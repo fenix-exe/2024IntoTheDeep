@@ -16,4 +16,17 @@ public class PivotPIDFFunctions{
         double power = pid + ff;
         return power;
     }
+    public void setPID(double kP, double kI, double kD, double f){
+        this.f = f;
+        controller.setPID(kP, kI, kD);
+    }
+    public void setPID(double kP, double kI, double kD){
+        controller.setPID(kP, kI, kD);
+    }
+    public void setPID(double kP, double kD){
+        controller.setPID(kP, controller.getI(), kD);
+    }
+    public void setPID(double kP){
+        controller.setPID(kP, controller.getI(), controller.getD());
+    }
 }
