@@ -8,6 +8,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 
 public class driveCode {
     Gamepad gamepad1;
@@ -29,8 +30,9 @@ public class driveCode {
         this.imu_IMU = imu;
         this.telemetry = telemetry;
     }
-    private double speedMultiplication(){
+    /*private double speedMultiplication(){
         if (gamepad1.right_bumper & !gamepad1previous.right_bumper){
+            //TODO: FIX NAMING TO MAP
             if (speedMultiplier == 1){
                 speedMultiplier = 0.5;
             } else {
@@ -38,8 +40,8 @@ public class driveCode {
             }
         }
         return speedMultiplier;
-    }
-    public void RobotCentric_Drive() {
+    }*/
+    public void RobotCentric_Drive(double speedMultiplication) {
         float drive;
         double strafe;
         float yaw;
@@ -48,12 +50,12 @@ public class driveCode {
         strafe = gamepad1.left_stick_x * 1.1;
         yaw = gamepad1.right_stick_x;
         double denominator = Math.max(1, Math.abs(drive+strafe+yaw));
-        FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplication());
-        BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplication());
-        FR.setPower((((drive - strafe) - yaw) / denominator) * speedMultiplication());
-        BR.setPower((((drive + strafe) - yaw) / denominator) * speedMultiplication());
+        FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplication);
+        BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplication);
+        FR.setPower((((drive - strafe) - yaw) / denominator) * speedMultiplication);
+        BR.setPower((((drive + strafe) - yaw) / denominator) * speedMultiplication);
     }
-    public void FieldCentricDrive() {
+    public void FieldCentricDrive(double speedMultiplication) {
         double botHeading;
         float y;
         float x;
@@ -73,9 +75,9 @@ public class driveCode {
         rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));
         rotY = x * Math.sin(-botHeading / 180 * Math.PI) - y * Math.cos(-botHeading / 180 * Math.PI);
         fielddenom = Math.max(1, Math.abs(rotX+rotY));
-        FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplication());
-        BL.setPower((((rotY - rotX) + rx) / fielddenom) * speedMultiplication());
-        FR.setPower((((rotY - rotX) - rx) / fielddenom) * speedMultiplication());
-        BR.setPower((((rotY + rotX) - rx) / fielddenom) * speedMultiplication());
+        FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplication);
+        BL.setPower((((rotY - rotX) + rx) / fielddenom) * speedMultiplication);
+        FR.setPower((((rotY - rotX) - rx) / fielddenom) * speedMultiplication);
+        BR.setPower((((rotY + rotX) - rx) / fielddenom) * speedMultiplication);
     }
 }

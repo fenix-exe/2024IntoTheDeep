@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
+@TeleOp()
 public class SlideAndPivotCode extends LinearOpMode {
     private DcMotorEx pivot;
     private DcMotorEx slide;
@@ -16,7 +17,7 @@ public class SlideAndPivotCode extends LinearOpMode {
             liftPos = 0;
             // Down Position
         } else if (gamepad1.b) {
-            liftPos = 4100;
+            liftPos = 2100;
             // Up Position
         } else if (Math.abs(gamepad1.right_stick_y) > 0) {
             liftPos += 400 * -gamepad1.right_stick_y;
@@ -25,16 +26,16 @@ public class SlideAndPivotCode extends LinearOpMode {
             liftPos = slide.getCurrentPosition();
             // Hold the Position
         }
-        if (liftPos > 4100) {
-            liftPos = 4100;
+        if (liftPos > 2100) {
+            liftPos = 2100;
         }
         if (liftPos <= 1) {
             liftPos = 0;
         }
         // Gives a bit of safety without limiting us by a significant amount
-        if (liftPos > SoftStopDistance() - 10) {
+        /*if (liftPos > SoftStopDistance() - 10) {
             liftPos = SoftStopDistance() - 10;
-        }
+        }*/
         telemetry.addData("softStop", SoftStopDistance());
         telemetry.addData("liftPos", liftPos);
         // Sets Limits and Soft Stop
