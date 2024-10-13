@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 
-@TeleOp()
+@TeleOp(name = "slide", group = "test")
 public class SlideAndPivotCode extends LinearOpMode {
     Gamepad gamepad1current;
     Gamepad gamepad2current;
@@ -73,6 +73,11 @@ public class SlideAndPivotCode extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
+        gamepad1current = new Gamepad();
+        gamepad1previous = new Gamepad();
+        gamepad2current = new Gamepad();
+        gamepad2previous = new Gamepad();
+
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         slide = hardwareMap.get(DcMotorEx.class, "slide");
 
@@ -88,6 +93,14 @@ public class SlideAndPivotCode extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                gamepad1previous.copy(gamepad1current);
+                gamepad2previous.copy(gamepad2current);
+
+                gamepad1current.copy(gamepad1);
+                gamepad2current.copy(gamepad2);
+
+                controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
+
                 liftCode();
                 telemetry.update();
             }
