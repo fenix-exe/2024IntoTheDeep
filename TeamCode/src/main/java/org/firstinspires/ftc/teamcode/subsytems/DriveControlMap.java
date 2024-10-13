@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsytems.pivot;
+package org.firstinspires.ftc.teamcode.subsytems;
 
 public interface DriveControlMap {
     //gamepad 1 controls
