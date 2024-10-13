@@ -3,20 +3,30 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
+
 @TeleOp()
 public class SlideAndPivotCode extends LinearOpMode {
+    Gamepad gamepad1current;
+    Gamepad gamepad2current;
+    Gamepad gamepad1previous;
+    Gamepad gamepad2previous;
+
     private DcMotorEx pivot;
     private DcMotorEx slide;
+    DriverControls controls;
     double liftPos = 0;
     private void liftCode() {
 
         // Tune
         ((DcMotorEx) slide).setVelocity(2000);
         // Sets Speed
-        if (gamepad1.a) {
+        if (controls.slidesFullyDown()) {
             liftPos = 0;
             // Down Position
-        } else if (gamepad1.b) {
+        } else if (controls.slidesFullyUp()) {
             liftPos = 2100;
             // Up Position
         } else if (Math.abs(gamepad1.right_stick_y) > 0) {
@@ -73,6 +83,7 @@ public class SlideAndPivotCode extends LinearOpMode {
         pivot.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         // Resetting our Encoders
         pivot.setDirection(DcMotorEx.Direction.REVERSE);
+        controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
         // Makes the pivot go in the correct direction
         waitForStart();
         if (opModeIsActive()) {
