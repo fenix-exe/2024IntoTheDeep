@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsytems.pivot;
 import com.arcrobotics.ftclib.controller.PIDController;
 //Code is from KookyBotz
 public class PivotPIDFFunctions{

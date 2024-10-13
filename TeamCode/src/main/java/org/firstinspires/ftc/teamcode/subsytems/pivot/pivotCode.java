@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsytems.pivot;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,7 +17,7 @@ public class pivotCode extends LinearOpMode {
         controller = new PivotPIDFFunctions(new PIDController(0.005, 0, 0.0005), 0);
          */
         //PID with motor and 7 hole U-channel
-        controller = new PivotPIDFFunctions(new PIDController(0.02, 0 ,0.0005),0);
+        controller = new PivotPIDFFunctions(new PIDController(0.014, 0 ,0.0004),0);
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         slide =hardwareMap.get(DcMotorEx.class, "slide");
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -30,22 +30,22 @@ public class pivotCode extends LinearOpMode {
                 pivotPos = 0;
                 // Down Position
             } else if (gamepad1.y) {
-                pivotPos = -2400;
+                pivotPos = -2170;
                 // Up Position
             }
             if (pivotPos < -2400) {
-                pivotPos = -2400;
+                pivotPos = -2170;
                 //Upward limit
             }
             if (pivotPos > -20) {
                 pivotPos = -20;
                 //Downward limit
             }
-            if (slide.getCurrentPosition() < 4000){
+            /*if (slide.getCurrentPosition() < 4000){
                 controller.setPID(0.02,0.0005);
             } else {
                 controller.setPID(0.05,0.0008);
-            }
+            }*/
             pivot.setPower(controller.moveToPos(pivot.getCurrentPosition(), pivotPos));
             //get power from PID
             telemetry.addData("pivotPos", pivotPos);

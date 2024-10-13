@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsytems.pivot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @TeleOp
 public class PivotPIDFTuning extends LinearOpMode {
     private PIDController controller;
-    public static double p=0.005,i=0,d=0.0005;
+    public static double p=0,i=0,d=0;
     public static double f=0;
     public static int target = 0;
-    private final double ticks_in_degrees = 5281.1/180;
+    private final double ticks_in_degrees = 8719.2/360;
     private DcMotorEx pivot;
     @Override
     public void runOpMode() throws InterruptedException {
