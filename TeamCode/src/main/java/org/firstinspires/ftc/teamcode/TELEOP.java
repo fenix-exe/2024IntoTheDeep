@@ -2,14 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
+import org.firstinspires.ftc.teamcode.subsytems.activeIntake;
 
 public class TELEOP extends LinearOpMode {
     driveCode driverCode;
+    activeIntake activeIntakeCode;
     DriverControls controls;
     Gamepad gamepad1previous;
     Gamepad gamepad2previous;
@@ -19,6 +22,7 @@ public class TELEOP extends LinearOpMode {
     DcMotorEx BL;
     DcMotorEx FR;
     DcMotorEx BR;
+    CRServo intake;
     IMU imu;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
@@ -42,6 +46,7 @@ public class TELEOP extends LinearOpMode {
         gamepad1previous.copy(gamepad1);
         gamepad2previous.copy(gamepad2);
         driverCode = new driveCode(gamepad1, gamepad1previous, FL, BL, FR, BR, imu, telemetry);
+        activeIntakeCode = new activeIntake(gamepad2, gamepad2previous, intake);
         controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
         drive = driveType.ROBOT;
 

@@ -19,8 +19,6 @@ public class activeIntake {
         this.intakePos = intakePos;
     }
 
-
-
     public activeIntake(Gamepad gamepad2, Gamepad gamepad2previous, CRServo intake){
         this.gamepad2=gamepad2;
         this.gamepad2previous=gamepad2previous;
