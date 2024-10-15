@@ -2,14 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake;
-
+@TeleOp
 public class TELEOP extends LinearOpMode {
     driveCode driverCode;
     activeIntake activeIntakeCode;
@@ -43,13 +45,23 @@ public class TELEOP extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
+        imu.resetYaw();
+
+        FL = hardwareMap.get(DcMotorEx.class, "FL");
+        FR = hardwareMap.get(DcMotorEx.class, "FR");
+        BL = hardwareMap.get(DcMotorEx.class, "BL");
+        BR = hardwareMap.get(DcMotorEx.class, "BR");
+
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+
         gamepad1previous.copy(gamepad1);
         gamepad2previous.copy(gamepad2);
-        driverCode = new driveCode(gamepad1, gamepad1previous, FL, BL, FR, BR, imu, telemetry);
+        driverCode = new driveCode(gamepad1, gamepad1previous, FL, FR, BL, BR, imu, telemetry);
         activeIntakeCode = new activeIntake(gamepad2, gamepad2previous, intake);
         controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
         drive = driveType.ROBOT;
-
+        speedMultiplier = speed.FAST;
         waitForStart();
 
         while (opModeIsActive()){
@@ -90,7 +102,7 @@ public class TELEOP extends LinearOpMode {
 
             switch (drive) {
                 case FIELD:
-                    driverCode.FieldCentricDrive(speedMultiplication);
+                    driverCode.FieldCentricDrive(speedMultiplication, controls.resetIMU());
                     break;
                 default:
                     driverCode.RobotCentric_Drive(speedMultiplication);

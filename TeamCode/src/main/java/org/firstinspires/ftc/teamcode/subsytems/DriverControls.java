@@ -24,6 +24,11 @@ public class DriverControls implements DriveControlMap{
     }
 
     @Override
+    public boolean resetIMU() {
+        return gamepad1.a;
+    }
+
+    @Override
     public boolean emergencyStop() {
         return gamepad1.start;
     }

@@ -6,6 +6,7 @@ public interface DriveControlMap {
     //makes robot move slower, is a toggle
     public boolean driveTypeSwitch();
     //switches robot modes, is a toggle
+    public boolean resetIMU();
     public boolean emergencyStop();
     //turns off robot completely
     public boolean undoEmergencyStop();

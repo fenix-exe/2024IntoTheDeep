@@ -55,25 +55,30 @@ public class driveCode {
         FR.setPower((((drive - strafe) - yaw) / denominator) * speedMultiplication);
         BR.setPower((((drive + strafe) - yaw) / denominator) * speedMultiplication);
     }
-    public void FieldCentricDrive(double speedMultiplication) {
+    public void FieldCentricDrive(double speedMultiplication, boolean gamepadControl) {
         double botHeading;
-        float y;
-        float x;
-        float rx;
+        double y;
+        double x;
+        double rx;
         double rotY;
         double rotX;
         double fielddenom;
 
+        if (gamepadControl){
+            imu_IMU.resetYaw();
+        }
+
         botHeading = imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        y = gamepad1.left_stick_y * -1;
+        y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
         rx = gamepad1.right_stick_x * 1;
         telemetry.addData("BotH", botHeading);
+        telemetry.update();
         if (gamepad1.dpad_down) {
             imu_IMU.resetYaw();
         }
         rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));
-        rotY = x * Math.sin(-botHeading / 180 * Math.PI) - y * Math.cos(-botHeading / 180 * Math.PI);
+        rotY = x * Math.sin(-botHeading / 180 * Math.PI) + y * Math.cos(-botHeading / 180 * Math.PI);
         fielddenom = Math.max(1, Math.abs(rotX+rotY));
         FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplication);
         BL.setPower((((rotY - rotX) + rx) / fielddenom) * speedMultiplication);

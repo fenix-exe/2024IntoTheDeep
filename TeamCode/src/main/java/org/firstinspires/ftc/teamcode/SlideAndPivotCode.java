@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
@@ -87,7 +88,12 @@ public class SlideAndPivotCode extends LinearOpMode {
         pivot.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         pivot.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         // Resetting our Encoders
+
+        gamepad1current.copy(gamepad1);
+        gamepad2current.copy(gamepad2);
+
         pivot.setDirection(DcMotorEx.Direction.REVERSE);
+        slide.setDirection(DcMotorEx.Direction.REVERSE);
         controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
         // Makes the pivot go in the correct direction
         waitForStart();
