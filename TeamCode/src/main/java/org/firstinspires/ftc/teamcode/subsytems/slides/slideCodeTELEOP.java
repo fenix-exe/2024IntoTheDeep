@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 
 @TeleOp(name = "slide", group = "test")
-public class slideCode extends LinearOpMode {
+public class slideCodeTELEOP extends LinearOpMode {
     Gamepad gamepad1current;
     Gamepad gamepad2current;
     Gamepad gamepad1previous;
