@@ -1,15 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsytems.slides;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 
 @TeleOp(name = "slide", group = "test")
-public class SlideAndPivotCode extends LinearOpMode {
+public class slideCode extends LinearOpMode {
     Gamepad gamepad1current;
     Gamepad gamepad2current;
     Gamepad gamepad1previous;
