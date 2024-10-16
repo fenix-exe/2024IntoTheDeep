@@ -40,12 +40,14 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean slidesFullyUp() {
-        return gamepad2.dpad_up;
+        /*return gamepad2.dpad_up;*/
+        return gamepad1.dpad_up;
     }
 
     @Override
     public boolean slidesFullyDown() {
-        return gamepad2.dpad_down;
+        /*return gamepad2.dpad_down;*/
+        return gamepad1.dpad_down;
     }
 
     @Override
@@ -60,7 +62,8 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public double slideMovement() {
-        return -gamepad2.left_stick_y;
+        /*return -gamepad2.left_stick_y;*/
+        return -gamepad1.right_stick_y;
     }
 
     @Override

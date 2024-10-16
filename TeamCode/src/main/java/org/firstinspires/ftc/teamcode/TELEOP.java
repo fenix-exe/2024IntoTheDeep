@@ -11,10 +11,13 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake;
+import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
+
 @TeleOp
 public class TELEOP extends LinearOpMode {
     driveCode driverCode;
     activeIntake activeIntakeCode;
+    slideCodeFunctions slideCode;
     DriverControls controls;
     Gamepad gamepad1previous;
     Gamepad gamepad2previous;
@@ -24,13 +27,17 @@ public class TELEOP extends LinearOpMode {
     DcMotorEx BL;
     DcMotorEx FR;
     DcMotorEx BR;
+    DcMotorEx slide;
     CRServo intake;
     IMU imu;
+    int topHeight = 4000;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
     private enum speed {FAST, SLOW}
+    private enum slidePos {UP, DOWN}
     driveType drive;
     speed speedMultiplier;
+    slidePos slideUpOrDown;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,17 +58,24 @@ public class TELEOP extends LinearOpMode {
         FR = hardwareMap.get(DcMotorEx.class, "FR");
         BL = hardwareMap.get(DcMotorEx.class, "BL");
         BR = hardwareMap.get(DcMotorEx.class, "BR");
+        slide = hardwareMap.get(DcMotorEx.class, "slide");
 
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         gamepad1previous.copy(gamepad1);
         gamepad2previous.copy(gamepad2);
+
         driverCode = new driveCode(gamepad1, gamepad1previous, FL, FR, BL, BR, imu, telemetry);
         activeIntakeCode = new activeIntake(gamepad2, gamepad2previous, intake);
+        slideCode = new slideCodeFunctions(slide);
         controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
+
         drive = driveType.ROBOT;
         speedMultiplier = speed.FAST;
+        slideUpOrDown = slidePos.DOWN;
+
         waitForStart();
 
         while (opModeIsActive()){
@@ -87,9 +101,17 @@ public class TELEOP extends LinearOpMode {
                     speedMultiplier = speed.FAST;
                 }
             }
-
-
-
+            if (controls.slidesFullyUp()){
+                slideCode.goTo(topHeight);
+                slideUpOrDown = slidePos.UP;
+            } else if (controls.slidesFullyDown()){
+                slideCode.goTo(0);
+                slideUpOrDown = slidePos.DOWN;
+            } else if ( Math.abs(controls.slideMovement()) > 0){
+                slideCode.joystickControl(controls.slideMovement());
+            } else {
+                slideCode.holdPos();
+            }
             //switch statements for state machines
             switch (speedMultiplier){
                 case SLOW:
