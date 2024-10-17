@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name = "pivotCode")
-public class pivotCode extends LinearOpMode {
+public class pivotCodeTELEOP extends LinearOpMode {
     private DcMotorEx pivot;
     private DcMotorEx slide;
     private int pivotPos;
