@@ -8,22 +8,29 @@ import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 public class slideCodeFunctions {
     DcMotorEx slide;
     int liftPos;
-    DriverControls control;
-    public slideCodeFunctions(DcMotorEx slide, DriverControls control){
+    int maxHeight = 4000;
+    int minHeight = 0;
+    public slideCodeFunctions(DcMotorEx slide){
         this.slide=slide;
-        this.control=control;
     }
     public void goTo(int targetPos){
         slide.setPower(1);
         slide.setTargetPosition(targetPos);
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    public void joystickControl(){
-        liftPos += 400 * control.slideMovement();
+    public void joystickControl(double slideMovement){
+        liftPos += 400 * slideMovement;
+
+        if(liftPos > maxHeight){
+            liftPos = maxHeight;
+        }
+        if(liftPos < minHeight){
+            liftPos = minHeight;
+        }
         goTo(liftPos);
     }
     public void holdPos(){
-        liftPos = slide.getTargetPosition();
+        liftPos = slide.getCurrentPosition();
         goTo(liftPos);
     }
 }
