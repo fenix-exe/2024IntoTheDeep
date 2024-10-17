@@ -68,7 +68,7 @@ public class TELEOP extends LinearOpMode {
         gamepad2previous.copy(gamepad2);
 
         driverCode = new driveCode(gamepad1, gamepad1previous, FL, FR, BL, BR, imu, telemetry);
-        activeIntakeCode = new activeIntake(gamepad2, gamepad2previous, intake);
+        activeIntakeCode = new activeIntake(intake);
         slideCode = new slideCodeFunctions(slide);
         controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
 
