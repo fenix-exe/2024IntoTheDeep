@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsytems.pivot;
 
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class pivotCodeFunctions {
@@ -21,7 +22,14 @@ public class pivotCodeFunctions {
         if (pivotPos > topPos){
             pivotPos = topPos;
         }
-        functions.moveToPos(pivot.getCurrentPosition(), targetPos);
+        /*if (pivot.getCurrentPosition() > pivotPos) {
+            pivot.setPower(-1);
+        } else {
+            pivot.setPower(1);
+        }*/
+        pivot.setPower(1);
+        pivot.setTargetPosition(pivotPos);
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     
 
