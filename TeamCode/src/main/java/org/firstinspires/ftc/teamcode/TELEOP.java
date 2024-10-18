@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -11,6 +13,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake;
+import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
+import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
 
 @TeleOp
@@ -18,6 +22,9 @@ public class TELEOP extends LinearOpMode {
     driveCode driverCode;
     activeIntake activeIntakeCode;
     slideCodeFunctions slideCode;
+    pivotCodeFunctions pivotCode;
+    PivotPIDFFunctions pivotPIDF;
+    PIDController controllerPivotPIDF;
     DriverControls controls;
     Gamepad gamepad1previous;
     Gamepad gamepad2previous;
@@ -28,9 +35,12 @@ public class TELEOP extends LinearOpMode {
     DcMotorEx FR;
     DcMotorEx BR;
     DcMotorEx slide;
+    DcMotorEx pivot;
     CRServo intake;
     IMU imu;
     int topHeight = 4000;
+    int topPivotPos = 2178;
+    int slowDownPivotHeight = 1000;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
     private enum speed {FAST, SLOW}
@@ -41,12 +51,15 @@ public class TELEOP extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        //gamepad initializations
         gamepad1current = new Gamepad();
         gamepad2current = new Gamepad();
 
         gamepad1previous = new Gamepad();
         gamepad2previous = new Gamepad();
 
+        //imu initializations
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
@@ -54,24 +67,41 @@ public class TELEOP extends LinearOpMode {
         imu.initialize(parameters);
         imu.resetYaw();
 
+        //motor intializations
         FL = hardwareMap.get(DcMotorEx.class, "FL");
         FR = hardwareMap.get(DcMotorEx.class, "FR");
         BL = hardwareMap.get(DcMotorEx.class, "BL");
         BR = hardwareMap.get(DcMotorEx.class, "BR");
         slide = hardwareMap.get(DcMotorEx.class, "slide");
+        pivot = hardwareMap.get(DcMotorEx.class, "pivot");
 
+        //reversing motor directions
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        //resetting encoders
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //gamepad copying
         gamepad1previous.copy(gamepad1);
         gamepad2previous.copy(gamepad2);
 
         driverCode = new driveCode(gamepad1, gamepad1previous, FL, FR, BL, BR, imu, telemetry);
         activeIntakeCode = new activeIntake(intake);
         slideCode = new slideCodeFunctions(slide);
+
+        //pivot initialization
+        controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
+        pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
+        pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, topPivotPos);
+
+        //driveMap initialization
         controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
 
+        //state machines initialization
         drive = driveType.ROBOT;
         speedMultiplier = speed.FAST;
         slideUpOrDown = slidePos.DOWN;
@@ -94,8 +124,8 @@ public class TELEOP extends LinearOpMode {
                     drive = driveType.ROBOT;
                 }
             }
-            if (controls.slowMode()){
-                if (speedMultiplier == speed.FAST){
+            if (controls.slowMode() || pivot.getCurrentPosition() > slowDownPivotHeight){
+                if (speedMultiplier == speed.FAST || pivot.getCurrentPosition() > slowDownPivotHeight){
                     speedMultiplier = speed.SLOW;
                 } else {
                     speedMultiplier = speed.FAST;
@@ -111,6 +141,12 @@ public class TELEOP extends LinearOpMode {
                 slideCode.joystickControl(controls.slideMovement());
             } else {
                 slideCode.holdPos();
+            }
+            if (controls.pivotParallel()){
+                pivotCode.goTo(0);
+            }
+            if (controls.pivotPerp()){
+                pivotCode.goTo(topPivotPos);
             }
             //switch statements for state machines
             switch (speedMultiplier){
