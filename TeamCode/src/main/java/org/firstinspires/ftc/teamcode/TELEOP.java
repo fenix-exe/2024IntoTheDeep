@@ -51,9 +51,13 @@ public class TELEOP extends LinearOpMode {
     private enum driveType {FIELD, ROBOT}
     private enum speed {FAST, SLOW}
     private enum slidePos {UP, DOWN}
+    private enum intakeDirection {FORWARD, BACKWARD}
+    private enum intakePower {YES, NO}
     driveType drive;
     speed speedMultiplier;
     slidePos slideUpOrDown;
+    intakeDirection direction;
+    intakePower power;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -94,6 +98,12 @@ public class TELEOP extends LinearOpMode {
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //zeroPowerBehavior
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //gamepad copying
         gamepad1previous.copy(gamepad1);
         gamepad2previous.copy(gamepad2);
@@ -114,6 +124,8 @@ public class TELEOP extends LinearOpMode {
         drive = driveType.ROBOT;
         speedMultiplier = speed.FAST;
         slideUpOrDown = slidePos.DOWN;
+        direction = intakeDirection.FORWARD;
+        power = intakePower.NO;
 
         waitForStart();
 
@@ -158,6 +170,22 @@ public class TELEOP extends LinearOpMode {
                 pivotCode.goTo(topPivotPos);
             }
 
+            if (controls.intakeDirection()){
+                if (direction == intakeDirection.FORWARD){
+                    direction = intakeDirection.BACKWARD;
+                } else {
+                    direction = intakeDirection.FORWARD;
+                }
+            }
+
+            if (controls.intakePower()){
+                if (power == intakePower.YES){
+                    power = intakePower.NO;
+                } else {
+                    power = intakePower.YES;
+                }
+            }
+
             //switch statements for state machines
             switch (speedMultiplier){
                 case SLOW:
@@ -174,6 +202,28 @@ public class TELEOP extends LinearOpMode {
                     break;
                 default:
                     driverCode.RobotCentric_Drive(speedMultiplication);
+                    break;
+            }
+
+            switch (power){
+                case NO:
+                    activeIntakeCode.intakeOff();
+                    break;
+                case YES:
+                    switch (direction){
+                        case FORWARD:
+                            activeIntakeCode.intakeForward();
+                            break;
+                        case BACKWARD:
+                            activeIntakeCode.intakeBack();
+                            break;
+                        default:
+                            activeIntakeCode.intakeOff();
+                            break;
+                    }
+                    break;
+                default:
+                    activeIntakeCode.intakeOff();
                     break;
             }
         }
