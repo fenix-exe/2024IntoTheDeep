@@ -10,9 +10,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake;
+import org.firstinspires.ftc.teamcode.subsytems.differential;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
@@ -26,6 +28,7 @@ public class TELEOP extends LinearOpMode {
     PivotPIDFFunctions pivotPIDF;
     PIDController controllerPivotPIDF;
     DriverControls controls;
+    activeIntake intakeCode;
     Gamepad gamepad1previous;
     Gamepad gamepad2previous;
     Gamepad gamepad1current;
@@ -37,6 +40,9 @@ public class TELEOP extends LinearOpMode {
     DcMotorEx slide;
     DcMotorEx pivot;
     CRServo intake;
+    Servo left;
+    Servo right;
+    differential diffCode;
     IMU imu;
     int topHeight = 4000;
     int topPivotPos = 2178;
@@ -74,6 +80,9 @@ public class TELEOP extends LinearOpMode {
         BR = hardwareMap.get(DcMotorEx.class, "BR");
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        intake = hardwareMap.get(CRServo.class, "intake");
+        left = hardwareMap.servo.get("left");
+        right = hardwareMap.servo.get("right");
 
         //reversing motor directions
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -148,6 +157,7 @@ public class TELEOP extends LinearOpMode {
             if (controls.pivotPerp()){
                 pivotCode.goTo(topPivotPos);
             }
+
             //switch statements for state machines
             switch (speedMultiplier){
                 case SLOW:
