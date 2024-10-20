@@ -91,7 +91,6 @@ public class TELEOP extends LinearOpMode {
         //reversing motor directions
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
-        slide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //resetting encoders
