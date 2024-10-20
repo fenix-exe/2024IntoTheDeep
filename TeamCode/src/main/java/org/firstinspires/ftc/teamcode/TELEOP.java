@@ -47,10 +47,10 @@ public class TELEOP extends LinearOpMode {
     int topHeight = 4000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
-    float pitchPos = 0;
-    float pitchStep = 30;
-    float rollStep = 30;
-    float rollPos = 0;
+    double pitchPos = 0;
+    double pitchStep = 30;
+    double rollStep = 30;
+    double rollPos = 0;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
     private enum speed {FAST, SLOW}
@@ -240,12 +240,9 @@ public class TELEOP extends LinearOpMode {
                     activeIntakeCode.intakeOff();
                     break;
             }
-            if (gamepad2.left_stick_y != 0){
-                pitchPos += pitchStep;
-            }
-            if (gamepad2.right_stick_y != 0){
-                rollPos += rollStep;
-            }
+
+            pitchPos += controls.degreeOfFreedomX() * pitchStep;
+            rollPos += controls.degreeOfFreedomY() * rollStep;
             diffCode.setDifferentialPosition(pitchPos, rollPos);
             telemetry.addData("pitch", pitchPos);
             telemetry.addData("roll", rollPos);
