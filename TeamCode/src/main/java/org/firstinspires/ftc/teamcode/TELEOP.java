@@ -44,7 +44,7 @@ public class TELEOP extends LinearOpMode {
     Servo right;
     differential diffCode;
     IMU imu;
-    int topHeight = 4000;
+    int topHeight = 5000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
     double speedMultiplication = 1;
@@ -97,6 +97,8 @@ public class TELEOP extends LinearOpMode {
         //resetting encoders
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //zeroPowerBehavior
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
