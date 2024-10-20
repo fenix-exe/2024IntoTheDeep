@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.activeIntake;
-import org.firstinspires.ftc.teamcode.subsytems.differential;
+import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
+import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
@@ -127,6 +127,8 @@ public class TELEOP extends LinearOpMode {
         direction = intakeDirection.FORWARD;
         power = intakePower.NO;
 
+        diffCode = new differential(left, right);
+
         waitForStart();
 
         while (opModeIsActive()){
@@ -226,7 +228,9 @@ public class TELEOP extends LinearOpMode {
                     activeIntakeCode.intakeOff();
                     break;
             }
+            diffCode.setDifferentialPosition(gamepad2.left_stick_y*90, gamepad2.right_stick_y*90);
         }
+
 
     }
 }
