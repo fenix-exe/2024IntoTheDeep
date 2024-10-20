@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsytems;
+package org.firstinspires.ftc.teamcode.subsytems.differential;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,8 +9,8 @@ public class differential {
 
     float leftRange = 270;
     float rightRange = 270;
-    public static float pitchError = 7;
-    public static float rollError = 20;
+    public static float pitchError = -13;
+    public static float rollError = -18;
 
     public differential(Servo left, Servo right){
         this.left = left;
@@ -33,6 +33,7 @@ public class differential {
         left.setPosition(setAPosition(pitch+pitchError, roll+rollError));
         right.setPosition(setBPosition(pitch+pitchError, roll+rollError));
     }
+
     
 
 }
