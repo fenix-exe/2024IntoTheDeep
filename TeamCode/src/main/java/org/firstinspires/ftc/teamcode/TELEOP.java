@@ -48,8 +48,8 @@ public class TELEOP extends LinearOpMode {
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
     double pitchPos = 0;
-    double pitchStep = 30;
-    double rollStep = 30;
+    double pitchStep = 13.5;
+    double rollStep = 13.5;
     double rollPos = 0;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
