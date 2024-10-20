@@ -47,6 +47,10 @@ public class TELEOP extends LinearOpMode {
     int topHeight = 5000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
+    double pitchPos = 0;
+    double pitchStep = 13.5;
+    double rollStep = 13.5;
+    double rollPos = 0;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
     private enum speed {FAST, SLOW}
@@ -174,21 +178,30 @@ public class TELEOP extends LinearOpMode {
                 pivotCode.goTo(topPivotPos);
             }
 
-            if (controls.intakeDirection()){
+            if (controls.intakenewForward() > 0.5){
+                direction = intakeDirection.FORWARD;
+                power = intakePower.YES;
+            } else if (controls.intakenewBackward() > 0.5){
+                direction = intakeDirection.BACKWARD;
+                power = intakePower.YES;
+            } else {
+                power = intakePower.NO;
+            }
+            /*if (controls.intakeDirection()){
                 if (direction == intakeDirection.FORWARD){
                     direction = intakeDirection.BACKWARD;
                 } else {
                     direction = intakeDirection.FORWARD;
                 }
-            }
+            }*/
 
-            if (controls.intakePower()){
+            /*if (controls.intakePower()){
                 if (power == intakePower.YES){
                     power = intakePower.NO;
                 } else {
                     power = intakePower.YES;
                 }
-            }
+            }*/
 
             //switch statements for state machines
             switch (speedMultiplier){
@@ -230,7 +243,13 @@ public class TELEOP extends LinearOpMode {
                     activeIntakeCode.intakeOff();
                     break;
             }
-            diffCode.setDifferentialPosition(gamepad2.left_stick_y*90, gamepad2.right_stick_y*90);
+
+            pitchPos += controls.degreeOfFreedomX() * pitchStep;
+            rollPos += controls.degreeOfFreedomY() * rollStep;
+            diffCode.setDifferentialPosition(pitchPos, rollPos);
+            telemetry.addData("pitch", pitchPos);
+            telemetry.addData("roll", rollPos);
+            telemetry.update();
         }
 
 

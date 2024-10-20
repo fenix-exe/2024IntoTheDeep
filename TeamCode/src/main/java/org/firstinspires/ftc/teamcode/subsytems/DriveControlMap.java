@@ -30,6 +30,10 @@ public interface DriveControlMap {
     //turns intake on/off, toggle
     public boolean intakeDirection();
     //changes intake direction, toggle
+    public float intakenewForward();
+    //instead of toggle, hold
+    public float intakenewBackward();
+    //instead of toggle, hold
 
 
 

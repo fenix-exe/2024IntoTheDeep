@@ -87,4 +87,14 @@ public class DriverControls implements DriveControlMap{
     public boolean intakeDirection() {
         return gamepad2.right_bumper && !gamepad2previous.right_bumper;
     }
+
+    @Override
+    public float intakenewForward() {
+        return gamepad2.left_trigger;
+    }
+
+    @Override
+    public float intakenewBackward() {
+        return gamepad2.right_trigger;
+    }
 }
