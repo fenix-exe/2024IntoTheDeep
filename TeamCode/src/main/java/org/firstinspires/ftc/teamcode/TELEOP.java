@@ -44,7 +44,7 @@ public class TELEOP extends LinearOpMode {
     Servo right;
     differential diffCode;
     IMU imu;
-    int topHeight = 4000;
+    int topHeight = 5000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
     double pitchPos = 0;
@@ -57,11 +57,13 @@ public class TELEOP extends LinearOpMode {
     private enum slidePos {UP, DOWN}
     private enum intakeDirection {FORWARD, BACKWARD}
     private enum intakePower {YES, NO}
+    private enum pivotPos {DEPOSIT, PICKUP}
     driveType drive;
     speed speedMultiplier;
     slidePos slideUpOrDown;
     intakeDirection direction;
     intakePower power;
+    pivotPos pivotStateMachine;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -101,6 +103,8 @@ public class TELEOP extends LinearOpMode {
         //resetting encoders
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //zeroPowerBehavior
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -130,6 +134,7 @@ public class TELEOP extends LinearOpMode {
         slideUpOrDown = slidePos.DOWN;
         direction = intakeDirection.FORWARD;
         power = intakePower.NO;
+        pivotStateMachine = pivotPos.PICKUP;
 
         diffCode = new differential(left, right);
 
@@ -160,10 +165,8 @@ public class TELEOP extends LinearOpMode {
             }
             if (controls.slidesFullyUp()){
                 slideCode.goTo(topHeight);
-                slideUpOrDown = slidePos.UP;
             } else if (controls.slidesFullyDown()){
                 slideCode.goTo(0);
-                slideUpOrDown = slidePos.DOWN;
             } else if ( Math.abs(controls.slideMovement()) > 0){
                 slideCode.joystickControl(controls.slideMovement());
             } else {
@@ -176,6 +179,7 @@ public class TELEOP extends LinearOpMode {
                 pivotCode.goTo(topPivotPos);
             }
 
+            //State definitions
             if (controls.intakenewForward() > 0.5){
                 direction = intakeDirection.FORWARD;
                 power = intakePower.YES;
@@ -185,6 +189,17 @@ public class TELEOP extends LinearOpMode {
             } else {
                 power = intakePower.NO;
             }
+            if (pivot.getCurrentPosition() >= topPivotPos - 100){
+                pivotStateMachine = pivotPos.DEPOSIT;
+            } else{
+                pivotStateMachine = pivotPos.PICKUP;
+            }
+            if (slide.getCurrentPosition() >= topHeight - 100){
+                slideUpOrDown = slidePos.UP;
+            } else{
+                slideUpOrDown = slidePos.DOWN;
+            }
+
             /*if (controls.intakeDirection()){
                 if (direction == intakeDirection.FORWARD){
                     direction = intakeDirection.BACKWARD;
