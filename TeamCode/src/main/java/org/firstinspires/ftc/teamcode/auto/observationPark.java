@@ -28,7 +28,7 @@ public class observationPark extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         try {
-            vector = listOfThings.SetUpListOfThings(telemetry, "/sdcard/Download/autoPositions/observationPark.csv" );
+            vector = listOfThings.SetUpListOfThings(telemetry, filename );
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -45,6 +45,11 @@ public class observationPark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " X", listOfThings.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", listOfThings.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", listOfThings.getAngleFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Elbow Phi", listOfThings.getElbowPhiFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Linear Slide", listOfThings.getLinearSlideFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Wrist Psi", listOfThings.getWristPsiFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Wrist Rho", listOfThings.getWristRhoFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Intake", listOfThings.getIntakeFromList(vector.get(i)));
         }
         Action action1 = traj1.build();
         telemetry.update();
