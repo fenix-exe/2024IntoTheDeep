@@ -34,14 +34,14 @@ public class observationPark extends LinearOpMode {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Pose2d beginPose = new Pose2d(listOfThings.getXFromList(vector.get(0)), listOfThings.getYFromList(vector.get(0)), Math.toRadians(listOfThings.getAngleFromList(vector.get(0))));
+        Pose2d beginPose = new Pose2d(listOfThings.getXFromList(vector.get(0)), listOfThings.getYFromList(vector.get(0)), listOfThings.getAngleFromList(vector.get(0)));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
         for (int i = 1; i < vector.size(); i++) {
-            traj1 = traj1.splineToConstantHeading(new Vector2d(listOfThings.getXFromList(vector.get(i)), listOfThings.getYFromList(vector.get(i))), Math.toRadians(listOfThings.getAngleFromList(vector.get(i))));
+            traj1 = traj1.splineToConstantHeading(new Vector2d(listOfThings.getXFromList(vector.get(i)), listOfThings.getYFromList(vector.get(i))), listOfThings.getAngleFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " X", listOfThings.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", listOfThings.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", listOfThings.getAngleFromList(vector.get(i)));

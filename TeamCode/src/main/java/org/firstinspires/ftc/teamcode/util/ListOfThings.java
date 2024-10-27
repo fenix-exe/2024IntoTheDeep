@@ -50,6 +50,6 @@ public class ListOfThings {
     }
 
     public double getAngleFromList(PositionInSpace position) {
-        return position.angle;
+        return Math.toRadians(position.angle);
     }
 }
