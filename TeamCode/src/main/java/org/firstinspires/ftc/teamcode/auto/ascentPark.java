@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Autonomous(name = "AUTO - Observation Park")
-public class observationPark extends LinearOpMode {
-    String filename = "/sdcard/Download/autoPositions/observationPark.csv";
+public class ascentPark extends LinearOpMode {
+    String filename = "/sdcard/Download/autoPositions/ascentPark.csv";
     ListOfThings listOfThings = new ListOfThings();
     ArrayList<ListOfThings.PositionInSpace> vector = new ArrayList<>();
     @Override
