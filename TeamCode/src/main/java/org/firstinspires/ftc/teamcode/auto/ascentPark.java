@@ -30,7 +30,8 @@ public class ascentPark extends LinearOpMode {
         try {
             vector = listOfThings.SetUpListOfThings(telemetry, filename );
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            telemetry.addData("No File Detected. File name is:", filename);
+            telemetry.update();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -45,7 +46,13 @@ public class ascentPark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " X", listOfThings.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", listOfThings.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", listOfThings.getAngleFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Elbow Phi", listOfThings.getElbowPhiFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Linear Slide", listOfThings.getLinearSlideFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Wrist Psi", listOfThings.getWristPsiFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Wrist Rho", listOfThings.getWristRhoFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Intake", listOfThings.getIntakeFromList(vector.get(i)));
         }
+
         Action action1 = traj1.build();
         telemetry.update();
 

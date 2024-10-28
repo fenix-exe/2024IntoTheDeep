@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import android.os.Environment;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -19,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 @Autonomous(name = "AUTO - Observation Park")
 public class observationPark extends LinearOpMode {
     String filename = "/sdcard/Download/autoPositions/observationPark.csv";
@@ -30,7 +33,8 @@ public class observationPark extends LinearOpMode {
         try {
             vector = listOfThings.SetUpListOfThings(telemetry, filename );
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            telemetry.addData("No File Detected. File name is:", filename);
+            telemetry.update();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
