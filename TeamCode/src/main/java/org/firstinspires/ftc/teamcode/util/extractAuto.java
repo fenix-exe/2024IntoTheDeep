@@ -4,10 +4,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
-public class ListOfThings {
-    ArrayList<PositionInSpace> listOfLists = new ArrayList<>();
+public class extractAuto {
+    ArrayList<PositionInSpace> autoPath = new ArrayList<>();
 
     public class PositionInSpace {
         public int x_value;
@@ -38,7 +37,6 @@ public class ListOfThings {
         br.readLine();
         while ((line = br.readLine()) != null) {
             String[] values = line.split(",");
-
             try {
                 int x_value = Integer.parseInt(values[0].trim());
                 int y_value = Integer.parseInt(values[1].trim());
@@ -48,13 +46,16 @@ public class ListOfThings {
                 double wrist_psi = Double.parseDouble(values[5].trim());
                 double wrist_rho = Double.parseDouble(values[6].trim());
                 int intake = Integer.parseInt(values[7].trim());
-                listOfLists.add(new PositionInSpace(x_value, y_value, angle, elbow_phi, linear_slide, wrist_psi, wrist_rho, intake));
+                autoPath.add(new PositionInSpace(x_value, y_value, angle, elbow_phi, linear_slide, wrist_psi, wrist_rho, intake));
             } catch (NumberFormatException e) {
                 telemetry.addData("Error", "Invalid number format in line: " + line);
                 telemetry.update();
+            } finally {
+                telemetry.addData("The file listed has been read and parsed successfully. ", filename);
+                telemetry.update();
             }
         }
-        return listOfLists;
+        return autoPath;
     }
 
     public int getXFromList(PositionInSpace position) {
