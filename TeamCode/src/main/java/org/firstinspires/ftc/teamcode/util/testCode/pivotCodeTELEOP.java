@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.subsytems.pivot;
+package org.firstinspires.ftc.teamcode.util.testCode;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
 
 @TeleOp(name = "pivotCode")
 public class pivotCodeTELEOP extends LinearOpMode {
