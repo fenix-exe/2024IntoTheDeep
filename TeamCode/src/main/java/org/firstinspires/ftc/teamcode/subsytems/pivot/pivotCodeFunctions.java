@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsytems.pivot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import static java.lang.Math.floor;
+
 
 public class pivotCodeFunctions {
     DcMotorEx pivot;
@@ -31,6 +33,13 @@ public class pivotCodeFunctions {
         pivot.setTargetPosition(pivotPos);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    
+    public void setNewTopPos(int topPos){
+        this.topPos = topPos;
+    }
+    public double ticksToDegrees(int ticks){
+        return ticks/24.22;
+    }
+
+
 
 }

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsytems.slides;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import static java.lang.Math.floor;
+
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 
@@ -32,5 +34,11 @@ public class slideCodeFunctions {
     public void holdPos(){
         liftPos = slide.getCurrentPosition();
         goTo(liftPos);
+    }
+    public double ticksToInches(int ticks){
+            return 4.724757/758.1 * ticks + 300/25.4;
+    }
+    public int InchesToTicks(double inches){
+        return (int) floor(758.1*(inches-300/25.4)/4.724757);
     }
 }

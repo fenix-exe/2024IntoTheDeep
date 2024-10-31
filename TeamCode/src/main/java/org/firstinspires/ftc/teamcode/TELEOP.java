@@ -44,6 +44,8 @@ public class TELEOP extends LinearOpMode {
     Servo right;
     differential diffCode;
     IMU imu;
+    double MaxSlideExtensionInches;
+    int initialTopHeight = 5000;
     int topHeight = 5000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
@@ -163,6 +165,22 @@ public class TELEOP extends LinearOpMode {
                     speedMultiplier = speed.FAST;
                 }
             }
+
+            double theta = pivotCode.ticksToDegrees(pivot.getCurrentPosition());
+            if (theta != 90) {
+                MaxSlideExtensionInches = 36/(Math.cos(Math.toRadians(theta)));
+            } else {
+                MaxSlideExtensionInches = 10^44;
+            }
+            int MaxSlideExtensionEncoderTicks = slideCode.InchesToTicks(MaxSlideExtensionInches);
+            if (MaxSlideExtensionEncoderTicks > initialTopHeight){
+                topHeight = MaxSlideExtensionEncoderTicks;
+            } else {
+                topHeight = initialTopHeight;
+            }
+
+            //Slide code
+
             if (controls.slidesFullyUp()){
                 slideCode.goTo(topHeight);
             } else if (controls.slidesFullyDown()){
