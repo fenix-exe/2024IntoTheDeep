@@ -20,6 +20,7 @@ public interface DriveControlMap {
     //pivot parallel to ground
     public boolean pivotPerp();
     //pivot perpendicular to ground
+    public double pivotJoystick();
     public double slideMovement();
     //joystick control of slides
     public double degreeOfFreedomX();

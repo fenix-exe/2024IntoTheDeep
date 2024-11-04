@@ -63,6 +63,11 @@ public class DriverControls implements DriveControlMap{
     }
 
     @Override
+    public double pivotJoystick() {
+        return gamepad1.left_stick_x;
+    }
+
+    @Override
     public double slideMovement() {
         return -gamepad2.left_stick_y;
         //return -gamepad1.right_stick_y;

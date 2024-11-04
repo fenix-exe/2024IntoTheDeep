@@ -33,6 +33,15 @@ public class pivotCodeFunctions {
         pivot.setTargetPosition(pivotPos);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+    public void pivotJoystick(int startPos, double pivotControlJoystick){
+        if (pivotControlJoystick != 0) {
+            pivotPos = (int) floor(startPos + pivotControlJoystick * 400);
+        }
+        pivot.setPower(1);
+        pivot.setTargetPosition(pivotPos);
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     public void setNewTopPos(int topPos){
         this.topPos = topPos;
     }

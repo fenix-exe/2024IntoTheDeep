@@ -166,7 +166,7 @@ public class TELEOP extends LinearOpMode {
                     speedMultiplier = speed.FAST;
                 }
             }
-
+//slide-pivot soft stop
             double theta = pivotCode.ticksToDegrees(pivot.getCurrentPosition());
             if (theta != 90) {
                 MaxSlideExtensionInches = 36/(Math.cos(Math.toRadians(theta)));
@@ -178,6 +178,9 @@ public class TELEOP extends LinearOpMode {
                 topHeight = MaxSlideExtensionEncoderTicks;
             } else {
                 topHeight = initialTopHeight;
+            }
+            if (slide.getCurrentPosition() > (topHeight - 100)){
+                slideCode.goTo(topHeight - 100);
             }
 
             //Slide code
@@ -191,13 +194,17 @@ public class TELEOP extends LinearOpMode {
             } else {
                 slideCode.holdPos();
             }
+
             if (controls.pivotParallel()){
                 pivotCode.goTo(0);
             }
             if (controls.pivotPerp()){
                 pivotCode.goTo(topPivotPos);
             }
-
+            pivotCode.pivotJoystick(pivot.getCurrentPosition(), controls.pivotJoystick());
+            if (controls.pivotJoystick() == 0 && (slideUpOrDown != slidePos.UP)){
+                pivotCode.goTo(pivot.getCurrentPosition());
+            }
             //State definitions
             if (controls.intakenewForward() > 0.5){
                 direction = intakeDirection.FORWARD;
@@ -213,7 +220,7 @@ public class TELEOP extends LinearOpMode {
             } else{
                 pivotStateMachine = pivotPos.PICKUP;
             }
-            if (slide.getCurrentPosition() >= topHeight - 100){
+            if (slide.getCurrentPosition() >= topHeight){
                 slideUpOrDown = slidePos.UP;
             } else{
                 slideUpOrDown = slidePos.DOWN;
