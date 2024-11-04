@@ -12,6 +12,7 @@
             <goBILDA5202SeriesMotor name="BR" port="3" />
             <Servo name="left" port="0" />
             <Servo name="right" port="1" />
+            <Servo name="intake" port="2" />
             <ContinuousRotationServo name="intake" port="2" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>

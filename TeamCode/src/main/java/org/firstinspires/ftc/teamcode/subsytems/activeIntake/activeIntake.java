@@ -93,6 +93,16 @@ public class activeIntake {
         }
     }
 
+    public Action aIForward() {
+        return new aIForward();
+    }
+    public Action aIStop() {
+        return new aIStop();
+    }
+    public Action aIBackward() {
+        return new aIBackward();
+    }
+
 
 
 
