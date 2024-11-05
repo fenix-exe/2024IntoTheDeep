@@ -34,6 +34,7 @@ public interface DriveControlMap {
     //instead of toggle, hold
     public float intakenewBackward();
     //instead of toggle, hold
+    public boolean resetWrist();
 
 
 

@@ -97,4 +97,8 @@ public class DriverControls implements DriveControlMap{
     public float intakenewBackward() {
         return gamepad2.right_trigger;
     }
+
+    public boolean resetWrist() {
+        return gamepad2.a;
+    }
 }

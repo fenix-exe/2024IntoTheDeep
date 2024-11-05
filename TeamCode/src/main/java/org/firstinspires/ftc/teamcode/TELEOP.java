@@ -263,6 +263,9 @@ public class TELEOP extends LinearOpMode {
             diffCode.setDifferentialPosition(pitchPos, rollPos);
             telemetry.addData("pitch", pitchPos);
             telemetry.addData("roll", rollPos);
+            if (controls.resetWrist()) {
+                diffCode.setDifferentialPosition(0,0);
+            }
             telemetry.update();
         }
 
