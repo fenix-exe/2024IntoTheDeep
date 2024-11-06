@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +13,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
+import org.firstinspires.ftc.teamcode.subsytems.RobotArm;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.driveCode;
@@ -21,7 +24,7 @@ import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
 
 @TeleOp
-public class TELEOP extends LinearOpMode {
+public class TELEOPV2 extends LinearOpMode {
     driveCode driverCode;
     activeIntake activeIntakeCode;
     slideCodeFunctions slideCode;
@@ -30,6 +33,7 @@ public class TELEOP extends LinearOpMode {
     PIDController controllerPivotPIDF;
     DriverControls controls;
     activeIntake intakeCode;
+    RobotArm arm;
     Gamepad gamepad1previous;
     Gamepad gamepad2previous;
     Gamepad gamepad1current;
@@ -45,10 +49,11 @@ public class TELEOP extends LinearOpMode {
     Servo right;
     differential diffCode;
     IMU imu;
+    RevColorSensorV3 activeIntakeSensor;
     double MaxSlideExtensionInches;
-    int initialTopHeight = 5000;
+    int PHYSICALMAXEXTENSION = 3433;
     int topHeight = 5000;
-    int lastTopHeight = 5000;
+    //int lastTopHeight = 5000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
     double pitchPos = 0;
@@ -58,16 +63,18 @@ public class TELEOP extends LinearOpMode {
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
     private enum speed {FAST, SLOW}
-    private enum slidePos {UP, DOWN}
+    private enum slidePos {UP, DOWN, MOVING_TO_POSITION, JOYSTICK_CONTROL}
     private enum intakeDirection {FORWARD, BACKWARD}
     private enum intakePower {YES, NO}
-    private enum pivotPos {DEPOSIT, PICKUP}
+    private enum pivotPos {DEPOSIT, PICKUP, MOVING_TO_POSITION, JOYSTICK_CONTROL}
+    private enum targetBlockColor {RED, BLUE, YELLOW}
     driveType drive;
     speed speedMultiplier;
     slidePos slideUpOrDown;
     intakeDirection direction;
     intakePower power;
     pivotPos pivotStateMachine;
+    targetBlockColor blockColor;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -97,6 +104,7 @@ public class TELEOP extends LinearOpMode {
         intake = hardwareMap.get(CRServo.class, "intake");
         left = hardwareMap.servo.get("left");
         right = hardwareMap.servo.get("right");
+        activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
 
         //reversing motor directions
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -128,6 +136,7 @@ public class TELEOP extends LinearOpMode {
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
         pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
         pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, topPivotPos);
+        arm = new RobotArm(slideCode, pivotCode, PHYSICALMAXEXTENSION, 35);
 
         //driveMap initialization
         controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
@@ -141,6 +150,20 @@ public class TELEOP extends LinearOpMode {
         pivotStateMachine = pivotPos.PICKUP;
 
         diffCode = new differential(left, right);
+        //uncomment this and line 241 for block selection
+        /*while(!gamepad1.a && !gamepad1.b && !gamepad1.x){
+            telemetry.addLine("Pressing A sets the target block color to red");
+            telemetry.addLine("Pressing B sets the target block color to blue");
+            telemetry.addLine("Pressing X sets the target block color to yellow");
+            telemetry.update();
+        }*/
+        if (gamepad1.a){
+            blockColor = targetBlockColor.RED;
+        } else if (gamepad1.b){
+            blockColor = targetBlockColor.BLUE;
+        } else if (gamepad1.x){
+            blockColor = targetBlockColor.YELLOW;
+        }
 
         waitForStart();
 
@@ -168,60 +191,60 @@ public class TELEOP extends LinearOpMode {
                 }
             }
 //slide-pivot soft stop
-            double theta = pivotCode.ticksToDegrees(pivot.getCurrentPosition());
-            if (theta != 90) {
-                MaxSlideExtensionInches = 36/(Math.cos(Math.toRadians(theta)));
-            } else {
-                MaxSlideExtensionInches = 10^44;
-            }
-            int MaxSlideExtensionEncoderTicks = slideCode.InchesToTicks(MaxSlideExtensionInches);
-            if (MaxSlideExtensionEncoderTicks < initialTopHeight){
-                topHeight = MaxSlideExtensionEncoderTicks;
-            } else {
-                topHeight = initialTopHeight;
-            }
-            /*if (slide.getCurrentPosition() > (topHeight - 100) && (lastTopHeight - 1 < topHeight) && (topHeight < lastTopHeight + 1)){
-                slideCode.goTo(topHeight - 100);
-            }*/
-            lastTopHeight = topHeight;
-
+            topHeight = arm.currentAllowedMaxExtensionLength();
             //Slide code
-
             if (controls.slidesFullyUp()){
                 slideCode.goTo(topHeight);
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
             } else if (controls.slidesFullyDown()){
                 slideCode.goTo(0);
-            } else if ( Math.abs(controls.slideMovement()) > 0){
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+            } else if (Math.abs(controls.slideMovement()) > 0){
                 slideCode.joystickControl(controls.slideMovement(), topHeight);
+                slideUpOrDown = slidePos.JOYSTICK_CONTROL;
             } else if (slide.getCurrentPosition() > topHeight) {
                 slideCode.goTo(topHeight);
             } else if (slide.getCurrentPosition() < 0){
                 slideCode.goTo(0);
-            } else {
+            } else if (slideUpOrDown != slidePos.MOVING_TO_POSITION) {
                 slideCode.holdPos();
             }
-
+//pivot code
             if (controls.pivotParallel()){
-                pivotCode.goTo(0);
-            }
-            if (controls.pivotPerp()){
+                if (arm.doesSlideNeedToRetract(0)){
+                    slideCode.goTo(arm.getSlideMaxLength(0));
+                }
+                else {
+                    pivotCode.goTo(0);
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                }
+            } else if (controls.pivotPerp()){
                 pivotCode.goTo(topPivotPos);
-            }
-            pivotCode.pivotJoystick(pivot.getCurrentPosition(), controls.pivotJoystick());
-            if (controls.pivotJoystick() == 0){
+                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+            } else if (controls.pivotJoystick() == 0 && pivotStateMachine != pivotPos.MOVING_TO_POSITION){
                 pivotCode.goTo(pivot.getCurrentPosition());
+            } else if (controls.pivotJoystick() < 0){
+                if (arm.doesSlideNeedToRetract(pivot.getCurrentPosition() - 50)){
+                    slideCode.goTo(arm.getSlideMaxLength(pivot.getCurrentPosition() - 50));
+                } else {
+                    pivotCode.pivotJoystick(pivot.getCurrentPosition(), controls.pivotJoystick());
+                    pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
+                }
+            } else if (controls.pivotJoystick() > 0) {
+                pivotCode.pivotJoystick(pivot.getCurrentPosition(), controls.pivotJoystick());
+                pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
             }
             //State definitions
             if (controls.intakenewForward() > 0.5){
                 direction = intakeDirection.FORWARD;
                 power = intakePower.YES;
-            } else if (controls.intakenewBackward() > 0.5){
+            } else if (controls.intakenewBackward() > 0.5/* || (blockColor == targetBlockColor.RED && activeIntakeSensor.red() >= 245 && activeIntakeSensor.green() <= 50) || (blockColor == targetBlockColor.BLUE && activeIntakeSensor.blue() >= 245) || (blockColor == targetBlockColor.RED && activeIntakeSensor.red() >= 245 && activeIntakeSensor.green() >= 245)*/){
                 direction = intakeDirection.BACKWARD;
                 power = intakePower.YES;
             } else {
                 power = intakePower.NO;
             }
-            if (pivot.getCurrentPosition() >= topPivotPos - 100){
+            /*if (pivot.getCurrentPosition() >= topPivotPos - 100){
                 pivotStateMachine = pivotPos.DEPOSIT;
             } else{
                 pivotStateMachine = pivotPos.PICKUP;
@@ -230,7 +253,7 @@ public class TELEOP extends LinearOpMode {
                 slideUpOrDown = slidePos.UP;
             } else{
                 slideUpOrDown = slidePos.DOWN;
-            }
+            }*/
 
             /*if (controls.intakeDirection()){
                 if (direction == intakeDirection.FORWARD){
@@ -295,6 +318,8 @@ public class TELEOP extends LinearOpMode {
             telemetry.addData("pitch", pitchPos);
             telemetry.addData("roll", rollPos);
             telemetry.addData("max slide height", topHeight);
+            telemetry.addData("elbow current draw", pivot.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("slide current draw", slide.getCurrent(CurrentUnit.MILLIAMPS));
             telemetry.update();
         }
 
