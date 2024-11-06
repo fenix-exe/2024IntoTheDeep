@@ -53,18 +53,18 @@ public class DriverControls implements DriveControlMap{
     @Override
     public boolean pivotParallel() {
         //return gamepad2.b
-        return gamepad1.b;
+        return gamepad2.b;
     }
 
     @Override
     public boolean pivotPerp() {
         //return gamepad2.y
-        return gamepad1.y;
+        return gamepad2.y;
     }
 
     @Override
     public double pivotJoystick() {
-        return gamepad1.left_stick_x;
+        return gamepad2.left_stick_x;
     }
 
     @Override

@@ -18,10 +18,10 @@ public class pivotCodeFunctions {
     }
     public void goTo(int targetPos){
         pivotPos = targetPos;
-        if (pivotPos < 0){
-            pivotPos = 0;
+        if (pivotPos < 10){
+            pivotPos = 10;
         }
-        if (pivotPos > topPos){
+        if (pivotPos > topPos - 10){
             pivotPos = topPos;
         }
         /*if (pivot.getCurrentPosition() > pivotPos) {
@@ -37,9 +37,7 @@ public class pivotCodeFunctions {
         if (pivotControlJoystick != 0) {
             pivotPos = (int) floor(startPos + pivotControlJoystick * 400);
         }
-        pivot.setPower(1);
-        pivot.setTargetPosition(pivotPos);
-        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        goTo(pivotPos);
     }
 
     public void setNewTopPos(int topPos){
@@ -47,6 +45,12 @@ public class pivotCodeFunctions {
     }
     public double ticksToDegrees(int ticks){
         return ticks/24.22;
+    }
+    public double getElbowAngle(){
+        return ticksToDegrees(pivot.getCurrentPosition());
+    }
+    public int getElbowTicks(){
+        return pivot.getCurrentPosition();
     }
 
 
