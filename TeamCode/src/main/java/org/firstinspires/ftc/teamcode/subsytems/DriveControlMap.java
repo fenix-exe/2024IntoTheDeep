@@ -20,6 +20,7 @@ public interface DriveControlMap {
     //pivot parallel to ground
     public boolean pivotPerp();
     //pivot perpendicular to ground
+    public double pivotJoystick();
     public double slideMovement();
     //joystick control of slides
     public double degreeOfFreedomX();
@@ -34,8 +35,16 @@ public interface DriveControlMap {
     //instead of toggle, hold
     public float intakenewBackward();
     //instead of toggle, hold
+<<<<<<< HEAD
     public boolean resetWrist();
 
+=======
+    public boolean submersibleIntakeReady();
+    public boolean acsent1Park();
+    public boolean drivingPos();
+    public boolean depositReadyBack();
+    public boolean depositReadyUp();
+>>>>>>> devenBranch
 
 
 

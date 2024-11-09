@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class driveCode {
     Gamepad gamepad1;
-    Gamepad gamepad1previous;
     DcMotorEx FL;
     DcMotorEx FR;
     DcMotorEx BL;
@@ -19,7 +18,6 @@ public class driveCode {
     Telemetry telemetry;
     public driveCode(Gamepad gamepad1, Gamepad gamepad1previous, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IMU imu, Telemetry telemetry){
         this.gamepad1=gamepad1;
-        this.gamepad1previous=gamepad1previous;
         this.FL=FL;
         this.FR=FR;
         this.BL=BL;
