@@ -42,67 +42,26 @@ public class activeIntake {
         setIntakePos(intakeState.BACKWARD);
     }
 
-    public class aIForward implements Action {
+    public class aIControl implements Action {
+        private final double targetPower;
 
-        double intakePos = intake.getPower();
+        public aIControl(double targetPower) {
+            this.targetPower = targetPower;
+        }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (intakePos != 1) {
-                intake.setPower(1);
+            if (intake.getPower() != targetPower) {
+                intake.setPower(targetPower);
                 return false;
-            }
-            else if (intakePos == 1) {
+            } else {
                 return true;
             }
-            return false;
         }
     }
 
-    public class aIStop implements Action {
-
-        double intakePos = intake.getPower();
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (intakePos != 0) {
-                intake.setPower(0);
-                return false;
-            }
-            else if (intakePos == 0) {
-                return true;
-            }
-            return false;
-        }
-    }
-
-    public class aIBackward implements Action {
-
-        double intakePos = intake.getPower();
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (intakePos != -1) {
-                intake.setPower(-1);
-                return false;
-            }
-            else if (intakePos == -1) {
-                return true;
-            }
-            return false;
-        }
-    }
-
-    public Action aIForward() {
-        return new aIForward();
-    }
-
-    public Action aIStop() {
-        return new aIStop();
-    }
-
-    public Action aIBackward() {
-        return new aIBackward();
+    public Action aIControl(double targetPower) {
+        return new aIControl(targetPower);
     }
 
 

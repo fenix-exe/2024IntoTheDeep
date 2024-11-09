@@ -8,30 +8,34 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
+import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 
 @Autonomous
 public class actionTest extends LinearOpMode {
     CRServo intake;
+    Servo left;
+    Servo right;
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(0,0,180);
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
-        activeIntake activeIntake = new activeIntake(intake);
         intake = hardwareMap.get(CRServo.class, "intake");
+        left = hardwareMap.get(Servo.class, "left");
+        right = hardwareMap.get(Servo.class, "right");
+        activeIntake activeIntake = new activeIntake(intake);
+        differential diffy = new differential(left, right);
 
         waitForStart();
 
         Actions.runBlocking(
-                new SequentialAction(
-                        activeIntake.aIForward(),
-                        new SleepAction(0.5))
-
-
-        );
+                new SequentialAction(activeIntake.aIControl(1),
+                        diffy.setDiffy(90, 72))
+                );
 
     }
 }
