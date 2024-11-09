@@ -21,7 +21,7 @@ public class diffTELEOP extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            diffCode.setDifferentialPosition(gamepad2.left_stick_y*90, gamepad2.right_stick_y*90);
+            diffCode.setDifferentialPosition(-90, 0);
             telemetry.addData("left", left.getPosition());
             telemetry.addData("g", gamepad2.left_stick_y);
             telemetry.addData("g2", gamepad2.right_stick_y);

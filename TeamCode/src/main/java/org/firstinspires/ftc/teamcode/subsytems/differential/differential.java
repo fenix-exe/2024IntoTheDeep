@@ -22,21 +22,21 @@ public class differential {
         this.right = right;
     }
 
-    private double setAPosition(double pitch, double roll) {
+    private double setAPosition(double roll, double pitch) {
         double aPos;
         aPos = (1 / leftRange) * (pitch + roll / 2) + 0.5;
         return aPos;
     }
 
-    private double setBPosition(double pitch, double roll) {
+    private double setBPosition(double roll, double pitch) {
         double bPos;
         bPos = (1 / rightRange) * (pitch - roll / 2) + 0.5;
         return bPos;
     }
 
     public void setDifferentialPosition(double pitch, double roll){
-        left.setPosition(setAPosition(pitch+pitchError, roll+rollError));
-        right.setPosition(setBPosition(pitch+pitchError, roll+rollError));
+        left.setPosition(setAPosition(-2*(pitch)+pitchError, roll+rollError));
+        right.setPosition(setBPosition(-2*(pitch)+pitchError, roll+rollError));
     }
 
     public class setDiffy implements Action {
