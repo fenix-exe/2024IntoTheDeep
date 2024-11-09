@@ -154,6 +154,6 @@ public class DriverControls implements DriveControlMap{
     }
 
     public boolean resetWrist() {
-        return gamepad2.a;
+        return gamepad2current.a;
     }
 }
