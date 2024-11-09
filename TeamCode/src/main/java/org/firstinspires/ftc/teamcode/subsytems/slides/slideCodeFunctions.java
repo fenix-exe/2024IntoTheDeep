@@ -25,15 +25,7 @@ public class slideCodeFunctions {
     }
     public void goTo(int targetPos){
         slide.setTargetPosition(targetPos);
-        double power;
-        if (slide.getCurrentPosition() < targetPos){
-            power = -1;
-        } else if (slide.getCurrentPosition() == targetPos){
-            power = 0;
-        } else {
-            power = -1;
-        }
-        slide.setPower(power);
+        slide.setPower(1);
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void joystickControl(double slideMovement , int maxHeight){
