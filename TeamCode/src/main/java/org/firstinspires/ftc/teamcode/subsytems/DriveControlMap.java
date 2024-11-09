@@ -35,6 +35,8 @@ public interface DriveControlMap {
     //instead of toggle, hold
     public float intakenewBackward();
     //instead of toggle, hold
+
+    public boolean resetWrist();
     public boolean submersibleIntakeReady();
     public boolean acsent1Park();
     public boolean drivingPos();

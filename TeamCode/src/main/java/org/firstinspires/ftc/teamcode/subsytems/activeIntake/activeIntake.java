@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsytems.activeIntake;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import androidx.annotation.NonNull;
 
 public class activeIntake {
     Gamepad gamepad2;
@@ -37,6 +41,30 @@ public class activeIntake {
         intake.setPower(-0.5);
         setIntakePos(intakeState.BACKWARD);
     }
+
+    public class aIControl implements Action {
+        private final double targetPower;
+
+        public aIControl(double targetPower) {
+            this.targetPower = targetPower;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (intake.getPower() != targetPower) {
+                intake.setPower(targetPower);
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public Action aIControl(double targetPower) {
+        return new aIControl(targetPower);
+    }
+
+
 
 
 }

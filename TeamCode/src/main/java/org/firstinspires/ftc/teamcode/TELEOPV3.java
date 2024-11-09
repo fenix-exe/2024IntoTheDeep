@@ -56,8 +56,8 @@ public class TELEOPV3 extends LinearOpMode {
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
     double pitchPos = 0;
-    double pitchStep = 13.5;
-    double rollStep = 13.5;
+    double pitchStep = 20;
+    double rollStep = 20;
     double rollPos = 0;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
@@ -175,6 +175,8 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(0,90);
+                pitchPos = 0;
+                rollPos = 90;
             }
             if (controls.drivingPos()){
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
@@ -183,6 +185,8 @@ public class TELEOPV3 extends LinearOpMode {
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 //add differential code
                 diffCode.setDifferentialPosition(90,90);
+                pitchPos = 90;
+                rollPos = 90;
             }
             if (controls.acsent1Park()){
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
@@ -190,6 +194,8 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(-90,90);
+                pitchPos = -90;
+                rollPos = 90;
             }
             if (controls.depositReadyBack()){
                 pivotCode.goTo(pivotCode.degreesToTicks(90));
@@ -197,6 +203,8 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(90,90);
+                pitchPos = 90;
+                rollPos = 90;
             }
             if(controls.depositReadyUp()){
                 pivotCode.goTo(pivotCode.degreesToTicks(70));
@@ -204,6 +212,8 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(90,90);
+                pitchPos = 90;
+                rollPos = 90;
             }
             //State definitions
             if (controls.intakenewForward() > 0.5){
@@ -285,6 +295,19 @@ public class TELEOPV3 extends LinearOpMode {
 
             pitchPos += controls.degreeOfFreedomX() * pitchStep;
             rollPos += controls.degreeOfFreedomY() * rollStep;
+
+            if (rollPos > 180) {
+                rollPos=180;
+            } else if (rollPos < -180) {
+                rollPos=-180;
+            }
+            if (pitchPos > 180) {
+                pitchPos=180;
+            } else if (pitchPos < -180) {
+                pitchPos=-180;
+            }
+
+
             diffCode.setDifferentialPosition(pitchPos, rollPos);
             telemetry.addData("pitch", pitchPos);
             telemetry.addData("roll", rollPos);
