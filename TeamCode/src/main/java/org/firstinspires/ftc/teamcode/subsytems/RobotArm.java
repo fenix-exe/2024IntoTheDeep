@@ -33,7 +33,7 @@ public class RobotArm {
     }
     public int currentAllowedMaxExtensionLength(){
         return getSlideMaxLength(elbow.getElbowTicks());
-    }
+   }
     public boolean doesSlideNeedToRetract(int angleInTicks){
         return slide.getSlidePosition() > getSlideMaxLength(angleInTicks);
     }

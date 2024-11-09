@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
 
 @TeleOp
-public class TELEOPV2 extends LinearOpMode {
+public class TELEOPV3 extends LinearOpMode {
     driveCode driverCode;
     activeIntake activeIntakeCode;
     slideCodeFunctions slideCode;
@@ -39,10 +39,7 @@ public class TELEOPV2 extends LinearOpMode {
     Gamepad gamepad2previous;
     Gamepad gamepad1current;
     Gamepad gamepad2current;
-    DcMotorEx FL;
-    DcMotorEx BL;
-    DcMotorEx FR;
-    DcMotorEx BR;
+
     DcMotorEx slide;
     DcMotorEx pivot;
     CRServo intake;
@@ -80,74 +77,11 @@ public class TELEOPV2 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        //gamepad initializations
-        gamepad1current = new Gamepad();
-        gamepad2current = new Gamepad();
-
-        gamepad1previous = new Gamepad();
-        gamepad2previous = new Gamepad();
-
-        //imu initializations
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
-        imu.initialize(parameters);
-        imu.resetYaw();
-
-        //motor intializations
-        FL = hardwareMap.get(DcMotorEx.class, "FL");
-        FR = hardwareMap.get(DcMotorEx.class, "FR");
-        BL = hardwareMap.get(DcMotorEx.class, "BL");
-        BR = hardwareMap.get(DcMotorEx.class, "BR");
-        slide = hardwareMap.get(DcMotorEx.class, "slide");
-        pivot = hardwareMap.get(DcMotorEx.class, "pivot");
-        intake = hardwareMap.get(CRServo.class, "intake");
-        left = hardwareMap.servo.get("left");
-        right = hardwareMap.servo.get("right");
-        //activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
-
-        //reversing motor directions
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
-        BL.setDirection(DcMotorSimple.Direction.REVERSE);
-        slide.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //Homing the pivot
-        /*while (!limitSwitch.isPressed()){
-            pivot.setPower(-0.5);
-        }
-        pivot.setPower(0);*/
-
-        //resetting encoders
-        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //zeroPowerBehavior
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //gamepad copying
-        gamepad1previous.copy(gamepad1);
-        gamepad2previous.copy(gamepad2);
-
-        driverCode = new driveCode(gamepad1, gamepad1previous, FL, FR, BL, BR, imu, telemetry);
-        activeIntakeCode = new activeIntake(intake);
-        slideCode = new slideCodeFunctions(slide);
-
-        //pivot initialization
-        controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
-        pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
-        pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, topPivotPos);
-        arm = new RobotArm(slideCode, pivotCode, PHYSICALMAXEXTENSION, 35);
-
-        //driveMap initialization
-        controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
+        initializeGamePads();
+        initializeDriveTrain();
+        initializeArmAndHome();
+        initializeIntake();
+        initializeDifferential();
 
         //state machines initialization
         drive = driveType.ROBOT;
@@ -156,10 +90,6 @@ public class TELEOPV2 extends LinearOpMode {
         direction = intakeDirection.FORWARD;
         power = intakePower.NO;
         pivotStateMachine = pivotPos.PICKUP;
-
-        diffCode = new differential(left, right);
-
-
 
         //uncomment this and line 241 for block selection
         /*while(!gamepad1.a && !gamepad1.b && !gamepad1.x){
@@ -179,13 +109,7 @@ public class TELEOPV2 extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()){
-            gamepad1previous.copy(gamepad1current);
-            gamepad2previous.copy(gamepad2current);
-
-            gamepad1current.copy(gamepad1);
-            gamepad2current.copy(gamepad2);
-
-            controls = new DriverControls(gamepad1current, gamepad2current, gamepad1previous, gamepad2previous);
+            controls.update();
 
             if (controls.driveTypeSwitch()){
                 if (drive == driveType.ROBOT){
@@ -210,15 +134,13 @@ public class TELEOPV2 extends LinearOpMode {
             } else if (controls.slidesFullyDown()){
                 slideCode.goTo(0);
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-            } else if (Math.abs(controls.slideMovement()) > 0.5){
+            } else if (Math.abs(controls.slideMovement()) > 0 && slide.getTargetPosition() < PHYSICALMAXEXTENSION){
                 slideCode.joystickControl(controls.slideMovement(), topHeight);
                 slideUpOrDown = slidePos.JOYSTICK_CONTROL;
             } else if (slide.getCurrentPosition() > topHeight) {
                 slideCode.goTo(topHeight);
-                slideUpOrDown = slidePos.MOVING_TO_POSITION;
             } else if (slide.getCurrentPosition() < 0){
                 slideCode.goTo(0);
-                slideUpOrDown = slidePos.MOVING_TO_POSITION;
             } else if (slideUpOrDown != slidePos.MOVING_TO_POSITION) {
                 slideCode.holdPos();
             }
@@ -251,12 +173,14 @@ public class TELEOPV2 extends LinearOpMode {
                 pivotCode.goTo(0);
                 slideCode.goTo(796);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(0,90);
             }
             if (controls.drivingPos()){
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
-                slideCode.goTo(796);
+                slideCode.goTo(0);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 //add differential code
                 diffCode.setDifferentialPosition(90,90);
             }
@@ -264,18 +188,21 @@ public class TELEOPV2 extends LinearOpMode {
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
                 slideCode.goTo(796);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(-90,90);
             }
             if (controls.depositReadyBack()){
                 pivotCode.goTo(pivotCode.degreesToTicks(90));
                 slideCode.goTo(slideCode.InchesToTicks(34));
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(90,90);
             }
             if(controls.depositReadyUp()){
                 pivotCode.goTo(pivotCode.degreesToTicks(70));
                 slideCode.goTo(slideCode.InchesToTicks(41));
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(90,90);
             }
             //State definitions
@@ -364,10 +291,71 @@ public class TELEOPV2 extends LinearOpMode {
             telemetry.addData("max slide height", topHeight);
             telemetry.addData("elbow current draw", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             telemetry.addData("slide current draw", slide.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("slide length", slideCode.InchesToTicks(slide.getCurrentPosition()));
             telemetry.update();
         }
 
 
+    }
+
+    private void initializeGamePads() {
+        controls = new DriverControls(gamepad1, gamepad2);
+    }
+
+    private void initializeDriveTrain(){
+        DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FL");
+        DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FR");
+        DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BL");
+        DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BR");
+
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //imu initializations
+        imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        imu.initialize(parameters);
+        imu.resetYaw();
+
+        driverCode = new driveCode(gamepad1, gamepad1previous, FL, FR, BL, BR, imu, telemetry);
+    }
+    private void initializeArmAndHome(){
+        slide = hardwareMap.get(DcMotorEx.class, "slide");
+        pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        slide.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Homing the pivot
+        /*while (!limitSwitch.isPressed()){
+            pivot.setPower(-0.5);
+        }
+        pivot.setPower(0);*/
+
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        slideCode = new slideCodeFunctions(slide);
+        controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
+        pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
+        pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, topPivotPos);
+        arm = new RobotArm(slideCode, pivotCode, PHYSICALMAXEXTENSION, 35);
+    }
+    private void initializeIntake(){
+        intake = hardwareMap.get(CRServo.class, "intake");
+        //activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
+        activeIntakeCode = new activeIntake(intake);
+    }
+    private void initializeDifferential(){
+        left = hardwareMap.servo.get("left");
+        right = hardwareMap.servo.get("right");
+        diffCode = new differential(left, right);
     }
 }

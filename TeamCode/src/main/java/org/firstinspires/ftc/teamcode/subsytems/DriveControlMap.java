@@ -35,7 +35,11 @@ public interface DriveControlMap {
     //instead of toggle, hold
     public float intakenewBackward();
     //instead of toggle, hold
-
+    public boolean submersibleIntakeReady();
+    public boolean acsent1Park();
+    public boolean drivingPos();
+    public boolean depositReadyBack();
+    public boolean depositReadyUp();
 
 
 
