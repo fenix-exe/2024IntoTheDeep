@@ -140,7 +140,7 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean drivingPos() {
-        return false;
+        return gamepad2current.dpad_right;
     }
 
     @Override

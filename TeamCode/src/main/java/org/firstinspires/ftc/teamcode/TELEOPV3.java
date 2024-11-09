@@ -50,7 +50,7 @@ public class TELEOPV3 extends LinearOpMode {
     RevColorSensorV3 activeIntakeSensor;
     TouchSensor limitSwitch;
     double MaxSlideExtensionInches;
-    int PHYSICALMAXEXTENSION = 3433;
+    int PHYSICALMAXEXTENSION = 5000;
     int topHeight = 5000;
     //int lastTopHeight = 5000;
     int topPivotPos = 2178;
@@ -134,7 +134,7 @@ public class TELEOPV3 extends LinearOpMode {
             } else if (controls.slidesFullyDown()){
                 slideCode.goTo(0);
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-            } else if (Math.abs(controls.slideMovement()) > 0){
+            } else if (Math.abs(controls.slideMovement()) > 0 && slide.getTargetPosition() < PHYSICALMAXEXTENSION){
                 slideCode.joystickControl(controls.slideMovement(), topHeight);
                 slideUpOrDown = slidePos.JOYSTICK_CONTROL;
             } else if (slide.getCurrentPosition() > topHeight) {
@@ -168,6 +168,42 @@ public class TELEOPV3 extends LinearOpMode {
             } else if (controls.pivotJoystick() > 0) {
                 pivotCode.pivotJoystick(pivot.getCurrentPosition(), controls.pivotJoystick());
                 pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
+            }
+            if (controls.submersibleIntakeReady()){
+                pivotCode.goTo(0);
+                slideCode.goTo(796);
+                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                diffCode.setDifferentialPosition(0,90);
+            }
+            if (controls.drivingPos()){
+                pivotCode.goTo(pivotCode.degreesToTicks(45));
+                slideCode.goTo(0);
+                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                //add differential code
+                diffCode.setDifferentialPosition(90,90);
+            }
+            if (controls.acsent1Park()){
+                pivotCode.goTo(pivotCode.degreesToTicks(45));
+                slideCode.goTo(796);
+                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                diffCode.setDifferentialPosition(-90,90);
+            }
+            if (controls.depositReadyBack()){
+                pivotCode.goTo(pivotCode.degreesToTicks(90));
+                slideCode.goTo(slideCode.InchesToTicks(34));
+                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                diffCode.setDifferentialPosition(90,90);
+            }
+            if(controls.depositReadyUp()){
+                pivotCode.goTo(pivotCode.degreesToTicks(70));
+                slideCode.goTo(slideCode.InchesToTicks(41));
+                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                diffCode.setDifferentialPosition(90,90);
             }
             //State definitions
             if (controls.intakenewForward() > 0.5){
@@ -314,7 +350,7 @@ public class TELEOPV3 extends LinearOpMode {
     }
     private void initializeIntake(){
         intake = hardwareMap.get(CRServo.class, "intake");
-        activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
+        //activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
         activeIntakeCode = new activeIntake(intake);
     }
     private void initializeDifferential(){

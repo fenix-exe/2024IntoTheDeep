@@ -34,7 +34,7 @@ public class pivotCodeFunctions {
         } else {
             pivot.setPower(1);
         }*/
-        pivot.setPower(0.8);
+        pivot.setPower(1);
         pivot.setTargetPosition(pivotPos);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
