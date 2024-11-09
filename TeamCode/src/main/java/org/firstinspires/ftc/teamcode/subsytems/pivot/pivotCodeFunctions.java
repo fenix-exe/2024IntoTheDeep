@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsytems.pivot;
 
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import androidx.annotation.NonNull;
+
 import static java.lang.Math.floor;
 
 
@@ -54,6 +59,26 @@ public class pivotCodeFunctions {
     }
     public int getElbowTicks(){
         return pivot.getCurrentPosition();
+    }
+
+    public class elbowControl implements Action {
+        private final int targetPos;
+
+
+        elbowControl(int targetPos){
+            this.targetPos = targetPos;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            goTo(targetPos);
+            pivot.setPower(0);
+            return true;
+        }
+    }
+
+    public Action elbowControl(int targetPos){
+        return new elbowControl(targetPos);
     }
 
 
