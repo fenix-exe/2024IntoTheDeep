@@ -29,13 +29,13 @@ public class pivotCodeFunctions {
         } else {
             pivot.setPower(1);
         }*/
-        pivot.setPower(1);
+        pivot.setPower(0.8);
         pivot.setTargetPosition(pivotPos);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void pivotJoystick(int startPos, double pivotControlJoystick){
         if (pivotControlJoystick != 0) {
-            pivotPos = (int) floor(startPos + pivotControlJoystick * 400);
+            pivotPos = (int) floor(startPos + pivotControlJoystick * 50);
         }
         goTo(pivotPos);
     }
@@ -46,12 +46,16 @@ public class pivotCodeFunctions {
     public double ticksToDegrees(int ticks){
         return ticks/24.22;
     }
+    public int degreesToTicks(double degrees){
+        return (int) floor(degrees * 24.22);
+    }
     public double getElbowAngle(){
         return ticksToDegrees(pivot.getCurrentPosition());
     }
     public int getElbowTicks(){
         return pivot.getCurrentPosition();
     }
+
 
 
 

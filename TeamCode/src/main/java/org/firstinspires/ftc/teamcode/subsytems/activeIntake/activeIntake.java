@@ -34,7 +34,7 @@ public class activeIntake {
     }
 
     public void intakeBack() {
-        intake.setPower(-1);
+        intake.setPower(-0.5);
         setIntakePos(intakeState.BACKWARD);
     }
 
