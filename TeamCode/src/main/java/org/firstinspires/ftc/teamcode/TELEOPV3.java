@@ -157,7 +157,7 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotCode.goTo(topPivotPos);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
             } else if (controls.pivotJoystick() == 0 && pivotStateMachine != pivotPos.MOVING_TO_POSITION){
-                pivotCode.goTo(pivot.getCurrentPosition());
+                pivot.setPower(0);
             } else if (controls.pivotJoystick() < 0){
                 if (arm.doesSlideNeedToRetract(pivot.getCurrentPosition() - 50)){
                     slideCode.goTo(arm.getSlideMaxLength(pivot.getCurrentPosition() - 50));
