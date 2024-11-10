@@ -56,8 +56,8 @@ public class TELEOPV3 extends LinearOpMode {
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
     double pitchPos = 0;
-    double pitchStep = 20;
-    double rollStep = 20;
+    double pitchStep = 5;
+    double rollStep = 5;
     double rollPos = 0;
     double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
@@ -157,7 +157,7 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotCode.goTo(topPivotPos);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
             } else if (controls.pivotJoystick() == 0 && pivotStateMachine != pivotPos.MOVING_TO_POSITION){
-                pivotCode.goTo(pivot.getCurrentPosition());
+                pivot.setPower(0);
             } else if (controls.pivotJoystick() < 0){
                 if (arm.doesSlideNeedToRetract(pivot.getCurrentPosition() - 50)){
                     slideCode.goTo(arm.getSlideMaxLength(pivot.getCurrentPosition() - 50));
@@ -170,12 +170,13 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
             }
             if (controls.submersibleIntakeReady()){
-                pivotCode.goTo(0);
+                pivotCode.goTo(-15);
                 slideCode.goTo(796);
+                //slideCode.goTo(407);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-                diffCode.setDifferentialPosition(0,90);
-                pitchPos = 0;
+                diffCode.setDifferentialPosition(-45,90);
+                pitchPos = -45;
                 rollPos = 90;
             }
             if (controls.drivingPos()){
@@ -191,6 +192,7 @@ public class TELEOPV3 extends LinearOpMode {
             if (controls.acsent1Park()){
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
                 slideCode.goTo(796);
+                //slideCode.goTo(407);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(-90,90);
