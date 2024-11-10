@@ -28,14 +28,14 @@ public class actionTest extends LinearOpMode {
         left = hardwareMap.get(Servo.class, "left");
         right = hardwareMap.get(Servo.class, "right");
         activeIntake activeIntake = new activeIntake(intake);
-        differential diffy = new differential(left, right);
+        //differential diffy = new differential(left, right);
 
         waitForStart();
 
-        Actions.runBlocking(
+        /*Actions.runBlocking(
                 new SequentialAction(activeIntake.aIControl(1),
                         diffy.setDiffy(90, 72))
-                );
+                );*/
 
     }
 }

@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
@@ -41,8 +42,8 @@ public class TELEOP extends LinearOpMode {
     DcMotorEx slide;
     DcMotorEx pivot;
     CRServo intake;
-    Servo left;
-    Servo right;
+    ServoImplEx left;
+    ServoImplEx right;
     differential diffCode;
     IMU imu;
     double MaxSlideExtensionInches;
@@ -95,8 +96,8 @@ public class TELEOP extends LinearOpMode {
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         intake = hardwareMap.get(CRServo.class, "intake");
-        left = hardwareMap.servo.get("left");
-        right = hardwareMap.servo.get("right");
+        left = hardwareMap.get(ServoImplEx.class,"left");
+        right = hardwareMap.get(ServoImplEx.class,"right");
 
         //reversing motor directions
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
