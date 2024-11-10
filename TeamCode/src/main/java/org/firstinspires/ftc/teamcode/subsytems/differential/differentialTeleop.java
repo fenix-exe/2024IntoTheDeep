@@ -64,6 +64,13 @@ public class differentialTeleop extends LinearOpMode {
                 roll = 90;
                 differentialCode.setDifferentialPosition(pitch,roll);
             }
+
+            if (timer.milliseconds() > 300 && !dontmoveroll){
+                telemetry.addLine("Movingroll");
+                differentialCode.setDifferentialPosition(pitch, roll);
+            }
+
+
             telemetry.addData("Left pos", left.getPosition());
             telemetry.addData("Right pos", right.getPosition());
             telemetry.update();

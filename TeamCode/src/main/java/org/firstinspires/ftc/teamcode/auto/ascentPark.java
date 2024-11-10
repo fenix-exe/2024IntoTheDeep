@@ -39,8 +39,27 @@ public class ascentPark extends LinearOpMode {
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
+        boolean XareSame = false;
+        boolean YareSame = false;
+        boolean AngleareSame = false;
         for (int i = 1; i < vector.size(); i++) {
-            traj1 = traj1.splineToConstantHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i)));
+            XareSame = ((extractAuto.getXFromList(vector.get(i-1)) == extractAuto.getXFromList(vector.get(i))));
+            YareSame = ((extractAuto.getYFromList(vector.get(i-1)) == extractAuto.getYFromList(vector.get(i))));
+            AngleareSame = ((extractAuto.getAngleFromList(vector.get(i-1)) == extractAuto.getAngleFromList(vector.get(i))));
+            if (!XareSame && YareSame && AngleareSame) {
+                traj1 = traj1.lineToX(extractAuto.getXFromList(vector.get(i)));
+            }
+            if (XareSame && !YareSame && AngleareSame) {
+                traj1 = traj1.lineToY(extractAuto.getYFromList(vector.get(i)));
+            }
+            if (XareSame && YareSame && !AngleareSame) {
+                traj1 = traj1.turnTo(extractAuto.getAngleFromList(vector.get(i)));
+            }
+            if (!XareSame && !YareSame && AngleareSame) {
+                traj1 = traj1.splineToConstantHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i)));
+            } else {
+                traj1 = traj1.splineTo(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i)));
+            }
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
