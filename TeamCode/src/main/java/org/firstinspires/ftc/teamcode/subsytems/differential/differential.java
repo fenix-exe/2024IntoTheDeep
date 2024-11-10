@@ -12,8 +12,8 @@ public class differential {
     ServoImplEx left;
     ServoImplEx right;
 
-    float leftRange = 270;
-    float rightRange = 270;
+    float leftRange = 300;
+    float rightRange = 300;
     public static float pitchError = -13;
     public static float rollError = -18;
 

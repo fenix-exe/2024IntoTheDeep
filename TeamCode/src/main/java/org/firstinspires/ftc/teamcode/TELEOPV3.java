@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -402,9 +403,12 @@ public class TELEOPV3 extends LinearOpMode {
     private void initializeDifferential(){
         left = hardwareMap.get(ServoImplEx.class, "left");
         right = hardwareMap.get(ServoImplEx.class, "right");
+        left.setPwmRange(new PwmControl.PwmRange(500,2500));
+        right.setPwmRange(new PwmControl.PwmRange(500,2500));
         diffCode = new differential(left, right);
         pitchPos = 0;
         rollPos = 0;
         diffCode.setDifferentialPosition(pitchPos, rollPos);
+
     }
 }
