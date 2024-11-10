@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
@@ -49,9 +50,10 @@ public class TELEOPV3 extends LinearOpMode {
     IMU imu;
     RevColorSensorV3 activeIntakeSensor;
     TouchSensor limitSwitch;
+    ElapsedTime timer;
     double MaxSlideExtensionInches;
-    int PHYSICALMAXEXTENSION = 5000;
-    int topHeight = 5000;
+    int PHYSICALMAXEXTENSION = 4000;
+    int topHeight = 4000;
     //int lastTopHeight = 5000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
@@ -82,6 +84,8 @@ public class TELEOPV3 extends LinearOpMode {
         initializeArmAndHome();
         initializeIntake();
         initializeDifferential();
+        timer = new ElapsedTime();
+
 
         //state machines initialization
         drive = driveType.ROBOT;
@@ -90,6 +94,8 @@ public class TELEOPV3 extends LinearOpMode {
         direction = intakeDirection.FORWARD;
         power = intakePower.NO;
         pivotStateMachine = pivotPos.PICKUP;
+
+        boolean dontmoveroll = false;
 
         //uncomment this and line 241 for block selection
         /*while(!gamepad1.a && !gamepad1.b && !gamepad1.x){
@@ -108,7 +114,9 @@ public class TELEOPV3 extends LinearOpMode {
 
         waitForStart();
 
+
         while (opModeIsActive()){
+            dontmoveroll = false;
             controls.update();
 
             if (controls.driveTypeSwitch()){
@@ -170,52 +178,65 @@ public class TELEOPV3 extends LinearOpMode {
                 pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
             }
             if (controls.submersibleIntakeReady()){
+                telemetry.addLine("going to submersibleIntakeReady position");
                 pivotCode.goTo(-15);
-                slideCode.goTo(796);
+                //slideCode.goTo(796);
                 //slideCode.goTo(407);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-                diffCode.setDifferentialPosition(-45,90);
                 pitchPos = -45;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                timer.reset();
                 rollPos = 90;
             }
             if (controls.drivingPos()){
+                telemetry.addLine("going to drivingPos position");
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
-                slideCode.goTo(0);
+                //slideCode.goTo(0);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-                //add differential code
-                diffCode.setDifferentialPosition(90,90);
                 pitchPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                timer.reset();
+                dontmoveroll = true;
                 rollPos = 90;
             }
             if (controls.acsent1Park()){
+                telemetry.addLine("going to acsent1Park position");
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
-                slideCode.goTo(796);
+                //slideCode.goTo(796);
                 //slideCode.goTo(407);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-                diffCode.setDifferentialPosition(-90,90);
                 pitchPos = -90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                timer.reset();
+                dontmoveroll = true;
                 rollPos = 90;
             }
             if (controls.depositReadyBack()){
+                telemetry.addLine("going to depositReadyBack position");
                 pivotCode.goTo(pivotCode.degreesToTicks(90));
-                slideCode.goTo(slideCode.InchesToTicks(34));
+                //slideCode.goTo(slideCode.InchesToTicks(34));
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-                diffCode.setDifferentialPosition(90,90);
-                pitchPos = 90;
                 rollPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                timer.reset();
+                dontmoveroll = true;
+                pitchPos = 90;
             }
             if(controls.depositReadyUp()){
+                telemetry.addLine("going to depositReadyUp position");
                 pivotCode.goTo(pivotCode.degreesToTicks(70));
-                slideCode.goTo(slideCode.InchesToTicks(41));
+                //slideCode.goTo(slideCode.InchesToTicks(41));
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-                diffCode.setDifferentialPosition(90,90);
-                pitchPos = 90;
                 rollPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                timer.reset();
+                dontmoveroll = true;
+                pitchPos = 90;
             }
             //State definitions
             if (controls.intakenewForward() > 0.5){
@@ -295,27 +316,17 @@ public class TELEOPV3 extends LinearOpMode {
                     break;
             }
 
-            pitchPos += controls.degreeOfFreedomX() * pitchStep;
-            rollPos += controls.degreeOfFreedomY() * rollStep;
-
-            if (rollPos > 180) {
-                rollPos=180;
-            } else if (rollPos < -180) {
-                rollPos=-180;
-            }
-            if (pitchPos > 180) {
-                pitchPos=180;
-            } else if (pitchPos < -180) {
-                pitchPos=-180;
+            if (timer.milliseconds() > 300 && !dontmoveroll){
+                telemetry.addLine("Movingroll");
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
             }
 
-
-            diffCode.setDifferentialPosition(pitchPos, rollPos);
             telemetry.addData("pitch", pitchPos);
             telemetry.addData("roll", rollPos);
             telemetry.addData("max slide height", topHeight);
             telemetry.addData("elbow current draw", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             telemetry.addData("slide current draw", slide.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("timer", timer.milliseconds());
             telemetry.update();
         }
 
@@ -382,5 +393,8 @@ public class TELEOPV3 extends LinearOpMode {
         left = hardwareMap.servo.get("left");
         right = hardwareMap.servo.get("right");
         diffCode = new differential(left, right);
+        pitchPos = 0;
+        rollPos = 0;
+        diffCode.setDifferentialPosition(pitchPos, rollPos);
     }
 }
