@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
@@ -31,8 +32,8 @@ public class observationPark extends LinearOpMode {
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
 
     CRServo intake;
-    Servo left;
-    Servo right;
+    ServoImplEx left;
+    ServoImplEx right;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,18 +55,16 @@ public class observationPark extends LinearOpMode {
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         intake = hardwareMap.get(CRServo.class, "intake");
-        left = hardwareMap.get(Servo.class, "left");
-        right = hardwareMap.get(Servo.class, "right");
+        left = hardwareMap.get(ServoImplEx.class, "left");
+        right = hardwareMap.get(ServoImplEx.class, "right");
         activeIntake activeIntake = new activeIntake(intake);
-        //differential diffy = new differential(left, right);
+        differential diffy = new differential(left, right);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
         //build trajectory based on file data
         for (int i = 1; i < vector.size(); i++) {
-            traj1 = traj1.splineToConstantHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i)));
-            activeIntake.aIControl(extractAuto.getXFromList(vector.get(i)));
-            //diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i)));
+            traj1 = traj1.splineToConstantHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i))).stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))));
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
