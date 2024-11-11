@@ -57,7 +57,7 @@ public class observationPark extends LinearOpMode {
         left = hardwareMap.get(Servo.class, "left");
         right = hardwareMap.get(Servo.class, "right");
         activeIntake activeIntake = new activeIntake(intake);
-        differential diffy = new differential(left, right);
+        //differential diffy = new differential(left, right);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
@@ -65,7 +65,7 @@ public class observationPark extends LinearOpMode {
         for (int i = 1; i < vector.size(); i++) {
             traj1 = traj1.splineToConstantHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i)));
             activeIntake.aIControl(extractAuto.getXFromList(vector.get(i)));
-            diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i)));
+            //diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));

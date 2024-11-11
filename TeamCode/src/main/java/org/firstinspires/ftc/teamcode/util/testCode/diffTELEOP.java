@@ -20,7 +20,7 @@ public class diffTELEOP extends LinearOpMode {
         left = hardwareMap.get(Servo.class,"left");
         right = hardwareMap.get(Servo.class, "right");
         intake = hardwareMap.get(CRServo.class, "intake");
-        diffCode = new differential(left, right);
+        //diffCode = new differential(left, right);
 
         waitForStart();
         while (opModeIsActive()) {

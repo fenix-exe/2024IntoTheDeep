@@ -157,8 +157,6 @@ public class TELEOPV2 extends LinearOpMode {
         power = intakePower.NO;
         pivotStateMachine = pivotPos.PICKUP;
 
-        diffCode = new differential(left, right);
-
 
 
         //uncomment this and line 241 for block selection
@@ -223,7 +221,7 @@ public class TELEOPV2 extends LinearOpMode {
                 slideCode.holdPos();
             }
 //pivot code
-            if (controls.pivotParallel()){
+            /*if (controls.pivotParallel()){
                 if (arm.doesSlideNeedToRetract(0)){
                     slideCode.goTo(arm.getSlideMaxLength(0));
                 }
@@ -252,7 +250,7 @@ public class TELEOPV2 extends LinearOpMode {
                 slideCode.goTo(796);
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(0,90);
-            }
+            }*/
             if (controls.drivingPos()){
                 pivotCode.goTo(pivotCode.degreesToTicks(45));
                 slideCode.goTo(796);

@@ -18,7 +18,7 @@ public class slideCodeFunctions {
     //pulleyCirc is the circumference of the pulley
     double PULLEYCIRC= 4.724757;
     //encoderRes is how many encoder ticks happen after 1 rotation of the motor
-    double ENCODERRES = 751.8;
+    double ENCODERRES = 384.5;
     //slideLength is the length of 1 stage of the slides
     //300 mm is the length of a misumi 330 slide, and 1 in = 25.4 mm
     double SLIDELENGTH = 300/25.4;

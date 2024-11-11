@@ -23,8 +23,8 @@ public class pivotCodeFunctions {
     }
     public void goTo(int targetPos){
         pivotPos = targetPos;
-        if (pivotPos < 0){
-            pivotPos = 0;
+        if (pivotPos < -15){
+            pivotPos = -15;
         }
         if (pivotPos > topPos){
             pivotPos = topPos;
@@ -44,9 +44,6 @@ public class pivotCodeFunctions {
         }
         goTo(pivotPos);*/
         double power;
-
-
-
         if (pivot.getCurrentPosition() > topPos - 100 && pivotControlJoystick > 0){
             power = 0;
         } else if (pivot.getCurrentPosition() < 100 && pivotControlJoystick < 0){

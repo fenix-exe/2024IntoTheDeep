@@ -130,12 +130,12 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean submersibleIntakeReady() {
-        return gamepad2current.a;
+        return gamepad2current.a && !gamepad2previous.a;
     }
 
     @Override
     public boolean acsent1Park() {
-        return gamepad2current.start;
+        return gamepad2current.start && !gamepad2previous.start;
     }
 
     @Override
@@ -145,15 +145,15 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean depositReadyBack() {
-        return gamepad2current.left_bumper;
+        return gamepad2current.left_bumper && !gamepad2previous.left_bumper;
     }
 
     @Override
     public boolean depositReadyUp() {
-        return gamepad2current.right_bumper;
+        return gamepad2current.right_bumper && !gamepad2previous.right_bumper;
     }
 
     public boolean resetWrist() {
-        return gamepad2current.a;
+        return gamepad2current.back;
     }
 }

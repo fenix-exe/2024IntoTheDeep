@@ -15,7 +15,7 @@ public class RobotArm {
         this.physicalMaxExtension = initialTopHeight;
         this.horizontalMaxLength = horizontalMaxLength;
     }
-    public int getSlideMaxLength(int angleInTicks){
+    public int getSlideMaxLengthIn42Inches(int angleInTicks){
         int topHeight;
         double theta = elbow.ticksToDegrees(angleInTicks);
         if (theta != 90) {
@@ -31,10 +31,22 @@ public class RobotArm {
         }
         return (int) Math.floor(Math.abs(topHeight));
     }
+    public int getSlideLengthAllowed(double angleInDegrees){
+        if (angleInDegrees > 75){
+            return 700;
+        } else if (angleInDegrees > 45 && angleInDegrees < 75){
+            return 1000;
+        } else {
+            return 5000;
+        }
+    }
     public int currentAllowedMaxExtensionLength(){
-        return getSlideMaxLength(elbow.getElbowTicks());
+        return Math.min(getSlideMaxLengthIn42Inches(elbow.getElbowTicks()), getSlideLengthAllowed(elbow.getElbowAngle()));
    }
+    public int currentAllowedMaxExtensionLength(int angleInTicks){
+        return Math.min(getSlideMaxLengthIn42Inches(angleInTicks), getSlideLengthAllowed(elbow.ticksToDegrees(angleInTicks)));
+    }
     public boolean doesSlideNeedToRetract(int angleInTicks){
-        return slide.getSlidePosition() > getSlideMaxLength(angleInTicks);
+        return slide.getSlidePosition() > Math.min(getSlideMaxLengthIn42Inches(angleInTicks), getSlideLengthAllowed(elbow.ticksToDegrees(angleInTicks)));
     }
 }

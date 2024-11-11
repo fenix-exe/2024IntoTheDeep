@@ -4,20 +4,21 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import androidx.annotation.NonNull;
 
 @Config
 public class differential {
-    Servo left;
-    Servo right;
+    ServoImplEx left;
+    ServoImplEx right;
 
     float leftRange = 270;
     float rightRange = 270;
     public static float pitchError = -13;
     public static float rollError = -18;
 
-    public differential(Servo left, Servo right){
+    public differential(ServoImplEx left, ServoImplEx right){
         this.left = left;
         this.right = right;
     }

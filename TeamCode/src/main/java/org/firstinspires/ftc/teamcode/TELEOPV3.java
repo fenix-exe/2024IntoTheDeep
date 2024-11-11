@@ -33,7 +33,7 @@ public class TELEOPV3 extends LinearOpMode {
     pivotCodeFunctions pivotCode;
     PivotPIDFFunctions pivotPIDF;
     PIDController controllerPivotPIDF;
-    DriverControls controls;
+    DriverControls driverControls;
     activeIntake intakeCode;
     RobotArm arm;
     Gamepad gamepad1previous;
@@ -52,8 +52,8 @@ public class TELEOPV3 extends LinearOpMode {
     TouchSensor limitSwitch;
     ElapsedTime timer;
     double MaxSlideExtensionInches;
-    int PHYSICALMAXEXTENSION = 4000;
-    int topHeight = 4000;
+    int PHYSICALMAXEXTENSION = 2500;
+    int maxAllowedExtension = 2500;
     //int lastTopHeight = 5000;
     int topPivotPos = 2178;
     int slowDownPivotHeight = 1000;
@@ -67,7 +67,7 @@ public class TELEOPV3 extends LinearOpMode {
     private enum slidePos {UP, DOWN, MOVING_TO_POSITION, JOYSTICK_CONTROL}
     private enum intakeDirection {FORWARD, BACKWARD}
     private enum intakePower {YES, NO}
-    private enum pivotPos {DEPOSIT, PICKUP, MOVING_TO_POSITION, JOYSTICK_CONTROL}
+    private enum pivotPos {DEPOSIT_FRONT, PICKUP, MOVING_TO_POSITION_90, JOYSTICK_CONTROL, NOT_MOVING, MOVING_TO_POSITION_0, MOVING_TO_POSITION_45, MOVING_TO_POSITION_70, MOVING_TO_POSITION_PICKUP, DEPOSIT_BACK,MIDDLE, FLAT}
     private enum targetBlockColor {RED, BLUE, YELLOW}
     driveType drive;
     speed speedMultiplier;
@@ -93,7 +93,7 @@ public class TELEOPV3 extends LinearOpMode {
         slideUpOrDown = slidePos.DOWN;
         direction = intakeDirection.FORWARD;
         power = intakePower.NO;
-        pivotStateMachine = pivotPos.PICKUP;
+        pivotStateMachine = pivotPos.FLAT;
 
         boolean dontmoveroll = false;
 
@@ -117,137 +117,191 @@ public class TELEOPV3 extends LinearOpMode {
 
         while (opModeIsActive()){
             dontmoveroll = false;
-            controls.update();
+            driverControls.update();
 
-            if (controls.driveTypeSwitch()){
+            if (driverControls.driveTypeSwitch()){
                 if (drive == driveType.ROBOT){
                     drive = driveType.FIELD;
                 } else {
                     drive = driveType.ROBOT;
                 }
             }
-            if (controls.slowMode() || pivot.getCurrentPosition() > slowDownPivotHeight){
+            if (driverControls.slowMode() || pivot.getCurrentPosition() > slowDownPivotHeight){
                 if (speedMultiplier == speed.FAST || pivot.getCurrentPosition() > slowDownPivotHeight){
                     speedMultiplier = speed.SLOW;
                 } else {
                     speedMultiplier = speed.FAST;
                 }
             }
-//slide-pivot soft stop
-            topHeight = arm.currentAllowedMaxExtensionLength();
+//slide controls soft stop
+            maxAllowedExtension = arm.currentAllowedMaxExtensionLength();
             //Slide code
-            if (controls.slidesFullyUp()){
-                slideCode.goTo(topHeight);
+            if (driverControls.slidesFullyUp()){
+                slideCode.goTo(maxAllowedExtension);
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-            } else if (controls.slidesFullyDown()){
+            } else if (driverControls.slidesFullyDown()){
                 slideCode.goTo(0);
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
-            } else if (Math.abs(controls.slideMovement()) > 0 && slide.getTargetPosition() < PHYSICALMAXEXTENSION){
-                slideCode.joystickControl(controls.slideMovement(), topHeight);
+            } else if (Math.abs(driverControls.slideMovement()) > 0 && slide.getTargetPosition() < PHYSICALMAXEXTENSION){
+                slideCode.joystickControl(driverControls.slideMovement(), maxAllowedExtension);
                 slideUpOrDown = slidePos.JOYSTICK_CONTROL;
-            } else if (slide.getCurrentPosition() > topHeight) {
-                slideCode.goTo(topHeight);
+            } else if (slide.getCurrentPosition() > maxAllowedExtension) {
+                slideCode.goTo(maxAllowedExtension);
             } else if (slide.getCurrentPosition() < 0){
                 slideCode.goTo(0);
             } else if (slideUpOrDown != slidePos.MOVING_TO_POSITION) {
                 slideCode.holdPos();
             }
-//pivot code
-            if (controls.pivotParallel()){
-                if (arm.doesSlideNeedToRetract(0)){
-                    slideCode.goTo(arm.getSlideMaxLength(0));
+//elbow code
+            if (driverControls.pivotParallel()){
+                if (arm.doesSlideNeedToRetract(0) || arm.doesSlideNeedToRetract(pivot.getCurrentPosition())){
+                    slideCode.goTo(Math.min(arm.currentAllowedMaxExtensionLength(), arm.currentAllowedMaxExtensionLength(0)));
                 }
                 else {
                     pivotCode.goTo(0);
-                    pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION_0;
                 }
-            } else if (controls.pivotPerp()){
-                pivotCode.goTo(topPivotPos);
-                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
-            } else if (controls.pivotJoystick() == 0 && pivotStateMachine != pivotPos.MOVING_TO_POSITION){
-                pivot.setPower(0);
-            } else if (controls.pivotJoystick() < 0){
-                if (arm.doesSlideNeedToRetract(pivot.getCurrentPosition() - 50)){
-                    slideCode.goTo(arm.getSlideMaxLength(pivot.getCurrentPosition() - 50));
+            } else if (driverControls.pivotPerp()){
+                if (arm.doesSlideNeedToRetract(topPivotPos) || arm.doesSlideNeedToRetract(pivot.getCurrentPosition())){
+                    slideCode.goTo(Math.min(arm.currentAllowedMaxExtensionLength(), arm.currentAllowedMaxExtensionLength(90)));
                 } else {
-                    pivotCode.pivotJoystick(pivot.getCurrentPosition(), controls.pivotJoystick());
+                    pivotCode.goTo(topPivotPos);
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION_90;
+                }
+            } else if (driverControls.pivotJoystick() == 0 && (pivotStateMachine == pivotPos.JOYSTICK_CONTROL || pivotStateMachine == pivotPos.DEPOSIT_FRONT || pivotStateMachine == pivotPos.DEPOSIT_BACK || pivotStateMachine == pivotPos.PICKUP || pivotStateMachine == pivotPos.NOT_MOVING || pivotStateMachine == pivotPos.MIDDLE || pivotStateMachine == pivotPos.FLAT)){
+                pivot.setPower(0);
+            } else if (driverControls.pivotJoystick() < 0){
+                if (arm.doesSlideNeedToRetract(pivot.getCurrentPosition() - 50) || arm.doesSlideNeedToRetract(pivot.getCurrentPosition())){
+                    slideCode.goTo(Math.min(arm.currentAllowedMaxExtensionLength(), arm.currentAllowedMaxExtensionLength(pivot.getCurrentPosition() - 50)));
+                } else {
+                    pivotCode.pivotJoystick(pivot.getCurrentPosition(), driverControls.pivotJoystick());
                     pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
                 }
-            } else if (controls.pivotJoystick() > 0) {
-                pivotCode.pivotJoystick(pivot.getCurrentPosition(), controls.pivotJoystick());
-                pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
+            } else if (driverControls.pivotJoystick() > 0) {
+                if (arm.doesSlideNeedToRetract(pivot.getCurrentPosition() + 50) || arm.doesSlideNeedToRetract(pivot.getCurrentPosition())){
+                    slideCode.goTo(Math.min(arm.currentAllowedMaxExtensionLength(), arm.currentAllowedMaxExtensionLength(pivot.getCurrentPosition() + 50)));
+                } else {
+                    pivotCode.pivotJoystick(pivot.getCurrentPosition(), driverControls.pivotJoystick());
+                    pivotStateMachine = pivotPos.JOYSTICK_CONTROL;
+                }
             }
-            if (controls.submersibleIntakeReady()){
+            if (driverControls.submersibleIntakeReady()){
                 telemetry.addLine("going to submersibleIntakeReady position");
-                pivotCode.goTo(-15);
+                if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(-2)) || arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(pivot.getCurrentPosition()))){
+                    slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(-2)));
+                } else {
+                    pivotCode.goTo(pivotCode.degreesToTicks(-2));
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION_45;
+                    slideCode.goTo(407);
+                }
                 //slideCode.goTo(796);
-                //slideCode.goTo(407);
-                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 pitchPos = -45;
-                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //diffCode.setDifferentialPosition(pitchPos, rollPos);
                 timer.reset();
+                dontmoveroll = true;
                 rollPos = 90;
             }
-            if (controls.drivingPos()){
+            if (driverControls.drivingPos()){
                 telemetry.addLine("going to drivingPos position");
-                pivotCode.goTo(pivotCode.degreesToTicks(45));
-                //slideCode.goTo(0);
-                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
+                if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(45)) || arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(pivot.getCurrentPosition()))){
+                    slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(45)));
+                } else {
+                    pivotCode.goTo(pivotCode.degreesToTicks(45));
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION_45;
+                    slideCode.goTo(407);
+                }
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 pitchPos = 90;
-                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //diffCode.setDifferentialPosition(pitchPos, rollPos);
                 timer.reset();
                 dontmoveroll = true;
                 rollPos = 90;
             }
-            if (controls.acsent1Park()){
+            if (driverControls.acsent1Park()){
                 telemetry.addLine("going to acsent1Park position");
-                pivotCode.goTo(pivotCode.degreesToTicks(45));
+                if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(45)) && pivotStateMachine != pivotPos.DEPOSIT_BACK){
+                    slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(90)));
+                    slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                } else if (pivotStateMachine == pivotPos.DEPOSIT_BACK){
+                    slideCode.goTo(slideCode.InchesToTicks(34));
+                    slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                } else {
+                    pivotCode.goTo(pivotCode.degreesToTicks(90));
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION_90;
+                }
                 //slideCode.goTo(796);
-                //slideCode.goTo(407);
-                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
-                slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 pitchPos = -90;
-                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //diffCode.setDifferentialPosition(pitchPos, rollPos);
                 timer.reset();
                 dontmoveroll = true;
                 rollPos = 90;
             }
-            if (controls.depositReadyBack()){
+            if (driverControls.depositReadyBack()){
                 telemetry.addLine("going to depositReadyBack position");
-                pivotCode.goTo(pivotCode.degreesToTicks(90));
-                //slideCode.goTo(slideCode.InchesToTicks(34));
-                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
-                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(90)) && pivotStateMachine != pivotPos.DEPOSIT_BACK){
+                    slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(90)));
+                    slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                } else if (pivotStateMachine == pivotPos.DEPOSIT_BACK){
+                    slideCode.goTo(slideCode.InchesToTicks(34));
+                    slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                } else {
+                    pivotCode.goTo(pivotCode.degreesToTicks(90));
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION_90;
+                }
                 rollPos = 90;
-                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //diffCode.setDifferentialPosition(pitchPos, rollPos);
                 timer.reset();
                 dontmoveroll = true;
                 pitchPos = 90;
             }
-            if(controls.depositReadyUp()){
+            if(driverControls.depositReadyUp()){
                 telemetry.addLine("going to depositReadyUp position");
-                pivotCode.goTo(pivotCode.degreesToTicks(70));
-                //slideCode.goTo(slideCode.InchesToTicks(41));
-                pivotStateMachine = pivotPos.MOVING_TO_POSITION;
-                slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(70)) && pivotStateMachine != pivotPos.DEPOSIT_FRONT){
+                    slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(70)));
+                    slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                } else if (pivotStateMachine == pivotPos.DEPOSIT_BACK){
+                    slideCode.goTo(slideCode.InchesToTicks(41));
+                    slideUpOrDown = slidePos.MOVING_TO_POSITION;
+                } else {
+                    pivotCode.goTo(pivotCode.degreesToTicks(70));
+                    pivotStateMachine = pivotPos.MOVING_TO_POSITION_70;
+                }
                 rollPos = 90;
-                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //diffCode.setDifferentialPosition(pitchPos, rollPos);
                 timer.reset();
                 dontmoveroll = true;
                 pitchPos = 90;
             }
             //State definitions
-            if (controls.intakenewForward() > 0.5){
+            if (driverControls.intakenewForward() > 0.5){
                 direction = intakeDirection.FORWARD;
                 power = intakePower.YES;
-            } else if (controls.intakenewBackward() > 0.5/* || (blockColor == targetBlockColor.RED && activeIntakeSensor.red() >= 245 && activeIntakeSensor.green() <= 50) || (blockColor == targetBlockColor.BLUE && activeIntakeSensor.blue() >= 245) || (blockColor == targetBlockColor.RED && activeIntakeSensor.red() >= 245 && activeIntakeSensor.green() >= 245)*/){
+            } else if (driverControls.intakenewBackward() > 0.5/* || (blockColor == targetBlockColor.RED && activeIntakeSensor.red() >= 245 && activeIntakeSensor.green() <= 50) || (blockColor == targetBlockColor.BLUE && activeIntakeSensor.blue() >= 245) || (blockColor == targetBlockColor.RED && activeIntakeSensor.red() >= 245 && activeIntakeSensor.green() >= 245)*/){
                 direction = intakeDirection.BACKWARD;
                 power = intakePower.YES;
             } else {
                 power = intakePower.NO;
             }
+            if (pivotStateMachine == pivotPos.MOVING_TO_POSITION_45 && (pivot.getCurrentPosition() > pivotCode.degreesToTicks(44) && pivot.getCurrentPosition() < pivotCode.degreesToTicks(46))){
+                pivotStateMachine = pivotPos.MIDDLE;
+            }
+            if (pivotStateMachine == pivotPos.MOVING_TO_POSITION_0 && (pivot.getCurrentPosition() > pivotCode.degreesToTicks(-1) && pivot.getCurrentPosition() < pivotCode.degreesToTicks(1))){
+                pivotStateMachine = pivotPos.FLAT;
+            }
+
+            if (pivotStateMachine == pivotPos.MOVING_TO_POSITION_70 && (pivot.getCurrentPosition() > pivotCode.degreesToTicks(69) && pivot.getCurrentPosition() < pivotCode.degreesToTicks(71))){
+                pivotStateMachine = pivotPos.DEPOSIT_FRONT;
+            }
+
+            if (pivotStateMachine == pivotPos.MOVING_TO_POSITION_90 && (pivot.getCurrentPosition() > pivotCode.degreesToTicks(89) && pivot.getCurrentPosition() < pivotCode.degreesToTicks(91))){
+                pivotStateMachine = pivotPos.DEPOSIT_BACK;
+            }
+
+            if (pivotStateMachine == pivotPos.MOVING_TO_POSITION_PICKUP && (pivot.getCurrentPosition() > pivotCode.degreesToTicks(-16) && pivot.getCurrentPosition() < pivotCode.degreesToTicks(-15))){
+                pivotStateMachine = pivotPos.MOVING_TO_POSITION_PICKUP;
+            }
+
             /*if (pivot.getCurrentPosition() >= topPivotPos - 100){
                 pivotStateMachine = pivotPos.DEPOSIT;
             } else{
@@ -287,7 +341,7 @@ public class TELEOPV3 extends LinearOpMode {
 
             switch (drive) {
                 case FIELD:
-                    driverCode.FieldCentricDrive(speedMultiplication, controls.resetIMU());
+                    driverCode.FieldCentricDrive(speedMultiplication, driverControls.resetIMU());
                     break;
                 default:
                     driverCode.RobotCentric_Drive(speedMultiplication);
@@ -316,14 +370,14 @@ public class TELEOPV3 extends LinearOpMode {
                     break;
             }
 
-            if (timer.milliseconds() > 300 && !dontmoveroll){
+            /*if (timer.milliseconds() > 300 && !dontmoveroll){
                 telemetry.addLine("Movingroll");
                 diffCode.setDifferentialPosition(pitchPos, rollPos);
-            }
+            }*/
 
             telemetry.addData("pitch", pitchPos);
             telemetry.addData("roll", rollPos);
-            telemetry.addData("max slide height", topHeight);
+            telemetry.addData("max slide height", maxAllowedExtension);
             telemetry.addData("elbow current draw", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             telemetry.addData("slide current draw", slide.getCurrent(CurrentUnit.MILLIAMPS));
             telemetry.addData("timer", timer.milliseconds());
@@ -334,7 +388,7 @@ public class TELEOPV3 extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        controls = new DriverControls(gamepad1, gamepad2);
+        driverControls = new DriverControls(gamepad1, gamepad2);
     }
 
     private void initializeDriveTrain(){
@@ -392,9 +446,8 @@ public class TELEOPV3 extends LinearOpMode {
     private void initializeDifferential(){
         left = hardwareMap.servo.get("left");
         right = hardwareMap.servo.get("right");
-        diffCode = new differential(left, right);
-        pitchPos = 0;
-        rollPos = 0;
-        diffCode.setDifferentialPosition(pitchPos, rollPos);
+        pitchPos = -90;
+        rollPos = 90;
+        //diffCode.setDifferentialPosition(pitchPos, rollPos);
     }
 }
