@@ -66,9 +66,14 @@ public class slideCodeFunctions {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            goTo(targetPos);
-            holdPos();
-            return true;
+            if (getSlidePosition() != targetPos) {
+                goTo(targetPos);
+                return true;
+            }
+            else {
+                holdPos();
+                return false;
+            }
 
         }
 
