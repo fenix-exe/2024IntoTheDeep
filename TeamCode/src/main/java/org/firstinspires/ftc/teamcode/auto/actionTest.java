@@ -67,7 +67,7 @@ public class actionTest extends LinearOpMode {
         pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, 2178);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(new Pose2d(0,0,0));
-        Action action1 = traj1.stopAndAdd(slideCode.slideControl(100)).stopAndAdd(diffy.setDiffy(0,0)).build();
+        Action action1 = traj1.stopAndAdd(pivotCode.elbowControl(300)).stopAndAdd(diffy.setDiffy(0,0)).build();
 
 
 

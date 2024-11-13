@@ -1,3 +1,6 @@
+To Create an Auto, use the code below:
+
+```
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -88,8 +91,6 @@ public class observationPark extends LinearOpMode {
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -106,8 +107,9 @@ public class observationPark extends LinearOpMode {
                     .stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                     .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                     .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
-                    /*.stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))*/;
-                    //Active Intake servo not working
+                    .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))));
+
+
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
@@ -116,10 +118,8 @@ public class observationPark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " Wrist Psi", extractAuto.getWristPsiFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Wrist Rho", extractAuto.getWristRhoFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Intake", extractAuto.getIntakeFromList(vector.get(i)));
+            telemetry.update();
         }
-
-        telemetry.update();
-
 
         Action action1 = traj1.build();
 
@@ -130,6 +130,8 @@ public class observationPark extends LinearOpMode {
 
         Actions.runBlocking(action1);
 
-        return;
     }
 }
+```
+Remember to put the csv file in the right place, and create a new program for the auto. The only thing
+that needs to be changed is the file name.
