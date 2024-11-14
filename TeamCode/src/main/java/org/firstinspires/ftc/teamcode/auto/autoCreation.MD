@@ -91,6 +91,8 @@ public class observationPark extends LinearOpMode {
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -101,15 +103,28 @@ public class observationPark extends LinearOpMode {
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
+        boolean XareSame = false;
+        boolean YareSame = false;
+        boolean AngleareSame = false;
         //build trajectory based on file data
         for (int i = 1; i < vector.size(); i++) {
-            traj1 = traj1.splineToConstantHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i)))
-                    .stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
-                    .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                    .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
-                    .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))));
-
-
+            XareSame = ((extractAuto.getXFromList(vector.get(i-1)) == extractAuto.getXFromList(vector.get(i))));
+            YareSame = ((extractAuto.getYFromList(vector.get(i-1)) == extractAuto.getYFromList(vector.get(i))));
+            AngleareSame = ((extractAuto.getAngleFromList(vector.get(i-1)) == extractAuto.getAngleFromList(vector.get(i))));
+            if (XareSame && YareSame && AngleareSame) {
+                traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                        .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
+                        /*.stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))*/;
+                //Active Intake servo not working
+            } else {
+                traj1 = traj1.splineToConstantHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i))), extractAuto.getAngleFromList(vector.get(i)))
+                        .stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                        .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
+                /*.stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))*/;
+                //Active Intake servo not working
+            }
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
@@ -118,8 +133,10 @@ public class observationPark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " Wrist Psi", extractAuto.getWristPsiFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Wrist Rho", extractAuto.getWristRhoFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Intake", extractAuto.getIntakeFromList(vector.get(i)));
-            telemetry.update();
         }
+
+        telemetry.update();
+
 
         Action action1 = traj1.build();
 
@@ -130,8 +147,10 @@ public class observationPark extends LinearOpMode {
 
         Actions.runBlocking(action1);
 
+        return;
     }
 }
+
 ```
 Remember to put the csv file in the right place, and create a new program for the auto. The only thing
 that needs to be changed is the file name.
