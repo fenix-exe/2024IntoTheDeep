@@ -34,6 +34,11 @@ public class pivotCodeFunctions {
         } else {
             pivot.setPower(1);
         }*/
+
+        if(pivot.getTargetPosition() == pivotPos){
+            return; //pivot is already going to our target
+        }
+
         pivot.setPower(1);
         pivot.setTargetPosition(pivotPos);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -66,8 +71,17 @@ public class pivotCodeFunctions {
     public double getElbowAngle(){
         return ticksToDegrees(pivot.getCurrentPosition());
     }
+
+    public void setElbowAngle(double angle){
+        int ticks = degreesToTicks(angle);
+        goTo(ticks);
+    }
     public int getElbowTicks(){
         return pivot.getCurrentPosition();
+    }
+
+    public boolean isBusy() {
+        return pivot.isBusy();
     }
 
     public class elbowControl implements Action {

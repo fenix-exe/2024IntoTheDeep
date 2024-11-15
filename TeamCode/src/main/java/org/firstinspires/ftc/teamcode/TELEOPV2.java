@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.RobotArm;
+import org.firstinspires.ftc.teamcode.subsytems.modules.RobotArm;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.driveCode;
@@ -264,13 +264,13 @@ public class TELEOPV2 extends LinearOpMode {
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(-90,90);
             }
-            if (controls.depositReadyBack()){
+            if (controls.depositReadyBackTopBucket()){
                 pivotCode.goTo(pivotCode.degreesToTicks(90));
                 slideCode.goTo(slideCode.InchesToTicks(34));
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;
                 diffCode.setDifferentialPosition(90,90);
             }
-            if(controls.depositReadyUp()){
+            if(controls.depositReadyFrontTopBucket()){
                 pivotCode.goTo(pivotCode.degreesToTicks(70));
                 slideCode.goTo(slideCode.InchesToTicks(41));
                 pivotStateMachine = pivotPos.MOVING_TO_POSITION;

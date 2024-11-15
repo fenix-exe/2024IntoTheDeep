@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.RobotArm;
+import org.firstinspires.ftc.teamcode.subsytems.modules.RobotArm;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.driveCode;
@@ -237,7 +237,7 @@ public class TELEOPV3 extends LinearOpMode {
                 dontmoveroll = true;
                 rollPos = 90;
             }
-            if (driverControls.depositReadyBack()){
+            if (driverControls.depositReadyBackTopBucket()){
                 telemetry.addLine("going to depositReadyBack position");
                 if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(90)) && pivotStateMachine != pivotPos.DEPOSIT_BACK){
                     slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(90)));
@@ -255,7 +255,7 @@ public class TELEOPV3 extends LinearOpMode {
                 dontmoveroll = true;
                 pitchPos = 90;
             }
-            if(driverControls.depositReadyUp()){
+            if(driverControls.depositReadyFrontTopBucket()){
                 telemetry.addLine("going to depositReadyUp position");
                 if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(70)) && pivotStateMachine != pivotPos.DEPOSIT_FRONT){
                     slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(70)));

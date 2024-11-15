@@ -2,6 +2,13 @@ package org.firstinspires.ftc.teamcode.subsytems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserIntent;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class DriverControls implements DriveControlMap{
     Gamepad gamepad1current;
     Gamepad gamepad2current;
@@ -62,6 +69,9 @@ public class DriverControls implements DriveControlMap{
     public boolean undoEmergencyStop() {
         return gamepad1current.options;
     }
+    public boolean microDriveAdjustments(){
+        return gamepad1current.left_trigger > 0.5;
+    }
 
     @Override
     public boolean slidesFullyUp() {
@@ -89,13 +99,18 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public double pivotJoystick() {
-        return gamepad2current.left_stick_x;
+        if (Math.abs(gamepad2current.left_stick_y) > 0.65){
+            return -gamepad2current.left_stick_y;
+        }
+        return 0;
     }
 
     @Override
     public double slideMovement() {
-        return -gamepad2current.left_stick_y;
-        //return -gamepad1.right_stick_y;
+        if (Math.abs(gamepad2current.left_stick_x) > 0.5){
+            return gamepad2current.left_stick_x;
+        }
+        return 0;
     }
 
     @Override
@@ -140,20 +155,72 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean drivingPos() {
-        return gamepad2current.dpad_right;
+        return gamepad2current.x;
     }
 
     @Override
-    public boolean depositReadyBack() {
-        return gamepad2current.left_bumper && !gamepad2previous.left_bumper;
+    public boolean depositReadyBackTopBucket() {
+        return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_trigger > 0.5);
     }
 
     @Override
-    public boolean depositReadyUp() {
-        return gamepad2current.right_bumper && !gamepad2previous.right_bumper;
+    public boolean depositReadyFrontTopBucket() {
+        return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_trigger > 0.5);
+    }
+
+    public boolean depositReadyBackBottomBucket(){
+        return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_trigger > 0.5);
+    }
+    public boolean depositReadyFrontBottomBucket(){
+        return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_trigger > 0.5);
     }
 
     public boolean resetWrist() {
         return gamepad2current.back;
+    }
+    public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
+    public Set<UserIntent> getUserIntents(){
+        Set<UserIntent> returnList = new HashSet<UserIntent>();
+        if (isDriving()){
+            if (microDriveAdjustments()){
+                returnList.add(UserIntent.MANUAL_DRIVE_ADJUSTMENTS);
+            } else {
+                returnList.add(UserIntent.MANUAL_DRIVE_NORMAL);
+            }
+        }
+        if (driveTypeSwitch()){
+            returnList.add(UserIntent.DRIVE_SWITCH);
+        }
+        if (slowMode()){
+            returnList.add(UserIntent.SPEED_SWITCH);
+        }
+        if(resetIMU()){
+            returnList.add(UserIntent.IMU_RESET);
+        }
+        if(Math.abs(pivotJoystick()) > 0){
+            returnList.add(UserIntent.MANUAL_ELBOW);
+        }
+        if(Math.abs(slideMovement()) > 0){
+            returnList.add(UserIntent.MANUAL_SLIDE);
+        }
+        if(depositReadyBackTopBucket()){
+            returnList.add(UserIntent.PRESET_DEPOSIT_BACK_TOP);
+        }
+        if(depositReadyFrontTopBucket()){
+            returnList.add(UserIntent.PRESET_DEPOSIT_FRONT_TOP);
+        }
+        if(depositReadyBackBottomBucket()){
+            returnList.add(UserIntent.PRESET_DEPOSIT_BACK_BOTTOM);
+        }
+        if(depositReadyFrontBottomBucket()){
+            returnList.add(UserIntent.PRESET_DEPOSIT_FRONT_BOTTOM);
+        }
+        if(drivingPos()){
+            returnList.add(UserIntent.PRESET_SAFE_DRIVING_POSITION);
+        }
+        if(submersibleIntakeReady()){
+            returnList.add(UserIntent.PRESET_SUBMERSIBLE_INTAKE);
+        }
+        return returnList;
     }
 }

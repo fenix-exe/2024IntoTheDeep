@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsytems;
+package org.firstinspires.ftc.teamcode.subsytems.modules;
 
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
@@ -48,5 +48,11 @@ public class RobotArm {
     }
     public boolean doesSlideNeedToRetract(int angleInTicks){
         return slide.getSlidePosition() > Math.min(getSlideMaxLengthIn42Inches(angleInTicks), getSlideLengthAllowed(elbow.ticksToDegrees(angleInTicks)));
+    }
+    public double getElbowAngleInDegrees(){
+        return elbow.getElbowAngle();
+    }
+    public double getSlideLengthInInches(){
+        return slide.getSlideLengthInInches();
     }
 }

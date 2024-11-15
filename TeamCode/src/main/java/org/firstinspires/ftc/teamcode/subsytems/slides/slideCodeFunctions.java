@@ -57,6 +57,9 @@ public class slideCodeFunctions {
     public int getSlidePosition(){
         return slide.getCurrentPosition();
     }
+    public double getSlideLengthInInches(){
+        return ticksToInches(slide.getCurrentPosition());
+    }
 
     public class slideControl implements Action {
         private final int targetPos;
