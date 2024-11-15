@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
+import org.firstinspires.ftc.teamcode.util.autoTeleTransfer;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
 
 import java.io.FileNotFoundException;
@@ -49,7 +50,7 @@ public class autoTemplate extends LinearOpMode {
     PivotPIDFFunctions pivotPIDF;
     PIDController controllerPivotPIDF;
     DcMotorEx slide;
-    DcMotorEx pivot;
+    DcMotorEx elbow;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -76,11 +77,11 @@ public class autoTemplate extends LinearOpMode {
         activeIntake activeIntake = new activeIntake(intake);
         differential diffy = new differential(left, right);
         slide = hardwareMap.get(DcMotorEx.class, "slide");
-        pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        elbow = hardwareMap.get(DcMotorEx.class, "pivot");
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        elbow.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         //Homing the pivot
@@ -89,8 +90,8 @@ public class autoTemplate extends LinearOpMode {
         }
         pivot.setPower(0);*/
 
-        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -99,7 +100,7 @@ public class autoTemplate extends LinearOpMode {
         slideCode = new slideCodeFunctions(slide);
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
         pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
-        pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, 2178);
+        pivotCode = new pivotCodeFunctions(elbow, pivotPIDF, 2178);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
@@ -146,6 +147,14 @@ public class autoTemplate extends LinearOpMode {
         if (isStopRequested()) return;
 
         Actions.runBlocking(action1);
+
+        autoTeleTransfer.setElbowTicks(elbow.getCurrentPosition());
+        autoTeleTransfer.setSlideTicks(slide.getCurrentPosition());
+        autoTeleTransfer.setxPos(extractAuto.getXFromList(vector.get(vector.size()-1)));
+        autoTeleTransfer.setyPos(extractAuto.getYFromList(vector.get(vector.size()-1)));
+        autoTeleTransfer.setHeadingAngle(extractAuto.getAngleFromList(vector.get(vector.size()-1)));
+        autoTeleTransfer.setDifPitch(extractAuto.getWristPsiFromList(vector.get(vector.size()-1)));
+        autoTeleTransfer.setDifRoll(extractAuto.getWristRhoFromList(vector.get(vector.size()-1)));
 
         return;
     }
