@@ -3,7 +3,11 @@ package org.firstinspires.ftc.teamcode.subsytems.differential;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+
 import com.qualcomm.robotcore.hardware.Servo;
+
+import com.qualcomm.robotcore.hardware.PwmControl;
+
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import androidx.annotation.NonNull;
@@ -15,23 +19,25 @@ public class differential {
 
     float leftRange = 270;
     float rightRange = 270;
-    public static float pitchError = -13;
-    public static float rollError = -18;
+    public static float pitchError = -15;
+    public static float rollError = 30;
 
     public differential(ServoImplEx left, ServoImplEx right){
         this.left = left;
         this.right = right;
+        left.setPwmRange(new PwmControl.PwmRange(600,2400));
+        right.setPwmRange(new PwmControl.PwmRange(600,2400));
     }
 
-    private double setAPosition(double roll, double pitch) {
+    private double setAPosition(double pitch, double roll) {
         double aPos;
-        aPos = (1 / leftRange) * (pitch + roll / 2) + 0.5;
+        aPos = (1 / leftRange) * (roll + ( pitch / 2)) + 0.5;
         return aPos;
     }
 
-    private double setBPosition(double roll, double pitch) {
+    private double setBPosition(double pitch, double roll) {
         double bPos;
-        bPos = (1 / rightRange) * (pitch - roll / 2) + 0.5;
+        bPos = (1 / rightRange) * (roll - (pitch / 2)) + 0.5;
         return bPos;
     }
 
@@ -52,7 +58,7 @@ public class differential {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setDifferentialPosition(pitch, roll);
-            return true;
+            return false;
         }
     }
 

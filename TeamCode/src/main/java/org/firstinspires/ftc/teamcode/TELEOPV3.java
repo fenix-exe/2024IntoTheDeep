@@ -11,7 +11,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -44,8 +47,8 @@ public class TELEOPV3 extends LinearOpMode {
     DcMotorEx slide;
     DcMotorEx pivot;
     CRServo intake;
-    Servo left;
-    Servo right;
+    ServoImplEx left;
+    ServoImplEx right;
     differential diffCode;
     IMU imu;
     RevColorSensorV3 activeIntakeSensor;
@@ -186,6 +189,7 @@ public class TELEOPV3 extends LinearOpMode {
                 }
             }
             if (driverControls.submersibleIntakeReady()){
+
                 telemetry.addLine("going to submersibleIntakeReady position");
                 if (arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(-2)) || arm.doesSlideNeedToRetract(pivotCode.degreesToTicks(pivot.getCurrentPosition()))){
                     slideCode.goTo(arm.currentAllowedMaxExtensionLength(pivotCode.degreesToTicks(-2)));
@@ -197,10 +201,9 @@ public class TELEOPV3 extends LinearOpMode {
                 //slideCode.goTo(796);
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 pitchPos = -45;
-                //diffCode.setDifferentialPosition(pitchPos, rollPos);
-                timer.reset();
-                dontmoveroll = true;
                 rollPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //timer.reset();
             }
             if (driverControls.drivingPos()){
                 telemetry.addLine("going to drivingPos position");
@@ -213,10 +216,10 @@ public class TELEOPV3 extends LinearOpMode {
                 }
                 slideUpOrDown = slidePos.MOVING_TO_POSITION;
                 pitchPos = 90;
-                //diffCode.setDifferentialPosition(pitchPos, rollPos);
-                timer.reset();
-                dontmoveroll = true;
                 rollPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //timer.reset();
+                //dontmoveroll = true;
             }
             if (driverControls.acsent1Park()){
                 telemetry.addLine("going to acsent1Park position");
@@ -232,10 +235,10 @@ public class TELEOPV3 extends LinearOpMode {
                 }
                 //slideCode.goTo(796);
                 pitchPos = -90;
-                //diffCode.setDifferentialPosition(pitchPos, rollPos);
-                timer.reset();
-                dontmoveroll = true;
                 rollPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //timer.reset();
+                //dontmoveroll = true;
             }
             if (driverControls.depositReadyBackTopBucket()){
                 telemetry.addLine("going to depositReadyBack position");
@@ -250,10 +253,11 @@ public class TELEOPV3 extends LinearOpMode {
                     pivotStateMachine = pivotPos.MOVING_TO_POSITION_90;
                 }
                 rollPos = 90;
-                //diffCode.setDifferentialPosition(pitchPos, rollPos);
-                timer.reset();
-                dontmoveroll = true;
                 pitchPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //timer.reset();
+                //dontmoveroll = true;
+
             }
             if(driverControls.depositReadyFrontTopBucket()){
                 telemetry.addLine("going to depositReadyUp position");
@@ -268,11 +272,13 @@ public class TELEOPV3 extends LinearOpMode {
                     pivotStateMachine = pivotPos.MOVING_TO_POSITION_70;
                 }
                 rollPos = 90;
-                //diffCode.setDifferentialPosition(pitchPos, rollPos);
-                timer.reset();
-                dontmoveroll = true;
                 pitchPos = 90;
+                diffCode.setDifferentialPosition(pitchPos, rollPos);
+                //timer.reset();
+                //dontmoveroll = true;
             }
+
+
             //State definitions
             if (driverControls.intakenewForward() > 0.5){
                 direction = intakeDirection.FORWARD;
@@ -375,6 +381,7 @@ public class TELEOPV3 extends LinearOpMode {
                 diffCode.setDifferentialPosition(pitchPos, rollPos);
             }*/
 
+
             telemetry.addData("pitch", pitchPos);
             telemetry.addData("roll", rollPos);
             telemetry.addData("max slide height", maxAllowedExtension);
@@ -444,10 +451,15 @@ public class TELEOPV3 extends LinearOpMode {
         activeIntakeCode = new activeIntake(intake);
     }
     private void initializeDifferential(){
-        left = hardwareMap.servo.get("left");
-        right = hardwareMap.servo.get("right");
         pitchPos = -90;
         rollPos = 90;
         //diffCode.setDifferentialPosition(pitchPos, rollPos);
+        left = hardwareMap.get(ServoImplEx.class, "left");
+        right = hardwareMap.get(ServoImplEx.class, "right");
+        left.setPwmRange(new PwmControl.PwmRange(500,2500));
+        right.setPwmRange(new PwmControl.PwmRange(500,2500));
+        diffCode = new differential(left, right);
+        diffCode.setDifferentialPosition(pitchPos, rollPos);
+
     }
 }

@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -29,12 +30,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
-@Autonomous(name = "AUTO - Observation Park")
-public class observationPark extends LinearOpMode {
+//TODO: WHEN COPYING THIS CODE, UN-DISABLE THE OPMODE
+@Disabled
+//TODO: WHEN COPYING THIS CODE, ADD AUTO NAME BELOW
+@Autonomous(name = "AUTO - _____")
+public class autoTemplate extends LinearOpMode {
 
     //initialize auto extractor
-    String filename = "/sdcard/Download/autoPositions/observationPark.csv";
+    //TODO: WHEN COPYING THIS CODE, CHANGE THE FILENAME TO THE CORRECT FILENAME
+    String filename = "/sdcard/Download/autoPositions/*.csv";
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
 

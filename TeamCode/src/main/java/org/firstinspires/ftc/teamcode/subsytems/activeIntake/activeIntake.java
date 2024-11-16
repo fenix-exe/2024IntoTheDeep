@@ -4,6 +4,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 
 import androidx.annotation.NonNull;
 
@@ -11,6 +14,7 @@ public class activeIntake {
     Gamepad gamepad2;
     Gamepad gamepad2previous;
     CRServo intake;
+    NormalizedColorSensor colorSensor;
 
     public enum intakeState {FORWARD,BACKWARD,OFF}
 
@@ -64,6 +68,43 @@ public class activeIntake {
         return new aIControl(targetPower);
     }
 
+    public class intakeIn implements Action {
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (true) {
+                //TODO: add color sensor code
+                intakeForward();
+                return true;
+            } else {
+                intakeOff();
+                return false;
+            }
+        }
+    }
+
+    public Action intakeIn() {
+        return new intakeIn();
+    }
+
+    public class intakeOut implements Action {
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (true) {
+                //TODO: add color sensor code
+                intakeBack();
+                return true;
+            } else {
+                intakeOff();
+                return false;
+            }
+        }
+    }
+
+    public Action intakeOut() {
+        return new intakeOut();
+    }
 
 
 
