@@ -25,8 +25,8 @@ public class pivotCodeFunctions {
 
     public void goTo(int targetPos) {
         pivotPos = targetPos;
-        if (pivotPos < 0) {
-            pivotPos = 0;
+        if (pivotPos < -15){
+            pivotPos = -15;
         }
         if (pivotPos > topPos) {
             pivotPos = topPos;
@@ -36,6 +36,11 @@ public class pivotCodeFunctions {
         } else {
             pivot.setPower(1);
         }*/
+
+        if(pivot.getTargetPosition() == pivotPos){
+            return; //pivot is already going to our target
+        }
+
         pivot.setPower(1);
         pivot.setTargetPosition(pivotPos);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -47,9 +52,7 @@ public class pivotCodeFunctions {
         }
         goTo(pivotPos);*/
         double power;
-
-
-        if (pivot.getCurrentPosition() > topPos - 100 && pivotControlJoystick > 0) {
+        if (pivot.getCurrentPosition() > topPos - 100 && pivotControlJoystick > 0){
             power = 0;
         } else if (pivot.getCurrentPosition() < 100 && pivotControlJoystick < 0) {
             power = 0;
@@ -75,13 +78,18 @@ public class pivotCodeFunctions {
         return ticksToDegrees(pivot.getCurrentPosition());
     }
 
-    public int getElbowTicks() {
+    public void setElbowAngle(double angle){
+        int ticks = degreesToTicks(angle);
+        goTo(ticks);
+    }
+    public int getElbowTicks(){
         return pivot.getCurrentPosition();
     }
 
-    public void holdPos() {
-        pivot.setPower(0);
+    public boolean isBusy() {
+        return pivot.isBusy();
     }
+
 
     public class elbowControl implements Action {
         private final int target;

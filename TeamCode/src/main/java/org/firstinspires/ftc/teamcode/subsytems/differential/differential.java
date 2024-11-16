@@ -3,7 +3,11 @@ package org.firstinspires.ftc.teamcode.subsytems.differential;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+
+import com.qualcomm.robotcore.hardware.Servo;
+
 import com.qualcomm.robotcore.hardware.PwmControl;
+
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import androidx.annotation.NonNull;
@@ -17,7 +21,6 @@ public class differential {
     float rightRange = 270;
     public static float pitchError = -15;
     public static float rollError = 30;
-
 
     public differential(ServoImplEx left, ServoImplEx right){
         this.left = left;

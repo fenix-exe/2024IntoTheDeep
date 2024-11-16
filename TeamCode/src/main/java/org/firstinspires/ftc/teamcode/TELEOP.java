@@ -141,7 +141,6 @@ public class TELEOP extends LinearOpMode {
         power = intakePower.NO;
         pivotStateMachine = pivotPos.PICKUP;
 
-        diffCode = new differential(left, right);
 
         waitForStart();
 

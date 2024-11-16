@@ -44,6 +44,7 @@ public class actionTest extends LinearOpMode {
         left = hardwareMap.get(ServoImplEx.class, "left");
         right = hardwareMap.get(ServoImplEx.class, "right");
         activeIntake activeIntake = new activeIntake(intake);
+
         differential diffy = new differential(left, right);
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
@@ -68,8 +69,6 @@ public class actionTest extends LinearOpMode {
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(new Pose2d(0,0,0));
         Action action1 = traj1.stopAndAdd(pivotCode.elbowControl(300)).stopAndAdd(diffy.setDiffy(0,0)).build();
-
-
 
 
         waitForStart();

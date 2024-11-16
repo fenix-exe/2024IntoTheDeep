@@ -39,9 +39,11 @@ public class differentialTeleop extends LinearOpMode {
         double roll;
 
 
-        differential.setDifferentialPosition(0,0);
-        roll = 0;
-        pitch = 0;
+
+        differentialCode.setDifferentialPosition(-90,90);
+        roll = -90;
+        pitch = 90;
+
         boolean dontmoveroll = false;
         gamepad1current.copy(gamepad1);
         waitForStart();
@@ -53,22 +55,32 @@ public class differentialTeleop extends LinearOpMode {
             if (gamepad1.a && !gamepad1previous.a){
                 telemetry.addLine("going to 0,0");
                 pitch = 0;
+                differentialCode.setDifferentialPosition(pitch,roll);
+                timer.reset();
+                dontmoveroll = true;
                 roll = 0;
             }
             if (gamepad1.b && !gamepad1previous.b){
                 telemetry.addLine("going to -90,90");
                 pitch = -90;
+
                 roll = -90;
 
             }
             if (gamepad1.x && !gamepad1previous.x){
                 telemetry.addLine("going to 90,90");
                 roll = -90;
+                differentialCode.setDifferentialPosition(pitch,roll);
+                timer.reset();
+                dontmoveroll = true;
                 pitch = 90;
              }
             if (gamepad1.y && !gamepad1previous.y){
                 telemetry.addLine("going to -45,90");
                 roll = 90;
+                differentialCode.setDifferentialPosition(pitch,roll);
+                timer.reset();
+                dontmoveroll = true;
                 pitch = -45;
             }
 
@@ -83,7 +95,6 @@ public class differentialTeleop extends LinearOpMode {
 
 
             differential.setDifferentialPosition(pitch, roll);
-
 
             telemetry.addData("Left pos", left.getPosition());
             telemetry.addData("Right pos", right.getPosition());

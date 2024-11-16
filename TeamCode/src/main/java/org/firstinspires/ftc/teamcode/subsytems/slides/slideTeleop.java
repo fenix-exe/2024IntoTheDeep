@@ -1,18 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsytems.slides;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.TELEOPV2;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.RobotArm;
-import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
-import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
+
 @TeleOp
 public class slideTeleop extends LinearOpMode {
 
@@ -27,6 +22,7 @@ public class slideTeleop extends LinearOpMode {
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
+        slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elbow = hardwareMap.get(DcMotorEx.class, "pivot");
         slideUpOrDown = slidePos.MOVING_TO_POSITION;
         slideCodeFunctions slideCode = new slideCodeFunctions(slides);

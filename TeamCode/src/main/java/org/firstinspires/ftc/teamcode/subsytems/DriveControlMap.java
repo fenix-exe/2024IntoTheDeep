@@ -40,8 +40,10 @@ public interface DriveControlMap {
     public boolean submersibleIntakeReady();
     public boolean acsent1Park();
     public boolean drivingPos();
-    public boolean depositReadyBack();
-    public boolean depositReadyUp();
+    public boolean depositReadyBackTopBucket();
+    public boolean depositReadyFrontTopBucket();
+    public boolean depositReadyBackBottomBucket();
+    public boolean depositReadyFrontBottomBucket();
 
 
 
