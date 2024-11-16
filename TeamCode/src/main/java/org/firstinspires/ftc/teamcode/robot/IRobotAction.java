@@ -6,6 +6,7 @@ public interface IRobotAction {
         OTHER,
         ARM_MOVE_TO_PRESET,
         ARM_MOVE_MANUAL,
+        END_EFFECTOR_MOVE_TO_PRESET
     }
 
     public void cancel();

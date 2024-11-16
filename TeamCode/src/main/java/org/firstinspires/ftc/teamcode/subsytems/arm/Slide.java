@@ -60,10 +60,9 @@ public class Slide {
     }
     public void holdPosition(){
         //setSlideExtensionLengthInTicks(slideMotor.getCurrentPosition());
-        slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
+        slideMotor.setTargetPosition(slideMotor.getTargetPosition());
         slideMotor.setPower(1);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //slideMotor.setPower(0);
     }
     public double ticksToInchesPivotPoint(int ticks){
         //pulleyCirc/encoderRes * ticks + singleStageSlideLength + slideToPivot

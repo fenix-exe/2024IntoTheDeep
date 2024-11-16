@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,6 +29,9 @@ import org.firstinspires.ftc.teamcode.subsytems.arm.Elbow;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Slide;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrainActionList;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.ActiveIntake;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.Differential;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffector;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorActionList;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorState;
 import org.firstinspires.ftc.teamcode.subsytems.modules.RobotArm;
@@ -46,8 +50,9 @@ import java.util.Set;
 @TeleOp
 public class TeleOPV4 extends LinearOpMode {
     DriveTrain driveTrain;
-    activeIntake activeIntakeCode;
+    ActiveIntake activeIntakeCode;
     Arm arm;
+    EndEffector endEffector;
     pivotCodeFunctions pivotCode;
     PivotPIDFFunctions pivotPIDF;
     PIDController controllerPivotPIDF;
@@ -61,9 +66,9 @@ public class TeleOPV4 extends LinearOpMode {
     DcMotorEx slide;
     DcMotorEx pivot;
     CRServo intake;
-    Servo left;
-    Servo right;
-    differential diffCode;
+    ServoImplEx left;
+    ServoImplEx right;
+    Differential diffCode;
     IMU imu;
     RevColorSensorV3 activeIntakeSensor;
     TouchSensor limitSwitch;
@@ -152,7 +157,7 @@ public class TeleOPV4 extends LinearOpMode {
         }*/
 
         RobotActions actions = new RobotActions();
-        RobotCore.initialize(driverControls, driveTrain, arm);
+        RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
         while (opModeIsActive()){
 
             driverControls.update();
@@ -160,7 +165,7 @@ public class TeleOPV4 extends LinearOpMode {
             Set<UserIntent> intent = driverControls.getUserIntents();
 
             RobotCore.updateRobotActionsforArm(actions, intent);
-            //RobotCore.updateActiveActionsforEndEffector(actions, intent);
+            RobotCore.updateRobotActionsForEndEffector(actions, intent);
             RobotCore.updateRobotActionsforDriveTrain(actions, intent);
 
             String actions_list = actions.toString();
@@ -238,13 +243,18 @@ public class TeleOPV4 extends LinearOpMode {
     private void initializeIntake(){
         intake = hardwareMap.get(CRServo.class, "intake");
         //activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
-        activeIntakeCode = new activeIntake(intake);
+        activeIntakeCode = new ActiveIntake(intake);
     }
     private void initializeDifferential(){
-        left = hardwareMap.servo.get("left");
-        right = hardwareMap.servo.get("right");
+        left = hardwareMap.get(ServoImplEx.class, "left");
+        right = hardwareMap.get(ServoImplEx.class, "right");
         pitchPos = -90;
         rollPos = 90;
-        //diffCode.setDifferentialPosition(pitchPos, rollPos);
+        diffCode = new Differential(left,right);
+    }
+    private void initializeEndEffector(){
+        initializeDifferential();
+        initializeIntake();
+        endEffector = new EndEffector(activeIntakeCode, diffCode);
     }
 }

@@ -221,6 +221,12 @@ public class DriverControls implements DriveControlMap{
         if(submersibleIntakeReady()){
             returnList.add(UserIntent.PRESET_SUBMERSIBLE_INTAKE);
         }
+        if(intakenewBackward() > 0.5){
+            returnList.add(UserIntent.INTAKE_BACKWARD);
+        }
+        if(intakenewForward() > 0.5){
+            returnList.add(UserIntent.INTAKE_FORWARD);
+        }
         return returnList;
     }
 }

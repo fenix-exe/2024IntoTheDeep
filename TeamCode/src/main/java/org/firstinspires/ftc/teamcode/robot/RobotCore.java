@@ -20,8 +20,11 @@ import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrainState;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.MoveDriveTrainAction;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.ResetIMUAction;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.StopDriveTrainAction;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffector;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorActionList;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorPresetPosition;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorState;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.MoveEndEffectorToPresetPositionAction;
 
 import java.util.HashSet;
 import java.util.List;
@@ -32,13 +35,15 @@ public class RobotCore {
     static DriveTrain drivetrain;
 
     static DriverControls driverControls;
+    static EndEffector endEffector;
 
     private static Set<RobotActivityState> activityState;
-    public static void initialize(DriverControls driverControls, DriveTrain drivetrain, Arm arm){
+    public static void initialize(DriverControls driverControls, DriveTrain drivetrain, Arm arm, EndEffector endEffector){
         activityState =new HashSet<>();
         RobotCore.arm = arm;
         RobotCore.drivetrain = drivetrain;
         RobotCore.driverControls = driverControls;
+        RobotCore.endEffector = endEffector;
     }
     public static Set<RobotActivityState> getCurrentActivityState(){
         return activityState;
@@ -200,6 +205,33 @@ public class RobotCore {
         }
         if(!intent.contains(UserIntent.MANUAL_DRIVE_NORMAL) && !intent.contains(UserIntent.MANUAL_DRIVE_ADJUSTMENTS)){
             actions.add(new StopDriveTrainAction(drivetrain));
+        }
+    }
+    public static void updateRobotActionsForEndEffector(RobotActions actions, Set<UserIntent> intent){
+        if (intent.contains(UserIntent.PRESET_SUBMERSIBLE_INTAKE)) {
+            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.INTAKE_POSITION));
+        } else if (intent.contains(UserIntent.PRESET_DEPOSIT_BACK_TOP)) {
+            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION));
+        } else if (intent.contains(UserIntent.PRESET_DEPOSIT_BACK_BOTTOM)) {
+            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION));
+        } else if (intent.contains(UserIntent.PRESET_DEPOSIT_FRONT_TOP)) {
+            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION));
+        } else if (intent.contains(UserIntent.PRESET_DEPOSIT_FRONT_BOTTOM)) {
+            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION));
+        } else if (intent.contains(UserIntent.PRESET_SAFE_DRIVING_POSITION)){
+            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.SAFE_DRIVING_POSITION));
+        }
+
+        if (intent.contains(UserIntent.MANUAL_DRIVE_NORMAL)) {
+            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.SAFE_DRIVING_POSITION));
+        }
+
+        if (intent.contains(UserIntent.INTAKE_FORWARD)){
+            endEffector.activeIntakeForward();
+        } else if (intent.contains(UserIntent.INTAKE_BACKWARD)){
+            endEffector.activeIntakeBackward();
+        } else if (!intent.contains(UserIntent.INTAKE_FORWARD) && !(intent.contains(UserIntent.INTAKE_BACKWARD))){
+            endEffector.activeIntakeOff();
         }
     }
     private static double getSpeedMultiplier(){
