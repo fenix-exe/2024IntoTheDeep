@@ -152,4 +152,8 @@ public class DriverControls implements DriveControlMap{
     public boolean depositReadyUp() {
         return gamepad2current.right_bumper;
     }
+
+    public boolean resetWrist() {
+        return gamepad2current.a;
+    }
 }

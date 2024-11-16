@@ -12,13 +12,13 @@ public class extractAuto {
         public int x_value;
         public int y_value;
         public double angle;
-        public double elbow_phi;
+        public int elbow_phi;
         public int linear_slide;
         public double wrist_psi;
         public double wrist_rho;
         public int intake;
 
-        PositionInSpace(int x_value, int y_value, double angle, double elbow_phi, int linear_slide, double wrist_psi, double wrist_rho, int intake) {
+        PositionInSpace(int x_value, int y_value, double angle, int elbow_phi, int linear_slide, double wrist_psi, double wrist_rho, int intake) {
             this.x_value = x_value;
             this.y_value = y_value;
             this.angle = angle;
@@ -41,7 +41,7 @@ public class extractAuto {
                 int x_value = Integer.parseInt(values[0].trim());
                 int y_value = Integer.parseInt(values[1].trim());
                 double angle = Double.parseDouble(values[2].trim());
-                double elbow_phi = Double.parseDouble(values[3].trim());
+                int elbow_phi = Integer.parseInt(values[3].trim());
                 int linear_slide = Integer.parseInt(values[4].trim());
                 double wrist_psi = Double.parseDouble(values[5].trim());
                 double wrist_rho = Double.parseDouble(values[6].trim());
@@ -70,7 +70,7 @@ public class extractAuto {
         return Math.toRadians(position.angle);
     }
 
-    public double getElbowPhiFromList(PositionInSpace position) {
+    public int getElbowPhiFromList(PositionInSpace position) {
         return position.elbow_phi;
     }
 

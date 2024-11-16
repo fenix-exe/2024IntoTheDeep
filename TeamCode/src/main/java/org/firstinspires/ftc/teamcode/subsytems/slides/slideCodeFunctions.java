@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsytems.slides;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import static java.lang.Math.floor;
 
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
+
+import androidx.annotation.NonNull;
 
 public class slideCodeFunctions {
     DcMotorEx slide;
@@ -53,4 +57,29 @@ public class slideCodeFunctions {
     public int getSlidePosition(){
         return slide.getCurrentPosition();
     }
+
+    public class slideControl implements Action {
+        private final int targetPos;
+        slideControl(int targetPos){
+            this.targetPos = targetPos;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (targetPos-30 < getSlidePosition() && getSlidePosition() < targetPos+30) {
+                holdPos();
+                return false;
+            }
+            else {
+                goTo(targetPos);
+                return true;
+            }
+
+        }
+
+    }
+    public Action slideControl(int targetPos){
+        return new slideControl(targetPos);
+    }
+
 }
