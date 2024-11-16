@@ -57,11 +57,11 @@ public class autoTeleTransfer {
         autoTeleTransfer.difRoll = difRoll;
     }
 
-    static double xPos;
-    static double yPos;
-    static double headingAngle;
-    static double elbowTicks;
-    static double slideTicks;
-    static double difPitch;
-    static double difRoll;
+    private static double xPos;
+    private static double yPos;
+    private static double headingAngle;
+    private static double elbowTicks;
+    private static double slideTicks;
+    private static double difPitch;
+    private static double difRoll;
 }
