@@ -198,8 +198,8 @@ public class TeleOPV4 extends LinearOpMode {
     }
     private void initializeIntake(){
         intake = hardwareMap.get(CRServo.class, "intake");
-        //activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
-        activeIntakeCode = new ActiveIntake(intake);
+        activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
+        activeIntakeCode = new ActiveIntake(intake, activeIntakeSensor);
     }
     private void initializeDifferential(){
         left = hardwareMap.get(ServoImplEx.class, "left");
