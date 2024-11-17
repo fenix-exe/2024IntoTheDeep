@@ -53,8 +53,8 @@ public class Elbow {
         if (elbowPosition > topPosition-50){
             elbowPosition = topPosition;
         }
-        if (elbowPosition < 20){
-            elbowPosition = 20;
+        if (elbowPosition < -15){
+            elbowPosition = -15;
         }
         goToTargetPosition(elbowPosition);
     }

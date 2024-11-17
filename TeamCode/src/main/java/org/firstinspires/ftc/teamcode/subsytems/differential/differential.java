@@ -45,6 +45,13 @@ public class differential {
         left.setPosition(setAPosition(-2*(pitch)+pitchError, roll+rollError));
         right.setPosition(setBPosition(-2*(pitch)+pitchError, roll+rollError));
     }
+    public double returnRoll() {
+        return 135*(left.getPosition())+135*(right.getPosition())-135;
+    }
+
+    public double returnPitch() {
+        return 2*(135*(left.getPosition())-135*(right.getPosition())-135)-540*(right.getPosition())+270;
+    }
 
     public class setDiffy implements Action {
         private final double pitch;

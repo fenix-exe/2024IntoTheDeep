@@ -22,8 +22,10 @@ public class MoveActiveIntakeAction implements IRobotAction {
         if (!cancelled){
             if(direction == ActiveIntakeDirection.FORWARD){
                 endEffector.activeIntakeForward();
-            } else {
+            } else if (direction == ActiveIntakeDirection.BACKWARD){
                 endEffector.activeIntakeBackward();
+            } else {
+                endEffector.activeIntakeOff();
             }
         }
         this.completed = true;

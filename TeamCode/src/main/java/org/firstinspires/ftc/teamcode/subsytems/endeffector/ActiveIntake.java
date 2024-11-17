@@ -2,17 +2,19 @@ package org.firstinspires.ftc.teamcode.subsytems.endeffector;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import androidx.annotation.NonNull;
 
 public class ActiveIntake {
     CRServo intake;
-    NormalizedColorSensor colorSensor;
+    RevColorSensorV3 colorSensor;
 
     public enum intakeState {FORWARD,BACKWARD,OFF}
 
@@ -25,8 +27,9 @@ public class ActiveIntake {
         this.intakePos = intakePos;
     }
 
-    public ActiveIntake(CRServo intake){
+    public ActiveIntake(CRServo intake, RevColorSensorV3 colorSensor){
         this.intake=intake;
+        this.colorSensor = colorSensor;
     }
 
     public void intakeForward() {
@@ -42,6 +45,9 @@ public class ActiveIntake {
     public void intakeBack() {
         intake.setPower(-0.5);
         setIntakePos(intakeState.BACKWARD);
+    }
+    public boolean blockIn(){
+        return colorSensor.getDistance(DistanceUnit.MM) < 20;
     }
 
     public class aIControl implements Action {

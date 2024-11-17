@@ -101,7 +101,7 @@ public class pivotCodeFunctions {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (target-30 < getElbowTicks() && getElbowTicks() < target+30) {
-                holdPos();
+                //holdPos();
                 return false;
             } else {
                 goTo(target);

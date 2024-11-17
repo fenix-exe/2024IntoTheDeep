@@ -33,7 +33,7 @@ public class differentialTeleop extends LinearOpMode {
         intake = hardwareMap.get(CRServo.class, "intake");
         left.setPwmRange(new PwmControl.PwmRange(500,2500));
         right.setPwmRange(new PwmControl.PwmRange(500,2500));
-        differential differential = new differential(left, right);
+        differentialCode = new differential(left, right);
         activeIntake aIntake = new activeIntake(intake);
         double pitch;
         double roll;
@@ -60,28 +60,28 @@ public class differentialTeleop extends LinearOpMode {
                 dontmoveroll = true;
                 roll = 0;
             }
-            if (gamepad1.b && !gamepad1previous.b){
+            if (gamepad1.b && !gamepad1previous.b){//dep back
                 telemetry.addLine("going to -90,90");
                 pitch = -90;
 
-                roll = -90;
+                roll = 90;
 
             }
-            if (gamepad1.x && !gamepad1previous.x){
+            if (gamepad1.x && !gamepad1previous.x){//intake deposit front
                 telemetry.addLine("going to 90,90");
+                roll = 90;
+                differentialCode.setDifferentialPosition(pitch,roll);
+                timer.reset();
+                dontmoveroll = true;
+                pitch = 0;
+             }
+            if (gamepad1.y && !gamepad1previous.y){
+                telemetry.addLine("going to -45,90");
                 roll = -90;
                 differentialCode.setDifferentialPosition(pitch,roll);
                 timer.reset();
                 dontmoveroll = true;
                 pitch = 90;
-             }
-            if (gamepad1.y && !gamepad1previous.y){
-                telemetry.addLine("going to -45,90");
-                roll = 90;
-                differentialCode.setDifferentialPosition(pitch,roll);
-                timer.reset();
-                dontmoveroll = true;
-                pitch = -45;
             }
 
            /* if (gamepad1.left_trigger > 0.5) {
@@ -91,10 +91,18 @@ public class differentialTeleop extends LinearOpMode {
             } else {
 
             }*/
-            intake.setPower(1);
+
+            if (gamepad1.right_bumper) {
+                intake.setPower(-1);
+            }
+            else if (gamepad1.left_bumper) {
+                intake.setPower(1);
+            } else {
+                intake.setPower(0);
+            }
 
 
-            differential.setDifferentialPosition(pitch, roll);
+            differentialCode.setDifferentialPosition(pitch, roll);
 
             telemetry.addData("Left pos", left.getPosition());
             telemetry.addData("Right pos", right.getPosition());

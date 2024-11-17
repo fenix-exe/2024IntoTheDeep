@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsytems.driverControl;
 
-public enum UserIntent {
+public enum UserDirective {
     IDLE,
     DRIVE_SWITCH,
     SPEED_SWITCH,
@@ -18,4 +18,19 @@ public enum UserIntent {
     PRESET_DEPOSIT_BACK_TOP,
     PRESET_DEPOSIT_BACK_BOTTOM,
     PRESET_SAFE_DRIVING_POSITION,
+    ELBOW_90,
+    ELBOW_0,
+    REMOVE_SPEED_RULES,
+    WRIST_DOWN,
+    SET_SUBMERSIBLE_INTAKE,
+    SET_DEPOSIT_FRONT_TOP,
+    SET_DEPOSIT_FRONT_BOTTOM,
+    SET_DEPOSIT_BACK_TOP,
+    SET_DEPOSIT_BACK_BOTTOM,
+    SET_SAFE_DRIVING_POSITION,
+    REMOVE_ARM_RULES,
+    DIFF_UP,
+    DIFF_DOWN,
+    DIFF_LEFT,
+    DIFF_RIGHT
 }

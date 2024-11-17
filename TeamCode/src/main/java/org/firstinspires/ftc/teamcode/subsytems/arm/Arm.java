@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsytems.arm;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.robot.RobotCore;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
 
@@ -83,17 +84,23 @@ public class Arm {
 
     public void moveToPresetPosition(ArmPresetPosition position){
         //if elbow needs to be moved to reach position, retract slides fully
-       if(Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2 && slide.getSlideExtensionInInches() > 1){
-            slide.setSlideExtensionLength(0);
-        } else{
-            //move elbow first
-            if(Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2){
-                elbow.setTargetAngle(position.elbowAngle);
-            } else {
-                // now move slide
-                slide.setSlideExtensionLength(position.slideLength);
-            }
-        }
+       if (!RobotCore.remove_arm_rules){
+           if(Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2 && slide.getSlideExtensionInInches() > 1){
+               slide.setSlideExtensionLength(0);
+           } else{
+               //move elbow first
+               if(Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2){
+                   elbow.setTargetAngle(position.elbowAngle);
+               } else {
+                   // now move slide
+                   slide.setSlideExtensionLength(position.slideLength);
+               }
+           }
+       } else {
+           slide.setSlideExtensionLength(position.slideLength);
+           elbow.setElbowAngle(position.elbowAngle);
+       }
+
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){
