@@ -31,15 +31,6 @@ public class pivotCodeFunctions {
         if (pivotPos > topPos) {
             pivotPos = topPos;
         }
-        /*if (pivot.getCurrentPosition() > pivotPos) {
-            pivot.setPower(-1);
-        } else {
-            pivot.setPower(1);
-        }*/
-
-        if(pivot.getTargetPosition() == pivotPos){
-            return; //pivot is already going to our target
-        }
 
         pivot.setPower(1);
         pivot.setTargetPosition(pivotPos);
@@ -100,11 +91,11 @@ public class pivotCodeFunctions {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            goTo(target);
             if (target-30 < getElbowTicks() && getElbowTicks() < target+30) {
-                holdPos();
+                pivot.setPower(0);
                 return false;
             } else {
-                goTo(target);
                 return true;
             }
         }

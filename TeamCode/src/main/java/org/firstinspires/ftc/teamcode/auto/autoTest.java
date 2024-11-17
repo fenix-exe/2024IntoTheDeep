@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
+import org.firstinspires.ftc.teamcode.util.writeAuto;
+
+import java.util.WeakHashMap;
 
 @Autonomous
 public class autoTest extends LinearOpMode {
@@ -24,21 +27,24 @@ public class autoTest extends LinearOpMode {
     PIDController controllerPivotPIDF;
     DcMotorEx slide;
     DcMotorEx pivot;
+    writeAuto writer;
     @Override
     public void runOpMode() throws InterruptedException {
 
-        slide = hardwareMap.get(DcMotorEx.class, "slide");
+        /*slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivot.setDirection(DcMotorSimple.Direction.REVERSE);*/
+        String filename = "/sdcard/Download/test.csv";
+        writer = new writeAuto(filename);
+
 
         //Homing the pivot
         /*while (!limitSwitch.isPressed()){
             pivot.setPower(-0.5);
         }
         pivot.setPower(0);*/
-
-        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -46,15 +52,21 @@ public class autoTest extends LinearOpMode {
         slideCode = new slideCodeFunctions(slide);
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
         pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
-        pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, 2178);
+        pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, 2178);*/
 
         waitForStart();
 
-        while (slideCode.getSlidePosition() < 100) {
-            slideCode.goTo(100);
-            telemetry.addData("Slide Position", slide.getCurrentPosition());
-            telemetry.update();
+        while (!isStopRequested()) {
+
+            if (gamepad1.a) {
+                writer.writeToFile(1, 2, 3, 4);
+            }
+            if (gamepad1.b) {
+                writer.writeToFile(10, 20, 30, 40);
+            }
         }
+
+
 
     }
 }
