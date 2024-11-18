@@ -55,57 +55,14 @@ public class activeIntake {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (intake.getPower() != targetPower) {
-                intake.setPower(targetPower);
-                return false;
-            } else {
-                return true;
-            }
+            intake.setPower(targetPower);
+            return false;
         }
     }
 
     public Action aIControl(double targetPower) {
         return new aIControl(targetPower);
     }
-
-    public class intakeIn implements Action {
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (true) {
-                //TODO: add color sensor code
-                intakeForward();
-                return true;
-            } else {
-                intakeOff();
-                return false;
-            }
-        }
-    }
-
-    public Action intakeIn() {
-        return new intakeIn();
-    }
-
-    public class intakeOut implements Action {
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (true) {
-                //TODO: add color sensor code
-                intakeBack();
-                return true;
-            } else {
-                intakeOff();
-                return false;
-            }
-        }
-    }
-
-    public Action intakeOut() {
-        return new intakeOut();
-    }
-
 
 
 }

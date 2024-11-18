@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,11 +29,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Autonomous(name = "AUTO - Ascent Preload Park")
+
+@Autonomous(name = "AUTO - Ascent Park")
 public class ascentPreloadPark extends LinearOpMode {
 
     //initialize auto extractor
-    //TODO: WHEN COPYING THIS CODE, CHANGE THE FILENAME TO THE CORRECT FILENAME
     String filename = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
@@ -66,6 +65,7 @@ public class ascentPreloadPark extends LinearOpMode {
 
         //set up rr
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
+
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         intake = hardwareMap.get(CRServo.class, "intake");
@@ -112,16 +112,18 @@ public class ascentPreloadPark extends LinearOpMode {
             if (XareSame && YareSame && AngleareSame) {
                 traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        //.stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
-                        /*.stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))*/;
+                .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
+                .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
+                        .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
+
                 //Active Intake servo not working
             } else {
-                traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i))), Math.PI/2 )
+                traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
                         .stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        //.stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
-                /*.stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))*/;
-                //Active Intake servo not working
+                .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
+                .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
+                        .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));                //Active Intake servo not working
             }
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
@@ -131,16 +133,18 @@ public class ascentPreloadPark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " Wrist Psi", extractAuto.getWristPsiFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Wrist Rho", extractAuto.getWristRhoFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Intake", extractAuto.getIntakeFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Wait", extractAuto.getWaitFromList(vector.get(i)));
+            telemetry.update();
+
         }
 
-        telemetry.update();
-
-        pivotCode.goTo(extractAuto.getElbowPhiFromList(vector.get(0)));
-        slideCode.goTo(extractAuto.getLinearSlideFromList(vector.get(0)));
 
 
         Action action1 = traj1.build();
 
+        pivotCode.goTo(870);
+        slideCode.goTo(0);
+        diffy.setDifferentialPosition(-90,-90);
 
         waitForStart();
 

@@ -16,10 +16,10 @@ public class extractAuto {
         public int linear_slide;
         public double wrist_psi;
         public double wrist_rho;
-        public int intake;
+        public double intake;
         public double wait;
 
-        PositionInSpace(int x_value, int y_value, double angle, int elbow_phi, int linear_slide, double wrist_psi, double wrist_rho, int intake, double wait) {
+        PositionInSpace(int x_value, int y_value, double angle, int elbow_phi, int linear_slide, double wrist_psi, double wrist_rho, double intake, double wait) {
             this.x_value = x_value;
             this.y_value = y_value;
             this.angle = angle;
@@ -47,7 +47,7 @@ public class extractAuto {
                 int linear_slide = Integer.parseInt(values[4].trim());
                 double wrist_psi = Double.parseDouble(values[5].trim());
                 double wrist_rho = Double.parseDouble(values[6].trim());
-                int intake = Integer.parseInt(values[7].trim());
+                double intake = Double.parseDouble(values[7].trim());
                 double wait = Double.parseDouble(values[8].trim());
                 autoPath.add(new PositionInSpace(x_value, y_value, angle, elbow_phi, linear_slide, wrist_psi, wrist_rho, intake, wait));
             } catch (NumberFormatException e) {
@@ -89,7 +89,7 @@ public class extractAuto {
         return position.wrist_rho;
     }
 
-    public int getIntakeFromList(PositionInSpace position) {
+    public double getIntakeFromList(PositionInSpace position) {
         return position.intake;
     }
 

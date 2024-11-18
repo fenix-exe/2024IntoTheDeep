@@ -4,8 +4,6 @@ import android.widget.Switch;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -17,8 +15,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
@@ -45,6 +43,7 @@ public class actionTest extends LinearOpMode {
     DcMotorEx slide;
     DcMotorEx pivot;
     writeAuto writer;
+    //TouchSensor limitSwitch;
     @Override
     public void runOpMode() throws InterruptedException {
         extractAuto extractAuto = new extractAuto();
@@ -56,6 +55,7 @@ public class actionTest extends LinearOpMode {
         intake = hardwareMap.get(CRServo.class, "intake");
         left = hardwareMap.get(ServoImplEx.class, "left");
         right = hardwareMap.get(ServoImplEx.class, "right");
+        //limitSwitch = hardwareMap.get(TouchSensor.class, "limit");
         activeIntake activeIntake = new activeIntake(intake);
 
         differential diffy = new differential(left, right);
@@ -91,31 +91,42 @@ public class actionTest extends LinearOpMode {
         Gamepad previousGamepad2 = new Gamepad();
 
 
-        while (selectedNum !=2 || selectedNum !=3 || selectedNum !=4 || selectedNum !=5){
-            previousGamepad1.copy(currentGamepad1);
-            previousGamepad2.copy(currentGamepad2);
+        while (selectedNum !=2 || selectedNum !=3 || selectedNum !=4 || selectedNum !=5 && !isStopRequested()){
+            previousGamepad1.copy(gamepad1);
             telemetry.addLine("1 - Home Pivot");
             telemetry.addLine("2 - AUTO - Observation Park");
             telemetry.addLine("3 - AUTO - Observation Preload Park");
             telemetry.addLine("4 - AUTO - Ascent Preload Park");
             telemetry.addLine("5 - AUTO - Ascent Cycle Park");
-            telemetry.addData("Selected Number", selectedNum);
-            if (currentGamepad1.a && !previousGamepad1.a){
+            telemetry.addData("Selected Number", currentNum);
+            telemetry.update();
+            if (gamepad1.a && !previousGamepad1.a){
                 if (currentNum == 5) {
                     currentNum = 1;
                 } else {
                     currentNum++;
                 }
             }
-            if (currentGamepad1.start && !previousGamepad1.start){
+            if (gamepad1.start && !previousGamepad1.start){
                 selectedNum = currentNum;
+                telemetry.addLine("intialized");
+                telemetry.update();
+                break;
             }
             if (selectedNum == 1){
-                //home pivot
+                /*while (!limitSwitch.isPressed()){
+            pivot.setPower(-0.5);
+                }*/
+                pivot.setPower(0);
+                pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 selectedNum = 0;
             } else {
                 pivot.setPower(0);
             }
+            currentGamepad1.copy(gamepad1);
         }
         switch (selectedNum){
             case 2:
@@ -134,6 +145,9 @@ public class actionTest extends LinearOpMode {
                 throw new IllegalStateException("Unexpected value: " + selectedNum);
         }
 
+        telemetry.addLine("read file");
+        telemetry.update();
+
         try {
             vector = extractAuto.SetUpListOfThings(telemetry, filename);
         } catch (FileNotFoundException e) {
@@ -142,6 +156,9 @@ public class actionTest extends LinearOpMode {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        telemetry.addLine("setup");
+        telemetry.update();
 
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
