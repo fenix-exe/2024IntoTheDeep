@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
 import org.firstinspires.ftc.teamcode.util.autoTeleTransfer;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
+import org.firstinspires.ftc.teamcode.util.writeAuto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,11 +48,13 @@ public class ascentPreloadPark extends LinearOpMode {
     PIDController controllerPivotPIDF;
     DcMotorEx slide;
     DcMotorEx elbow;
+    writeAuto writer;
 
     @Override
     public void runOpMode() throws InterruptedException {
         //add telemetry to FTC dashboard
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        writer = new writeAuto("/sdcard/Download/save.csv");
 
         //try to read and extract data from file
         try {
@@ -114,6 +117,7 @@ public class ascentPreloadPark extends LinearOpMode {
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                 .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
                 .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
+                        .stopAndAdd(writer.savePosition(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
 
                 //Active Intake servo not working
@@ -123,6 +127,7 @@ public class ascentPreloadPark extends LinearOpMode {
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                 .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                 .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
+                        .stopAndAdd(writer.savePosition(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));                //Active Intake servo not working
             }
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
@@ -148,9 +153,15 @@ public class ascentPreloadPark extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) {
+            return;
+        }
+
 
         Actions.runBlocking(action1);
+
+
+
 
         autoTeleTransfer.setElbowTicks(elbow.getCurrentPosition());
         autoTeleTransfer.setSlideTicks(slide.getCurrentPosition());
