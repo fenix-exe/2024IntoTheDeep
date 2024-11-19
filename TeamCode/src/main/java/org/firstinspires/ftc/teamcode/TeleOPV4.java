@@ -106,14 +106,13 @@ public class TeleOPV4 extends LinearOpMode {
 
         RobotActions actions = new RobotActions();
         RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
-        RobotCore.gamepad2 = gamepad2;
         while (opModeIsActive()){
 
             driverControls.update();
 
             Set<UserDirective> directive = driverControls.getUserIntents();
 
-            RobotCore.updatePresetPositions(directive);
+            RobotCore.updatePresetPositions(actions, directive);
             RobotCore.updateRobotActionsforArm(actions, directive);
             RobotCore.updateRobotActionsForEndEffector(actions, directive);
             RobotCore.updateRobotActionsforDriveTrain(actions, directive);

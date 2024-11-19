@@ -87,13 +87,19 @@ public class DriverControls implements DriveControlMap{
     @Override
     public boolean pivotParallel() {
         //return gamepad2current.b
-        return gamepad2current.dpad_right;
+        return gamepad2current.dpad_right && !gamepad2current.dpad_left;
+    }
+    public boolean setNewPivotParallel(){
+        return gamepad2current.dpad_right && gamepad2current.dpad_left;
     }
 
     @Override
     public boolean pivotPerp() {
         //return gamepad2.y
-        return gamepad2current.dpad_up;
+        return gamepad2current.dpad_up && !gamepad2current.dpad_left;
+    }
+    public boolean setNewPivotPerp(){
+        return gamepad2current.dpad_up && gamepad2current.dpad_left;
     }
 
     @Override
@@ -189,6 +195,7 @@ public class DriverControls implements DriveControlMap{
     public boolean diffDown(){return gamepad2current.dpad_down && !gamepad2previous.dpad_down;}
     public boolean diffLeft(){return gamepad2current.dpad_left && !gamepad2previous.dpad_left;}
     public boolean diffRight(){return gamepad2current.dpad_right && !gamepad2previous.dpad_right;}
+    public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){
@@ -266,6 +273,12 @@ public class DriverControls implements DriveControlMap{
         }
         if (setNewSubmersibleIntakeReady()){
             returnList.add(UserDirective.SET_SUBMERSIBLE_INTAKE);
+        }
+        if (setNewPivotParallel()){
+            returnList.add(UserDirective.SET_ELBOW_0);
+        }
+        if (setNewPivotPerp()){
+            returnList.add(UserDirective.SET_ELBOW_90);
         }
         if (removeArmRules()){
             returnList.add(UserDirective.REMOVE_ARM_RULES);

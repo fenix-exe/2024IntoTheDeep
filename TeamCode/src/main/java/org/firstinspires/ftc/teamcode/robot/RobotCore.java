@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Arm;
@@ -10,6 +9,8 @@ import org.firstinspires.ftc.teamcode.subsytems.arm.HoldSlideAction;
 import org.firstinspires.ftc.teamcode.subsytems.arm.MoveElbowAction;
 import org.firstinspires.ftc.teamcode.subsytems.arm.MoveSlideAction;
 import org.firstinspires.ftc.teamcode.subsytems.arm.MoveToPresetPositionAction;
+import org.firstinspires.ftc.teamcode.subsytems.arm.SetArmPresetPosition;
+import org.firstinspires.ftc.teamcode.subsytems.driverControl.RumbleGamepadAction;
 import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserDirective;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.ChangeSpeedAction;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
@@ -25,7 +26,6 @@ import org.firstinspires.ftc.teamcode.subsytems.endeffector.MoveActiveIntakeActi
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.MoveEndEffectorThroughJoystick;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.MoveEndEffectorToPresetPositionAction;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class RobotCore {
@@ -34,22 +34,20 @@ public class RobotCore {
 
     static DriverControls driverControls;
     static EndEffector endEffector;
-    public static boolean remove_arm_rules = false;
-    public static Gamepad gamepad2;
 
-    private static Set<RobotActivityState> activityState;
     public static void initialize(DriverControls driverControls, DriveTrain drivetrain, Arm arm, EndEffector endEffector){
-        activityState =new HashSet<>();
         RobotCore.arm = arm;
         RobotCore.drivetrain = drivetrain;
         RobotCore.driverControls = driverControls;
         RobotCore.endEffector = endEffector;
     }
-    public static Set<RobotActivityState> getCurrentActivityState(){
-        return activityState;
-    }
 
     public static void updateRobotActionsforArm(RobotActions actions, Set<UserDirective> intent) {
+        //Drivers requested to override safety rules
+        boolean remove_arm_rules = false;
+        if (intent.contains(UserDirective.REMOVE_ARM_RULES)){
+            remove_arm_rules = true;
+        }
 
         if (intent.contains(UserDirective.MANUAL_ELBOW)) {
             actions.cancelPresetArmActions();
@@ -62,28 +60,28 @@ public class RobotCore {
             actions.add(new MoveSlideAction(arm,driverControls.slideMovement()));
         } else if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_POSITION, remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_TOP)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION, remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_BOTTOM)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION, remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_FRONT_TOP)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION, remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_FRONT_BOTTOM)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION, remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_SAFE_DRIVING_POSITION)){
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.SAFE_DRIVING_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.SAFE_DRIVING_POSITION, remove_arm_rules));
         } else if (intent.contains(UserDirective.ELBOW_0)){
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.FLAT_ELBOW));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.FLAT_ELBOW, remove_arm_rules));
         } else if (intent.contains(UserDirective.ELBOW_90)){
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.ASCENT_2_HANG));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.ASCENT_2_HANG, remove_arm_rules));
         }
 
         // check if you need to hold position for slide and/or elbow
@@ -98,11 +96,7 @@ public class RobotCore {
             }
         }
 
-        if (intent.contains(UserDirective.REMOVE_ARM_RULES)){
-            remove_arm_rules = true;
-        } else {
-            remove_arm_rules = false;
-        }
+
     }
     public static void updateRobotActionsforDriveTrain(RobotActions actions, Set<UserDirective> intent){
         if(intent.contains(UserDirective.SPEED_SWITCH)){
@@ -170,28 +164,34 @@ public class RobotCore {
         }
 
         if (intent.contains(UserDirective.INTAKE_FORWARD) && endEffector.blockIn()){
-            gamepad2.rumble(10);
+            actions.add(new RumbleGamepadAction(driverControls));
         }
 
     }
-    public static void updatePresetPositions(Set<UserDirective> directive){
+    public static void updatePresetPositions(RobotActions actions, Set<UserDirective> directive){
         if (directive.contains(UserDirective.SET_DEPOSIT_BACK_BOTTOM)){
-            ArmPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION = new ArmPresetPosition(arm.getElbowAngleInDegrees(), arm.getSlideExtension());
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
         }
         if (directive.contains(UserDirective.SET_DEPOSIT_FRONT_BOTTOM)){
-            ArmPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION = new ArmPresetPosition(arm.getElbowAngleInDegrees(), arm.getSlideExtension());
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
         }
         if (directive.contains(UserDirective.SET_DEPOSIT_BACK_TOP)){
-            ArmPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION = new ArmPresetPosition(arm.getElbowAngleInDegrees(), arm.getSlideExtension());
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
         }
         if (directive.contains(UserDirective.SET_DEPOSIT_FRONT_TOP)){
-            ArmPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION = new ArmPresetPosition(arm.getElbowAngleInDegrees(), arm.getSlideExtension());
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
         }
         if (directive.contains(UserDirective.SET_SUBMERSIBLE_INTAKE)){
-            ArmPresetPosition.INTAKE_POSITION = new ArmPresetPosition(arm.getElbowAngleInDegrees(), arm.getSlideExtension());
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.INTAKE_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
         }
         if (directive.contains(UserDirective.SET_SAFE_DRIVING_POSITION)){
-            ArmPresetPosition.SAFE_DRIVING_POSITION = new ArmPresetPosition(arm.getElbowAngleInDegrees(), arm.getSlideExtension());
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.SAFE_DRIVING_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+        }
+        if (directive.contains(UserDirective.SET_ELBOW_0)){
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.FLAT_ELBOW, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+        }
+        if (directive.contains(UserDirective.SET_ELBOW_90)){
+            actions.add(new SetArmPresetPosition(ArmPresetPosition.ASCENT_2_HANG, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
         }
     }
     private static double getSpeedMultiplier(Set<UserDirective> intent){
