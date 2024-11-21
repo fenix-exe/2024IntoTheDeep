@@ -12,8 +12,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robot.ConfigReader;
 import org.firstinspires.ftc.teamcode.robot.RobotActions;
 import org.firstinspires.ftc.teamcode.robot.RobotCore;
@@ -128,6 +130,8 @@ public class TeleOPV4 extends LinearOpMode {
             telemetry.addData("IMU yaw", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.addData("pitch", diffCode.returnPitch());
             telemetry.addData("roll", diffCode.returnRoll());
+            telemetry.addData("slide current", slide.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("elbow current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             //telemetry.addData("Is the hall effect sensor triggered?", limitSwitch.isPressed());
             telemetry.update();
 
@@ -172,22 +176,18 @@ public class TeleOPV4 extends LinearOpMode {
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //limitSwitch = hardwareMap.get(TouchSensor.class, "limit switch");
-
-        //Homing the elbow
-        /*while (!limitSwitch.isPressed()){
-            pivot.setPower(-0.5);
-        }
-        pivot.setPower(0);*/
+        //limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //home();
 
         Slide slideControl = new Slide(slide, PHYSICALMAXEXTENSION);
         Elbow elbow = new Elbow(pivot, 2300);
@@ -217,5 +217,18 @@ public class TeleOPV4 extends LinearOpMode {
     }
     private void loadFromConfigFile(String fileName){
         ConfigReader.readConfig(fileName);
+    }
+    private void home(){
+        //Homing the elbow
+        while (!limitSwitch.isPressed() && !isStopRequested()){
+            pivot.setPower(-0.5);
+        }
+        pivot.setPower(0);
+
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

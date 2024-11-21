@@ -22,6 +22,9 @@ public class differential {
     public static float pitchError = -15;
     public static float rollError = 30;
 
+    private double last_known_pitch = 0;
+    private double last_known_roll = 0;
+
     public differential(ServoImplEx left, ServoImplEx right){
         this.left = left;
         this.right = right;
@@ -44,13 +47,18 @@ public class differential {
     public void setDifferentialPosition(double pitch, double roll){
         left.setPosition(setAPosition(-2*(pitch)+pitchError, roll+rollError));
         right.setPosition(setBPosition(-2*(pitch)+pitchError, roll+rollError));
+        this.last_known_pitch = pitch;
+        this.last_known_roll = roll;
+
     }
     public double returnRoll() {
-        return 135*(left.getPosition())+135*(right.getPosition())-135;
+        //return 135*(left.getPosition())+135*(right.getPosition())-135;
+        return last_known_roll;
     }
 
     public double returnPitch() {
-        return 2*(135*(left.getPosition())-135*(right.getPosition())-135)-540*(right.getPosition())+270;
+        //return 2*(135*(left.getPosition())-135*(right.getPosition())-135)-540*(right.getPosition())+270;
+        return last_known_pitch;
     }
 
     public class setDiffy implements Action {

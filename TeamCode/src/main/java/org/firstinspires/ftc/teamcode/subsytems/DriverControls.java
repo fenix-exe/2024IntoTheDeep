@@ -74,13 +74,13 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean slidesFullyUp() {
-        return gamepad2current.dpad_up;
+        return false;
         //return gamepad1.dpad_up;
     }
 
     @Override
     public boolean slidesFullyDown() {
-        return gamepad2current.dpad_down;
+        return false;
         //return gamepad1.dpad_down;
     }
 
@@ -112,8 +112,8 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public double slideMovement() {
-        if (Math.abs(gamepad2current.right_stick_y) > 0.5){
-            return -gamepad2current.right_stick_y;
+        if (Math.abs(gamepad2current.left_stick_x) > 0.5){
+            return -gamepad2current.left_stick_x;
         }
         return 0;
     }
@@ -130,12 +130,12 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean intakePower() {
-        return gamepad2current.left_bumper && !gamepad2previous.left_bumper;
+        return false;
     }
 
     @Override
     public boolean intakeDirection() {
-        return gamepad2current.right_bumper && !gamepad2previous.right_bumper;
+        return false;
     }
 
     @Override
@@ -191,10 +191,10 @@ public class DriverControls implements DriveControlMap{
     public boolean wristDown(){return gamepad2current.dpad_down;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
     public boolean removeArmRules(){return gamepad2current.left_bumper;}
-    public boolean diffUp(){return gamepad2current.dpad_up && !gamepad2previous.dpad_up;}
-    public boolean diffDown(){return gamepad2current.dpad_down && !gamepad2previous.dpad_down;}
-    public boolean diffLeft(){return gamepad2current.dpad_left && !gamepad2previous.dpad_left;}
-    public boolean diffRight(){return gamepad2current.dpad_right && !gamepad2previous.dpad_right;}
+    public boolean diffUp(){return -gamepad2current.right_stick_y > 0.5;}
+    public boolean diffDown(){return -gamepad2current.right_stick_y < -0.5;}
+    public boolean diffLeft(){return gamepad2current.right_stick_x > 0.5;}
+    public boolean diffRight(){return gamepad2current.right_stick_x < -0.5;}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();

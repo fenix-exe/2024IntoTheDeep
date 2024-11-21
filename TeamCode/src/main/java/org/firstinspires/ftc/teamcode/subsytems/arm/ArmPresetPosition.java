@@ -14,7 +14,7 @@ public class ArmPresetPosition {
     public static ArmPresetPosition DEPOSIT_BACK_TOP_BUCKET_POSITION = new ArmPresetPosition(90,25);
     public static ArmPresetPosition DEPOSIT_BACK_BOTTOM_BUCKET_POSITION = new ArmPresetPosition(90,7.75);
 
-    public static ArmPresetPosition SAFE_DRIVING_POSITION = new ArmPresetPosition(45,0);
+    public static ArmPresetPosition SAFE_DRIVING_POSITION = new ArmPresetPosition(65,0);
     public static ArmPresetPosition ASCENT_2_HANG = new ArmPresetPosition(90, 0);
     public static ArmPresetPosition FLAT_ELBOW = new ArmPresetPosition(0,0);
 }

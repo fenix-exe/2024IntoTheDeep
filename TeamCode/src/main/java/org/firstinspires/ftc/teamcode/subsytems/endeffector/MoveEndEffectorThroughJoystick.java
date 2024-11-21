@@ -10,7 +10,7 @@ public class MoveEndEffectorThroughJoystick implements IRobotAction {
     EndEffector endEffector;
     double deltaPitch;
     double deltaRoll;
-    double STEP_SIZE = 1.5;
+    double STEP_SIZE = 3;
     public MoveEndEffectorThroughJoystick(EndEffector endEffector, EndEffectorMovement direction){
         this.endEffector = endEffector;
         this.direction = direction;

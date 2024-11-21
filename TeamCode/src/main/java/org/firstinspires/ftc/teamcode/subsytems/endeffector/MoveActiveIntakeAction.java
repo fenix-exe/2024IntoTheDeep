@@ -33,12 +33,12 @@ public class MoveActiveIntakeAction implements IRobotAction {
 
     @Override
     public boolean isComplete() {
-        return false;
+        return this.completed;
     }
 
     @Override
     public boolean isCancelled() {
-        return false;
+        return this.cancelled;
     }
 
     @Override

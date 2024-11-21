@@ -16,7 +16,7 @@ public class Elbow {
     DcMotorEx elbow;
     int elbowPosition;
     int topPosition;
-    int STEP_SIZE_FOR_JOYSTICK = 250;
+    int STEP_SIZE_FOR_JOYSTICK = 350;
     public Elbow(DcMotorEx elbow, int topPosition){
         this.elbow = elbow;
         this.topPosition = topPosition;
@@ -28,8 +28,8 @@ public class Elbow {
     }
     public void setTargetAngle(double degrees){
         elbowPosition = degreesToTicks(degrees);
-        if (elbowPosition < -15){
-            elbowPosition = -15;
+        if (elbowPosition < 0){
+            elbowPosition = 0;
         }
         if (elbowPosition > topPosition){
             elbowPosition = topPosition;
@@ -37,9 +37,9 @@ public class Elbow {
 
         goToTargetPosition(elbowPosition);
     }
-    public void elbowJoystick(int startPos, double joystickControl){
-
-        /*double power;
+    public void elbowJoystick(double joystickControl){
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double power;
         if (elbow.getCurrentPosition() > topPosition - 100 && joystickControl > 0){
             power = 0;
         } else if (elbow.getCurrentPosition() < 100 && joystickControl < 0){
@@ -47,16 +47,16 @@ public class Elbow {
         } else {
             power = joystickControl;
         }
+        elbow.setPower(power);
 
-        elbow.setPower(power);*/
-        int elbowPosition = elbow.getCurrentPosition() + (int) (STEP_SIZE_FOR_JOYSTICK * joystickControl);
+        /*int elbowPosition = elbow.getCurrentPosition() + (int) (STEP_SIZE_FOR_JOYSTICK * joystickControl);
         if (elbowPosition > topPosition-50){
             elbowPosition = topPosition;
         }
         if (elbowPosition < -15){
             elbowPosition = -15;
         }
-        goToTargetPosition(elbowPosition);
+        goToTargetPosition(elbowPosition);*/
     }
     public void holdPosition(){
         elbow.setPower(0);

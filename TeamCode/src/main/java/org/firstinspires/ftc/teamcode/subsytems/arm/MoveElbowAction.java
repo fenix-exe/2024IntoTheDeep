@@ -7,10 +7,12 @@ public class MoveElbowAction implements IRobotAction {
     double joystickMovement;
     boolean cancelled = false;
     boolean complete = false;
+    boolean remove_arm_rules;
 
-    public MoveElbowAction(Arm arm, double joystickMovement){
+    public MoveElbowAction(Arm arm, double joystickMovement, boolean remove_arm_rules){
         this.arm = arm;
         this.joystickMovement = joystickMovement;
+        this.remove_arm_rules = remove_arm_rules;
     }
 
     @Override
@@ -21,7 +23,7 @@ public class MoveElbowAction implements IRobotAction {
     @Override
     public void execute() {
         if (!this.cancelled){
-            arm.moveElbow(joystickMovement);
+            arm.moveElbow(joystickMovement, remove_arm_rules);
         }
         this.complete = true;
     }

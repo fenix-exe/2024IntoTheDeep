@@ -50,14 +50,12 @@ public class RobotCore {
         }
 
         if (intent.contains(UserDirective.MANUAL_ELBOW)) {
-            actions.cancelPresetArmActions();
-            //actions.add(new MoveElbowAction(arm, 20 * driverControls.pivotJoystick() + arm.getElbowAngleInDegrees()));
-            actions.add(new MoveElbowAction(arm, driverControls.pivotJoystick()));
-        } else if (intent.contains(UserDirective.MANUAL_SLIDE)) {
             // first cancel any preset arm commands so we stop any preset slide/elbow moves
             actions.cancelPresetArmActions();
-            //actions.add(new MoveSlideAction(arm, 0.5 * driverControls.slideMovement() + arm.getSlideExtension()));
-            actions.add(new MoveSlideAction(arm,driverControls.slideMovement()));
+            actions.add(new MoveElbowAction(arm, driverControls.pivotJoystick(), remove_arm_rules));
+        } else if (intent.contains(UserDirective.MANUAL_SLIDE)) {
+            actions.cancelPresetArmActions();
+            actions.add(new MoveSlideAction(arm, driverControls.slideMovement()));
         } else if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
             actions.cancelPresetArmActions();
             actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_POSITION, remove_arm_rules));
@@ -198,7 +196,7 @@ public class RobotCore {
         if (!intent.contains(UserDirective.REMOVE_SPEED_RULES)){
             if (arm.getElbowAngleInDegrees() <= 30){
                  return DriveTrainSpeedMultiplier.HALF_SPEED;
-            } else if (30 < arm.getElbowAngleInDegrees() && arm.getElbowAngleInDegrees() <= 60){
+            } else if (30 < arm.getElbowAngleInDegrees() && arm.getElbowAngleInDegrees() <= 70){
                 return DriveTrainSpeedMultiplier.NO_MULTIPLIER;
             } else {
                 return  DriveTrainSpeedMultiplier.SUPER_SLOW;
