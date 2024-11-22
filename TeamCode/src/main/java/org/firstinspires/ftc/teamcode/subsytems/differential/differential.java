@@ -61,13 +61,6 @@ public class differential {
         return last_known_pitch;
     }
 
-    public double returnRoll(double aPos, double bPos) {
-        return 135*(aPos)+135*(bPos)-135;
-    }
-
-    public double returnPitch(double aPos, double bPos) {
-        return 2*(135*(aPos)-135*(bPos)-135)-540*(bPos)+270;
-    }
 
     public class setDiffy implements Action {
         private final double pitch;
