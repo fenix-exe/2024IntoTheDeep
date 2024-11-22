@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsytems.arm;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,10 +15,11 @@ public class ElbowTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
+        RevTouchSensor limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
         elbowMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elbow = new Elbow(elbowMotor, 2100);
+        elbow = new Elbow(elbowMotor, limitSwitch, 2100);
         waitForStart();
 
         while (opModeIsActive()){

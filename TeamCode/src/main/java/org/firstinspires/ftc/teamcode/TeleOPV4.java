@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -102,12 +103,12 @@ public class TeleOPV4 extends LinearOpMode {
         } else if (gamepad1.x){
             blockColor = targetBlockColor.YELLOW;
         }*/
-
+        RobotActions actions = new RobotActions();
+        RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
         waitForStart();
 
 
-        RobotActions actions = new RobotActions();
-        RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
+
         while (opModeIsActive()){
 
             driverControls.update();
@@ -179,7 +180,7 @@ public class TeleOPV4 extends LinearOpMode {
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -190,10 +191,12 @@ public class TeleOPV4 extends LinearOpMode {
         //home();
 
         Slide slideControl = new Slide(slide, PHYSICALMAXEXTENSION);
-        Elbow elbow = new Elbow(pivot, 2300);
+        Elbow elbow = new Elbow(pivot, limitSwitch, 2300);
         arm = new Arm(slideControl, elbow, PHYSICALMAXEXTENSION);
+
         slide.setTargetPosition(0);
         pivot.setTargetPosition(0);
+
     }
     private void initializeIntake(){
         intake = hardwareMap.get(CRServo.class, "intake");

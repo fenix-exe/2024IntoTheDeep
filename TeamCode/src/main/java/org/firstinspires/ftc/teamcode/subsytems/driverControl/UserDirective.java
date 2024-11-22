@@ -34,5 +34,6 @@ public enum UserDirective {
     DIFF_UP,
     DIFF_DOWN,
     DIFF_LEFT,
-    DIFF_RIGHT
+    DIFF_RIGHT,
+    HOME_ARM
 }

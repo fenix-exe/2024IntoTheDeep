@@ -13,7 +13,6 @@ public class HomeTeleOp extends LinearOpMode {
     DcMotorEx slide;
     DcMotorEx pivot;
     RevTouchSensor limitSwitch;
-    ElapsedTime timer;
 
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
@@ -39,15 +38,12 @@ public class HomeTeleOp extends LinearOpMode {
         pivot.setTargetPosition(0);
     }
     private void home(){
-        timer = new ElapsedTime();
-        timer.reset();
         //Homing the elbow
-        pivot.setTargetPosition(125);
-        while (Math.abs(pivot.getCurrentPosition()) - 10 > pivot.getTargetPosition()){
-            pivot.setPower(1);
+        while (!limitSwitch.isPressed() && !isStopRequested()){
+            pivot.setPower(-0.2);
         }
-        while (!limitSwitch.isPressed() && !isStopRequested() && timer.milliseconds() < 5000){
-            pivot.setPower(-0.5);
+        while (limitSwitch.isPressed() && !isStopRequested()){
+            pivot.setPower(0.2);
         }
         pivot.setPower(0);
 

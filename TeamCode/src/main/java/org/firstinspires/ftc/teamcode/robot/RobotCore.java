@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
+
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Arm;
 import org.firstinspires.ftc.teamcode.subsytems.arm.ArmPresetPosition;
 import org.firstinspires.ftc.teamcode.subsytems.arm.HoldElbowAction;
 import org.firstinspires.ftc.teamcode.subsytems.arm.HoldSlideAction;
+import org.firstinspires.ftc.teamcode.subsytems.arm.HomeElbowAction;
 import org.firstinspires.ftc.teamcode.subsytems.arm.MoveElbowAction;
 import org.firstinspires.ftc.teamcode.subsytems.arm.MoveSlideAction;
 import org.firstinspires.ftc.teamcode.subsytems.arm.MoveToPresetPositionAction;
@@ -80,6 +83,9 @@ public class RobotCore {
         } else if (intent.contains(UserDirective.ELBOW_90)){
             actions.cancelPresetArmActions();
             actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.ASCENT_2_HANG, remove_arm_rules));
+        } else if (intent.contains(UserDirective.HOME_ARM)){
+            actions.cancelPresetArmActions();
+            actions.add(new HomeElbowAction(arm));
         }
 
         // check if you need to hold position for slide and/or elbow
@@ -127,19 +133,19 @@ public class RobotCore {
     }
     public static void updateRobotActionsForEndEffector(RobotActions actions, Set<UserDirective> intent){
         if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
-            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.INTAKE_POSITION));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_POSITION));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_TOP)) {
-            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_BOTTOM)) {
-            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_FRONT_TOP)) {
-            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_FRONT_BOTTOM)) {
-            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION));
         } else if (intent.contains(UserDirective.PRESET_SAFE_DRIVING_POSITION)){
-            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.SAFE_DRIVING_POSITION));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.SAFE_DRIVING_POSITION));
         } else if (intent.contains(UserDirective.WRIST_DOWN)){
-            actions.add(new MoveEndEffectorToPresetPositionAction(endEffector, EndEffectorPresetPosition.INTAKE_DOWN_ON_GROUND));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_DOWN_ON_GROUND));
         }
 
         //gamepad control for the differential through dpad

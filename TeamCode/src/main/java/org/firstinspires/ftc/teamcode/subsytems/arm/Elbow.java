@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsytems.arm;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -14,12 +15,14 @@ import static java.lang.Math.floor;
 
 public class Elbow {
     DcMotorEx elbow;
+    RevTouchSensor limitSwitch;
     int elbowPosition;
     int topPosition;
     int STEP_SIZE_FOR_JOYSTICK = 350;
-    public Elbow(DcMotorEx elbow, int topPosition){
+    public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition){
         this.elbow = elbow;
         this.topPosition = topPosition;
+        this.limitSwitch = limitSwitch;
     }
     private void goToTargetPosition(int targetPosition){
         elbow.setTargetPosition(targetPosition);
@@ -84,6 +87,13 @@ public class Elbow {
 
     public boolean isBusy() {
         return elbow.isBusy();
+    }
+    public void resetEncoder(){
+        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void setElbowPower(double power){
+        elbow.setPower(power);
     }
 
     public class elbowControl implements Action {
