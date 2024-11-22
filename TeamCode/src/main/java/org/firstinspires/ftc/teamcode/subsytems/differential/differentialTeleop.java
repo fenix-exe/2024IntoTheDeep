@@ -25,84 +25,67 @@ public class differentialTeleop extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
-        gamepad1current = new Gamepad();
-        gamepad1previous = new Gamepad();
+
 
         left = hardwareMap.get(ServoImplEx.class, "left");
         right = hardwareMap.get(ServoImplEx.class, "right");
-        intake = hardwareMap.get(CRServo.class, "intake");
         left.setPwmRange(new PwmControl.PwmRange(500,2500));
         right.setPwmRange(new PwmControl.PwmRange(500,2500));
-        differentialCode = new differential(left, right);
-        activeIntake aIntake = new activeIntake(intake);
+        intake = hardwareMap.get(CRServo.class, "intake");
+
+        differential differential = new differential(left, right);
         double pitch;
         double roll;
 
+        pitch = 0;
+        roll = 0;
 
 
-        differentialCode.setDifferentialPosition(-90,90);
-        roll = -90;
-        pitch = 90;
-
-        boolean dontmoveroll = false;
-        gamepad1current.copy(gamepad1);
         waitForStart();
 
         while (opModeIsActive()){
-            dontmoveroll = false;
-            gamepad1previous.copy(gamepad1current);
-            gamepad1current.copy(gamepad1);
-            if (gamepad1.a && !gamepad1previous.a){
+            if (gamepad1.a){
+                //zero
                 telemetry.addLine("going to 0,0");
                 pitch = 0;
-                differentialCode.setDifferentialPosition(pitch,roll);
-                timer.reset();
-                dontmoveroll = true;
                 roll = 0;
             }
-            if (gamepad1.b && !gamepad1previous.b){//dep back
+            if (gamepad1.b){
+
                 telemetry.addLine("going to -90,90");
+                //outtake
                 pitch = -90;
-
-                roll = 90;
-
-            }
-            if (gamepad1.x && !gamepad1previous.x){//intake deposit front
-                telemetry.addLine("going to 90,90");
-                roll = 90;
-                differentialCode.setDifferentialPosition(pitch,roll);
-                timer.reset();
-                dontmoveroll = true;
-                pitch = 0;
-             }
-            if (gamepad1.y && !gamepad1previous.y){
-                telemetry.addLine("going to -45,90");
                 roll = -90;
-                differentialCode.setDifferentialPosition(pitch,roll);
-                timer.reset();
-                dontmoveroll = true;
+
+            }
+            if (gamepad1.x){
+                //ascentpark fold in
+                telemetry.addLine("going to 90,90");
                 pitch = 90;
+                roll = -90;
+
+            }
+            if (gamepad1.y){
+                telemetry.addLine("going to -45,90");
+                //intake
+                pitch = 50;
+                roll = 90;
+
+
             }
 
-           /* if (gamepad1.left_trigger > 0.5) {
-                aIntake.intakeForward();
-            } else if (gamepad1.right_trigger > 0.5) {
-                aIntake.intakeBack();
-            } else {
-
-            }*/
-
-            if (gamepad1.right_bumper) {
+            if (gamepad1.left_bumper) {
+                intake.setPower(1);
+            }
+            else if (gamepad1.right_bumper) {
                 intake.setPower(-1);
             }
-            else if (gamepad1.left_bumper) {
-                intake.setPower(1);
-            } else {
+            else {
                 intake.setPower(0);
             }
 
-
             differentialCode.setDifferentialPosition(pitch, roll);
+
 
             telemetry.addData("Left pos", left.getPosition());
             telemetry.addData("Right pos", right.getPosition());

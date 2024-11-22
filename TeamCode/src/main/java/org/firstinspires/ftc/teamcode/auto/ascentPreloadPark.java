@@ -31,11 +31,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - Observation Park")
-public class observationPark extends LinearOpMode {
+@Autonomous(name = "AUTO - Ascent Park")
+public class ascentPreloadPark extends LinearOpMode {
 
     //initialize auto extractor
-    String filename = "/sdcard/Download/autoPositions/observationPark.csv";
+    String filename = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
 
@@ -115,18 +115,18 @@ public class observationPark extends LinearOpMode {
             if (XareSame && YareSame && AngleareSame) {
                 traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
-                        .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
+                .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
+                .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
                         .stopAndAdd(writer.savePosition(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
 
                 //Active Intake servo not working
             } else {
                 traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
-                        .stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
-                        .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
+                .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
+                .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
                         .stopAndAdd(writer.savePosition(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));                //Active Intake servo not working
             }
@@ -143,9 +143,10 @@ public class observationPark extends LinearOpMode {
 
         }
 
-
-
         Action action1 = traj1.build();
+
+
+
 
         pivotCode.goTo(870);
         slideCode.goTo(0);
