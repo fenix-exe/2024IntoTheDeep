@@ -123,7 +123,7 @@ public class ascentPreloadPark extends LinearOpMode {
                 //Active Intake servo not working
             } else {
                 traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
-                        .stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                 .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                 .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
@@ -143,9 +143,10 @@ public class ascentPreloadPark extends LinearOpMode {
 
         }
 
-
-
         Action action1 = traj1.build();
+
+
+
 
         pivotCode.goTo(870);
         slideCode.goTo(0);

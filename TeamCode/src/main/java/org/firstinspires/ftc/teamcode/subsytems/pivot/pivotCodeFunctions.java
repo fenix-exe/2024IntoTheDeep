@@ -3,8 +3,12 @@ package org.firstinspires.ftc.teamcode.subsytems.pivot;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 import androidx.annotation.NonNull;
 
@@ -16,11 +20,16 @@ public class pivotCodeFunctions {
     int pivotPos;
     int topPos;
     PivotPIDFFunctions functions;
+    MecanumDrive drive;
 
     public pivotCodeFunctions(DcMotorEx pivot, PivotPIDFFunctions functions, int topPos) {
         this.pivot = pivot;
         this.functions = functions;
         this.topPos = topPos;
+    }
+
+    public void driveSetup(MecanumDrive drive) {
+        this.drive = drive;
     }
 
     public void goTo(int targetPos) {
@@ -104,5 +113,30 @@ public class pivotCodeFunctions {
     }
     public Action elbowControl(int targetPos) {
         return new elbowControl(targetPos);
+    }
+
+    public class moveElbowControl implements Action {
+        int x;
+        int y;
+        double heading;
+        int arm;
+
+        public moveElbowControl(int x, int y, double heading, int arm) {
+            this.x = x;
+            this.y = y;
+            this.heading = heading;
+            this.arm = arm;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            new ParallelAction(
+                    drive.actionBuilder(drive.pose).splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading)).build()
+                    ,elbowControl(arm));
+            return false;
+        }
+    }
+    public Action moveElbowControl(int x, int y, double heading, int arm) {
+        return new moveElbowControl(x, y, heading, arm);
     }
 }
