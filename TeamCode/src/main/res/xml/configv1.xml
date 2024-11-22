@@ -16,6 +16,7 @@
             <ContinuousRotationServo name="intake" port="2" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <RevColorSensorV3 name="activeIntakeSensor" port="1" bus="1" />
+            <RevTouchSensor name="limit switch" port="1"  />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

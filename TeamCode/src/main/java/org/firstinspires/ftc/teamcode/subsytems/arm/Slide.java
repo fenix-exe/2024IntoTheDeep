@@ -24,6 +24,7 @@ public class Slide {
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
     double SLIDETOELBOW = 2.5;
     static int STEP_SIZE_FOR_SLIDE = 400;
+    int currentTargetPos;
     public Slide(DcMotorEx slideMotor, double maxPhysicalExtensionInches){
         this.slideMotor =slideMotor;
         this.maxPhysicalExtensionInches = maxPhysicalExtensionInches;
@@ -43,12 +44,12 @@ public class Slide {
         }
 
         slideMotor.setTargetPosition(ticks);
-        slideMotor.setPower(1);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(1);
     }
 
     public void joystickControl(double slideMovement , int maxHeight){
-        int newSlidePosition = slideMotor.getCurrentPosition() + (int) (STEP_SIZE_FOR_SLIDE * slideMovement);
+        /*int newSlidePosition = slideMotor.getCurrentPosition() + (int) (STEP_SIZE_FOR_SLIDE * slideMovement);
 
         if(newSlidePosition > maxHeight){
             newSlidePosition = maxHeight;
@@ -56,9 +57,10 @@ public class Slide {
         if(newSlidePosition < minHeight) {
             newSlidePosition = minHeight;
         }
-        setSlideExtensionLengthInTicks(newSlidePosition);
+        setSlideExtensionLengthInTicks(newSlidePosition);*/
 
-        /*double power;
+        double power;
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (slideMotor.getCurrentPosition() > maxHeight - 100 && slideMovement > 0){
             power = 0;
         } else if (slideMotor.getCurrentPosition() < 100 && slideMovement < 0){
@@ -66,13 +68,20 @@ public class Slide {
         } else {
             power = slideMovement;
         }
-        slideMotor.setPower(power);*/
+        slideMotor.setPower(power);
     }
     public void holdPosition(){
         //setSlideExtensionLengthInTicks(slideMotor.getCurrentPosition());
-        slideMotor.setTargetPosition(slideMotor.getTargetPosition());
-        slideMotor.setPower(1);
+        currentTargetPos = slideMotor.getCurrentPosition();
+        if (slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION){
+            //hold in preset position
+            slideMotor.setTargetPosition(slideMotor.getTargetPosition());
+        } else {
+            //hold in joystick controlled position
+            slideMotor.setTargetPosition(currentTargetPos);
+        }
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(1);
     }
     public double ticksToInchesPivotPoint(int ticks){
         //pulleyCirc/encoderRes * ticks + singleStageSlideLength + slideToPivot
@@ -100,6 +109,10 @@ public class Slide {
     }
     public boolean isBusy(){
         return slideMotor.isBusy();
+    }
+    public void resetEncoder(){
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 

@@ -60,12 +60,18 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean emergencyStop() {
-        return gamepad1current.start;
+        //return gamepad1current.start;
+        return false;
     }
+
 
     @Override
     public boolean undoEmergencyStop() {
-        return gamepad1current.options;
+        //return gamepad1current.options;
+        return false;
+    }
+    public boolean homeArm(){
+        return gamepad1current.start && gamepad1current.options;
     }
     public boolean microDriveAdjustments(){
         return gamepad1current.left_trigger > 0.5;
@@ -294,6 +300,9 @@ public class DriverControls implements DriveControlMap{
         }
         if (diffLeft()){
             returnList.add(UserDirective.DIFF_LEFT);
+        }
+        if (homeArm()){
+            returnList.add(UserDirective.HOME_ARM);
         }
         return returnList;
     }

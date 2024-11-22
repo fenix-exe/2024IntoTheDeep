@@ -57,6 +57,15 @@ public class Arm {
             return 5000;
         }
     }
+    public void resetEncoders(){
+        elbow.resetEncoder();
+        slide.resetEncoder();
+        elbow.setTargetAngle(0);
+        slide.setSlideExtensionLengthInTicks(0);
+    }
+    public void setElbowPower(double power){
+        elbow.setElbowPower(power);
+    }
     public int currentAllowedMaxExtensionLength(){
         return Math.min(getSlideMaxLengthIn42Inches(elbow.getElbowTicks()), getSlideLengthAllowed(elbow.getElbowAngle()));
     }
@@ -88,11 +97,11 @@ public class Arm {
            slide.setSlideExtensionLength(position.slideLength);
            elbow.setElbowAngle(position.elbowAngle);
        } else {
-           if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2 && slide.getSlideExtensionInInches() > 1) {
+           if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 3 && slide.getSlideExtensionInInches() > 1) {
                slide.setSlideExtensionLength(0);
            } else {
                //move elbow first
-               if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2) {
+               if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 3) {
                    elbow.setTargetAngle(position.elbowAngle);
                } else {
                    // now move slide
@@ -103,7 +112,7 @@ public class Arm {
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){
-        return Math.abs(elbow.getElbowAngle() - position.elbowAngle) < 2 &&  // angle is within 2 degrees of target
+        return Math.abs(elbow.getElbowAngle() - position.elbowAngle) < 3 &&  // angle is within 3 degrees of target
                 Math.abs(slide.getSlideExtensionInInches() - position.slideLength) < 1; // slide is within 1 inch of target
     }
 
