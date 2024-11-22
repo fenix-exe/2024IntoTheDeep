@@ -51,6 +51,7 @@ public class differentialTeleop extends LinearOpMode {
                 roll = 0;
             }
             if (gamepad1.b){
+
                 telemetry.addLine("going to -90,90");
                 //outtake
                 pitch = -90;
@@ -70,6 +71,7 @@ public class differentialTeleop extends LinearOpMode {
                 pitch = 50;
                 roll = 90;
 
+
             }
 
             if (gamepad1.left_bumper) {
@@ -82,7 +84,7 @@ public class differentialTeleop extends LinearOpMode {
                 intake.setPower(0);
             }
 
-            differential.setDifferentialPosition(pitch, roll);
+            differentialCode.setDifferentialPosition(pitch, roll);
 
 
             telemetry.addData("Left pos", left.getPosition());

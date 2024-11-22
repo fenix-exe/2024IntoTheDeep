@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsytems.arm;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.robot.RobotCore;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
 
@@ -23,11 +24,11 @@ public class Arm {
         slide.joystickControl(slideMovement, max_extension);
     };
 
-    public void moveElbow(double elbowMovement){
-        if (slide.getSlideExtensionInInches() > 1){
+    public void moveElbow(double elbowMovement, boolean remove_arm_rules){
+        if (slide.getSlideExtensionInInches() > 1 && !remove_arm_rules){
             slide.setSlideExtensionLength(0);
         } else {
-            elbow.elbowJoystick(-1, elbowMovement);
+            elbow.elbowJoystick(elbowMovement);
         }
     }
 
@@ -35,7 +36,7 @@ public class Arm {
         int topHeight;
         double theta = elbow.ticksToDegrees(angleInTicks);
         if (theta != 90) {
-            MaxSlideExtensionInches = 36/(Math.cos(Math.toRadians(theta)));
+            MaxSlideExtensionInches = 31/(Math.cos(Math.toRadians(theta)));
         } else {
             MaxSlideExtensionInches = 10^44;
         }
@@ -81,19 +82,24 @@ public class Arm {
     }
     public void holdSlide(){slide.holdPosition();}
 
-    public void moveToPresetPosition(ArmPresetPosition position){
+    public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
         //if elbow needs to be moved to reach position, retract slides fully
-       if(Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2 && slide.getSlideExtensionInInches() > 1){
-            slide.setSlideExtensionLength(0);
-        } else{
-            //move elbow first
-            if(Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2){
-                elbow.setTargetAngle(position.elbowAngle);
-            } else {
-                // now move slide
-                slide.setSlideExtensionLength(position.slideLength);
-            }
-        }
+       if (manual_override_arm_rules){
+           slide.setSlideExtensionLength(position.slideLength);
+           elbow.setElbowAngle(position.elbowAngle);
+       } else {
+           if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2 && slide.getSlideExtensionInInches() > 1) {
+               slide.setSlideExtensionLength(0);
+           } else {
+               //move elbow first
+               if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 2) {
+                   elbow.setTargetAngle(position.elbowAngle);
+               } else {
+                   // now move slide
+                   slide.setSlideExtensionLength(position.slideLength);
+               }
+           }
+       }
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){

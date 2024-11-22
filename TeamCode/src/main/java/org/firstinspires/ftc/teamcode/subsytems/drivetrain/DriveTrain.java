@@ -17,7 +17,7 @@ public class DriveTrain {
     IMU imu_IMU;
     double speedMultiplier = 1;
 
-    DriveType driveType = DriveType.ROBOT_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
+    public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
 
     Telemetry telemetry;
     public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IMU imu, Telemetry telemetry){

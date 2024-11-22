@@ -103,6 +103,8 @@ public class pivotCodeFunctions {
             goTo(target);
             if (target-30 < getElbowTicks() && getElbowTicks() < target+30) {
                 pivot.setPower(0);
+
+                //holdPos();
                 return false;
             } else {
                 return true;

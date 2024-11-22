@@ -1,84 +1,60 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.robot.Robot;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.robot.ConfigReader;
 import org.firstinspires.ftc.teamcode.robot.RobotActions;
-import org.firstinspires.ftc.teamcode.robot.RobotActivityState;
 import org.firstinspires.ftc.teamcode.robot.RobotCore;
-import org.firstinspires.ftc.teamcode.robot.RobotPhysicalState;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Arm;
-import org.firstinspires.ftc.teamcode.subsytems.arm.ArmActionList;
-import org.firstinspires.ftc.teamcode.subsytems.arm.ArmState;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Elbow;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Slide;
-import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrainActionList;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorActionList;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorState;
-import org.firstinspires.ftc.teamcode.subsytems.modules.RobotArm;
-import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
-import org.firstinspires.ftc.teamcode.subsytems.driveCode;
-import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserIntent;
-import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrainState;
-import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
-import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
-import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
+import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.ActiveIntake;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.Differential;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffector;
+import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserDirective;
 
-import java.util.List;
 import java.util.Set;
 
 @TeleOp
 public class TeleOPV4 extends LinearOpMode {
     DriveTrain driveTrain;
-    activeIntake activeIntakeCode;
+    ActiveIntake activeIntakeCode;
     Arm arm;
-    pivotCodeFunctions pivotCode;
-    PivotPIDFFunctions pivotPIDF;
-    PIDController controllerPivotPIDF;
+    EndEffector endEffector;
     DriverControls driverControls;
-    activeIntake intakeCode;
-    /*Gamepad gamepad1previous;
-    Gamepad gamepad2previous;
-    Gamepad gamepad1current;
-    Gamepad gamepad2current;*/
-
     DcMotorEx slide;
     DcMotorEx pivot;
     CRServo intake;
-    Servo left;
-    Servo right;
+    ServoImplEx left;
+    ServoImplEx right;
     differential diffCode;
     IMU imu;
     RevColorSensorV3 activeIntakeSensor;
-    TouchSensor limitSwitch;
-    ElapsedTime timer;
+    RevTouchSensor limitSwitch;
     double MaxSlideExtensionInches;
     int PHYSICALMAXEXTENSION = 2500;
     int maxAllowedExtension = 2500;
     //int lastTopHeight = 5000;
     int topPivotPos = 2178;
-    int slowDownPivotHeight = 1000;
     double pitchPos = 0;
-    double pitchStep = 5;
-    double rollStep = 5;
     double rollPos = 0;
-    double speedMultiplication = 1;
     private enum driveType {FIELD, ROBOT}
     private enum speed {FAST, SLOW}
     private enum slidePos {UP, DOWN, MOVING_TO_POSITION, JOYSTICK_CONTROL}
@@ -99,9 +75,9 @@ public class TeleOPV4 extends LinearOpMode {
         initializeGamePads();
         initializeDriveTrain();
         initializeArmAndHome();
-        initializeIntake();
-        initializeDifferential();
-        //timer = new ElapsedTime();
+        initializeEndEffector();
+        //loadFromConfigFile("/sdcard/Download/TeleOp/PresetPositions.csv");
+
 
 
         //state machines initialization
@@ -112,7 +88,6 @@ public class TeleOPV4 extends LinearOpMode {
         power = intakePower.NO;
         pivotStateMachine = pivotPos.FLAT;
 
-        boolean dontmoveroll = false;
 
         /*while(!gamepad1.a && !gamepad1.b && !gamepad1.x){
             telemetry.addLine("Pressing A sets the target block color to red");
@@ -130,45 +105,34 @@ public class TeleOPV4 extends LinearOpMode {
 
         waitForStart();
 
-        /*DriveTrainState driveActivityState = DriveTrainState.IDLE;
-        ArmState armActivityState = ArmState.IDLE;
-        EndEffectorState endEffectorActivityState = EndEffectorState.IDLE;*/
-
-        /*while (opModeIsActive()){
-
-            Set<UserIntent> intent = driverControls.getUserIntents();
-            Set<RobotActivityState> currentActivityState = RobotCore.getCurrentActivityState();  // This is the overall state of the robot, not the subsystem
-
-            RobotPhysicalState currentPhysicalState = RobotCore.getRobotPhysicalState();  // arm angle, slide len, differential angle, intake status
-
-            DriveTrainActionList driveTrainActions = RobotCore.getStepsForUserIntentForDriveTrain(intent, currentPhysicalState, currentActivityState);
-            ArmActionList armActions = RobotCore.getStepsForUserIntentForArm(intent, currentPhysicalState, currentActivityState);
-            EndEffectorActionList endEffector = RobotCore.getStepsForUserIntentForEndEffector(intent, currentPhysicalState, currentActivityState);
-
-            driveActivityState = driveTrainActions.execute();
-            armActivityState =armActions.execute();
-            endEffectorActivityState =endEffector.execute();
-            RobotCore.setCurrentActivityState(driveActivityState, armActivityState, endEffectorActivityState, intent);
-        }*/
 
         RobotActions actions = new RobotActions();
-        RobotCore.initialize(driverControls, driveTrain, arm);
+        RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
         while (opModeIsActive()){
 
             driverControls.update();
 
-            Set<UserIntent> intent = driverControls.getUserIntents();
+            Set<UserDirective> directive = driverControls.getUserIntents();
 
-            RobotCore.updateRobotActionsforArm(actions, intent);
-            //RobotCore.updateActiveActionsforEndEffector(actions, intent);
-            RobotCore.updateRobotActionsforDriveTrain(actions, intent);
+            RobotCore.updatePresetPositions(actions, directive);
+            RobotCore.updateRobotActionsforArm(actions, directive);
+            RobotCore.updateRobotActionsForEndEffector(actions, directive);
+            RobotCore.updateRobotActionsforDriveTrain(actions, directive);
 
             String actions_list = actions.toString();
-            telemetry.addData("Intent", intent);
+            telemetry.addData("Intent", directive);
             telemetry.addData("actions", actions_list);
-            telemetry.addData("Arm extension", arm.getSlideExtension());
+            telemetry.addData("Slide extension", arm.getSlideExtension());
+            telemetry.addData("Slide target position", arm.getSlideExtension());
             telemetry.addData("Slide limit", arm.getSlideMaxLengthIn42Inches(arm.getElbowAngleInTicks()));
+            telemetry.addData("Elbow angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Elbow target position", pivot.getTargetPosition());
+            telemetry.addData("IMU yaw", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.addData("pitch", diffCode.returnPitch());
+            telemetry.addData("roll", diffCode.returnRoll());
+            telemetry.addData("slide current", slide.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("elbow current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
+            //telemetry.addData("Is the hall effect sensor triggered?", limitSwitch.isPressed());
             telemetry.update();
 
             actions.execute();
@@ -212,39 +176,59 @@ public class TeleOPV4 extends LinearOpMode {
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //Homing the pivot
-        /*while (!limitSwitch.isPressed()){
-            pivot.setPower(-0.5);
-        }
-        pivot.setPower(0);*/
+        //limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //slideCode = new slideCodeFunctions(slide);
-        controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
-        pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
-        pivotCode = new pivotCodeFunctions(pivot, pivotPIDF, topPivotPos);
+        //home();
+
         Slide slideControl = new Slide(slide, PHYSICALMAXEXTENSION);
-        Elbow elbow = new Elbow(pivot, 2100);
+        Elbow elbow = new Elbow(pivot, 2300);
         arm = new Arm(slideControl, elbow, PHYSICALMAXEXTENSION);
+        slide.setTargetPosition(0);
+        pivot.setTargetPosition(0);
     }
     private void initializeIntake(){
         intake = hardwareMap.get(CRServo.class, "intake");
-        //activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
-        activeIntakeCode = new activeIntake(intake);
+        activeIntakeSensor = hardwareMap.get(RevColorSensorV3.class, "activeIntakeSensor");
+        activeIntakeCode = new ActiveIntake(intake, activeIntakeSensor);
     }
     private void initializeDifferential(){
-        left = hardwareMap.servo.get("left");
-        right = hardwareMap.servo.get("right");
-        pitchPos = -90;
-        rollPos = 90;
-        //diffCode.setDifferentialPosition(pitchPos, rollPos);
+        left = hardwareMap.get(ServoImplEx.class, "left");
+        right = hardwareMap.get(ServoImplEx.class, "right");
+        left.setPwmRange(new PwmControl.PwmRange(500,2500));
+        right.setPwmRange(new PwmControl.PwmRange(500,2500));
+        pitchPos = 0;
+        rollPos = -90;
+        diffCode = new differential(left,right);
+        diffCode.setDifferentialPosition(pitchPos, rollPos);
+    }
+    private void initializeEndEffector(){
+        initializeDifferential();
+        initializeIntake();
+        endEffector = new EndEffector(activeIntakeCode, diffCode);
+    }
+    private void loadFromConfigFile(String fileName){
+        ConfigReader.readConfig(fileName);
+    }
+    private void home(){
+        //Homing the elbow
+        while (!limitSwitch.isPressed() && !isStopRequested()){
+            pivot.setPower(-0.5);
+        }
+        pivot.setPower(0);
+
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
