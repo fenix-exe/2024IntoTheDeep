@@ -93,19 +93,19 @@ public class DriverControls implements DriveControlMap{
     @Override
     public boolean pivotParallel() {
         //return gamepad2current.b
-        return gamepad2current.dpad_right && !gamepad2current.dpad_left;
+        return false;
     }
     public boolean setNewPivotParallel(){
-        return gamepad2current.dpad_right && gamepad2current.dpad_left;
+        return false;
     }
 
     @Override
     public boolean pivotPerp() {
         //return gamepad2.y
-        return gamepad2current.dpad_up && !gamepad2current.dpad_left;
+        return false;
     }
     public boolean setNewPivotPerp(){
-        return gamepad2current.dpad_up && gamepad2current.dpad_left;
+        return false;
     }
 
     @Override
@@ -118,8 +118,8 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public double slideMovement() {
-        if (Math.abs(gamepad2current.left_stick_x) > 0.5){
-            return -gamepad2current.left_stick_x;
+        if (Math.abs(gamepad2current.right_stick_y) > 0.5){
+            return -gamepad2current.right_stick_y;
         }
         return 0;
     }
@@ -156,7 +156,7 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean submersibleIntakeReady() {
-        return gamepad2current.a && !gamepad2previous.a && !gamepad2previous.dpad_left;
+        return gamepad2current.a && !gamepad2previous.a && !gamepad2previous.left_stick_button;
     }
 
     @Override
@@ -166,41 +166,41 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean drivingPos() {
-        return gamepad2current.x && !gamepad2current.dpad_left;
+        return gamepad2current.x && !gamepad2current.left_stick_button;
     }
 
     @Override
     public boolean depositReadyBackTopBucket() {
-        return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && !gamepad2current.dpad_left;
+        return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
     }
 
     @Override
     public boolean depositReadyFrontTopBucket() {
-        return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && !gamepad2current.dpad_left;
+        return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
     }
 
     public boolean depositReadyBackBottomBucket(){
-        return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && !gamepad2current.dpad_left;
+        return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
     }
     public boolean depositReadyFrontBottomBucket(){
-        return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && !gamepad2current.dpad_left;
+        return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
     }
-    public boolean setNewDrivingPos(){return gamepad2current.x && gamepad2current.dpad_left;}
-    public boolean setNewDepositReadyBackTopBucket(){return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && gamepad2current.dpad_left;}
-    public boolean setNewDepositReadyFrontTopBucket(){return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && gamepad2current.dpad_left;}
-    public boolean setNewDepositReadyBackBottomBucket(){return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && gamepad2current.dpad_left;}
-    public boolean setNewDepositReadyFrontBottomBucket(){return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && gamepad2current.dpad_left;}
-    public boolean setNewSubmersibleIntakeReady(){return gamepad2current.a && !gamepad2previous.a && gamepad2current.dpad_left;}
+    public boolean setNewDrivingPos(){return gamepad2current.x && gamepad2current.left_stick_button;}
+    public boolean setNewDepositReadyBackTopBucket(){return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
+    public boolean setNewDepositReadyFrontTopBucket(){return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
+    public boolean setNewDepositReadyBackBottomBucket(){return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
+    public boolean setNewDepositReadyFrontBottomBucket(){return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
+    public boolean setNewSubmersibleIntakeReady(){return gamepad2current.a && !gamepad2previous.a && gamepad2current.left_stick_button;}
     public boolean resetWrist() {
         return gamepad2current.back;
     }
     public boolean wristDown(){return gamepad2current.dpad_down;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
     public boolean removeArmRules(){return gamepad2current.left_bumper;}
-    public boolean diffUp(){return -gamepad2current.right_stick_y > 0.5;}
-    public boolean diffDown(){return -gamepad2current.right_stick_y < -0.5;}
-    public boolean diffLeft(){return gamepad2current.right_stick_x > 0.5;}
-    public boolean diffRight(){return gamepad2current.right_stick_x < -0.5;}
+    public boolean diffUp(){return gamepad2current.dpad_up;}
+    public boolean diffDown(){return gamepad2current.dpad_down;}
+    public boolean diffLeft(){return gamepad2current.dpad_left;}
+    public boolean diffRight(){return gamepad2current.dpad_right;}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
