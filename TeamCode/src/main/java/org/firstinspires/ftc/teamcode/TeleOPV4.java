@@ -182,10 +182,10 @@ public class TeleOPV4 extends LinearOpMode {
 
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
-        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //home();

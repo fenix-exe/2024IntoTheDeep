@@ -21,6 +21,7 @@ public class diffTELEOP extends LinearOpMode {
     DriverControls controls;
     public static double pitch = 0;
     public static double roll = 0;
+    public static double intPower = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         left = hardwareMap.get(ServoImplEx.class,"left");
@@ -34,6 +35,7 @@ public class diffTELEOP extends LinearOpMode {
         while (opModeIsActive()) {
 
             diffCode.setDifferentialPosition(pitch, roll);
+            intake.setPower(intPower);
 
 
             telemetry.addData("loca", left.getPosition());
