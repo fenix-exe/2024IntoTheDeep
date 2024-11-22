@@ -57,13 +57,22 @@ public class Slide {
             newSlidePosition = minHeight;
         }
         setSlideExtensionLengthInTicks(newSlidePosition);
+
+        /*double power;
+        if (slideMotor.getCurrentPosition() > maxHeight - 100 && slideMovement > 0){
+            power = 0;
+        } else if (slideMotor.getCurrentPosition() < 100 && slideMovement < 0){
+            power = 0;
+        } else {
+            power = slideMovement;
+        }
+        slideMotor.setPower(power);*/
     }
     public void holdPosition(){
         //setSlideExtensionLengthInTicks(slideMotor.getCurrentPosition());
-        slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
+        slideMotor.setTargetPosition(slideMotor.getTargetPosition());
         slideMotor.setPower(1);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //slideMotor.setPower(0);
     }
     public double ticksToInchesPivotPoint(int ticks){
         //pulleyCirc/encoderRes * ticks + singleStageSlideLength + slideToPivot

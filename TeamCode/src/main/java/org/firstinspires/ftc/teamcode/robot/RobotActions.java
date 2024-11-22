@@ -31,6 +31,15 @@ public class RobotActions {
         return false;
     }
 
+    public boolean containsPresetEnndEffectorActions(){
+        for (IRobotAction action : actions) {
+            if(action.getActionType() == IRobotAction.ActionType.END_EFFECTOR_MOVE_TO_PRESET){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void add(IRobotAction action){
         actions.add(action);
     }

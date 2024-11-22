@@ -2,11 +2,9 @@ package org.firstinspires.ftc.teamcode.subsytems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserIntent;
+import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserDirective;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class DriverControls implements DriveControlMap{
@@ -72,29 +70,36 @@ public class DriverControls implements DriveControlMap{
     public boolean microDriveAdjustments(){
         return gamepad1current.left_trigger > 0.5;
     }
+    public boolean removeSpeedRules(){return gamepad1current.right_trigger > 0.5;}
 
     @Override
     public boolean slidesFullyUp() {
-        return gamepad2current.dpad_up;
+        return false;
         //return gamepad1.dpad_up;
     }
 
     @Override
     public boolean slidesFullyDown() {
-        return gamepad2current.dpad_down;
+        return false;
         //return gamepad1.dpad_down;
     }
 
     @Override
     public boolean pivotParallel() {
         //return gamepad2current.b
-        return gamepad2current.b;
+        return gamepad2current.dpad_right && !gamepad2current.dpad_left;
+    }
+    public boolean setNewPivotParallel(){
+        return gamepad2current.dpad_right && gamepad2current.dpad_left;
     }
 
     @Override
     public boolean pivotPerp() {
         //return gamepad2.y
-        return gamepad2current.y;
+        return gamepad2current.dpad_up && !gamepad2current.dpad_left;
+    }
+    public boolean setNewPivotPerp(){
+        return gamepad2current.dpad_up && gamepad2current.dpad_left;
     }
 
     @Override
@@ -108,7 +113,7 @@ public class DriverControls implements DriveControlMap{
     @Override
     public double slideMovement() {
         if (Math.abs(gamepad2current.left_stick_x) > 0.5){
-            return gamepad2current.left_stick_x;
+            return -gamepad2current.left_stick_x;
         }
         return 0;
     }
@@ -125,12 +130,12 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean intakePower() {
-        return gamepad2current.left_bumper && !gamepad2previous.left_bumper;
+        return false;
     }
 
     @Override
     public boolean intakeDirection() {
-        return gamepad2current.right_bumper && !gamepad2previous.right_bumper;
+        return false;
     }
 
     @Override
@@ -145,7 +150,7 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean submersibleIntakeReady() {
-        return gamepad2current.a && !gamepad2previous.a;
+        return gamepad2current.a && !gamepad2previous.a && !gamepad2previous.dpad_left;
     }
 
     @Override
@@ -155,71 +160,140 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean drivingPos() {
-        return gamepad2current.x;
+        return gamepad2current.x && !gamepad2current.dpad_left;
     }
 
     @Override
     public boolean depositReadyBackTopBucket() {
-        return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_trigger > 0.5);
+        return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && !gamepad2current.dpad_left;
     }
 
     @Override
     public boolean depositReadyFrontTopBucket() {
-        return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_trigger > 0.5);
+        return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && !gamepad2current.dpad_left;
     }
 
     public boolean depositReadyBackBottomBucket(){
-        return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_trigger > 0.5);
+        return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && !gamepad2current.dpad_left;
     }
     public boolean depositReadyFrontBottomBucket(){
-        return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_trigger > 0.5);
+        return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && !gamepad2current.dpad_left;
     }
-
+    public boolean setNewDrivingPos(){return gamepad2current.x && gamepad2current.dpad_left;}
+    public boolean setNewDepositReadyBackTopBucket(){return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && gamepad2current.dpad_left;}
+    public boolean setNewDepositReadyFrontTopBucket(){return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && gamepad2current.dpad_left;}
+    public boolean setNewDepositReadyBackBottomBucket(){return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && gamepad2current.dpad_left;}
+    public boolean setNewDepositReadyFrontBottomBucket(){return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && gamepad2current.dpad_left;}
+    public boolean setNewSubmersibleIntakeReady(){return gamepad2current.a && !gamepad2previous.a && gamepad2current.dpad_left;}
     public boolean resetWrist() {
         return gamepad2current.back;
     }
+    public boolean wristDown(){return gamepad2current.dpad_down;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
-    public Set<UserIntent> getUserIntents(){
-        Set<UserIntent> returnList = new HashSet<UserIntent>();
+    public boolean removeArmRules(){return gamepad2current.left_bumper;}
+    public boolean diffUp(){return -gamepad2current.right_stick_y > 0.5;}
+    public boolean diffDown(){return -gamepad2current.right_stick_y < -0.5;}
+    public boolean diffLeft(){return gamepad2current.right_stick_x > 0.5;}
+    public boolean diffRight(){return gamepad2current.right_stick_x < -0.5;}
+    public void rumbleArmGamepad(){gamepad2current.rumble(10);}
+    public Set<UserDirective> getUserIntents(){
+        Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){
             if (microDriveAdjustments()){
-                returnList.add(UserIntent.MANUAL_DRIVE_ADJUSTMENTS);
+                returnList.add(UserDirective.MANUAL_DRIVE_ADJUSTMENTS);
             } else {
-                returnList.add(UserIntent.MANUAL_DRIVE_NORMAL);
+                returnList.add(UserDirective.MANUAL_DRIVE_NORMAL);
             }
         }
         if (driveTypeSwitch()){
-            returnList.add(UserIntent.DRIVE_SWITCH);
+            returnList.add(UserDirective.DRIVE_SWITCH);
         }
         if (slowMode()){
-            returnList.add(UserIntent.SPEED_SWITCH);
+            returnList.add(UserDirective.SPEED_SWITCH);
         }
         if(resetIMU()){
-            returnList.add(UserIntent.IMU_RESET);
+            returnList.add(UserDirective.IMU_RESET);
         }
         if(Math.abs(pivotJoystick()) > 0){
-            returnList.add(UserIntent.MANUAL_ELBOW);
+            returnList.add(UserDirective.MANUAL_ELBOW);
         }
         if(Math.abs(slideMovement()) > 0){
-            returnList.add(UserIntent.MANUAL_SLIDE);
+            returnList.add(UserDirective.MANUAL_SLIDE);
         }
         if(depositReadyBackTopBucket()){
-            returnList.add(UserIntent.PRESET_DEPOSIT_BACK_TOP);
+            returnList.add(UserDirective.PRESET_DEPOSIT_BACK_TOP);
         }
         if(depositReadyFrontTopBucket()){
-            returnList.add(UserIntent.PRESET_DEPOSIT_FRONT_TOP);
+            returnList.add(UserDirective.PRESET_DEPOSIT_FRONT_TOP);
         }
         if(depositReadyBackBottomBucket()){
-            returnList.add(UserIntent.PRESET_DEPOSIT_BACK_BOTTOM);
+            returnList.add(UserDirective.PRESET_DEPOSIT_BACK_BOTTOM);
         }
         if(depositReadyFrontBottomBucket()){
-            returnList.add(UserIntent.PRESET_DEPOSIT_FRONT_BOTTOM);
+            returnList.add(UserDirective.PRESET_DEPOSIT_FRONT_BOTTOM);
         }
         if(drivingPos()){
-            returnList.add(UserIntent.PRESET_SAFE_DRIVING_POSITION);
+            returnList.add(UserDirective.PRESET_SAFE_DRIVING_POSITION);
         }
         if(submersibleIntakeReady()){
-            returnList.add(UserIntent.PRESET_SUBMERSIBLE_INTAKE);
+            returnList.add(UserDirective.PRESET_SUBMERSIBLE_INTAKE);
+        }
+        if(intakenewBackward() > 0.5){
+            returnList.add(UserDirective.INTAKE_BACKWARD);
+        }
+        if(intakenewForward() > 0.5){
+            returnList.add(UserDirective.INTAKE_FORWARD);
+        }
+        if (pivotParallel()){
+            returnList.add(UserDirective.ELBOW_0);
+        }
+        if (pivotPerp()){
+            returnList.add(UserDirective.ELBOW_90);
+        }
+        if (removeSpeedRules()){
+            returnList.add(UserDirective.REMOVE_SPEED_RULES);
+        }
+        if (wristDown()){
+            returnList.add(UserDirective.WRIST_DOWN);
+        }
+        if (setNewDepositReadyBackBottomBucket()){
+            returnList.add(UserDirective.SET_DEPOSIT_BACK_BOTTOM);
+        }
+        if (setNewDepositReadyBackTopBucket()){
+            returnList.add(UserDirective.SET_DEPOSIT_BACK_TOP);
+        }
+        if (setNewDepositReadyFrontBottomBucket()){
+            returnList.add(UserDirective.SET_DEPOSIT_FRONT_BOTTOM);
+        }
+        if (setNewDepositReadyFrontTopBucket()){
+            returnList.add(UserDirective.SET_DEPOSIT_FRONT_TOP);
+        }
+        if (setNewDrivingPos()){
+            returnList.add(UserDirective.SET_SAFE_DRIVING_POSITION);
+        }
+        if (setNewSubmersibleIntakeReady()){
+            returnList.add(UserDirective.SET_SUBMERSIBLE_INTAKE);
+        }
+        if (setNewPivotParallel()){
+            returnList.add(UserDirective.SET_ELBOW_0);
+        }
+        if (setNewPivotPerp()){
+            returnList.add(UserDirective.SET_ELBOW_90);
+        }
+        if (removeArmRules()){
+            returnList.add(UserDirective.REMOVE_ARM_RULES);
+        }
+        if (diffUp()){
+            returnList.add(UserDirective.DIFF_UP);
+        }
+        if (diffDown()){
+            returnList.add(UserDirective.DIFF_DOWN);
+        }
+        if (diffRight()){
+            returnList.add(UserDirective.DIFF_RIGHT);
+        }
+        if (diffLeft()){
+            returnList.add(UserDirective.DIFF_LEFT);
         }
         return returnList;
     }
