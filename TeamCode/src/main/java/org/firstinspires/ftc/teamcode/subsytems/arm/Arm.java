@@ -25,14 +25,14 @@ public class Arm {
     };
 
     public void moveElbow(double elbowMovement, boolean remove_arm_rules){
-        if (slide.getSlideExtensionInInches() > 1 && !remove_arm_rules){
+        if ((slide.getSlideExtensionInInches() > 1 && !remove_arm_rules) && !(elbow.getElbowAngle() < 20 && slide.getSlideExtensionInInches() >= 3)){
             slide.setSlideExtensionLength(0);
         } else {
             double power;
             if (elbow.getElbowTicks() > elbow.topPosition - 100 && elbowMovement > 0){ //top limit
                 power = 0;
-            } else if (((elbow.getElbowTicks() < 0 && slide.getSlideExtensionInInches() < 3)
-                    || (elbow.getElbowTicks() < -100 && slide.getSlideExtensionInInches() >= 3))
+            } else if (((elbow.getElbowTicks() < 0 && slide.getSlideExtensionInInches() < 2)
+                    || (elbow.getElbowTicks() < -100 && slide.getSlideExtensionInInches() >= 2))
                     && elbowMovement < 0){ //bottom limit is dependent on slides
                 power = 0;
             } else {
