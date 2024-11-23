@@ -200,7 +200,7 @@ public class DriverControls implements DriveControlMap{
     public boolean diffUp(){return gamepad2current.dpad_down;}
     public boolean diffDown(){return gamepad2current.dpad_up;}
     public boolean diffLeft(){return gamepad2current.dpad_right;}
-    public boolean diffRight(){return gamepad2current.dpad_left}
+    public boolean diffRight(){return gamepad2current.dpad_left;}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
