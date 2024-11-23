@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - Ascent Park")
+@Autonomous(name = "AUTO - Ascent Park", preselectTeleOp = "TeleOPV4")
 public class ascentPreloadPark extends LinearOpMode {
 
     //initialize auto extractor

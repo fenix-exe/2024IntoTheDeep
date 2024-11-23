@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsytems.arm;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-@TeleOp
+@Disabled
+//@TeleOp
 public class HallEffectSensorTest extends LinearOpMode {
     RevTouchSensor limitSwitch;
     @Override

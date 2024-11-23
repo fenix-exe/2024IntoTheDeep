@@ -30,8 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
-@Autonomous(name = "AUTO - Observation Preload Park")
+@Disabled
+//@Autonomous(name = "AUTO - Observation Preload Park")
 public class observationPreloadPark extends LinearOpMode {
 
     //initialize auto extractor
