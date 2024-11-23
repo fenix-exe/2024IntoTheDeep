@@ -31,8 +31,7 @@ public class Arm {
             double power;
             if (elbow.getElbowTicks() > elbow.topPosition - 100 && elbowMovement > 0){ //top limit
                 power = 0;
-            } else if (((elbow.getElbowTicks() < 0 && slide.getSlideExtensionInInches() < 2)
-                    || (elbow.getElbowTicks() < -100 && slide.getSlideExtensionInInches() >= 2))
+            } else if (elbow.getElbowAngle() < -5
                     && elbowMovement < 0){ //bottom limit is dependent on slides
                 power = 0;
             } else {

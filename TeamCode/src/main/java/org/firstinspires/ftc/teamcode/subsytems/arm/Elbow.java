@@ -31,7 +31,7 @@ public class Elbow {
     }
     public void setTargetAngle(double degrees){
         elbowPosition = degreesToTicks(degrees);
-        if (elbowPosition < 0){
+        if (elbowPosition < -140){
             elbowPosition = 0;
         }
         if (elbowPosition > topPosition){
