@@ -19,9 +19,9 @@ public class Arm {
         this.physicalMaxExtension = initialTopHeight;
     }
 
-    public void moveSlide(double slideMovement) {
+    public void moveSlide(double slideMovement, boolean remove_arm_rules) {
         int max_extension = getSlideMaxLengthIn42Inches(getElbowAngleInTicks());
-        slide.joystickControl(slideMovement, max_extension);
+        slide.joystickControl(slideMovement, max_extension,remove_arm_rules);
     };
 
     public void moveElbow(double elbowMovement, boolean remove_arm_rules){
@@ -102,11 +102,13 @@ public class Arm {
 
     public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
         //if elbow needs to be moved to reach position, retract slides fully
-       if (manual_override_arm_rules){
+       if (manual_override_arm_rules || (elbow.getElbowAngle() < 20 && !(position.elbowAngle > 20))){
            slide.setSlideExtensionLength(position.slideLength);
-           elbow.setElbowAngle(position.elbowAngle);
+           elbow.setTargetAngle(position.elbowAngle);
        } else {
-           if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 3 && slide.getSlideExtensionInInches() > 1) {
+           if (position.elbowAngle > 20 && elbow.getElbowAngle() < 23){
+               elbow.setTargetAngle(25);
+           } else if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 3 && slide.getSlideExtensionInInches() > 1) {
                slide.setSlideExtensionLength(0);
            } else {
                //move elbow first

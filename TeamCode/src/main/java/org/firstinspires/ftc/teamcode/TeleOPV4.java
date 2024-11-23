@@ -106,6 +106,7 @@ public class TeleOPV4 extends LinearOpMode {
         RobotActions actions = new RobotActions();
         RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
         waitForStart();
+        diffCode.setDifferentialPosition(-90,-90);
 
 
 

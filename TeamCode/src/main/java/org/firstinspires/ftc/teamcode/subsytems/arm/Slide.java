@@ -48,7 +48,7 @@ public class Slide {
         slideMotor.setPower(1);
     }
 
-    public void joystickControl(double slideMovement , int maxHeight){
+    public void joystickControl(double slideMovement , int maxHeight, boolean remove_arm_rules){
         /*int newSlidePosition = slideMotor.getCurrentPosition() + (int) (STEP_SIZE_FOR_SLIDE * slideMovement);
 
         if(newSlidePosition > maxHeight){
@@ -61,13 +61,18 @@ public class Slide {
 
         double power;
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if (slideMotor.getCurrentPosition() > maxHeight - 100 && slideMovement > 0){
-            power = 0;
-        } else if (slideMotor.getCurrentPosition() < 100 && slideMovement < 0){
-            power = 0;
+        if (!remove_arm_rules){
+            if (slideMotor.getCurrentPosition() > maxHeight - 100 && slideMovement > 0){
+                power = 0;
+            } else if (slideMotor.getCurrentPosition() < 100 && slideMovement < 0){
+                power = 0;
+            } else {
+                power = slideMovement;
+            }
         } else {
             power = slideMovement;
         }
+
         slideMotor.setPower(power);
     }
     public void holdPosition(){

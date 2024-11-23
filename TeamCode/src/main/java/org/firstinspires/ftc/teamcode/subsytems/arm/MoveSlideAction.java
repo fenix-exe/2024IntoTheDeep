@@ -9,11 +9,13 @@ public class MoveSlideAction implements IRobotAction {
     public boolean cancelled = false;
 
     public boolean completed = false;
+    boolean remove_arm_rules;
 
 
-    public MoveSlideAction(Arm arm, double slideMovement){
+    public MoveSlideAction(Arm arm, double slideMovement, boolean remove_arm_rules){
         this.arm=arm;
         this.slideMovement = slideMovement;
+        this.remove_arm_rules = remove_arm_rules;
     }
 
     @Override
@@ -23,7 +25,7 @@ public class MoveSlideAction implements IRobotAction {
 
     public void execute(){
         if(!this.cancelled){
-            arm.moveSlide(slideMovement);
+            arm.moveSlide(slideMovement, remove_arm_rules);
         }
         this.completed = true;
     }

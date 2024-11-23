@@ -58,7 +58,7 @@ public class RobotCore {
             actions.add(new MoveElbowAction(arm, driverControls.pivotJoystick(), remove_arm_rules));
         } else if (intent.contains(UserDirective.MANUAL_SLIDE)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveSlideAction(arm, driverControls.slideMovement()));
+            actions.add(new MoveSlideAction(arm, driverControls.slideMovement(), remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
             actions.cancelPresetArmActions();
             actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_POSITION, remove_arm_rules));

@@ -17,5 +17,5 @@ public class ArmPresetPosition {
     public static ArmPresetPosition SAFE_DRIVING_POSITION = new ArmPresetPosition(65,0);
     public static ArmPresetPosition ASCENT_2_HANG = new ArmPresetPosition(90, 0);
     public static ArmPresetPosition FLAT_ELBOW = new ArmPresetPosition(0,0);
-    public static ArmPresetPosition INTAKE_DOWN = new ArmPresetPosition(-4, 4);
+    public static ArmPresetPosition INTAKE_DOWN = new ArmPresetPosition(-6, 4);
 }
