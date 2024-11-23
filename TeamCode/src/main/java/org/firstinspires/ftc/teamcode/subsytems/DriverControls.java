@@ -161,7 +161,7 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean acsent1Park() {
-        return gamepad2current.start && !gamepad2previous.start;
+        return false;
     }
 
     @Override
@@ -184,6 +184,9 @@ public class DriverControls implements DriveControlMap{
     }
     public boolean depositReadyFrontBottomBucket(){
         return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
+    }
+    public boolean intakeDown(){
+        return gamepad2current.start;
     }
     public boolean setNewDrivingPos(){return gamepad2current.x && gamepad2current.left_stick_button;}
     public boolean setNewDepositReadyBackTopBucket(){return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
@@ -303,6 +306,9 @@ public class DriverControls implements DriveControlMap{
         }
         if (homeArm()){
             returnList.add(UserDirective.HOME_ARM);
+        }
+        if (intakeDown()){
+            returnList.add(UserDirective.INTAKE_DOWN);
         }
         return returnList;
     }

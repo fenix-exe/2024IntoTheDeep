@@ -17,5 +17,6 @@ public class EndEffectorPresetPosition {
     public static EndEffectorPresetPosition DEPOSIT_BACK_TOP_BUCKET_POSITION = new EndEffectorPresetPosition(-90,90);
     public static EndEffectorPresetPosition DEPOSIT_BACK_BOTTOM_BUCKET_POSITION = new EndEffectorPresetPosition(-90,90);
     public static EndEffectorPresetPosition SAFE_DRIVING_POSITION = new EndEffectorPresetPosition(-90,-90);
-    public static EndEffectorPresetPosition INTAKE_DOWN_ON_GROUND = new EndEffectorPresetPosition(25,-90);
+    public static EndEffectorPresetPosition INTAKE_CLOSE_TO_BAR = new EndEffectorPresetPosition(25,-90);
+    public static EndEffectorPresetPosition INTAKE_DOWN = new EndEffectorPresetPosition(15.5, -90);
 }

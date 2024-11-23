@@ -86,6 +86,9 @@ public class RobotCore {
         } else if (intent.contains(UserDirective.HOME_ARM)){
             actions.cancelPresetArmActions();
             actions.add(new HomeElbowAction(arm));
+        } else if (intent.contains(UserDirective.INTAKE_DOWN)){
+            actions.cancelPresetArmActions();
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_DOWN, remove_arm_rules));
         }
 
         // check if you need to hold position for slide and/or elbow
@@ -145,7 +148,9 @@ public class RobotCore {
         } else if (intent.contains(UserDirective.PRESET_SAFE_DRIVING_POSITION)){
             actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.SAFE_DRIVING_POSITION));
         } else if (intent.contains(UserDirective.WRIST_DOWN)){
-            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_DOWN_ON_GROUND));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_CLOSE_TO_BAR));
+        } else if (intent.contains(UserDirective.INTAKE_DOWN)){
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_DOWN));
         }
 
         //gamepad control for the differential through dpad
