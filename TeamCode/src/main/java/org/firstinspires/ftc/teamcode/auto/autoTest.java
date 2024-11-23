@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,8 +18,8 @@ import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
 import org.firstinspires.ftc.teamcode.util.writeAuto;
 
 import java.util.WeakHashMap;
-
-@Autonomous
+@Disabled
+//@Autonomous
 public class autoTest extends LinearOpMode {
 
     slideCodeFunctions slideCode;
