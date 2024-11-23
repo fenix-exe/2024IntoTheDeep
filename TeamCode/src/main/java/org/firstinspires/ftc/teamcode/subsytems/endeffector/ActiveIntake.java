@@ -33,7 +33,7 @@ public class ActiveIntake {
     }
 
     public void intakeForward() {
-        intake.setPower(1);
+        intake.setPower(-1);
         setIntakePos(intakeState.FORWARD);
     }
 
@@ -43,7 +43,7 @@ public class ActiveIntake {
     }
 
     public void intakeBack() {
-        intake.setPower(-0.5);
+        intake.setPower(0.5);
         setIntakePos(intakeState.BACKWARD);
     }
     public boolean blockIn(){
