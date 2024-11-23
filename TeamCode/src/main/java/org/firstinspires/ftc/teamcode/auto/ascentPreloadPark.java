@@ -69,10 +69,8 @@ public class ascentPreloadPark extends LinearOpMode {
         }
 
         //set up rr
-        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
 
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         intake = hardwareMap.get(CRServo.class, "intake");
         left = hardwareMap.get(ServoImplEx.class, "left");
         right = hardwareMap.get(ServoImplEx.class, "right");
@@ -105,6 +103,30 @@ public class ascentPreloadPark extends LinearOpMode {
         pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
         pivotCode = new pivotCodeFunctions(elbow, pivotPIDF, 2178);
 
+
+
+        while(!gamepad1.a) {
+
+        }
+        while (!limitSwitch.isPressed() && !isStopRequested()){
+            elbow.setPower(-0.2);
+        }
+        while (limitSwitch.isPressed() && !isStopRequested()){
+            elbow.setPower(0.2);
+        }
+        elbow.setPower(0);
+
+        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(!gamepad1.b) {
+
+        }
+        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
         boolean XareSame = false;
@@ -118,8 +140,8 @@ public class ascentPreloadPark extends LinearOpMode {
             if (XareSame && YareSame && AngleareSame) {
                 traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
-                .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
+                        .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
+                        .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
                         .stopAndAdd(writer.savePosition(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
 
@@ -148,31 +170,11 @@ public class ascentPreloadPark extends LinearOpMode {
 
         Action action1 = traj1.build();
 
-        while(!gamepad1.a) {
-
-        }
-        while (!limitSwitch.isPressed() && !isStopRequested()){
-            elbow.setPower(-0.2);
-        }
-        while (limitSwitch.isPressed() && !isStopRequested()){
-            elbow.setPower(0.2);
-        }
-        elbow.setPower(0);
-
-        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        while(!gamepad1.b) {
-
-        }
-
 
         pivotCode.goTo(870);
         slideCode.goTo(0);
         diffy.setDifferentialPosition(-90,-90);
+
 
         waitForStart();
 

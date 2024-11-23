@@ -208,10 +208,7 @@ public class TeleOPV4 extends LinearOpMode {
         right = hardwareMap.get(ServoImplEx.class, "right");
         left.setPwmRange(new PwmControl.PwmRange(500,2500));
         right.setPwmRange(new PwmControl.PwmRange(500,2500));
-        pitchPos = 0;
-        rollPos = -90;
         diffCode = new differential(left,right);
-        diffCode.setDifferentialPosition(pitchPos, rollPos);
     }
     private void initializeEndEffector(){
         initializeDifferential();

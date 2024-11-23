@@ -5,9 +5,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -49,6 +49,7 @@ public class observationPark extends LinearOpMode {
     DcMotorEx slide;
     DcMotorEx elbow;
     writeAuto writer;
+    RevTouchSensor limitSwitch;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,10 +68,8 @@ public class observationPark extends LinearOpMode {
         }
 
         //set up rr
-        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
 
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         intake = hardwareMap.get(CRServo.class, "intake");
         left = hardwareMap.get(ServoImplEx.class, "left");
         right = hardwareMap.get(ServoImplEx.class, "right");
@@ -82,6 +81,7 @@ public class observationPark extends LinearOpMode {
         elbow.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
 
         //Homing the pivot
@@ -102,6 +102,30 @@ public class observationPark extends LinearOpMode {
         pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
         pivotCode = new pivotCodeFunctions(elbow, pivotPIDF, 2178);
 
+
+
+        while(!gamepad1.a) {
+
+        }
+        while (!limitSwitch.isPressed() && !isStopRequested()){
+            elbow.setPower(-0.2);
+        }
+        while (limitSwitch.isPressed() && !isStopRequested()){
+            elbow.setPower(0.2);
+        }
+        elbow.setPower(0);
+
+        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(!gamepad1.b) {
+
+        }
+        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
         boolean XareSame = false;
@@ -122,8 +146,8 @@ public class observationPark extends LinearOpMode {
 
                 //Active Intake servo not working
             } else {
-                traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
-                        .stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                traj1 = traj1.afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
                         .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
@@ -143,9 +167,8 @@ public class observationPark extends LinearOpMode {
 
         }
 
-
-
         Action action1 = traj1.build();
+
 
         pivotCode.goTo(870);
         slideCode.goTo(0);
