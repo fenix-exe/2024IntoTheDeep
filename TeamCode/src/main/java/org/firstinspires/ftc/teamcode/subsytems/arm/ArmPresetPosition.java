@@ -8,7 +8,7 @@ public class ArmPresetPosition {
         this.slideLength = slideLength;
     }
 
-    public static ArmPresetPosition INTAKE_POSITION = new ArmPresetPosition(0,5);
+    public static ArmPresetPosition INTAKE_POSITION = new ArmPresetPosition(2,5);
     public static ArmPresetPosition DEPOSIT_FRONT_TOP_BUCKET_POSITION = new ArmPresetPosition(70,28.5);
     public static ArmPresetPosition DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION = new ArmPresetPosition(70,11.25);
     public static ArmPresetPosition DEPOSIT_BACK_TOP_BUCKET_POSITION = new ArmPresetPosition(90,25);

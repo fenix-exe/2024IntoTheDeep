@@ -11,7 +11,7 @@ public class EndEffectorPresetPosition {
         this.roll = roll;
     }
 
-    public static EndEffectorPresetPosition INTAKE_POSITION = new EndEffectorPresetPosition(0,-90);
+    public static EndEffectorPresetPosition INTAKE_POSITION = new EndEffectorPresetPosition(-30,-90);
     public static EndEffectorPresetPosition DEPOSIT_FRONT_TOP_BUCKET_POSITION = new EndEffectorPresetPosition(50,-90);
     public static EndEffectorPresetPosition DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION = new EndEffectorPresetPosition(50,-90);
     public static EndEffectorPresetPosition DEPOSIT_BACK_TOP_BUCKET_POSITION = new EndEffectorPresetPosition(-90,90);

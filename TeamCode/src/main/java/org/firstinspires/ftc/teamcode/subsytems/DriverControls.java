@@ -45,7 +45,7 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean slowMode() {
-        return gamepad1current.left_bumper && !gamepad1previous.left_bumper;
+        return false;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DriverControls implements DriveControlMap{
 
     @Override
     public boolean resetIMU() {
-        return gamepad1current.a;
+        return gamepad1current.left_bumper;
     }
 
     @Override
