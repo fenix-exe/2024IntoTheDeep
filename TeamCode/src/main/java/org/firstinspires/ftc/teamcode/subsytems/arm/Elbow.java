@@ -42,15 +42,7 @@ public class Elbow {
     }
     public void elbowJoystick(double joystickControl){
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double power;
-        if (elbow.getCurrentPosition() > topPosition - 100 && joystickControl > 0){
-            power = 0;
-        } else if (elbow.getCurrentPosition() < 100 && joystickControl < 0){
-            power = 0;
-        } else {
-            power = joystickControl;
-        }
-        elbow.setPower(power);
+        elbow.setPower(joystickControl);
 
         /*int elbowPosition = elbow.getCurrentPosition() + (int) (STEP_SIZE_FOR_JOYSTICK * joystickControl);
         if (elbowPosition > topPosition-50){

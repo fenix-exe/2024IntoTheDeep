@@ -28,7 +28,17 @@ public class Arm {
         if (slide.getSlideExtensionInInches() > 1 && !remove_arm_rules){
             slide.setSlideExtensionLength(0);
         } else {
-            elbow.elbowJoystick(elbowMovement);
+            double power;
+            if (elbow.getElbowTicks() > elbow.topPosition - 100 && elbowMovement > 0){ //top limit
+                power = 0;
+            } else if (((elbow.getElbowTicks() < 0 && slide.getSlideExtensionInInches() < 3)
+                    || (elbow.getElbowTicks() < -100 && slide.getSlideExtensionInInches() >= 3))
+                    && elbowMovement < 0){ //bottom limit is dependent on slides
+                power = 0;
+            } else {
+                power = elbowMovement;
+            }
+            elbow.elbowJoystick(power);
         }
     }
 
