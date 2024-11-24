@@ -174,6 +174,12 @@ public class ascentPreloadPark extends LinearOpMode {
         pivotCode.goTo(870);
         slideCode.goTo(0);
         diffy.setDifferentialPosition(-90,-90);
+        if (870-30 < elbow.getCurrentPosition() && elbow.getCurrentPosition() < 870+30) {
+            elbow.setPower(0);
+
+        } else {
+            pivotCode.goTo(870);
+        }
 
 
         waitForStart();
