@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsytems.endeffector;
 
 import org.firstinspires.ftc.teamcode.robot.IRobotAction;
-import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 
 public class MoveEndEffectorThroughJoystick implements IRobotAction {
     boolean cancelled = false;

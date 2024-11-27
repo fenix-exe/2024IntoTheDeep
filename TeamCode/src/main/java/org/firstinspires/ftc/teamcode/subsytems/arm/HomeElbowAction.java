@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsytems.arm;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.robot.IRobotAction;
 

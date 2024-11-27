@@ -3,26 +3,16 @@ package org.firstinspires.ftc.teamcode.subsytems.differential;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
 
 @TeleOp
 public class differentialTeleop extends LinearOpMode {
-    double pitch;
-    double roll;
     ServoImplEx left;
     ServoImplEx right;
     CRServo intake;
     differential differentialCode;
-    Gamepad gamepad1current;
-    Gamepad gamepad1previous;
-
-    ElapsedTime timer = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -33,7 +23,7 @@ public class differentialTeleop extends LinearOpMode {
         right.setPwmRange(new PwmControl.PwmRange(500,2500));
         intake = hardwareMap.get(CRServo.class, "intake");
 
-        differential differential = new differential(left, right);
+        differentialCode = new differential(left, right);
         double pitch;
         double roll;
 

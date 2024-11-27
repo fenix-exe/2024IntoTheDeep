@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsytems.endeffector;
 
-import org.firstinspires.ftc.teamcode.subsytems.arm.ArmPresetPosition;
 
 public class EndEffectorPresetPosition {
 

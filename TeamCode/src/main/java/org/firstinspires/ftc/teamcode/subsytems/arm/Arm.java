@@ -1,11 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsytems.arm;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
-
-import org.firstinspires.ftc.teamcode.robot.RobotCore;
-import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
-import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
-
 public class Arm {
     Slide slide;
     Elbow elbow;
@@ -22,7 +16,7 @@ public class Arm {
     public void moveSlide(double slideMovement, boolean remove_arm_rules) {
         int max_extension = getSlideMaxLengthIn42Inches(getElbowAngleInTicks());
         slide.joystickControl(slideMovement, max_extension,remove_arm_rules);
-    };
+    }
 
     public void moveElbow(double elbowMovement, boolean remove_arm_rules){
         if ((slide.getSlideExtensionInInches() > 1 && !remove_arm_rules) && !(elbow.getElbowAngle() < 20 && slide.getSlideExtensionInInches() >= 3)){

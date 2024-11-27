@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import androidx.annotation.NonNull;
 
@@ -18,7 +17,6 @@ public class Elbow {
     RevTouchSensor limitSwitch;
     int elbowPosition;
     int topPosition;
-    int STEP_SIZE_FOR_JOYSTICK = 350;
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition){
         this.elbow = elbow;
         this.topPosition = topPosition;
@@ -42,16 +40,15 @@ public class Elbow {
     }
     public void elbowJoystick(double joystickControl){
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elbow.setPower(joystickControl);
-
-        /*int elbowPosition = elbow.getCurrentPosition() + (int) (STEP_SIZE_FOR_JOYSTICK * joystickControl);
-        if (elbowPosition > topPosition-50){
-            elbowPosition = topPosition;
+        double power;
+        if (joystickControl < 0 && elbow.getCurrentPosition() < -140){
+            power = 0;
+        } else if (joystickControl > 0 && elbow.getCurrentPosition() > topPosition - 50){
+            power = 0;
+        } else {
+            power = joystickControl;
         }
-        if (elbowPosition < -15){
-            elbowPosition = -15;
-        }
-        goToTargetPosition(elbowPosition);*/
+        elbow.setPower(power);
     }
     public void holdPosition(){
         elbow.setPower(0);

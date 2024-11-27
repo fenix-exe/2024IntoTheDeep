@@ -11,10 +11,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 import androidx.annotation.NonNull;
 
 public class activeIntake {
-    Gamepad gamepad2;
-    Gamepad gamepad2previous;
     CRServo intake;
-    NormalizedColorSensor colorSensor;
 
     public enum intakeState {FORWARD,BACKWARD,OFF}
 

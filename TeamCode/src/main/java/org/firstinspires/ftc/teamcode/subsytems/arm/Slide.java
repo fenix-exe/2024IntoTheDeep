@@ -13,7 +13,6 @@ public class Slide {
     DcMotorEx slideMotor;
     double maxPhysicalExtensionInches;
     int maxPhysicalExtensionTicks;
-    int minHeight = 0;
     //pulleyCirc is the circumference of the pulley
     double PULLEYCIRC= 4.724757;
     //encoderRes is how many encoder ticks happen after 1 rotation of the motor
@@ -23,7 +22,6 @@ public class Slide {
     double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
     double SLIDETOELBOW = 2.5;
-    static int STEP_SIZE_FOR_SLIDE = 400;
     int currentTargetPos;
     public Slide(DcMotorEx slideMotor, double maxPhysicalExtensionInches){
         this.slideMotor =slideMotor;
@@ -49,15 +47,6 @@ public class Slide {
     }
 
     public void joystickControl(double slideMovement , int maxHeight, boolean remove_arm_rules){
-        /*int newSlidePosition = slideMotor.getCurrentPosition() + (int) (STEP_SIZE_FOR_SLIDE * slideMovement);
-
-        if(newSlidePosition > maxHeight){
-            newSlidePosition = maxHeight;
-        }
-        if(newSlidePosition < minHeight) {
-            newSlidePosition = minHeight;
-        }
-        setSlideExtensionLengthInTicks(newSlidePosition);*/
 
         double power;
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

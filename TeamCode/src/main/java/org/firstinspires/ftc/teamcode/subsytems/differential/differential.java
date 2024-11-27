@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 
-import com.qualcomm.robotcore.hardware.Servo;
 
 import com.qualcomm.robotcore.hardware.PwmControl;
 
