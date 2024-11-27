@@ -170,15 +170,12 @@ public class observationPark extends LinearOpMode {
         Action action1 = traj1.build();
 
 
-        pivotCode.goTo(870);
         slideCode.goTo(0);
         diffy.setDifferentialPosition(-90,-90);
-        if (870-30 < elbow.getCurrentPosition() && elbow.getCurrentPosition() < 870+30) {
-            elbow.setPower(0);
-
-        } else {
+        while (780 > elbow.getCurrentPosition() || elbow.getCurrentPosition() > 980) {
             pivotCode.goTo(870);
         }
+        elbow.setPower(0);
 
         waitForStart();
 
