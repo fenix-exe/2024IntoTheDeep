@@ -6,12 +6,10 @@ public class MoveToPresetPositionAction implements IRobotAction {
     Arm arm;
     ArmPresetPosition presetPosition;
     public boolean cancelled = false;
-    boolean manual_override_rules = false;
 
-    public MoveToPresetPositionAction(Arm arm, ArmPresetPosition  presetPosition, boolean manual_override_rules){
+    public MoveToPresetPositionAction(Arm arm, ArmPresetPosition  presetPosition){
         this.arm = arm;
         this.presetPosition = presetPosition;
-        this.manual_override_rules = manual_override_rules;
     }
 
     @Override
@@ -21,7 +19,7 @@ public class MoveToPresetPositionAction implements IRobotAction {
 
     public void execute(){
         if(!cancelled) {
-            arm.moveToPresetPosition(presetPosition, manual_override_rules);
+            arm.moveToPresetPosition(presetPosition);
         }
     }
 

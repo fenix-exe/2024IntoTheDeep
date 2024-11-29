@@ -18,10 +18,7 @@ public class Arm {
         slide.joystickControl(slideMovement, max_extension,remove_arm_rules);
     }
 
-    public void moveElbow(double elbowMovement, boolean remove_arm_rules){
-        if ((slide.getSlideExtensionInInches() > 1 && !remove_arm_rules) && !(elbow.getElbowAngle() < 20 && slide.getSlideExtensionInInches() >= 3)){
-            slide.setSlideExtensionLength(0);
-        } else {
+    public void moveElbow(double elbowMovement){
             double power;
             if (elbow.getElbowTicks() > elbow.topPosition - 100 && elbowMovement > 0){ //top limit
                 power = 0;
@@ -32,7 +29,6 @@ public class Arm {
                 power = elbowMovement;
             }
             elbow.elbowJoystick(power);
-        }
     }
 
     public int getSlideMaxLengthIn42Inches(int angleInTicks){
@@ -94,26 +90,10 @@ public class Arm {
     }
     public void holdSlide(){slide.holdPosition();}
 
-    public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
+    public void moveToPresetPosition(ArmPresetPosition position){
         //if elbow needs to be moved to reach position, retract slides fully
-       if (manual_override_arm_rules || (elbow.getElbowAngle() < 20 && !(position.elbowAngle > 20))){
-           slide.setSlideExtensionLength(position.slideLength);
-           elbow.setTargetAngle(position.elbowAngle);
-       } else {
-           if (position.elbowAngle > 20 && elbow.getElbowAngle() < 23){
-               elbow.setTargetAngle(25);
-           } else if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 3 && slide.getSlideExtensionInInches() > 1) {
-               slide.setSlideExtensionLength(0);
-           } else {
-               //move elbow first
-               if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 3) {
-                   elbow.setTargetAngle(position.elbowAngle);
-               } else {
-                   // now move slide
-                   slide.setSlideExtensionLength(position.slideLength);
-               }
-           }
-       }
+        slide.setSlideExtensionLength(position.slideLength);
+        elbow.setTargetAngle(position.elbowAngle);
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){
