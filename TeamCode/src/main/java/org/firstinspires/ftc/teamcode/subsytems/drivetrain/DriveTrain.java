@@ -108,6 +108,12 @@ public class DriveTrain {
         FR.setPower((((rotY - rotX) - rx) / fielddenom) * speedMultiplier);
         BR.setPower((((rotY + rotX) - rx) / fielddenom) * speedMultiplier);
     }
+    public void stopDriveTrain(){
+        FL.setPower(0);
+        FR.setPower(0);
+        BL.setPower(0);
+        BR.setPower(0);
+    }
     public void resetIMU(){
         imu_IMU.resetYaw();
     }

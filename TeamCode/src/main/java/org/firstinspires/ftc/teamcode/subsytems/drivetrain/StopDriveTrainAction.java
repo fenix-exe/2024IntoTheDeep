@@ -17,11 +17,7 @@ public class StopDriveTrainAction implements IRobotAction {
     @Override
     public void execute() {
         if (!isCancelled()){
-            if (driveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
-                driveTrain.RobotCentric_Drive();
-            } else {
-                driveTrain.FieldCentricDrive();
-            }
+            driveTrain.stopDriveTrain();
         }
         this.complete = true;
     }
