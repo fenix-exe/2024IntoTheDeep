@@ -19,10 +19,10 @@ public class HomeElbowAction implements IRobotAction {
     public void execute() {
         if (!cancelled){
             while (!arm.elbow.limitSwitch.isPressed() && !cancelled){
-                arm.setElbowPower(-0.5);
+                arm.setElbowPower(-0.75);
             }
             while (arm.elbow.limitSwitch.isPressed() && !cancelled){
-                arm.setElbowPower(0.5);
+                arm.setElbowPower(0.75);
             }
             arm.setElbowPower(0);
 

@@ -169,7 +169,7 @@ public class TeleOPV4 extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
-        imu.resetYaw();
+        //imu.resetYaw();
 
         driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
     }
