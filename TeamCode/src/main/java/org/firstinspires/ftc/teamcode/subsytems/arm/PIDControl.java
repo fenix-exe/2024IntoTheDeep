@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.subsytems.arm;
 import com.arcrobotics.ftclib.controller.PIDController;
 
 public class PIDControl {
-    private  PIDController controller;
+    private PIDController controller;
     private double f;
     private double ticksToUnit;
     public PIDControl(PIDController controller, double p, double i, double d, double f, double ticksToUnit){
