@@ -71,7 +71,7 @@ public class DriverControls implements DriveControlMap{
         return false;
     }
     public boolean homeArm(){
-        return gamepad1current.start && gamepad1current.options;
+        return gamepad1current.a && gamepad1current.b;
     }
     public boolean microDriveAdjustments(){
         return gamepad1current.left_trigger > 0.5;

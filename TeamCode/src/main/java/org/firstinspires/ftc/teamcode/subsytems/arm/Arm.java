@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsytems.arm;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
+import java.util.HashMap;
+
 public class Arm {
     Slide slide;
     Elbow elbow;
@@ -106,6 +110,24 @@ public class Arm {
     }
     public double getSlideExtension(){
         return slide.getSlideExtensionInInches();
+    }
+
+    public HashMap getDebugInfo() {
+        /*telemetry.addData("Slide extension", arm.getSlideExtension());
+        telemetry.addData("Slide target position", arm.getSlideExtension());
+        telemetry.addData("Slide limit", arm.getSlideMaxLengthIn42Inches(arm.getElbowAngleInTicks()));
+        telemetry.addData("Elbow angle", arm.getElbowAngleInDegrees());
+        telemetry.addData("Elbow target position", pivot.getTargetPosition());*/
+
+        HashMap debugInfo = new HashMap<>();
+        debugInfo.put("Slide Extension", this.getSlideExtension());
+        debugInfo.put("Slide Limit", this.getSlideMaxLengthIn42Inches(this.getElbowAngleInTicks()));
+        debugInfo.put("Slide Power", this.slide.slideMotor.getPower());
+        debugInfo.put("Slide Current", this.slide.slideMotor.getCurrent(CurrentUnit.MILLIAMPS));
+        debugInfo.put("Elbow Angle", this.getElbowAngleInDegrees());
+        debugInfo.put("Elbow Power", this.elbow.elbow.getPower());
+        debugInfo.put("Elbow Current", this.elbow.elbow.getCurrent(CurrentUnit.MILLIAMPS));
+        return debugInfo;
     }
 
 

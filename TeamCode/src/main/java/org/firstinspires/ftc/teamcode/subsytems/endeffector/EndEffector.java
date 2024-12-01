@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsytems.endeffector;
 
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 
+import java.util.HashMap;
+
 public class EndEffector {
     ActiveIntake intake;
     differential diffy;
@@ -28,6 +30,19 @@ public class EndEffector {
         double pitch = controlPitch*STEP_SIZE + diffy.returnPitch();
         double roll = controlRoll*STEP_SIZE + diffy.returnRoll();
         setDifferentialPosition(pitch, roll);
+    }
+    public HashMap getDebugInfo() {
+        /*telemetry.addData("Slide extension", arm.getSlideExtension());
+        telemetry.addData("Slide target position", arm.getSlideExtension());
+        telemetry.addData("Slide limit", arm.getSlideMaxLengthIn42Inches(arm.getElbowAngleInTicks()));
+        telemetry.addData("Elbow angle", arm.getElbowAngleInDegrees());
+        telemetry.addData("Elbow target position", pivot.getTargetPosition());*/
+
+        HashMap debugInfo = new HashMap<>();
+        debugInfo.put("Differential Pitch", diffy.returnPitch());
+        debugInfo.put("Differential Roll", diffy.returnRoll());
+        debugInfo.put("Active Intake Power", intake.intake.getPower());
+        return debugInfo;
     }
 
 }

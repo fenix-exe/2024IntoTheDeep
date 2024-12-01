@@ -12,11 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.robot.Robot;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robot.ConfigReader;
 import org.firstinspires.ftc.teamcode.robot.RobotActions;
 import org.firstinspires.ftc.teamcode.robot.RobotCore;
@@ -27,10 +22,10 @@ import org.firstinspires.ftc.teamcode.subsytems.arm.Slide;
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.ActiveIntake;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.Differential;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffector;
-import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserDirective;
+import org.firstinspires.ftc.teamcode.util.loggerUtil;
 
+import java.util.HashMap;
 import java.util.Set;
 
 @TeleOp
@@ -114,7 +109,8 @@ public class TeleOPV4 extends LinearOpMode {
 
             driverControls.update();
 
-            Set<UserDirective> directive = driverControls.getUserIntents();
+            Set directive = driverControls.getUserIntents();
+            String directives = directive.toString();
 
             RobotCore.updatePresetPositions(actions, directive);
             RobotCore.updateRobotActionsforArm(actions, directive);
@@ -122,21 +118,42 @@ public class TeleOPV4 extends LinearOpMode {
             RobotCore.updateRobotActionsforDriveTrain(actions, directive);
 
             String actions_list = actions.toString();
+
+            HashMap arm_debugInfo = arm.getDebugInfo();
+            HashMap endEffector_debugInfo = endEffector.getDebugInfo();
+            HashMap driveTrain_debugInfo = driveTrain.getDebugInfo();
+
             telemetry.addData("Intent", directive);
             telemetry.addData("actions", actions_list);
-            telemetry.addData("Slide extension", arm.getSlideExtension());
-            telemetry.addData("Slide target position", arm.getSlideExtension());
-            telemetry.addData("Slide limit", arm.getSlideMaxLengthIn42Inches(arm.getElbowAngleInTicks()));
-            telemetry.addData("Elbow angle", arm.getElbowAngleInDegrees());
-            telemetry.addData("Elbow target position", pivot.getTargetPosition());
-            telemetry.addData("IMU yaw", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-            telemetry.addData("pitch", diffCode.returnPitch());
-            telemetry.addData("roll", diffCode.returnRoll());
-            telemetry.addData("slide current", slide.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("elbow current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("Slide extension", arm_debugInfo.get("Slide Extension"));
+            telemetry.addData("Slide limit", arm_debugInfo.get("Slide Limit"));
+            telemetry.addData("Elbow angle", arm_debugInfo.get("Elbow Angle"));
+            telemetry.addData("IMU yaw", driveTrain_debugInfo.get("IMU Yaw"));
+            telemetry.addData("pitch", endEffector_debugInfo.get("Differential Pitch"));
+            telemetry.addData("roll", endEffector_debugInfo.get("Differential Roll"));
+            telemetry.addData("slide current", arm_debugInfo.get("Slide Current"));
+            telemetry.addData("elbow current", arm_debugInfo.get("Elbow Current"));
+            telemetry.addData("active intake power", endEffector_debugInfo.get("Active Intake Power"));
             //telemetry.addData("Is the hall effect sensor triggered?", limitSwitch.isPressed());
             telemetry.update();
 
+            //logging
+            loggerUtil.debug("Directive: " + directives);
+            loggerUtil.debug("Actions: " + actions_list);
+            loggerUtil.debug("Slide Extension: " + arm_debugInfo.get("Slide Extension"));
+            loggerUtil.debug("Slide Limit: " + arm_debugInfo.get("Slide Limit"));
+            loggerUtil.debug("Slide Current: " + arm_debugInfo.get("Slide Current"));
+            loggerUtil.debug("Elbow Angle: " + arm_debugInfo.get("Elbow Angle"));
+            loggerUtil.debug("Elbow Current: " + arm_debugInfo.get("Elbow Current"));
+            loggerUtil.debug("Differential Pitch: " + endEffector_debugInfo.get("Differential Pitch"));
+            loggerUtil.debug("Differential Roll: " + endEffector_debugInfo.get("Differential Roll"));
+            loggerUtil.debug("Active Intake Power: " + endEffector_debugInfo.get("Active Intake Power"));
+            loggerUtil.debug("DriveTrain Motor Powers: " + driveTrain_debugInfo.get("FL Power") + ", " + driveTrain_debugInfo.get("FR Power") + ", " + driveTrain_debugInfo.get("BL Power") + ", " + driveTrain_debugInfo.get("BR Power"));
+            loggerUtil.debug("DriveTrain Motor Currents: " + driveTrain_debugInfo.get("FL Current") + ", " + driveTrain_debugInfo.get("FR Current") + ", " + driveTrain_debugInfo.get("BL Current") + ", " + driveTrain_debugInfo.get("BR Current"));
+            loggerUtil.debug("IMU Yaw: " + driveTrain_debugInfo.get("IMU Yaw"));
+            loggerUtil.debug("Drive Type: " + driveTrain_debugInfo.get("Drive Type"));
+
+            //execution of actions
             actions.execute();
             actions.removeCompleteAndCancelled();
 
@@ -232,4 +249,5 @@ public class TeleOPV4 extends LinearOpMode {
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
 }
