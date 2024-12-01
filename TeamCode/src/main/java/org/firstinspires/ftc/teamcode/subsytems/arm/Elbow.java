@@ -66,9 +66,6 @@ public class Elbow {
         return elbow.getCurrentPosition();
     }
 
-    public boolean isBusy() {
-        return elbow.isBusy();
-    }
     public void resetEncoder(){
         elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

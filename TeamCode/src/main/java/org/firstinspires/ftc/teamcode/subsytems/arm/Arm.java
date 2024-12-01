@@ -44,11 +44,7 @@ public class Arm {
             MaxSlideExtensionInches = 10^44;
         }
         int MaxSlideExtensionEncoderTicks = slide.inchesToTicksPivotPoint(MaxSlideExtensionInches);
-        if (MaxSlideExtensionEncoderTicks < physicalMaxExtension){
-            topHeight = MaxSlideExtensionEncoderTicks;
-        } else {
-            topHeight = physicalMaxExtension;
-        }
+        topHeight = Math.min(physicalMaxExtension, MaxSlideExtensionEncoderTicks);
         return (int) Math.floor(Math.abs(topHeight));
     }
     public int getSlideLengthAllowed(double angleInDegrees){
@@ -104,20 +100,11 @@ public class Arm {
         return Math.abs(elbow.getElbowAngle() - position.elbowAngle) < 3 &&  // angle is within 3 degrees of target
                 Math.abs(slide.getSlideExtensionInInches() - position.slideLength) < 1; // slide is within 1 inch of target
     }
-
-    public boolean isBusy(){
-        return slide.isBusy() || elbow.isBusy();
-    }
     public double getSlideExtension(){
         return slide.getSlideExtensionInInches();
     }
 
     public HashMap getDebugInfo() {
-        /*telemetry.addData("Slide extension", arm.getSlideExtension());
-        telemetry.addData("Slide target position", arm.getSlideExtension());
-        telemetry.addData("Slide limit", arm.getSlideMaxLengthIn42Inches(arm.getElbowAngleInTicks()));
-        telemetry.addData("Elbow angle", arm.getElbowAngleInDegrees());
-        telemetry.addData("Elbow target position", pivot.getTargetPosition());*/
 
         HashMap debugInfo = new HashMap<>();
         debugInfo.put("Slide Extension", this.getSlideExtension());

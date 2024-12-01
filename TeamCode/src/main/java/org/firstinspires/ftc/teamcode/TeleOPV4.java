@@ -176,8 +176,6 @@ public class TeleOPV4 extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //home();
-
         Slide slideControl = new Slide(slide, PHYSICALMAXEXTENSION);
         Elbow elbow = new Elbow(pivot, limitSwitch, 2300);
         arm = new Arm(slideControl, elbow, PHYSICALMAXEXTENSION);
