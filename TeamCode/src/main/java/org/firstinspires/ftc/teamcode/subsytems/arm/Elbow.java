@@ -17,8 +17,10 @@ public class Elbow {
     RevTouchSensor limitSwitch;
     int elbowPosition;
     int topPosition;
-    public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition){
+    PIDControl controller;
+    public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, PIDControl controller, int topPosition){
         this.elbow = elbow;
+        this.controller = controller;
         this.topPosition = topPosition;
         this.limitSwitch = limitSwitch;
     }
@@ -36,7 +38,7 @@ public class Elbow {
             elbowPosition = topPosition;
         }
 
-        goToTargetPosition(elbowPosition);
+        elbow.setPower(controller.moveToPosition(elbow.getCurrentPosition(), elbowPosition));
     }
     public void elbowJoystick(double joystickControl){
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

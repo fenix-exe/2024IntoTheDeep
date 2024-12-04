@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robot.RobotCore;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Arm;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Elbow;
+import org.firstinspires.ftc.teamcode.subsytems.arm.PIDControl;
 import org.firstinspires.ftc.teamcode.subsytems.arm.Slide;
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
@@ -181,7 +183,7 @@ public class TeleOPV4 extends LinearOpMode {
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Slide slideControl = new Slide(slide, PHYSICALMAXEXTENSION);
-        Elbow elbow = new Elbow(pivot, limitSwitch, 2300);
+        Elbow elbow = new Elbow(pivot, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
         arm = new Arm(slideControl, elbow, PHYSICALMAXEXTENSION);
 
         slide.setTargetPosition(0);
