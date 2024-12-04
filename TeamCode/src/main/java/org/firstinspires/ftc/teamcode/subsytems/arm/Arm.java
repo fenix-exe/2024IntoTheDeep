@@ -10,7 +10,6 @@ public class Arm {
     int physicalMaxExtension;
     double MaxSlideExtensionInches;
 
-
     public Arm(Slide slide, Elbow elbow, int initialTopHeight){
         this.slide = slide;
         this.elbow = elbow;

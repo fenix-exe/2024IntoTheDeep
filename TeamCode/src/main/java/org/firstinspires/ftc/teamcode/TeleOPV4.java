@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.ActiveIntake;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffector;
+import org.firstinspires.ftc.teamcode.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.util.LoggerUtil;
 
 import java.util.HashMap;
@@ -44,10 +45,11 @@ public class TeleOPV4 extends LinearOpMode {
     IMU imu;
     RevColorSensorV3 activeIntakeSensor;
     RevTouchSensor limitSwitch;
+    FrequencyCounter freqCounter;
     int PHYSICALMAXEXTENSION = 2500;
 
     private static boolean isTelemetryEnabled = true;
-    private static boolean isLoggingEnabled = true;
+    private static boolean isLoggingEnabled = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,8 +63,11 @@ public class TeleOPV4 extends LinearOpMode {
         RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
         waitForStart();
         diffCode.setDifferentialPosition(-90,-90);
+        freqCounter = new FrequencyCounter();
+
 
         while (opModeIsActive()){
+            freqCounter.count();
 
             driverControls.update();
 
@@ -73,12 +78,11 @@ public class TeleOPV4 extends LinearOpMode {
             RobotCore.updateRobotActionsforDriveTrain(actions, directive);
 
             logDebugInfo(directive, actions);
-
             //execution of actions
             actions.execute();
             actions.removeCompleteAndCancelled();
-
         }
+
 
 
     }
@@ -97,7 +101,6 @@ public class TeleOPV4 extends LinearOpMode {
     }
 
     private static void updateLogging(String directives, String actions_list, HashMap arm_debugInfo, HashMap endEffector_debugInfo, HashMap driveTrain_debugInfo) {
-        LoggerUtil.setIsLoggingEnabled(isLoggingEnabled);
         LoggerUtil.debug("Directive: " + directives);
         LoggerUtil.debug("Actions: " + actions_list);
         LoggerUtil.debug("Slide Extension: " + arm_debugInfo.get("Slide Extension"));
@@ -127,6 +130,7 @@ public class TeleOPV4 extends LinearOpMode {
             telemetry.addData("slide current", arm_debugInfo.get("Slide Current"));
             telemetry.addData("elbow current", arm_debugInfo.get("Elbow Current"));
             telemetry.addData("active intake power", endEffector_debugInfo.get("Active Intake Power"));
+            telemetry.addData("average loop frequency", freqCounter.getAveFrequency());
             //telemetry.addData("Is the hall effect sensor triggered?", limitSwitch.isPressed());
             telemetry.update();
         }

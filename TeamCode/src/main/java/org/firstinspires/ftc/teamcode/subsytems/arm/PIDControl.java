@@ -5,13 +5,12 @@ public class PIDControl {
     private PIDController controller;
     private double f;
     private double ticksToUnit;
-    public PIDControl(PIDController controller, double p, double i, double d, double f, double ticksToUnit){
+    public PIDControl(PIDController controller, double f, double ticksToUnit){
         this.controller = controller;
         this.f = f;
         this.ticksToUnit = ticksToUnit;
-        controller.setPID(p, i, d);
     }
-    public double moveToPos (int currentPos, int targetPos){
+    public double moveToPosition (int currentPos, int targetPos){
         double pid = controller.calculate(currentPos, targetPos);
         double ff = Math.cos(Math.toRadians(targetPos/ticksToUnit))*f;
         double power = pid + ff;

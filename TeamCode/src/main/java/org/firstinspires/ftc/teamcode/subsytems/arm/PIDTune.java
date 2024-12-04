@@ -15,20 +15,20 @@ public class PIDTune extends LinearOpMode {
     public static double f=0;
     public static int target = 0;
     private final double ticks_in_degrees = 8719.2/360;
-    private DcMotorEx pivot;
+    private DcMotorEx elbow;
     @Override
     public void runOpMode() throws InterruptedException {
         controller = new PIDController(p, i ,d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        elbow = hardwareMap.get(DcMotorEx.class, "pivot");
         waitForStart();
         while (opModeIsActive()){
             controller.setPID(p, i ,d);
-            int armPos = pivot.getCurrentPosition();
+            int armPos = elbow.getCurrentPosition();
             double pid = controller.calculate(armPos, target);
             double ff = Math.cos(Math.toRadians(target/ticks_in_degrees))*f;
             double power = pid +ff;
-            pivot.setPower(power);
+            elbow.setPower(power);
             telemetry.addData("pos", armPos);
             telemetry.addData("target", target);
             telemetry.update();
