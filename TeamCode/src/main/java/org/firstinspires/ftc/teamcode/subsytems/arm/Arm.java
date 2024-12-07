@@ -89,10 +89,29 @@ public class Arm {
     }
     public void holdSlide(){slide.holdPosition();}
 
-    public void moveToPresetPosition(ArmPresetPosition position){
+    public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
         //if elbow needs to be moved to reach position, retract slides fully
-        slide.setSlideExtensionLength(position.slideLength);
-        elbow.setTargetAngle(position.elbowAngle);
+        if (manual_override_arm_rules || (elbow.getElbowAngle() < 20 && !(position.elbowAngle > 20))){
+            slide.setSlideExtensionLength(position.slideLength);
+            elbow.setTargetAngle(position.elbowAngle);
+        } else {
+            if (position.elbowAngle > 20 && elbow.getElbowAngle() < 23){
+                elbow.setTargetAngle(25);
+            } else if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 5 && slide.getSlideExtensionInInches() > 1) {
+                slide.setSlideExtensionLength(0);
+            } else {
+                //move elbow first
+                if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 5) {
+                    elbow.setTargetAngle(position.elbowAngle);
+                } else {
+                    // now move slide
+                    elbow.setTargetAngle(position.elbowAngle);
+                    slide.setSlideExtensionLength(position.slideLength);
+                }
+            }
+        }
+        //slide.setSlideExtensionLength(position.slideLength);
+        //elbow.setTargetAngle(position.elbowAngle);
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){

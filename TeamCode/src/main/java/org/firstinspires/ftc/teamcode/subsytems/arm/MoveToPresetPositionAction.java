@@ -5,9 +5,11 @@ import org.firstinspires.ftc.teamcode.robot.IRobotAction;
 public class MoveToPresetPositionAction implements IRobotAction {
     Arm arm;
     ArmPresetPosition presetPosition;
+    private boolean manual_override_arm_rules;
     public boolean cancelled = false;
 
-    public MoveToPresetPositionAction(Arm arm, ArmPresetPosition  presetPosition){
+    public MoveToPresetPositionAction(Arm arm, ArmPresetPosition presetPosition, boolean manual_override_arm_rules){
+        this.manual_override_arm_rules = manual_override_arm_rules;
         this.arm = arm;
         this.presetPosition = presetPosition;
     }
@@ -19,7 +21,7 @@ public class MoveToPresetPositionAction implements IRobotAction {
 
     public void execute(){
         if(!cancelled) {
-            arm.moveToPresetPosition(presetPosition);
+            arm.moveToPresetPosition(presetPosition, manual_override_arm_rules);
         }
     }
 

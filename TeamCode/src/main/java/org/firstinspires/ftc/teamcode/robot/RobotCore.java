@@ -59,34 +59,34 @@ public class RobotCore {
             actions.add(new MoveSlideAction(arm, driverControls.slideMovement(), remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_POSITION,remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_TOP)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION,remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_BOTTOM)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION,remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_FRONT_TOP)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION,remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_FRONT_BOTTOM)) {
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION,remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_SAFE_DRIVING_POSITION)){
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.SAFE_DRIVING_POSITION));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.SAFE_DRIVING_POSITION,remove_arm_rules));
         } else if (intent.contains(UserDirective.ELBOW_0)){
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.FLAT_ELBOW));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.FLAT_ELBOW,remove_arm_rules));
         } else if (intent.contains(UserDirective.ELBOW_90)){
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.ASCENT_2_HANG));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.ASCENT_2_HANG,remove_arm_rules));
         } else if (intent.contains(UserDirective.HOME_ARM)){
             actions.cancelPresetArmActions();
             actions.add(new HomeElbowAction(arm));
         } else if (intent.contains(UserDirective.INTAKE_DOWN)){
             actions.cancelPresetArmActions();
-            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_DOWN));
+            actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_DOWN,remove_arm_rules));
         }
 
         // check if you need to hold position for slide and/or elbow
