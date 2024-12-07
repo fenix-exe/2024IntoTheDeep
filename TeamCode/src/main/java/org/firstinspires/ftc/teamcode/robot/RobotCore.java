@@ -35,6 +35,7 @@ public class RobotCore {
     static DriverControls driverControls;
     static EndEffector endEffector;
 
+
     public static void initialize(DriverControls driverControls, DriveTrain drivetrain, Arm arm, EndEffector endEffector){
         RobotCore.arm = arm;
         RobotCore.drivetrain = drivetrain;
@@ -145,7 +146,7 @@ public class RobotCore {
         } else if (intent.contains(UserDirective.PRESET_SAFE_DRIVING_POSITION)){
             actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.SAFE_DRIVING_POSITION));
         } else if (intent.contains(UserDirective.WRIST_DOWN)){
-            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_CLOSE_TO_BAR));
+            actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.DISPERSION));
         } else if (intent.contains(UserDirective.INTAKE_DOWN)){
             actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_DOWN));
         }
@@ -174,31 +175,40 @@ public class RobotCore {
         }
 
     }
-    public static void updatePresetPositions(RobotActions actions, Set<UserDirective> directive){
+    public static boolean updatePresetPositions(RobotActions actions, Set<UserDirective> directive){
         if (directive.contains(UserDirective.SET_DEPOSIT_BACK_BOTTOM)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_BACK_BOTTOM_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
         if (directive.contains(UserDirective.SET_DEPOSIT_FRONT_BOTTOM)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_FRONT_BOTTOM_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
         if (directive.contains(UserDirective.SET_DEPOSIT_BACK_TOP)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
         if (directive.contains(UserDirective.SET_DEPOSIT_FRONT_TOP)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.DEPOSIT_FRONT_TOP_BUCKET_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
         if (directive.contains(UserDirective.SET_SUBMERSIBLE_INTAKE)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.INTAKE_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
         if (directive.contains(UserDirective.SET_SAFE_DRIVING_POSITION)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.SAFE_DRIVING_POSITION, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
         if (directive.contains(UserDirective.SET_ELBOW_0)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.FLAT_ELBOW, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
         if (directive.contains(UserDirective.SET_ELBOW_90)){
             actions.add(new SetArmPresetPosition(ArmPresetPosition.ASCENT_2_HANG, arm.getElbowAngleInDegrees(), arm.getSlideExtension()));
+            return true;
         }
+        return false;
     }
     private static double getSpeedMultiplier(Set<UserDirective> intent){
         if (!intent.contains(UserDirective.REMOVE_SPEED_RULES)){

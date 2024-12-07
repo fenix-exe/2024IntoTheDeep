@@ -13,7 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import org.firstinspires.ftc.teamcode.robot.ConfigReader;
+
+import org.firstinspires.ftc.teamcode.robot.ConfigUtil;
 import org.firstinspires.ftc.teamcode.robot.RobotActions;
 import org.firstinspires.ftc.teamcode.robot.RobotCore;
 import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
@@ -53,13 +54,14 @@ public class TeleOPV4 extends LinearOpMode {
     private static boolean isTelemetryEnabled = true;
     private static boolean isLoggingEnabled = false;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         initializeGamePads();
         initializeDriveTrain();
         initializeArmAndHome();
         initializeEndEffector();
-        //loadFromConfigFile("/sdcard/Download/TeleOp/PresetPositions.csv");
+        ConfigUtil.loadPresetsFromConfig();
 
         RobotActions actions = new RobotActions();
         RobotCore.initialize(driverControls, driveTrain, arm, endEffector);
@@ -70,22 +72,24 @@ public class TeleOPV4 extends LinearOpMode {
 
         while (opModeIsActive()){
             freqCounter.count();
-
             driverControls.update();
 
             Set directive = driverControls.getUserIntents();
-            RobotCore.updatePresetPositions(actions, directive);
+            boolean directiveContainsChangePreset = RobotCore.updatePresetPositions(actions, directive);
             RobotCore.updateRobotActionsforArm(actions, directive);
             RobotCore.updateRobotActionsForEndEffector(actions, directive);
             RobotCore.updateRobotActionsforDriveTrain(actions, directive);
 
             logDebugInfo(directive, actions);
+
             //execution of actions
             actions.execute();
             actions.removeCompleteAndCancelled();
+
+            if (directiveContainsChangePreset) {
+                ConfigUtil.writePresetsToConfig();
+            }
         }
-
-
 
     }
 
@@ -206,9 +210,6 @@ public class TeleOPV4 extends LinearOpMode {
         initializeDifferential();
         initializeIntake();
         endEffector = new EndEffector(activeIntakeCode, diffCode);
-    }
-    private void loadFromConfigFile(String fileName){
-        ConfigReader.readConfig(fileName);
     }
 
 }
