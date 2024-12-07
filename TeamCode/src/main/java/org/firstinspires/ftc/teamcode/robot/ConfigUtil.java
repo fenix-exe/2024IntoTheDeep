@@ -94,6 +94,7 @@ public class ConfigUtil {
                 break;
             case INTAKE_DOWN:
                 EndEffectorPresetPosition.INTAKE_DOWN = presetPosition;
+                break;
             default:
                 LoggerUtil.error("Read Unknown End Effector Preset," + presetPosition.toString());
                 break;

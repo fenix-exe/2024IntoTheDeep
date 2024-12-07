@@ -90,6 +90,7 @@ public class TeleOPV4 extends LinearOpMode {
                 ConfigUtil.writePresetsToConfig();
             }
         }
+        LoggerUtil.logFlush();
 
     }
 
