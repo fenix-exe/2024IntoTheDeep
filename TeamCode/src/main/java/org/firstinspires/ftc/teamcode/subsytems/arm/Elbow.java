@@ -38,9 +38,7 @@ public class Elbow {
             elbowPosition = topPosition;
         }
 
-        //goToTargetPosition(elbowPosition);
-        elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        elbow.setPower(controller.moveToPosition(elbow.getCurrentPosition(), elbowPosition));
+        goToTargetPosition(elbowPosition);
     }
     public void elbowJoystick(double joystickControl){
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -97,7 +97,7 @@ public class Arm {
         } else {
             if (position.elbowAngle > 20 && elbow.getElbowAngle() < 23){
                 elbow.setTargetAngle(25);
-            } else if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 5 && slide.getSlideExtensionInInches() > 1) {
+            } else if (Math.abs(elbow.getElbowAngle() - position.elbowAngle) > 5 && slide.getSlideExtensionInInches() > 5) {
                 slide.setSlideExtensionLength(0);
             } else {
                 //move elbow first
@@ -110,8 +110,6 @@ public class Arm {
                 }
             }
         }
-        //slide.setSlideExtensionLength(position.slideLength);
-        //elbow.setTargetAngle(position.elbowAngle);
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){
