@@ -1,30 +1,30 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.arm.Arm;
-import org.firstinspires.ftc.teamcode.subsytems.arm.ArmPresetPosition;
-import org.firstinspires.ftc.teamcode.subsytems.arm.HoldElbowAction;
-import org.firstinspires.ftc.teamcode.subsytems.arm.HoldSlideAction;
-import org.firstinspires.ftc.teamcode.subsytems.arm.HomeElbowAction;
-import org.firstinspires.ftc.teamcode.subsytems.arm.MoveElbowAction;
-import org.firstinspires.ftc.teamcode.subsytems.arm.MoveSlideAction;
-import org.firstinspires.ftc.teamcode.subsytems.arm.MoveToPresetPositionAction;
-import org.firstinspires.ftc.teamcode.subsytems.arm.SetArmPresetPosition;
-import org.firstinspires.ftc.teamcode.subsytems.driverControl.RumbleGamepadAction;
-import org.firstinspires.ftc.teamcode.subsytems.driverControl.UserDirective;
-import org.firstinspires.ftc.teamcode.subsytems.drivetrain.ChangeSpeedAction;
+import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
+import org.firstinspires.ftc.teamcode.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.modules.arm.ArmPresetPosition;
+import org.firstinspires.ftc.teamcode.modules.arm.actions.HoldElbowAction;
+import org.firstinspires.ftc.teamcode.modules.arm.actions.HoldSlideAction;
+import org.firstinspires.ftc.teamcode.modules.arm.actions.HomeElbowAction;
+import org.firstinspires.ftc.teamcode.modules.arm.actions.MoveElbowAction;
+import org.firstinspires.ftc.teamcode.modules.arm.actions.MoveSlideAction;
+import org.firstinspires.ftc.teamcode.modules.arm.actions.MoveToPresetPositionAction;
+import org.firstinspires.ftc.teamcode.modules.arm.actions.SetArmPresetPosition;
+import org.firstinspires.ftc.teamcode.modules.driverControl.actions.RumbleGamepadAction;
+import org.firstinspires.ftc.teamcode.modules.driverControl.UserDirective;
+import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.ChangeSpeedAction;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrainSpeedMultiplier;
-import org.firstinspires.ftc.teamcode.subsytems.drivetrain.MoveDriveTrainAction;
-import org.firstinspires.ftc.teamcode.subsytems.drivetrain.ResetIMUAction;
-import org.firstinspires.ftc.teamcode.subsytems.drivetrain.StopDriveTrainAction;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.ActiveIntakeDirection;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffector;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorMovement;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorPresetPosition;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.MoveActiveIntakeAction;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.MoveEndEffectorThroughJoystick;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.MoveEndEffectorToPresetPositionAction;
+import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.MoveDriveTrainAction;
+import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.ResetIMUAction;
+import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.StopDriveTrainAction;
+import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntakeDirection;
+import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffector;
+import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffectorMovement;
+import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffectorPresetPosition;
+import org.firstinspires.ftc.teamcode.modules.endEffector.actions.MoveActiveIntakeAction;
+import org.firstinspires.ftc.teamcode.modules.endEffector.actions.MoveEndEffectorThroughJoystickAction;
+import org.firstinspires.ftc.teamcode.modules.endEffector.actions.MoveEndEffectorToPresetPositionAction;
 
 import java.util.Set;
 
@@ -153,13 +153,13 @@ public class RobotCore {
 
         //gamepad control for the differential through dpad
         if (intent.contains(UserDirective.DIFF_UP)){
-            actions.add(new MoveEndEffectorThroughJoystick(endEffector, EndEffectorMovement.UP));
+            actions.add(new MoveEndEffectorThroughJoystickAction(endEffector, EndEffectorMovement.UP));
         } else if (intent.contains(UserDirective.DIFF_DOWN)){
-            actions.add(new MoveEndEffectorThroughJoystick(endEffector, EndEffectorMovement.DOWN));
+            actions.add(new MoveEndEffectorThroughJoystickAction(endEffector, EndEffectorMovement.DOWN));
         } else if (intent.contains(UserDirective.DIFF_LEFT)){
-            actions.add(new MoveEndEffectorThroughJoystick(endEffector, EndEffectorMovement.LEFT));
+            actions.add(new MoveEndEffectorThroughJoystickAction(endEffector, EndEffectorMovement.LEFT));
         } else if (intent.contains(UserDirective.DIFF_RIGHT)){
-            actions.add(new MoveEndEffectorThroughJoystick(endEffector, EndEffectorMovement.RIGHT));
+            actions.add(new MoveEndEffectorThroughJoystickAction(endEffector, EndEffectorMovement.RIGHT));
         }
 
         if (intent.contains(UserDirective.INTAKE_FORWARD)){

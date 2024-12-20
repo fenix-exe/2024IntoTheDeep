@@ -3,17 +3,11 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.util.RobotLog;
 
 
-import org.firstinspires.ftc.teamcode.subsytems.arm.ArmPresetPosition;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorPresetPosition;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
-import java.util.Set;
-import java.util.logging.Logger;
 
 public class LoggerUtil {
     private static final String TAG = "Fenix";

@@ -17,15 +17,15 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import org.firstinspires.ftc.teamcode.robot.ConfigUtil;
 import org.firstinspires.ftc.teamcode.robot.RobotActions;
 import org.firstinspires.ftc.teamcode.robot.RobotCore;
-import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.arm.Arm;
-import org.firstinspires.ftc.teamcode.subsytems.arm.Elbow;
-import org.firstinspires.ftc.teamcode.subsytems.arm.PIDControl;
-import org.firstinspires.ftc.teamcode.subsytems.arm.Slide;
-import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
+import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
+import org.firstinspires.ftc.teamcode.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.subsytems.elbow.Elbow;
+import org.firstinspires.ftc.teamcode.subsytems.elbow.PIDControl;
+import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
+import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.ActiveIntake;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffector;
+import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntake;
+import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffector;
 import org.firstinspires.ftc.teamcode.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.util.LoggerUtil;
 
@@ -44,7 +44,7 @@ public class TeleOPV4 extends LinearOpMode {
     CRServo intake;
     ServoImplEx left;
     ServoImplEx right;
-    differential diffCode;
+    Differential diffCode;
     IMU imu;
     RevColorSensorV3 activeIntakeSensor;
     RevTouchSensor limitSwitch;
@@ -205,7 +205,7 @@ public class TeleOPV4 extends LinearOpMode {
         right = hardwareMap.get(ServoImplEx.class, "right");
         left.setPwmRange(new PwmControl.PwmRange(500,2500));
         right.setPwmRange(new PwmControl.PwmRange(500,2500));
-        diffCode = new differential(left,right);
+        diffCode = new Differential(left,right);
     }
     private void initializeEndEffector(){
         initializeDifferential();

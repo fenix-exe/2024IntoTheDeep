@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import org.firstinspires.ftc.teamcode.subsytems.arm.ArmPresetPosition;
-import org.firstinspires.ftc.teamcode.subsytems.arm.ArmPresetPositionNames;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorPresetPosition;
-import org.firstinspires.ftc.teamcode.subsytems.endeffector.EndEffectorPresetPositionNames;
+import org.firstinspires.ftc.teamcode.modules.arm.ArmPresetPosition;
+import org.firstinspires.ftc.teamcode.modules.arm.ArmPresetPositionNames;
+import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffectorPresetPosition;
+import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffectorPresetPositionNames;
 import org.firstinspires.ftc.teamcode.util.LoggerUtil;
 
 import java.io.BufferedReader;

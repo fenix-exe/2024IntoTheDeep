@@ -4,19 +4,16 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
+import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
+import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 @Config
 @TeleOp
 public class diffTELEOP extends LinearOpMode {
     ServoImplEx left;
     ServoImplEx right;
-    differential diffCode;
+    Differential diffCode;
     CRServo intake;
     DriverControls controls;
     public static double pitch = 0;
@@ -27,7 +24,7 @@ public class diffTELEOP extends LinearOpMode {
         left = hardwareMap.get(ServoImplEx.class,"left");
         right = hardwareMap.get(ServoImplEx.class, "right");
         intake = hardwareMap.get(CRServo.class, "intake");
-        diffCode = new differential(left, right);
+        diffCode = new Differential(left, right);
 
 
 
