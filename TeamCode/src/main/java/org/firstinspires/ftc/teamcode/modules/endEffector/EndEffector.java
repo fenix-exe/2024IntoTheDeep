@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.endEffector;
 
+import org.firstinspires.ftc.teamcode.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntake;
 
@@ -8,7 +9,6 @@ import java.util.HashMap;
 public class EndEffector {
     ActiveIntake intake;
     Differential diffy;
-    double STEP_SIZE = 0.5;
 
     public EndEffector(ActiveIntake intake, Differential diffy ){
         this.intake = intake;
@@ -28,8 +28,8 @@ public class EndEffector {
         diffy.setDifferentialPosition(pitch, roll);
     }
     public void diffyJoystick(double controlPitch, double controlRoll){
-        double pitch = controlPitch*STEP_SIZE + diffy.returnPitch();
-        double roll = controlRoll*STEP_SIZE + diffy.returnRoll();
+        double pitch = controlPitch* EndEffectorConstants.STEP_SIZE + diffy.returnPitch();
+        double roll = controlRoll* EndEffectorConstants.STEP_SIZE + diffy.returnRoll();
         setDifferentialPosition(pitch, roll);
     }
     public HashMap getDebugInfo() {

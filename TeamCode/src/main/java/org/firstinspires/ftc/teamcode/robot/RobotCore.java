@@ -212,9 +212,9 @@ public class RobotCore {
     }
     private static double getSpeedMultiplier(Set<UserDirective> intent){
         if (!intent.contains(UserDirective.REMOVE_SPEED_RULES)){
-            if (arm.getElbowAngleInDegrees() <= 30){
+            if (arm.getElbowAngleInDegrees() <= RobotConstants.ELBOWINTAKEANGLE){
                  return DriveTrainSpeedMultiplier.HALF_SPEED;
-            } else if (30 < arm.getElbowAngleInDegrees() && arm.getElbowAngleInDegrees() <= 70){
+            } else if (RobotConstants.ELBOWINTAKEANGLE < arm.getElbowAngleInDegrees() && arm.getElbowAngleInDegrees() <= RobotConstants.ELBOWOUTTAKEANGLE){
                 return DriveTrainSpeedMultiplier.NO_MULTIPLIER;
             } else {
                 return  DriveTrainSpeedMultiplier.SUPER_SLOW;

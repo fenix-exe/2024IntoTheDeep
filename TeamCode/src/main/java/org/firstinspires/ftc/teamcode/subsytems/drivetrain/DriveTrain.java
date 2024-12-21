@@ -18,7 +18,7 @@ public class DriveTrain {
     DcMotorEx BL;
     DcMotorEx BR;
     IMU imu_IMU;
-    double speedMultiplier = 1;
+    public double speedMultiplier = 1;
 
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
 
