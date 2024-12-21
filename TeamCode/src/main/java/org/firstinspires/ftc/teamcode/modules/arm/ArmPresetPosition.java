@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.modules.arm;
 public class ArmPresetPosition {
 
     ArmPresetPositionNames name;
-    double slideLength;
-    double elbowAngle;
+    public double slideLength;
+    public double elbowAngle;
     public ArmPresetPosition(ArmPresetPositionNames name, double elbowAngle, double slideLength){
         this.name = name;
         this.elbowAngle = elbowAngle;

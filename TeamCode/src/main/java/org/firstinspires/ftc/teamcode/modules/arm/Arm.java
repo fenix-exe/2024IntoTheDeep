@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class Arm {
     Slide slide;
-    Elbow elbow;
+    public Elbow elbow;
     int physicalMaxExtension;
     double MaxSlideExtensionInches;
 

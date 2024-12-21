@@ -4,8 +4,8 @@ package org.firstinspires.ftc.teamcode.modules.endEffector;
 public class EndEffectorPresetPosition {
 
     EndEffectorPresetPositionNames name;
-    double pitch;
-    double roll;
+    public double pitch;
+    public double roll;
     public EndEffectorPresetPosition(EndEffectorPresetPositionNames name, double pitch, double roll){
         this.name = name;
         this.pitch = pitch;

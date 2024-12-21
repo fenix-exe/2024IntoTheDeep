@@ -14,7 +14,7 @@ import static java.lang.Math.floor;
 
 public class Elbow {
     public DcMotorEx elbowMotor;
-    RevTouchSensor limitSwitch;
+    public RevTouchSensor limitSwitch;
     int elbowPosition;
     public int topPosition;
     PIDControl controller;
