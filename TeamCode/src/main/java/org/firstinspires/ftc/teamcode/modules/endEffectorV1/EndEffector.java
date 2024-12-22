@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.modules.endEffector;
+package org.firstinspires.ftc.teamcode.modules.endEffectorV1;
 
-import org.firstinspires.ftc.teamcode.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntake;
 

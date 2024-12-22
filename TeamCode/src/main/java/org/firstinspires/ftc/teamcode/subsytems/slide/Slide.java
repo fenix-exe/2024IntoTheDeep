@@ -33,6 +33,7 @@ public class Slide {
         setSlideExtensionLengthInTicks(targetPosition);
     }
     private void setSlideExtensionLengthInTicks(int ticks){
+        //TODO move if statements into modules
         if (ticks < 0 || ticks > maxPhysicalExtensionTicks){
             return;
         }
@@ -50,6 +51,7 @@ public class Slide {
 
         double power;
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //TODO move if statements into modules
         if (!remove_arm_rules){
             if (slideMotor.getCurrentPosition() > maxHeight - 100 && slideMovement > 0){
                 power = 0;

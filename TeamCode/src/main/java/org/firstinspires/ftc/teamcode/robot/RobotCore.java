@@ -19,12 +19,12 @@ import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.MoveDriveTrainA
 import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.ResetIMUAction;
 import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.StopDriveTrainAction;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntakeDirection;
-import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffector;
-import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffectorMovement;
-import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffectorPresetPosition;
-import org.firstinspires.ftc.teamcode.modules.endEffector.actions.MoveActiveIntakeAction;
-import org.firstinspires.ftc.teamcode.modules.endEffector.actions.MoveEndEffectorThroughJoystickAction;
-import org.firstinspires.ftc.teamcode.modules.endEffector.actions.MoveEndEffectorToPresetPositionAction;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffector;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffectorMovement;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffectorPresetPosition;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.actions.MoveActiveIntakeAction;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.actions.MoveEndEffectorThroughJoystickAction;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.actions.MoveEndEffectorToPresetPositionAction;
 
 import java.util.Set;
 

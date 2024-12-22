@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntake;
-import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffector;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffector;
 import org.firstinspires.ftc.teamcode.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.util.LoggerUtil;
 

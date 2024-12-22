@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.modules.endEffector.actions;
+package org.firstinspires.ftc.teamcode.modules.endEffectorV1.actions;
 
-import org.firstinspires.ftc.teamcode.modules.endEffector.EndEffector;
+import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffector;
 import org.firstinspires.ftc.teamcode.robot.IRobotAction;
 
 public class StopActiveIntakeAction implements IRobotAction {

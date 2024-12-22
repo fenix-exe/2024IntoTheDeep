@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import org.firstinspires.ftc.teamcode.util.LoggerUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -59,6 +61,7 @@ public class RobotActions {
         }
         for (IRobotAction action : actionsToRemove) {
             actions.remove(action);
+            LoggerUtil.info(action.toString());
         }
     }
 
