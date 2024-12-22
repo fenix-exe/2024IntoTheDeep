@@ -21,7 +21,21 @@ public class Arm {
 
     public void moveSlide(double slideMovement, boolean remove_arm_rules) {
         int max_extension = getSlideMaxLengthIn42Inches(getElbowAngleInTicks());
-        slide.joystickControl(slideMovement, max_extension,remove_arm_rules);
+        double power;
+        if (!remove_arm_rules){
+            if (slide.getSlideExtensionInInches() > max_extension
+                    && slideMovement > 0){ //top limit
+                power = 0;
+            } else if (slide.getSlideExtensionInInches() < 0
+                    && slideMovement < 0){ //bottom limit
+                power = 0;
+            } else {
+                power = slideMovement;
+            }
+        } else {
+            power = slideMovement;
+        }
+        slide.joystickControl(power);
     }
 
     public void moveElbow(double elbowMovement){
@@ -29,7 +43,7 @@ public class Arm {
             if (elbow.getElbowTicks() > elbow.topPosition - ArmConstants.ELBOWTICKSTOLERANCE && elbowMovement > 0){ //top limit
                 power = 0;
             } else if (elbow.getElbowAngle() < ArmConstants.ELBOWBOTTOMANGLE
-                    && elbowMovement < 0){ //bottom limit is dependent on slides
+                    && elbowMovement < 0){ //bottom limit
                 power = 0;
             } else {
                 power = elbowMovement;
@@ -68,9 +82,11 @@ public class Arm {
     public void holdSlide(){slide.holdPosition();}
 
     public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
+        //if elbow is not at preset position, move elbow to preset position
         if ((Math.abs(elbow.getElbowAngle() - position.elbowAngle) > ArmConstants.ELBOWPRESETTOLERANCE) || manual_override_arm_rules){
             elbow.setTargetAngleAndSpeed(position.elbowAngle, ArmSpeedController.getElbowPowerLimit());
         } else {
+            // if elbow is at preset position, move slide to preset position
             elbow.setTargetAngleAndSpeed(position.elbowAngle, ArmSpeedController.getElbowPowerLimit());
             slide.setSlideExtensionLength(position.slideLength);
         }
