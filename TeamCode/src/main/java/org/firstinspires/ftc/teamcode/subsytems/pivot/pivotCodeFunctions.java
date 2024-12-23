@@ -117,28 +117,4 @@ public class pivotCodeFunctions {
         return new elbowControl(targetPos);
     }
 
-    public class moveElbowControl implements Action {
-        int x;
-        int y;
-        double heading;
-        int arm;
-
-        public moveElbowControl(int x, int y, double heading, int arm) {
-            this.x = x;
-            this.y = y;
-            this.heading = heading;
-            this.arm = arm;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            new ParallelAction(
-                    drive.actionBuilder(drive.pose).splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading)).build()
-                    ,elbowControl(arm));
-            return false;
-        }
-    }
-    public Action moveElbowControl(int x, int y, double heading, int arm) {
-        return new moveElbowControl(x, y, heading, arm);
-    }
 }

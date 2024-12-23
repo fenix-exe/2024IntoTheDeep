@@ -15,11 +15,13 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
 import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.fullClaw;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
@@ -40,9 +42,9 @@ public class ascentPreloadPark extends LinearOpMode {
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
 
-    CRServo intake;
-    ServoImplEx left;
-    ServoImplEx right;
+    ServoImplEx pitch;
+    ServoImplEx roll;
+    ServoImplEx claw;
     slideCodeFunctions slideCode;
     pivotCodeFunctions pivotCode;
     PivotPIDFFunctions pivotPIDF;
@@ -51,6 +53,7 @@ public class ascentPreloadPark extends LinearOpMode {
     DcMotorEx elbow;
     writeAuto writer;
     RevTouchSensor limitSwitch;
+    fullClaw fullClaw;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -71,11 +74,10 @@ public class ascentPreloadPark extends LinearOpMode {
         //set up rr
 
 
-        intake = hardwareMap.get(CRServo.class, "intake");
-        left = hardwareMap.get(ServoImplEx.class, "left");
-        right = hardwareMap.get(ServoImplEx.class, "right");
-        activeIntake activeIntake = new activeIntake(intake);
-        differential diffy = new differential(left, right);
+        pitch = hardwareMap.get(ServoImplEx.class, "pitch");
+        roll = hardwareMap.get(ServoImplEx.class, "roll");
+        claw = hardwareMap.get(ServoImplEx.class, "claw");
+        fullClaw = new fullClaw(pitch, roll, claw);
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         elbow = hardwareMap.get(DcMotorEx.class, "pivot");
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -140,19 +142,15 @@ public class ascentPreloadPark extends LinearOpMode {
             if (XareSame && YareSame && AngleareSame) {
                 traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)),extractAuto.getWristRhoFromList(vector.get(i))))
-                        .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
-                        .stopAndAdd(writer.savePosition(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
+                        .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
 
                 //Active Intake servo not working
             } else {
                 traj1 = traj1.afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .afterDisp(0,slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
-                        .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .stopAndAdd(diffy.setDiffy(extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
-                        .stopAndAdd(activeIntake.aIControl(extractAuto.getIntakeFromList(vector.get(i))))
-                        .stopAndAdd(writer.savePosition(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getWristPsiFromList(vector.get(i)), extractAuto.getWristRhoFromList(vector.get(i))))
+                        .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));                //Active Intake servo not working
             }
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
@@ -160,9 +158,9 @@ public class ascentPreloadPark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Elbow Phi", extractAuto.getElbowPhiFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Linear Slide", extractAuto.getLinearSlideFromList(vector.get(i)));
-            telemetry.addData("Vector " + (i) + " Wrist Psi", extractAuto.getWristPsiFromList(vector.get(i)));
-            telemetry.addData("Vector " + (i) + " Wrist Rho", extractAuto.getWristRhoFromList(vector.get(i)));
-            telemetry.addData("Vector " + (i) + " Intake", extractAuto.getIntakeFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Pitch", extractAuto.getPitchFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Roll", extractAuto.getRollFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Claw", extractAuto.getClawFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Wait", extractAuto.getWaitFromList(vector.get(i)));
             telemetry.update();
 
@@ -171,12 +169,16 @@ public class ascentPreloadPark extends LinearOpMode {
         Action action1 = traj1.build();
 
 
-        slideCode.goTo(0);
-        diffy.setDifferentialPosition(-90,-90);
-        while (780 > elbow.getCurrentPosition() || elbow.getCurrentPosition() > 980) {
+        pivotCode.goTo(870);
+        fullClaw.setPitch(0.7);
+        fullClaw.setRoll(0);
+        fullClaw.setClaw(1);
+        if (870-30 < elbow.getCurrentPosition() && elbow.getCurrentPosition() < 870+30) {
+            elbow.setPower(0);
+
+        } else {
             pivotCode.goTo(870);
         }
-        elbow.setPower(0);
 
 
         waitForStart();
@@ -196,8 +198,7 @@ public class ascentPreloadPark extends LinearOpMode {
         autoTeleTransfer.setxPos(extractAuto.getXFromList(vector.get(vector.size()-1)));
         autoTeleTransfer.setyPos(extractAuto.getYFromList(vector.get(vector.size()-1)));
         autoTeleTransfer.setHeadingAngle(extractAuto.getAngleFromList(vector.get(vector.size()-1)));
-        autoTeleTransfer.setDifPitch(extractAuto.getWristPsiFromList(vector.get(vector.size()-1)));
-        autoTeleTransfer.setDifRoll(extractAuto.getWristRhoFromList(vector.get(vector.size()-1)));
+
 
         return;
     }

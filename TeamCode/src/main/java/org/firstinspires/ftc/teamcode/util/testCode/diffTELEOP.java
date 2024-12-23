@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImpl;
@@ -14,32 +15,37 @@ import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
 @Config
 @TeleOp
 public class diffTELEOP extends LinearOpMode {
-    ServoImplEx left;
-    ServoImplEx right;
-    differential diffCode;
-    CRServo intake;
-    DriverControls controls;
-    public static double pitch = 0;
-    public static double roll = 0;
-    public static double intPower = 0;
+    ServoImplEx pitch;
+    ServoImplEx claw;
+    ServoImplEx roll;
+    DcMotor slide;
+    DcMotor pivot;
+    public static double clawnum = 0;
+    public static double pitchnum = 0;
+    public static double rollnum = 0;
     @Override
     public void runOpMode() throws InterruptedException {
-        left = hardwareMap.get(ServoImplEx.class,"left");
-        right = hardwareMap.get(ServoImplEx.class, "right");
-        intake = hardwareMap.get(CRServo.class, "intake");
-        diffCode = new differential(left, right);
+        pitch = hardwareMap.get(ServoImplEx.class,"pitch");
+        claw = hardwareMap.get(ServoImplEx.class, "claw");
+        roll = hardwareMap.get(ServoImplEx.class, "roll");
+        slide = hardwareMap.get(DcMotor.class, "slide");
+        pivot = hardwareMap.get(DcMotor.class, "pivot");
 
 
 
         waitForStart();
         while (opModeIsActive()) {
 
-            diffCode.setDifferentialPosition(pitch, roll);
-            intake.setPower(intPower);
+            pitch.setPosition(pitchnum);
+            claw.setPosition(clawnum);
+            roll.setPosition(rollnum);
+
+            slide.setPower(gamepad1.left_stick_y*0.3);
+            pivot.setPower(gamepad1.left_stick_x*0.3);
 
 
-            telemetry.addData("loca", left.getPosition());
-            telemetry.addData("locb", right.getPosition());
+            telemetry.addData("claw", claw.getPosition());
+            telemetry.addData("pitch", pitch.getPosition());
 
             telemetry.update();
         }
