@@ -16,7 +16,7 @@ public class Wrist {
     }
     public void manualControlRoll(double stepSize, double initPosition){
         double targetPosition = stepSize + initPosition;
-        pitch.setPosition(targetPosition);
+        roll.setPosition(targetPosition);
     }
     public void presetPositionPitch (double presetPosition){
         pitch.setPosition(presetPosition);

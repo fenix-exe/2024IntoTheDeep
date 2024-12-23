@@ -31,33 +31,17 @@ public class Elbow {
     }
     public void setTargetAngle(double degrees){
         elbowPosition = degreesToTicks(degrees);
-        //TODO move if statements into modules
-        if (elbowPosition < -140){
-            elbowPosition = -140;
-        }
-        if (elbowPosition > topPosition){
-            elbowPosition = topPosition;
-        }
-
         goToTargetPosition(elbowPosition);
     }
     public void setTargetAngleAndSpeed(double deg, double power) {
         elbowPosition = degreesToTicks(deg);
-        //TODO move if statements into modules
-        if (elbowPosition < -140){
-            elbowPosition = -140;
-        }
-        if (elbowPosition > topPosition){
-            elbowPosition = topPosition;
-        }
-
         elbowMotor.setTargetPosition(elbowPosition);
         elbowMotor.setPower(power);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void elbowJoystick(double joystickControl){
-        elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elbowMotor.setPower(joystickControl);
+        int targetPos = (int) (elbowMotor.getCurrentPosition() + 100*joystickControl);
+        goToTargetPosition(targetPos);
     }
     public void holdPosition(){
         elbowMotor.setPower(0);

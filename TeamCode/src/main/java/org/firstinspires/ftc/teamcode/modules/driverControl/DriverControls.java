@@ -119,7 +119,7 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public double slideMovement() {
-        if (Math.abs(gamepad2current.right_stick_y) > 0.5){
+        if (Math.abs(gamepad2current.right_stick_y) > 0.5){ // setting the threshold at which we want to set a positive or negative value
             return -gamepad2current.right_stick_y;
         }
         return 0;
@@ -194,6 +194,12 @@ public class DriverControls implements DriveControlMap {
     public boolean setNewDepositReadyFrontTopBucket(){return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
     public boolean setNewDepositReadyBackBottomBucket(){return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
     public boolean setNewDepositReadyFrontBottomBucket(){return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
+
+    @Override
+    public boolean escapePresets() {
+        return gamepad2current.right_stick_button;
+    }
+
     public boolean setNewSubmersibleIntakeReady(){return gamepad2current.a && !gamepad2previous.a && gamepad2current.left_stick_button;}
     public boolean resetWrist() {
         return gamepad2current.back;

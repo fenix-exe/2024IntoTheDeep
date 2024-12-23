@@ -7,6 +7,6 @@ public class ArmSpeedController {
 
     public static double getElbowPowerLimit(){
         //TODO tune
-        return 1 - slide.getSlideExtensionInInches()/60;
+        return 1;
     }
 }

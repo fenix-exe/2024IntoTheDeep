@@ -40,7 +40,8 @@ public class Arm {
 
     public void moveElbow(double elbowMovement){
             double power;
-            if (elbow.getElbowTicks() > elbow.topPosition - ArmConstants.ELBOWTICKSTOLERANCE && elbowMovement > 0){ //top limit
+            if (elbow.getElbowTicks() > elbow.topPosition - ArmConstants.ELBOWTICKSTOLERANCE
+                    && elbowMovement > 0){ //top limit
                 power = 0;
             } else if (elbow.getElbowAngle() < ArmConstants.ELBOWBOTTOMANGLE
                     && elbowMovement < 0){ //bottom limit
@@ -83,13 +84,19 @@ public class Arm {
 
     public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
         //if elbow is not at preset position, move elbow to preset position
-        if ((Math.abs(elbow.getElbowAngle() - position.elbowAngle) > ArmConstants.ELBOWPRESETTOLERANCE) || manual_override_arm_rules){
+        if ((Math.abs(elbow.getElbowAngle() - position.elbowAngle) > ArmConstants.ELBOWPRESETTOLERANCE) || manual_override_arm_rules){ //checsk to see if the elbow is not within a tolerance of the target
             elbow.setTargetAngleAndSpeed(position.elbowAngle, ArmSpeedController.getElbowPowerLimit());
         } else {
             // if elbow is at preset position, move slide to preset position
             elbow.setTargetAngleAndSpeed(position.elbowAngle, ArmSpeedController.getElbowPowerLimit());
             slide.setSlideExtensionLength(position.slideLength);
         }
+    }
+    public void moveSlideToLength(double inches){
+        slide.setSlideExtensionLength(inches);
+    }
+    public void moveElbowToAngle(double deg){
+        elbow.setTargetAngle(deg);
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){

@@ -33,25 +33,14 @@ public class Slide {
         setSlideExtensionLengthInTicks(targetPosition);
     }
     private void setSlideExtensionLengthInTicks(int ticks){
-        //TODO move if statements into modules
-        if (ticks < 0 || ticks > maxPhysicalExtensionTicks){
-            return;
-        }
-
-        if(slideMotor.getTargetPosition() == ticks) {
-            return; //slide is already moving to our target
-        }
-
         slideMotor.setTargetPosition(ticks);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotor.setPower(1);
     }
 
     public void joystickControl(double slideMovement){
-
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //TODO move if statements into modules
-        slideMotor.setPower(slideMovement);
+        int targetPos = (int) (slideMotor.getCurrentPosition() + 100*slideMovement);
+        setSlideExtensionLengthInTicks(targetPos);
     }
     public void holdPosition(){
         //setSlideExtensionLengthInTicks(slideMotor.getCurrentPosition());

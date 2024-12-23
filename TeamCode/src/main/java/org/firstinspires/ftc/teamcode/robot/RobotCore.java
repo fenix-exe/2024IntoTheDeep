@@ -57,7 +57,7 @@ public class RobotCore {
         } else if (intent.contains(UserDirective.MANUAL_SLIDE)) {
             actions.cancelPresetArmActions();
             actions.add(new MoveSlideAction(arm, driverControls.slideMovement(), remove_arm_rules));
-        } else if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
+        } /*else if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
             actions.cancelPresetArmActions();
             actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_POSITION,remove_arm_rules));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_TOP)) {
@@ -87,7 +87,7 @@ public class RobotCore {
         } else if (intent.contains(UserDirective.INTAKE_DOWN)){
             actions.cancelPresetArmActions();
             actions.add(new MoveToPresetPositionAction(arm, ArmPresetPosition.INTAKE_DOWN,remove_arm_rules));
-        }
+        }*/
 
         // check if you need to hold position for slide and/or elbow
         if (!actions.containsPresetArmActions()) {
@@ -133,7 +133,7 @@ public class RobotCore {
         }
     }
     public static void updateRobotActionsForEndEffector(RobotActions actions, Set<UserDirective> intent){
-        if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
+        /*if (intent.contains(UserDirective.PRESET_SUBMERSIBLE_INTAKE)) {
             actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_POSITION));
         } else if (intent.contains(UserDirective.PRESET_DEPOSIT_BACK_TOP)) {
             actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.DEPOSIT_BACK_TOP_BUCKET_POSITION));
@@ -149,7 +149,7 @@ public class RobotCore {
             actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.DISPERSION));
         } else if (intent.contains(UserDirective.INTAKE_DOWN)){
             actions.add(new MoveEndEffectorToPresetPositionAction(arm, endEffector, EndEffectorPresetPosition.INTAKE_DOWN));
-        }
+        }*/
 
         //gamepad control for the differential through dpad
         if (intent.contains(UserDirective.DIFF_UP)){

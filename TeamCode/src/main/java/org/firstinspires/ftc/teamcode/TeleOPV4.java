@@ -71,11 +71,15 @@ public class TeleOPV4 extends LinearOpMode {
 
 
         while (opModeIsActive()){
+            //loop frequency counting
             freqCounter.count();
+
+            //read from gamepads
             driverControls.update();
 
+            //convert gamepad reads into actions
             Set directive = driverControls.getUserIntents();
-            boolean directiveContainsChangePreset = RobotCore.updatePresetPositions(actions, directive);
+            //boolean directiveContainsChangePreset = RobotCore.updatePresetPositions(actions, directive);
             RobotCore.updateRobotActionsforArm(actions, directive);
             RobotCore.updateRobotActionsForEndEffector(actions, directive);
             RobotCore.updateRobotActionsforDriveTrain(actions, directive);
@@ -86,9 +90,9 @@ public class TeleOPV4 extends LinearOpMode {
             actions.execute();
             actions.removeCompleteAndCancelled();
 
-            if (directiveContainsChangePreset) {
+            /*if (directiveContainsChangePreset) {
                 ConfigUtil.writePresetsToConfig();
-            }
+            }*/
         }
         LoggerUtil.logFlush();
 

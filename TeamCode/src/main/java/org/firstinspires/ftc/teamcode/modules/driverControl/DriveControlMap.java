@@ -49,7 +49,7 @@ public interface DriveControlMap {
     public boolean setNewDepositReadyFrontTopBucket();
     public boolean setNewDepositReadyBackBottomBucket();
     public boolean setNewDepositReadyFrontBottomBucket();
-
+    public boolean escapePresets();
 
 
 
