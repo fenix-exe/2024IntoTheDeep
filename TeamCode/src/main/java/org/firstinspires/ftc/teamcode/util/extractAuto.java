@@ -14,20 +14,20 @@ public class extractAuto {
         public double angle;
         public int elbow_phi;
         public int linear_slide;
-        public double wrist_psi;
-        public double wrist_rho;
-        public double intake;
+        public double pitch;
+        public double roll;
+        public double claw;
         public double wait;
 
-        PositionInSpace(int x_value, int y_value, double angle, int elbow_phi, int linear_slide, double wrist_psi, double wrist_rho, double intake, double wait) {
+        PositionInSpace(int x_value, int y_value, double angle, int elbow_phi, int linear_slide, double pitch, double roll, double claw, double wait) {
             this.x_value = x_value;
             this.y_value = y_value;
             this.angle = angle;
             this.elbow_phi = elbow_phi;
             this.linear_slide = linear_slide;
-            this.wrist_psi = wrist_psi;
-            this.wrist_rho = wrist_rho;
-            this.intake = intake;
+            this.pitch = pitch;
+            this.roll = roll;
+            this.claw = claw;
             this.wait = wait;
 
         }
@@ -45,11 +45,11 @@ public class extractAuto {
                 double angle = Double.parseDouble(values[2].trim());
                 int elbow_phi = Integer.parseInt(values[3].trim());
                 int linear_slide = Integer.parseInt(values[4].trim());
-                double wrist_psi = Double.parseDouble(values[5].trim());
-                double wrist_rho = Double.parseDouble(values[6].trim());
-                double intake = Double.parseDouble(values[7].trim());
+                double pitch = Double.parseDouble(values[5].trim());
+                double roll = Double.parseDouble(values[6].trim());
+                double claw = Double.parseDouble(values[7].trim());
                 double wait = Double.parseDouble(values[8].trim());
-                autoPath.add(new PositionInSpace(x_value, y_value, angle, elbow_phi, linear_slide, wrist_psi, wrist_rho, intake, wait));
+                autoPath.add(new PositionInSpace(x_value, y_value, angle, elbow_phi, linear_slide, pitch, roll, claw, wait));
             } catch (NumberFormatException e) {
                 telemetry.addData("Error", "Invalid number format in line: " + line);
                 telemetry.update();
@@ -81,16 +81,16 @@ public class extractAuto {
         return position.linear_slide;
     }
 
-    public double getWristPsiFromList(PositionInSpace position) {
-        return position.wrist_psi;
+    public double getPitchFromList(PositionInSpace position) {
+        return position.pitch;
     }
 
-    public double getWristRhoFromList(PositionInSpace position) {
-        return position.wrist_rho;
+    public double getRollFromList(PositionInSpace position) {
+        return position.roll;
     }
 
-    public double getIntakeFromList(PositionInSpace position) {
-        return position.intake;
+    public double getClawFromList(PositionInSpace position) {
+        return position.claw;
     }
 
     public double getWaitFromList(PositionInSpace position) {
