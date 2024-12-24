@@ -5,10 +5,8 @@ import org.firstinspires.ftc.teamcode.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.modules.arm.ArmPresetPosition;
 import org.firstinspires.ftc.teamcode.modules.arm.actions.HoldElbowAction;
 import org.firstinspires.ftc.teamcode.modules.arm.actions.HoldSlideAction;
-import org.firstinspires.ftc.teamcode.modules.arm.actions.HomeElbowAction;
 import org.firstinspires.ftc.teamcode.modules.arm.actions.MoveElbowAction;
 import org.firstinspires.ftc.teamcode.modules.arm.actions.MoveSlideAction;
-import org.firstinspires.ftc.teamcode.modules.arm.actions.MoveToPresetPositionAction;
 import org.firstinspires.ftc.teamcode.modules.arm.actions.SetArmPresetPosition;
 import org.firstinspires.ftc.teamcode.modules.driverControl.actions.RumbleGamepadAction;
 import org.firstinspires.ftc.teamcode.modules.driverControl.UserDirective;
@@ -21,10 +19,8 @@ import org.firstinspires.ftc.teamcode.modules.driveTrain.actions.StopDriveTrainA
 import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntakeDirection;
 import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffector;
 import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffectorMovement;
-import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffectorPresetPosition;
 import org.firstinspires.ftc.teamcode.modules.endEffectorV1.actions.MoveActiveIntakeAction;
 import org.firstinspires.ftc.teamcode.modules.endEffectorV1.actions.MoveEndEffectorThroughJoystickAction;
-import org.firstinspires.ftc.teamcode.modules.endEffectorV1.actions.MoveEndEffectorToPresetPositionAction;
 
 import java.util.Set;
 
@@ -212,9 +208,9 @@ public class RobotCore {
     }
     private static double getSpeedMultiplier(Set<UserDirective> intent){
         if (!intent.contains(UserDirective.REMOVE_SPEED_RULES)){
-            if (arm.getElbowAngleInDegrees() <= RobotConstants.ELBOWINTAKEANGLE){
+            if (arm.getElbowAngleInDegrees() <= RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE){
                  return DriveTrainSpeedMultiplier.HALF_SPEED;
-            } else if (RobotConstants.ELBOWINTAKEANGLE < arm.getElbowAngleInDegrees() && arm.getElbowAngleInDegrees() <= RobotConstants.ELBOWOUTTAKEANGLE){
+            } else if (RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE < arm.getElbowAngleInDegrees() && arm.getElbowAngleInDegrees() <= RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE){
                 return DriveTrainSpeedMultiplier.NO_MULTIPLIER;
             } else {
                 return  DriveTrainSpeedMultiplier.SUPER_SLOW;

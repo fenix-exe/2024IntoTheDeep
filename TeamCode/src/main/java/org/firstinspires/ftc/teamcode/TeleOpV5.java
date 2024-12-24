@@ -42,6 +42,7 @@ public class TeleOpV5 extends LinearOpMode {
     IMU imu;
     RevTouchSensor limitSwitch;
     FrequencyCounter freqCounter;
+    double speedMultiplier;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,7 +51,7 @@ public class TeleOpV5 extends LinearOpMode {
         initializeArmAndHome();
         initializeEndEffector();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModels.initialize(arm, wrist, driverControls);
+        StateModels.initialize(arm, wrist, claw, driverControls);
         DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
 
 
@@ -74,12 +75,24 @@ public class TeleOpV5 extends LinearOpMode {
                 driveTrain.resetIMU();
             }
 
+            //speed adjustments
+            if (driverControls.microDriveAdjustments()){
+                speedMultiplier = 0.4;
+            } else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
+                speedMultiplier = 0.6;
+            } else if (arm.getElbowAngleInDegrees() > RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE) {
+                speedMultiplier = 0.4;
+            } else {
+                speedMultiplier = 1;
+            }
+
+
             switch (DriveTrain.driveType) {
                 case ROBOT_CENTRIC:
-                    driveTrain.RobotCentric_Drive(1);
+                    driveTrain.RobotCentric_Drive(speedMultiplier);
                     break;
                 case FIELD_CENTRIC:
-                    driveTrain.FieldCentricDrive(1);
+                    driveTrain.FieldCentricDrive(speedMultiplier);
                     break;
             }
 
@@ -120,9 +133,18 @@ public class TeleOpV5 extends LinearOpMode {
 
             //state models for preset positions
             StateModels.presetPositionDriveStateModel(0,-90,58,0);
-            StateModels.presetPositionIntakeStateModel(-30,-90,0,2);
-            StateModels.presetPositionDepositStateModel(50,-90,70,28.5);
+            StateModels.presetPositionIntakeStateModel(0,-90,8.5,5);
+            StateModels.presetPositionDepositStateModel(-30,-90,70,29.5);
+            StateModels.depositSampleIntoBucketStateModel(0,-90,58,0);
+            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,-90,58,0);
+            StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,58,0);
 
+            //telemetry
+            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            telemetry.addData("Slide Length", arm.getSlideExtension());
+            telemetry.addData("Wrist Pitch", pitch.getPosition());
+            telemetry.addData("Wrist Roll", roll.getPosition());
+            telemetry.update();
 
         }
     }

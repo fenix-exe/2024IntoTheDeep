@@ -2,18 +2,18 @@ package org.firstinspires.ftc.teamcode.subsytems.claw;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+
 public class Claw {
     Servo claw;
-    double OPEN_POSITION = 0.3;
-    double CLOSED_POSITION = 1;
-    double INTERMEDIATE_POSITION = 0.5;
+
     public Claw (Servo claw){
         this.claw = claw;
     }
     public void openClaw(){
-        claw.setPosition(OPEN_POSITION);
+        claw.setPosition(RobotConstants.OPEN_POSITION);
     }
-    public void closeClaw(){
-        claw.setPosition(CLOSED_POSITION);
-    }
+    public void closeClaw(){claw.setPosition(RobotConstants.CLOSED_POSITION);}
+    public void intermediateClaw(){claw.setPosition(RobotConstants.INTERMEDIATE_POSITION);}
 }
