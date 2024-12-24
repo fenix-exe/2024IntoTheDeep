@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -25,6 +26,7 @@ import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.util.FrequencyCounter;
 
+@TeleOp
 public class TeleOpV5 extends LinearOpMode {
     DriveTrain driveTrain;
     Arm arm;
@@ -82,25 +84,29 @@ public class TeleOpV5 extends LinearOpMode {
             }
 
             //manual control for arm
-            if (driverControls.slideMovement() > 0){
+            if (Math.abs(driverControls.slideMovement()) > 0){
                 arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
             }
-            if (driverControls.pivotJoystick() > 0){
+            if (Math.abs(driverControls.pivotJoystick()) > 0){
                 arm.moveElbow(driverControls.pivotJoystick());
             }
 
             //manual control for wrist
             if (driverControls.diffDown()){
-                wrist.manualControlPitch(-15);
+                wrist.manualControlPitch(-1);
+                telemetry.addLine("Wrist Down");
             }
             if (driverControls.diffUp()){
-                wrist.manualControlPitch(15);
+                wrist.manualControlPitch(1);
+                telemetry.addLine("Wrist Up");
             }
             if (driverControls.diffLeft()){
-                wrist.manualControlRoll(-15);
+                wrist.manualControlRoll(-1);
+                telemetry.addLine("Wrist Left");
             }
             if (driverControls.diffRight()){
-                wrist.manualControlRoll(15);
+                wrist.manualControlRoll(1);
+                telemetry.addLine("Wrist Right");
             }
 
             //manual control for claw
@@ -113,7 +119,7 @@ public class TeleOpV5 extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(-90,-90,58,0);
+            StateModels.presetPositionDriveStateModel(0,-90,58,0);
             StateModels.presetPositionIntakeStateModel(-30,-90,0,2);
             StateModels.presetPositionDepositStateModel(50,-90,70,28.5);
 
@@ -181,6 +187,8 @@ public class TeleOpV5 extends LinearOpMode {
     private void initializeDifferential(){
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         roll = hardwareMap.get(ServoImplEx.class, "roll");
+        pitch.setDirection(Servo.Direction.REVERSE);
+        roll.setDirection(Servo.Direction.REVERSE);
         wrist = new Wrist(pitch, roll);
     }
     private void initializeEndEffector(){

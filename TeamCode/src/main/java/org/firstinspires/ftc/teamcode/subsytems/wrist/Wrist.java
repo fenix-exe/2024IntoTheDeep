@@ -22,7 +22,7 @@ public class Wrist {
     }
     public void manualControlRoll(double stepSizeInDegrees){
         //step size is divided because it is in angles, not servo position
-        double targetPosition = stepSizeInDegrees/300 + roll.getPosition();
+        double targetPosition = stepSizeInDegrees/180 + roll.getPosition();
         if (targetPosition > 1){
             targetPosition = 1;
         }
@@ -38,10 +38,12 @@ public class Wrist {
         roll.setPosition(presetPosition);
     }
     public void presetPosition(double pitch, double roll){
-        //divide by 300 to convert angles to servo positions for gobilda servos
+        //divide by 300 to convert angles to servo positions for pitch
         //0.5 is the middle position of the servo, maximum of +150 to -150 degrees
+        //divide by 180 to convert angles to servo positions for roll
+        //0.5 is the middle position of the servo, maximum of -90 to 90 degrees
         presetPositionPitch(pitch/300 + 0.5);
-        presetPositionRoll(roll/300 + 0.5);
+        presetPositionRoll(roll/180 + 0.5);
     }
 
 }

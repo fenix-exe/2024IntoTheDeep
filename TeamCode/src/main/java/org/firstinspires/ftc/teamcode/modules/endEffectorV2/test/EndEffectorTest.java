@@ -24,6 +24,8 @@ public class EndEffectorTest extends LinearOpMode {
         pitchServo = hardwareMap.get(Servo.class, "pitch");
         rollServo = hardwareMap.get(Servo.class, "roll");
         clawServo = hardwareMap.get(Servo.class, "claw");
+        pitchServo.setDirection(Servo.Direction.REVERSE);
+        rollServo.setDirection(Servo.Direction.REVERSE);
         wrist = new Wrist(pitchServo, rollServo);
         claw = new Claw(clawServo);
         endEffector = new EndEffectorV2(wrist, claw);
@@ -35,16 +37,16 @@ public class EndEffectorTest extends LinearOpMode {
             rollPosition = rollServo.getPosition();
 
             if (gamepad1.dpad_down) {
-                endEffector.manualPitch(-0.001, pitchPosition);
+                endEffector.manualPitch(-1, pitchPosition);
             }
             if (gamepad1.dpad_up) {
-                endEffector.manualPitch(0.001, pitchPosition);
+                endEffector.manualPitch(1, pitchPosition);
             }
             if (gamepad1.dpad_left) {
-                endEffector.manualRoll(-0.001, rollPosition);
+                endEffector.manualRoll(-1, rollPosition);
             }
             if (gamepad1.dpad_right) {
-                endEffector.manualRoll(0.001, rollPosition);
+                endEffector.manualRoll(1, rollPosition);
             }
             if (gamepad1.a) {
                 endEffector.goToPresetPosition(0,0);

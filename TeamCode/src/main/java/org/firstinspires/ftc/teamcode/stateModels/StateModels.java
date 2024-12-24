@@ -22,6 +22,9 @@ public class StateModels {
         StateModels.arm = arm;
         StateModels.wrist = wrist;
         StateModels.driverControls = driverControls;
+        drivePresetState = DriveStates.START;
+        intakePresetState = IntakeStates.START;
+        depositPresetState = DepositStates.START;
     }
 
     public static void presetPositionDriveStateModel(double pitch, double roll, double elbowAngle, double slideLength){
@@ -47,7 +50,7 @@ public class StateModels {
                 }
                 break;
             case MOVING_SLIDE:
-                if (arm.getSlideExtension() - slideLength < RobotConstants.SLIDE_TOLERANCE) {
+                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
                     arm.moveElbowToAngle(elbowAngle);
                     drivePresetState = DriveStates.MOVING_ELBOW;
                 }
@@ -57,7 +60,7 @@ public class StateModels {
                 }
                 break;
             case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - elbowAngle) < RobotConstants.ELBOW_TOLERANCE){
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
                     drivePresetState = DriveStates.START;
                 }
@@ -71,7 +74,7 @@ public class StateModels {
     public static void presetPositionIntakeStateModel(double pitch, double roll, double elbowAngle, double slideLength){
         switch (intakePresetState){
             case START:
-                if (driverControls.drivingPos()){
+                if (driverControls.submersibleIntakeReady()){
                     timer = new ElapsedTime();
                     timer.reset();
                     wrist.presetPosition(pitch,roll);
@@ -91,7 +94,7 @@ public class StateModels {
                 }
                 break;
             case MOVING_SLIDE:
-                if (arm.getSlideExtension() - slideLength < RobotConstants.SLIDE_TOLERANCE) {
+                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
                     arm.moveElbowToAngle(elbowAngle);
                     intakePresetState = IntakeStates.MOVING_ELBOW;
                 }
@@ -101,7 +104,7 @@ public class StateModels {
                 }
                 break;
             case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - elbowAngle) < RobotConstants.ELBOW_TOLERANCE){
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
                     intakePresetState = IntakeStates.START;
                 }
@@ -135,8 +138,9 @@ public class StateModels {
                 }
                 break;
             case RETRACTING_SLIDE:
-                if (arm.getSlideExtension() - 0 < RobotConstants.SLIDE_TOLERANCE){
+                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
                     arm.moveElbowToAngle(elbowAngle);
+                    depositPresetState = DepositStates.MOVING_ELBOW;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
@@ -144,7 +148,7 @@ public class StateModels {
                 }
                 break;
             case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - elbowAngle) < RobotConstants.ELBOW_TOLERANCE){
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
                     depositPresetState = DepositStates.MOVING_SLIDE;
                 }
@@ -154,7 +158,7 @@ public class StateModels {
                 }
                 break;
             case MOVING_SLIDE:
-                if (arm.getSlideExtension() - slideLength < RobotConstants.SLIDE_TOLERANCE) {
+                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
                     depositPresetState = DepositStates.START;
                 }
                 if (driverControls.escapePresets()){

@@ -85,6 +85,12 @@ public class Arm {
         holdElbow();
         holdSlide();
     }
+    public double getElbowTargetPositionInDegrees(){
+        return elbow.ticksToDegrees(elbow.elbowMotor.getTargetPosition());
+    }
+    public double getSlideTargetPositionInInches(){
+        return slide.ticksToInches(slide.slideMotor.getTargetPosition());
+    }
 
     public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
         //if elbow is not at preset position, move elbow to preset position

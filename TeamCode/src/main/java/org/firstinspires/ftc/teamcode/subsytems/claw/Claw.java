@@ -4,8 +4,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw {
     Servo claw;
-    double OPEN_POSITION = 0.5;
+    double OPEN_POSITION = 0.3;
     double CLOSED_POSITION = 1;
+    double INTERMEDIATE_POSITION = 0.5;
     public Claw (Servo claw){
         this.claw = claw;
     }
