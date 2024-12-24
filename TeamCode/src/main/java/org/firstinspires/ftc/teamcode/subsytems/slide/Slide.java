@@ -43,15 +43,7 @@ public class Slide {
         setSlideExtensionLengthInTicks(targetPos);
     }
     public void holdPosition(){
-        //setSlideExtensionLengthInTicks(slideMotor.getCurrentPosition());
-        currentTargetPos = slideMotor.getCurrentPosition();
-        if (slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION){
-            //hold in preset position
-            slideMotor.setTargetPosition(slideMotor.getTargetPosition());
-        } else {
-            //hold in joystick controlled position
-            slideMotor.setTargetPosition(currentTargetPos);
-        }
+        slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotor.setPower(1);
     }

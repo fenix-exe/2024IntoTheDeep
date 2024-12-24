@@ -13,10 +13,10 @@ public class EndEffectorV2 {
     }
 
     public void manualPitch(double stepSize, double initialPosition){
-        wrist.manualControlPitch(stepSize, initialPosition);
+        wrist.manualControlPitch(stepSize);
     }
     public void manualRoll(double stepSize, double initialPosition){
-        wrist.manualControlRoll(stepSize, initialPosition);
+        wrist.manualControlRoll(stepSize);
     }
     public void goToPresetPosition (double pitch, double roll){
         wrist.presetPositionPitch(pitch);

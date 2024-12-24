@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,13 +10,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.modules.endEffectorV2.EndEffectorV2;
-import org.firstinspires.ftc.teamcode.robot.ConfigUtil;
-import org.firstinspires.ftc.teamcode.subsytems.activeIntake.ActiveIntake;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.stateModels.PresetConfigUtil;
+import org.firstinspires.ftc.teamcode.stateModels.StateModels;
 import org.firstinspires.ftc.teamcode.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.Elbow;
@@ -28,7 +27,6 @@ import org.firstinspires.ftc.teamcode.util.FrequencyCounter;
 
 public class TeleOpV5 extends LinearOpMode {
     DriveTrain driveTrain;
-    ActiveIntake activeIntakeCode;
     Arm arm;
     DriverControls driverControls;
     DcMotorEx slide;
@@ -40,18 +38,8 @@ public class TeleOpV5 extends LinearOpMode {
     Wrist wrist;
     Claw claw;
     IMU imu;
-    RevColorSensorV3 activeIntakeSensor;
     RevTouchSensor limitSwitch;
     FrequencyCounter freqCounter;
-    int PHYSICALMAXEXTENSION = 2500;
-    double SLIDE_TOLERANCE = 1;
-    double ELBOW_TOLERANCE = 3;
-
-    public enum presetDriveState {START, MOVING_WRIST, MOVING_SLIDE, MOVING_ELBOW}
-    public enum presetIntakeState {START, MOVING_WRIST, MOVING_SLIDE, MOVING_ELBOW}
-    presetDriveState drivePresetState;
-    presetIntakeState intakePresetState;
-    ElapsedTime timer;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -59,20 +47,23 @@ public class TeleOpV5 extends LinearOpMode {
         initializeDriveTrain();
         initializeArmAndHome();
         initializeEndEffector();
-        ConfigUtil.loadPresetsFromConfig();
-        driveTrain.driveType = driveTrain.driveType.ROBOT_CENTRIC;
-        drivePresetState = presetDriveState.START;
-        intakePresetState = presetIntakeState.START;
+        PresetConfigUtil.loadPresetsFromConfig();
+        StateModels.initialize(arm, wrist, driverControls);
+        DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
+
 
         waitForStart();
 
         while (opModeIsActive()){
+
+            driverControls.update();
+
             //driving code
             if (driverControls.driveTypeSwitch()){
-                if (driveTrain.driveType == driveTrain.driveType.ROBOT_CENTRIC){
-                    driveTrain.driveType = driveTrain.driveType.FIELD_CENTRIC;
+                if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
+                    DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
                 } else{
-                    driveTrain.driveType = driveTrain.driveType.ROBOT_CENTRIC;
+                    DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
                 }
 
             }
@@ -81,7 +72,7 @@ public class TeleOpV5 extends LinearOpMode {
                 driveTrain.resetIMU();
             }
 
-            switch (driveTrain.driveType) {
+            switch (DriveTrain.driveType) {
                 case ROBOT_CENTRIC:
                     driveTrain.RobotCentric_Drive(1);
                     break;
@@ -97,9 +88,24 @@ public class TeleOpV5 extends LinearOpMode {
             if (driverControls.pivotJoystick() > 0){
                 arm.moveElbow(driverControls.pivotJoystick());
             }
+            if (driverControls.diffDown()){
+                wrist.manualControlPitch(-15);
+            }
+            if (driverControls.diffUp()){
+                wrist.manualControlPitch(15);
+            }
+            if (driverControls.diffLeft()){
+                wrist.manualControlRoll(-15);
+            }
+            if (driverControls.diffRight()){
+                wrist.manualControlRoll(15);
+            }
 
-            presetPositionDriveStateModel(-0.5,-0.5,45,0);
-            presetPositionIntakeStateModel(0,0,0,2);
+
+            //state models for preset positions
+            StateModels.presetPositionDriveStateModel(-90,-90,58,0);
+            StateModels.presetPositionIntakeStateModel(-30,-90,0,2);
+            StateModels.presetPositionDepositStateModel(50,-90,70,28.5);
 
 
         }
@@ -149,9 +155,9 @@ public class TeleOpV5 extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Slide slideControl = new Slide(slide, PHYSICALMAXEXTENSION);
+        Slide slideControl = new Slide(slide, RobotConstants.PHYSICAL_MAX_EXTENSION);
         Elbow elbow = new Elbow(pivot, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
-        arm = new Arm(slideControl, elbow, PHYSICALMAXEXTENSION);
+        arm = new Arm(slideControl, elbow, RobotConstants.PHYSICAL_MAX_EXTENSION);
 
         slide.setTargetPosition(0);
         pivot.setTargetPosition(0);
@@ -172,97 +178,8 @@ public class TeleOpV5 extends LinearOpMode {
         initializeIntake();
         endEffector = new EndEffectorV2(wrist, claw);
     }
-    private void presetPositionDriveStateModel(double pitch, double roll, double elbowAngle, double slideLength){
-        switch (drivePresetState){
-            case START:
-                if (driverControls.drivingPos()){
-                    timer = new ElapsedTime();
-                    timer.reset();
-                    endEffector.goToPresetPosition(pitch,roll);
-                    drivePresetState = presetDriveState.MOVING_WRIST;
-                }
-                break;
-            case MOVING_WRIST:
-                if (timer.milliseconds() > 250){
-                    arm.moveSlideToLength(slideLength);
-                    drivePresetState = presetDriveState.MOVING_SLIDE;
-                }
-                if (driverControls.escapePresets()){
-                    arm.moveSlideToLength(arm.getSlideExtension());
-                    arm.moveElbowToAngle(arm.getElbowAngleInDegrees());
-                    drivePresetState = presetDriveState.START;
-                }
-                break;
-            case MOVING_SLIDE:
-                if (arm.getSlideExtension() - slideLength < SLIDE_TOLERANCE) {
-                    arm.moveElbowToAngle(elbowAngle);
-                    drivePresetState = presetDriveState.MOVING_ELBOW;
-                }
-                if (driverControls.escapePresets()){
-                    arm.moveSlideToLength(arm.getSlideExtension());
-                    arm.moveElbowToAngle(arm.getElbowAngleInDegrees());
-                    drivePresetState = presetDriveState.START;
-                }
-                break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - elbowAngle) < ELBOW_TOLERANCE){
-                    arm.moveSlideToLength(slideLength);
-                    drivePresetState = presetDriveState.START;
-                }
-                if (driverControls.escapePresets()){
-                    arm.moveSlideToLength(arm.getSlideExtension());
-                    arm.moveElbowToAngle(arm.getElbowAngleInDegrees());
-                    drivePresetState = presetDriveState.START;
-                }
-                break;
-        }
-    }
 
-    private void presetPositionIntakeStateModel(double pitch, double roll, double elbowAngle, double slideLength){
-        switch (intakePresetState){
-            case START:
-                if (driverControls.drivingPos()){
-                    timer = new ElapsedTime();
-                    timer.reset();
-                    endEffector.goToPresetPosition(pitch,roll);
-                    drivePresetState = presetDriveState.START;
-                    intakePresetState = presetIntakeState.MOVING_WRIST;
-                }
-                break;
-            case MOVING_WRIST:
-                if (timer.milliseconds() > 250){
-                    arm.moveSlideToLength(slideLength);
-                    intakePresetState = presetIntakeState.MOVING_SLIDE;
-                }
-                if (driverControls.escapePresets()){
-                    arm.moveSlideToLength(arm.getSlideExtension());
-                    arm.moveElbowToAngle(arm.getElbowAngleInDegrees());
-                    intakePresetState = presetIntakeState.START;
-                }
-                break;
-            case MOVING_SLIDE:
-                if (arm.getSlideExtension() - slideLength < SLIDE_TOLERANCE) {
-                    arm.moveElbowToAngle(elbowAngle);
-                    intakePresetState = presetIntakeState.MOVING_ELBOW;
-                }
-                if (driverControls.escapePresets()){
-                    arm.moveSlideToLength(arm.getSlideExtension());
-                    arm.moveElbowToAngle(arm.getElbowAngleInDegrees());
-                    intakePresetState = presetIntakeState.START;
-                }
-                break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - elbowAngle) < ELBOW_TOLERANCE){
-                    arm.moveSlideToLength(slideLength);
-                    intakePresetState = presetIntakeState.START;
-                }
-                if (driverControls.escapePresets()){
-                    arm.moveSlideToLength(arm.getSlideExtension());
-                    arm.moveElbowToAngle(arm.getElbowAngleInDegrees());
-                    intakePresetState = presetIntakeState.START;
-                }
-                break;
-        }
-    }
+
+
 
 }

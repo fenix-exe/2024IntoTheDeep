@@ -26,8 +26,8 @@ public class Elbow {
     }
     private void goToTargetPosition(int targetPosition){
         elbowMotor.setTargetPosition(targetPosition);
-        elbowMotor.setPower(1);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbowMotor.setPower(1);
     }
     public void setTargetAngle(double degrees){
         elbowPosition = degreesToTicks(degrees);
@@ -36,15 +36,17 @@ public class Elbow {
     public void setTargetAngleAndSpeed(double deg, double power) {
         elbowPosition = degreesToTicks(deg);
         elbowMotor.setTargetPosition(elbowPosition);
-        elbowMotor.setPower(power);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbowMotor.setPower(power);
     }
     public void elbowJoystick(double joystickControl){
         int targetPos = (int) (elbowMotor.getCurrentPosition() + 100*joystickControl);
         goToTargetPosition(targetPos);
     }
     public void holdPosition(){
+        //this only works because we have a worm gear and we don't want to waste uneccesary battery power
         elbowMotor.setPower(0);
+        //goToTargetPosition(elbowMotor.getCurrentPosition());
     }
     public double ticksToDegrees(int ticks){
         return ticks/24.22;

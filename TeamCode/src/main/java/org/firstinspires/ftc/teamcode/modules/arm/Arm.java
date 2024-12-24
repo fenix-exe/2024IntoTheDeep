@@ -81,6 +81,10 @@ public class Arm {
         elbow.holdPosition();
     }
     public void holdSlide(){slide.holdPosition();}
+    public void holdArm(){
+        holdElbow();
+        holdSlide();
+    }
 
     public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
         //if elbow is not at preset position, move elbow to preset position
