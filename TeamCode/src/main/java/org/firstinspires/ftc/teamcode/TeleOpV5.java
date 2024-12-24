@@ -81,13 +81,15 @@ public class TeleOpV5 extends LinearOpMode {
                     break;
             }
 
-            //manual control
+            //manual control for arm
             if (driverControls.slideMovement() > 0){
                 arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
             }
             if (driverControls.pivotJoystick() > 0){
                 arm.moveElbow(driverControls.pivotJoystick());
             }
+
+            //manual control for wrist
             if (driverControls.diffDown()){
                 wrist.manualControlPitch(-15);
             }
@@ -99,6 +101,14 @@ public class TeleOpV5 extends LinearOpMode {
             }
             if (driverControls.diffRight()){
                 wrist.manualControlRoll(15);
+            }
+
+            //manual control for claw
+            if (driverControls.intakenewForward() > 0.01){
+                claw.openClaw();
+            }
+            if (driverControls.intakenewBackward() > 0.01){
+                claw.closeClaw();
             }
 
 
