@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.subsytems.endeffector;
+package org.firstinspires.ftc.teamcode.subsytems.claw;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import androidx.annotation.NonNull;
 
-public class fullClaw {
+public class autoClaw {
     ServoImplEx pitch;
     ServoImplEx roll;
     ServoImplEx claw;
@@ -19,7 +18,7 @@ public class fullClaw {
     }
 
 
-    public fullClaw(ServoImplEx pitch, ServoImplEx roll, ServoImplEx claw){
+    public autoClaw(ServoImplEx pitch, ServoImplEx roll, ServoImplEx claw){
         this.pitch = pitch;
         this.roll = roll;
         this.claw = claw;

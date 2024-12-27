@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+
 import androidx.annotation.NonNull;
 
 import static java.lang.Math.floor;
@@ -24,6 +25,13 @@ public class Elbow {
         this.topPosition = topPosition;
         this.limitSwitch = limitSwitch;
     }
+
+    public void goTo(int targetPosition, double speed){
+        elbowMotor.setTargetPosition(targetPosition);
+        elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbowMotor.setPower(speed);
+    }
+
     private void goToTargetPosition(int targetPosition){
         elbowMotor.setTargetPosition(targetPosition);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -71,6 +79,34 @@ public class Elbow {
     }
 
 
+
+    public class elbowControl implements Action {
+        private final int target;
+        private final double speed;
+
+        elbowControl(int targetPos, double speed) {
+            this.target = targetPos;
+            this.speed = speed;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            goTo(target, speed);
+            if (target-30 < getElbowTicks() && getElbowTicks() < target+30) {
+                elbowMotor.setPower(0);
+
+                //holdPos();
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+
+    }
+    public Action elbowControl(int targetPos, double speed) {
+        return new elbowControl(targetPos, speed);
+    }
 
 
 
