@@ -32,18 +32,18 @@ public class Wrist {
         roll.setPosition(targetPosition);
     }
     public void presetPositionPitch (double presetPosition){
-        pitch.setPosition(presetPosition);
+        pitch.setPosition(presetPosition/300 + 0.5);
     }
     public void presetPositionRoll (double presetPosition){
-        roll.setPosition(presetPosition);
+        roll.setPosition(presetPosition/180 + 0.5);
     }
     public void presetPosition(double pitch, double roll){
         //divide by 300 to convert angles to servo positions for pitch
         //0.5 is the middle position of the servo, maximum of +150 to -150 degrees
         //divide by 180 to convert angles to servo positions for roll
         //0.5 is the middle position of the servo, maximum of -90 to 90 degrees
-        presetPositionPitch(pitch/300 + 0.5);
-        presetPositionRoll(roll/180 + 0.5);
+        presetPositionPitch(pitch);
+        presetPositionRoll(roll);
     }
 
 }

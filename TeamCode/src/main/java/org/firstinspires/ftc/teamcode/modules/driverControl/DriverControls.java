@@ -195,6 +195,15 @@ public class DriverControls implements DriveControlMap {
     public boolean leaveDeposit(){
         return gamepad2current.y && !gamepad2previous.y;
     }
+    public boolean pickupSpecimenPreset(){
+        return gamepad2current.start && !gamepad2previous.start;
+    }
+    public boolean depositSpecimenPreset(){
+        return gamepad2current.back && !gamepad2previous.back;
+    }
+    public boolean depositBack(){
+        return gamepad1current.dpad_down && !gamepad1previous.dpad_down;
+    }
     public boolean intakeDown(){
         return gamepad2current.start;
     }

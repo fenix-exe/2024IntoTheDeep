@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -133,17 +133,21 @@ public class TeleOpV5 extends LinearOpMode {
 
             //state models for preset positions
             StateModels.presetPositionDriveStateModel(0,-90,58,0);
-            StateModels.presetPositionIntakeStateModel(0,-90,8.5,5);
-            StateModels.presetPositionDepositStateModel(-30,-90,70,29.5);
+            StateModels.presetPositionIntakeStateModel(-90,-90,12,5);
+            StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
+            StateModels.presetPositionDepositBackStateModel(75,0,90,24);
             StateModels.depositSampleIntoBucketStateModel(0,-90,58,0);
-            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,-90,58,0);
-            StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,58,0);
+            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,-90,7,15, 58,0);
+            StateModels.presetPositionGrabBlockFromInsideStateModel(0,0,-90,0,8,58,0);
+            StateModels.presetPositionPickupSpecimensStateModel(0,90,18,8);
+            StateModels.presetPositionDepositSpecimensStateModel(0,0,90,10);
 
             //telemetry
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Slide Length", arm.getSlideExtension());
             telemetry.addData("Wrist Pitch", pitch.getPosition());
             telemetry.addData("Wrist Roll", roll.getPosition());
+            telemetry.addData("Block Intake Position", StateModels.depositBackPresetState);
             telemetry.update();
 
         }
