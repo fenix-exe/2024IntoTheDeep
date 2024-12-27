@@ -19,12 +19,10 @@ public class pivotCodeFunctions {
     DcMotorEx pivot;
     int pivotPos;
     int topPos;
-    PivotPIDFFunctions functions;
     MecanumDrive drive;
 
-    public pivotCodeFunctions(DcMotorEx pivot, PivotPIDFFunctions functions, int topPos) {
+    public pivotCodeFunctions(DcMotorEx pivot, int topPos) {
         this.pivot = pivot;
-        this.functions = functions;
         this.topPos = topPos;
     }
 

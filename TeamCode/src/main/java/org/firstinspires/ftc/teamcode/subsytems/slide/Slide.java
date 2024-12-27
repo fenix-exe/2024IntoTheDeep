@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import static java.lang.Math.floor;
 
 
@@ -64,6 +65,28 @@ public class Slide {
     public void resetEncoder(){
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public class slideControl implements Action {
+        private final int targetPos;
+        slideControl(int targetPos){
+            this.targetPos = targetPos;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            setSlideExtensionLengthInTicks(targetPos);
+            if (targetPos-60 < slideMotor.getCurrentPosition() && slideMotor.getCurrentPosition() < targetPos+60) {
+                setSlideExtensionLengthInTicks(targetPos);
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    public Action slideControl(int targetPos){
+        return new slideControl(targetPos);
     }
 
 

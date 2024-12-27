@@ -5,27 +5,21 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsytems.endeffector.fullClaw;
-import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
 import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
-import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
-import org.firstinspires.ftc.teamcode.util.autoTeleTransfer;
+import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
-import org.firstinspires.ftc.teamcode.util.writeAuto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,13 +37,15 @@ public class ascentPreloadPark extends LinearOpMode {
     ServoImplEx pitch;
     ServoImplEx roll;
     ServoImplEx claw;
-    slideCodeFunctions slideCode;
+
     pivotCodeFunctions pivotCode;
-    PivotPIDFFunctions pivotPIDF;
-    PIDController controllerPivotPIDF;
-    DcMotorEx slide;
     DcMotorEx elbow;
-    writeAuto writer;
+
+    PIDController controllerPivotPIDF;
+
+    Slide slide;
+    DcMotorEx slideMotor;
+
     RevTouchSensor limitSwitch;
     fullClaw fullClaw;
 
@@ -57,7 +53,6 @@ public class ascentPreloadPark extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //add telemetry to FTC dashboard
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        writer = new writeAuto("/sdcard/Download/save.csv");
 
         //try to read and extract data from file
         try {
@@ -76,11 +71,11 @@ public class ascentPreloadPark extends LinearOpMode {
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
         fullClaw = new fullClaw(pitch, roll, claw);
-        slide = hardwareMap.get(DcMotorEx.class, "slide");
+
         elbow = hardwareMap.get(DcMotorEx.class, "pivot");
-        slide.setDirection(DcMotorSimple.Direction.REVERSE);
+
         elbow.setDirection(DcMotorSimple.Direction.REVERSE);
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
@@ -94,14 +89,16 @@ public class ascentPreloadPark extends LinearOpMode {
         elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide = new Slide(slideMotor, 3000);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slideCode = new slideCodeFunctions(slide);
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
-        pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
-        pivotCode = new pivotCodeFunctions(elbow, pivotPIDF, 2178);
+        pivotCode = new pivotCodeFunctions(elbow,  2178);
 
 
 
@@ -120,8 +117,8 @@ public class ascentPreloadPark extends LinearOpMode {
         elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while(!gamepad1.b && !isStopRequested()) {
 
@@ -140,14 +137,14 @@ public class ascentPreloadPark extends LinearOpMode {
             AngleareSame = ((extractAuto.getAngleFromList(vector.get(i-1)) == extractAuto.getAngleFromList(vector.get(i))));
             if (XareSame && YareSame && AngleareSame) {
                 traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                        .stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
 
                 //Active Intake servo not working
             } else {
                 traj1 = traj1.afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
                         .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));                //Active Intake servo not working
@@ -192,11 +189,6 @@ public class ascentPreloadPark extends LinearOpMode {
 
 
 
-        autoTeleTransfer.setElbowTicks(elbow.getCurrentPosition());
-        autoTeleTransfer.setSlideTicks(slide.getCurrentPosition());
-        autoTeleTransfer.setxPos(extractAuto.getXFromList(vector.get(vector.size()-1)));
-        autoTeleTransfer.setyPos(extractAuto.getYFromList(vector.get(vector.size()-1)));
-        autoTeleTransfer.setHeadingAngle(extractAuto.getAngleFromList(vector.get(vector.size()-1)));
 
 
         return;
