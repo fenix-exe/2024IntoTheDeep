@@ -105,9 +105,10 @@ public class ascentPreloadPark extends LinearOpMode {
 
 
 
-        while(!gamepad1.a) {
+        while(!gamepad1.a && !isStopRequested()) {
 
         }
+
         while (!limitSwitch.isPressed() && !isStopRequested()){
             elbow.setPower(-0.2);
         }
@@ -122,7 +123,7 @@ public class ascentPreloadPark extends LinearOpMode {
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(!gamepad1.b) {
+        while(!gamepad1.b && !isStopRequested()) {
 
         }
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
@@ -138,14 +139,14 @@ public class ascentPreloadPark extends LinearOpMode {
             YareSame = ((extractAuto.getYFromList(vector.get(i-1)) == extractAuto.getYFromList(vector.get(i))));
             AngleareSame = ((extractAuto.getAngleFromList(vector.get(i-1)) == extractAuto.getAngleFromList(vector.get(i))));
             if (XareSame && YareSame && AngleareSame) {
-                traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
 
                 //Active Intake servo not working
             } else {
-                traj1 = traj1.afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                traj1 = traj1.afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
                         .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
@@ -167,7 +168,7 @@ public class ascentPreloadPark extends LinearOpMode {
         Action action1 = traj1.build();
 
 
-        pivotCode.goTo(870);
+        pivotCode.goTo(870, 1);
         fullClaw.setPitch(0.7);
         fullClaw.setRoll(0);
         fullClaw.setClaw(1);
@@ -175,7 +176,7 @@ public class ascentPreloadPark extends LinearOpMode {
             elbow.setPower(0);
 
         } else {
-            pivotCode.goTo(870);
+            pivotCode.goTo(870, 1);
         }
 
 

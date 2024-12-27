@@ -32,7 +32,7 @@ public class pivotCodeFunctions {
         this.drive = drive;
     }
 
-    public void goTo(int targetPos) {
+    public void goTo(int targetPos, double speed) {
         pivotPos = targetPos;
         if (pivotPos < -15){
             pivotPos = -15;
@@ -41,7 +41,7 @@ public class pivotCodeFunctions {
             pivotPos = topPos;
         }
 
-        pivot.setPower(1);
+        pivot.setPower(speed);
         pivot.setTargetPosition(pivotPos);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -80,7 +80,7 @@ public class pivotCodeFunctions {
 
     public void setElbowAngle(double angle){
         int ticks = degreesToTicks(angle);
-        goTo(ticks);
+        goTo(ticks, 1);
     }
     public int getElbowTicks(){
         return pivot.getCurrentPosition();
@@ -93,14 +93,16 @@ public class pivotCodeFunctions {
 
     public class elbowControl implements Action {
         private final int target;
+        private final double speed;
 
-        elbowControl(int targetPos) {
+        elbowControl(int targetPos, double speed) {
             this.target = targetPos;
+            this.speed = speed;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            goTo(target);
+            goTo(target, speed);
             if (target-30 < getElbowTicks() && getElbowTicks() < target+30) {
                 pivot.setPower(0);
 
@@ -113,8 +115,8 @@ public class pivotCodeFunctions {
 
 
     }
-    public Action elbowControl(int targetPos) {
-        return new elbowControl(targetPos);
+    public Action elbowControl(int targetPos, double speed) {
+        return new elbowControl(targetPos, speed);
     }
 
 }
