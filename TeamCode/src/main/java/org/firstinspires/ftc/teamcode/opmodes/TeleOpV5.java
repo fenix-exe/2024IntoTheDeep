@@ -56,6 +56,7 @@ public class TeleOpV5 extends LinearOpMode {
 
 
         waitForStart();
+        wrist.presetPosition(0,0);
 
         while (opModeIsActive()){
 
@@ -123,24 +124,26 @@ public class TeleOpV5 extends LinearOpMode {
             }
 
             //manual control for claw
-            if (driverControls.intakenewForward() > 0.01){
-                claw.openClaw();
-            }
-            if (driverControls.intakenewBackward() > 0.01){
-                claw.closeClaw();
+            if (driverControls.openCloseClaw()){
+                if (clawServo.getPosition() == RobotConstants.OPEN_POSITION){
+                    claw.closeClaw();
+                } else {
+                    claw.openClaw();
+                }
             }
 
 
             //state models for preset positions
             StateModels.presetPositionDriveStateModel(0,-90,58,0);
-            StateModels.presetPositionIntakeStateModel(-90,-90,12,5);
+            //StateModels.presetPositionIntakeStateModel(-90,-90,12,5); Arjun's recommended version of intake position
+            StateModels.presetPositionIntakeStateModel(0,-90,3,5); //Coach Pankaj's recommended version of intake position
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
             StateModels.presetPositionDepositBackStateModel(75,0,90,24);
             StateModels.depositSampleIntoBucketStateModel(0,-90,58,0);
-            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,-90,7,15, 58,0);
+            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,-90,7,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(0,0,-90,0,8,58,0);
             StateModels.presetPositionPickupSpecimensStateModel(0,90,18,8);
-            StateModels.presetPositionDepositSpecimensStateModel(0,0,90,10);
+            StateModels.presetPositionDepositSpecimensStateModel(90,90,90,2.5);
 
             //telemetry
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
