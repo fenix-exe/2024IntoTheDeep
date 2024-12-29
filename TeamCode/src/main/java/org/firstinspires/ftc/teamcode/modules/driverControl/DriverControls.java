@@ -205,7 +205,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.back && !gamepad2previous.back;
     }
     public boolean depositBack(){
-        return gamepad1current.dpad_down && !gamepad1previous.dpad_down;
+        return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean intakeDown(){
         return gamepad2current.start;
@@ -228,10 +228,10 @@ public class DriverControls implements DriveControlMap {
     public boolean wristDown(){return gamepad2current.back;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
     public boolean removeArmRules(){return gamepad2current.left_bumper;}
-    public boolean diffUp(){return gamepad2current.dpad_down;}
-    public boolean diffDown(){return gamepad2current.dpad_up;}
-    public boolean diffLeft(){return gamepad2current.dpad_right;}
-    public boolean diffRight(){return gamepad2current.dpad_left;}
+    public boolean diffUp(){return gamepad2current.dpad_up && !gamepad2previous.dpad_up;}
+    public boolean diffDown(){return gamepad2current.dpad_down && !gamepad2previous.dpad_down;}
+    public boolean diffLeft(){return gamepad2current.dpad_left && !gamepad2previous.dpad_left;}
+    public boolean diffRight(){return gamepad2current.dpad_right && !gamepad2previous.dpad_right;}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();

@@ -78,13 +78,13 @@ public class TeleOpV5 extends LinearOpMode {
 
             //speed adjustments
             if (driverControls.microDriveAdjustments()){
-                speedMultiplier = 0.4;
+                speedMultiplier = RobotConstants.EXTRA_SLOW;
             } else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
-                speedMultiplier = 0.6;
+                speedMultiplier = RobotConstants.SLOW;
             } else if (arm.getElbowAngleInDegrees() > RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE) {
-                speedMultiplier = 0.4;
+                speedMultiplier = RobotConstants.EXTRA_SLOW;
             } else {
-                speedMultiplier = 1;
+                speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
 
@@ -107,19 +107,19 @@ public class TeleOpV5 extends LinearOpMode {
 
             //manual control for wrist
             if (driverControls.diffDown()){
-                wrist.manualControlPitch(-1);
+                wrist.manualControlPitch(-15);
                 telemetry.addLine("Wrist Down");
             }
             if (driverControls.diffUp()){
-                wrist.manualControlPitch(1);
+                wrist.manualControlPitch(15);
                 telemetry.addLine("Wrist Up");
             }
             if (driverControls.diffLeft()){
-                wrist.manualControlRoll(-1);
+                wrist.manualControlRoll(-15);
                 telemetry.addLine("Wrist Left");
             }
             if (driverControls.diffRight()){
-                wrist.manualControlRoll(1);
+                wrist.manualControlRoll(15);
                 telemetry.addLine("Wrist Right");
             }
 
@@ -128,21 +128,24 @@ public class TeleOpV5 extends LinearOpMode {
                 if (clawServo.getPosition() == RobotConstants.OPEN_POSITION){
                     claw.closeClaw();
                 } else {
-                    claw.openClaw();
+                    claw.intermediateClaw();
+                    if (StateModels.intakePosition){
+                        wrist.presetPositionPitch(-90);
+                    }
                 }
             }
 
 
             //state models for preset positions
             StateModels.presetPositionDriveStateModel(0,-90,58,0);
-            //StateModels.presetPositionIntakeStateModel(-90,-90,12,5); Arjun's recommended version of intake position
-            StateModels.presetPositionIntakeStateModel(0,-90,3,5); //Coach Pankaj's recommended version of intake position
+            StateModels.presetPositionIntakeStateModel(0,-90,-90,-90,12,4);
+            StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
             StateModels.presetPositionDepositBackStateModel(75,0,90,24);
             StateModels.depositSampleIntoBucketStateModel(0,-90,58,0);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,-90,7,10, 58,0);
-            StateModels.presetPositionGrabBlockFromInsideStateModel(0,0,-90,0,8,58,0);
-            StateModels.presetPositionPickupSpecimensStateModel(0,90,18,8);
+            StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,1,10,58,0);
+            StateModels.presetPositionPickupSpecimensStateModel(0,90,18,0);
             StateModels.presetPositionDepositSpecimensStateModel(90,90,90,2.5);
 
             //telemetry
@@ -150,7 +153,9 @@ public class TeleOpV5 extends LinearOpMode {
             telemetry.addData("Slide Length", arm.getSlideExtension());
             telemetry.addData("Wrist Pitch", pitch.getPosition());
             telemetry.addData("Wrist Roll", roll.getPosition());
-            telemetry.addData("Block Intake Position", StateModels.depositBackPresetState);
+            telemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
+            telemetry.addData("Y Cycle", StateModels.depositCycle);
+            telemetry.addData("At intake position?", StateModels.intakePosition);
             telemetry.update();
 
         }

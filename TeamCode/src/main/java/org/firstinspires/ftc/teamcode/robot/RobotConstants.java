@@ -10,6 +10,9 @@ public class RobotConstants {
     public static int PHYSICAL_MAX_EXTENSION = 2500;
     public static double OPEN_POSITION = 0.3;
     public static double CLOSED_POSITION = 1;
-    public static double INTERMEDIATE_POSITION = 0.5;
+    public static double INTERMEDIATE_POSITION = 0.45;
+    public static double EXTRA_SLOW = 0.4;
+    public static double SLOW = 0.6;
+    public static double NORMAL_SPEED = 1;
 
 }

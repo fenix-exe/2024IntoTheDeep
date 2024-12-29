@@ -57,7 +57,6 @@ public class EndEffectorTest extends LinearOpMode {
             if (gamepad1.right_bumper){
                 endEffector.closeClaw();
             }
-
             telemetry.addData("Pitch position", pitchPosition);
             telemetry.addData("Roll position", rollPosition);
             telemetry.update();
