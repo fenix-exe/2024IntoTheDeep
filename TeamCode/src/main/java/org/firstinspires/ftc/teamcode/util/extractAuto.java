@@ -12,15 +12,15 @@ public class extractAuto {
         public double x_value;
         public double y_value;
         public double angle;
-        public int elbow_phi;
+        public double elbow_phi;
         public double elbow_speed;
-        public int linear_slide;
+        public double linear_slide;
         public double pitch;
         public double roll;
         public double claw;
         public double wait;
 
-        PositionInSpace(double x_value, double y_value, double angle, int elbow_phi, double elbow_speed, int linear_slide, double pitch, double roll, double claw, double wait) {
+        PositionInSpace(double x_value, double y_value, double angle, double elbow_phi, double elbow_speed, double linear_slide, double pitch, double roll, double claw, double wait) {
             this.x_value = x_value;
             this.y_value = y_value;
             this.angle = angle;
@@ -45,9 +45,9 @@ public class extractAuto {
                 double x_value = Double.parseDouble(values[0].trim());
                 double y_value = Double.parseDouble(values[1].trim());
                 double angle = Double.parseDouble(values[2].trim());
-                int elbow_phi = Integer.parseInt(values[3].trim());
+                double elbow_phi = Double.parseDouble(values[3].trim());
                 double elbow_speed = Double.parseDouble(values[4].trim());
-                int linear_slide = Integer.parseInt(values[5].trim());
+                double linear_slide = Double.parseDouble(values[5].trim());
                 double pitch = Double.parseDouble(values[6].trim());
                 double roll = Double.parseDouble(values[7].trim());
                 double claw = Double.parseDouble(values[8].trim());
@@ -76,11 +76,11 @@ public class extractAuto {
         return Math.toRadians(position.angle);
     }
 
-    public int getElbowPhiFromList(PositionInSpace position) {
+    public double getElbowPhiFromList(PositionInSpace position) {
         return position.elbow_phi;
     }
 
-    public int getLinearSlideFromList(PositionInSpace position) {
+    public double getLinearSlideFromList(PositionInSpace position) {
         return position.linear_slide;
     }
 

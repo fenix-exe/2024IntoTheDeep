@@ -68,16 +68,16 @@ public class Slide {
     }
 
     public class slideControl implements Action {
-        private final int targetPos;
-        slideControl(int targetPos){
+        private final double targetPos;
+        slideControl(double targetPos){
             this.targetPos = targetPos;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            setSlideExtensionLengthInTicks(targetPos);
-            if (targetPos-60 < slideMotor.getCurrentPosition() && slideMotor.getCurrentPosition() < targetPos+60) {
-                setSlideExtensionLengthInTicks(targetPos);
+            setSlideExtensionLength(targetPos);
+            if (targetPos-0.5 < slideMotor.getCurrentPosition() && slideMotor.getCurrentPosition() < targetPos+0.5) {
+                setSlideExtensionLength(targetPos);
                 return false;
             }
             else {
@@ -85,7 +85,7 @@ public class Slide {
             }
         }
     }
-    public Action slideControl(int targetPos){
+    public Action slideControl(double targetPos){
         return new slideControl(targetPos);
     }
 
