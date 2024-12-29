@@ -5,22 +5,29 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsytems.elbow.Elbow;
-import org.firstinspires.ftc.teamcode.subsytems.elbow.PIDControl;
-import org.firstinspires.ftc.teamcode.subsytems.claw.autoClaw;
-import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
+import org.firstinspires.ftc.teamcode.subsytems.activeIntake.activeIntake;
+import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
+import org.firstinspires.ftc.teamcode.subsytems.endeffector.fullClaw;
+import org.firstinspires.ftc.teamcode.subsytems.pivot.PivotPIDFFunctions;
+import org.firstinspires.ftc.teamcode.subsytems.pivot.pivotCodeFunctions;
+import org.firstinspires.ftc.teamcode.subsytems.slides.slideCodeFunctions;
+import org.firstinspires.ftc.teamcode.util.autoTeleTransfer;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
+import org.firstinspires.ftc.teamcode.util.writeAuto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,42 +38,34 @@ import java.util.ArrayList;
 public class ascentPreloadPark extends LinearOpMode {
 
     //initialize auto extractor
-    String FILE_NAME = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
-    int ELBOW_START = 870;
-    int SLIDE_START = 0;
-    double PITCH_START = 0.7;
-    double ROLL_START = 0;
-    double CLAW_START = 1;
-
-
+    String filename = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
 
     ServoImplEx pitch;
     ServoImplEx roll;
     ServoImplEx claw;
-
-    Elbow elbow;
-    DcMotorEx elbowMotor;
-
+    slideCodeFunctions slideCode;
+    pivotCodeFunctions pivotCode;
+    PivotPIDFFunctions pivotPIDF;
     PIDController controllerPivotPIDF;
-
-    Slide slide;
-    DcMotorEx slideMotor;
-
+    DcMotorEx slide;
+    DcMotorEx elbow;
+    writeAuto writer;
     RevTouchSensor limitSwitch;
-    autoClaw autoClaw;
+    fullClaw fullClaw;
 
     @Override
     public void runOpMode() throws InterruptedException {
         //add telemetry to FTC dashboard
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        writer = new writeAuto("/sdcard/Download/save.csv");
 
         //try to read and extract data from file
         try {
-            vector = extractAuto.SetUpListOfThings(telemetry, FILE_NAME);
+            vector = extractAuto.SetUpListOfThings(telemetry, filename );
         } catch (FileNotFoundException e) {
-            telemetry.addData("No File Detected. File name is:", FILE_NAME);
+            telemetry.addData("No File Detected. File name is:", filename);
             telemetry.update();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -78,14 +77,14 @@ public class ascentPreloadPark extends LinearOpMode {
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
-        autoClaw = new autoClaw(pitch, roll, claw);
-
-        elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
-        elbowMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fullClaw = new fullClaw(pitch, roll, claw);
+        slide = hardwareMap.get(DcMotorEx.class, "slide");
+        elbow = hardwareMap.get(DcMotorEx.class, "pivot");
+        slide.setDirection(DcMotorSimple.Direction.REVERSE);
+        elbow.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
-        elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         //Homing the pivot
@@ -94,43 +93,40 @@ public class ascentPreloadPark extends LinearOpMode {
         }
         pivot.setPower(0);*/
 
+        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide = new Slide(slideMotor, 3000);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
+        slideCode = new slideCodeFunctions(slide);
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
-        Elbow elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2500);
+        pivotPIDF = new PivotPIDFFunctions(controllerPivotPIDF, 0);
+        pivotCode = new pivotCodeFunctions(elbow, pivotPIDF, 2178);
 
 
 
-        while(!gamepad1.a && !isStopRequested()) {
+        while(!gamepad1.a) {
 
         }
-
         while (!limitSwitch.isPressed() && !isStopRequested()){
-            elbowMotor.setPower(-0.2);
+            elbow.setPower(-0.2);
         }
         while (limitSwitch.isPressed() && !isStopRequested()){
-            elbowMotor.setPower(0.2);
+            elbow.setPower(0.2);
         }
-        elbowMotor.setPower(0);
+        elbow.setPower(0);
 
-        elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(!gamepad1.b && !isStopRequested()) {
+        while(!gamepad1.b) {
 
         }
-
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
@@ -144,24 +140,23 @@ public class ascentPreloadPark extends LinearOpMode {
             YareSame = ((extractAuto.getYFromList(vector.get(i-1)) == extractAuto.getYFromList(vector.get(i))));
             AngleareSame = ((extractAuto.getAngleFromList(vector.get(i-1)) == extractAuto.getAngleFromList(vector.get(i))));
             if (XareSame && YareSame && AngleareSame) {
-                traj1 = traj1.stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
+                traj1 = traj1.stopAndAdd(pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .stopAndAdd(slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                        .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
 
                 //Active Intake servo not working
             } else {
-                traj1 = traj1.afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                traj1 = traj1.afterDisp(0,pivotCode.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i))))
+                        .afterDisp(0,slideCode.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)), extractAuto.getYFromList(vector.get(i)),extractAuto.getAngleFromList(vector.get(i))), Math.PI/2)
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
+                        .stopAndAdd(fullClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i)) ))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));                //Active Intake servo not working
             }
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Elbow Phi", extractAuto.getElbowPhiFromList(vector.get(i)));
-            telemetry.addData("Vector " + (i) + " Elbow Speed", extractAuto.getElbowSpeedFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Linear Slide", extractAuto.getLinearSlideFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Pitch", extractAuto.getPitchFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Roll", extractAuto.getRollFromList(vector.get(i)));
@@ -174,15 +169,15 @@ public class ascentPreloadPark extends LinearOpMode {
         Action action1 = traj1.build();
 
 
-        elbow.goTo(ELBOW_START, 1);
-        autoClaw.setPitch(PITCH_START);
-        autoClaw.setRoll(ROLL_START);
-        autoClaw.setClaw(CLAW_START);
-        if (ELBOW_START-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < ELBOW_START+30) {
-            elbowMotor.setPower(0);
+        pivotCode.goTo(870);
+        fullClaw.setPitch(0.7);
+        fullClaw.setRoll(0);
+        fullClaw.setClaw(1);
+        if (870-30 < elbow.getCurrentPosition() && elbow.getCurrentPosition() < 870+30) {
+            elbow.setPower(0);
 
         } else {
-            elbow.goTo(ELBOW_START, 1);
+            pivotCode.goTo(870);
         }
 
 
@@ -198,6 +193,11 @@ public class ascentPreloadPark extends LinearOpMode {
 
 
 
+        autoTeleTransfer.setElbowTicks(elbow.getCurrentPosition());
+        autoTeleTransfer.setSlideTicks(slide.getCurrentPosition());
+        autoTeleTransfer.setxPos(extractAuto.getXFromList(vector.get(vector.size()-1)));
+        autoTeleTransfer.setyPos(extractAuto.getYFromList(vector.get(vector.size()-1)));
+        autoTeleTransfer.setHeadingAngle(extractAuto.getAngleFromList(vector.get(vector.size()-1)));
 
 
         return;
