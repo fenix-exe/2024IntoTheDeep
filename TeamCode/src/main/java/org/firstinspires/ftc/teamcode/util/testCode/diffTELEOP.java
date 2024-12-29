@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.teamcode.subsytems.DriverControls;
-import org.firstinspires.ftc.teamcode.subsytems.differential.differential;
+import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
+import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 @Config
 @TeleOp
 public class diffTELEOP extends LinearOpMode {

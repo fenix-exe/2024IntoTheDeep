@@ -16,9 +16,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsytems.claw.autoClaw;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.PIDControl;
-import org.firstinspires.ftc.teamcode.subsytems.claw.autoClaw;
 import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
 
@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - Ascent Park", preselectTeleOp = "TeleOPV4")
-public class ascentPreloadPark extends LinearOpMode {
+@Autonomous(name = "AUTO - Observation Park", preselectTeleOp = "TeleOPV5")
+public class observationPark extends LinearOpMode {
 
     //initialize auto extractor
-    String FILE_NAME = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
+    String FILE_NAME = "/sdcard/Download/autoPositions/observationPark.csv";
     int ELBOW_START = 870;
     int SLIDE_START = 0;
     double PITCH_START = 0.7;
