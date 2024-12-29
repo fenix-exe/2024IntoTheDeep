@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -33,7 +34,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 @TeleOp
-public class PresetPositionTeleOp extends LinearOpMode {
+@Disabled
+public class TeleOPV4 extends LinearOpMode {
     DriveTrain driveTrain;
     ActiveIntake activeIntakeCode;
     Arm arm;
@@ -52,7 +54,7 @@ public class PresetPositionTeleOp extends LinearOpMode {
     int PHYSICALMAXEXTENSION = 2500;
 
     private static boolean isTelemetryEnabled = true;
-    private static boolean isLoggingEnabled = true;
+    private static boolean isLoggingEnabled = false;
 
 
     @Override
@@ -71,14 +73,18 @@ public class PresetPositionTeleOp extends LinearOpMode {
 
 
         while (opModeIsActive()){
+            //loop frequency counting
             freqCounter.count();
+
+            //read from gamepads
             driverControls.update();
 
+            //convert gamepad reads into actions
             Set directive = driverControls.getUserIntents();
-            boolean directiveContainsChangePreset = RobotCore.updatePresetPositions(actions, directive);
+            //boolean directiveContainsChangePreset = RobotCore.updatePresetPositions(actions, directive);
             RobotCore.updateRobotActionsforArm(actions, directive);
             RobotCore.updateRobotActionsForEndEffector(actions, directive);
-            //RobotCore.updateRobotActionsforDriveTrain(actions, directive);
+            RobotCore.updateRobotActionsforDriveTrain(actions, directive);
 
             logDebugInfo(directive, actions);
 
@@ -86,9 +92,9 @@ public class PresetPositionTeleOp extends LinearOpMode {
             actions.execute();
             actions.removeCompleteAndCancelled();
 
-            if (directiveContainsChangePreset) {
+            /*if (directiveContainsChangePreset) {
                 ConfigUtil.writePresetsToConfig();
-            }
+            }*/
         }
         LoggerUtil.logFlush();
 
