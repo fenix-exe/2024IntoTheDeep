@@ -40,8 +40,7 @@ public class Slide {
     }
 
     public void joystickControl(double slideMovement){
-
-        int targetPos = (int) (slideMotor.getCurrentPosition() + 200*slideMovement);
+        int targetPos = (int) (slideMotor.getCurrentPosition() + 100*slideMovement);
         setSlideExtensionLengthInTicks(targetPos);
     }
     public void holdPosition(){
@@ -89,5 +88,6 @@ public class Slide {
     public Action slideControl(double targetPos){
         return new slideControl(targetPos);
     }
-    
+
+
 }
