@@ -81,18 +81,18 @@ public class Elbow {
 
 
     public class elbowControl implements Action {
-        private final int target;
+        private final double target;
         private final double speed;
 
-        elbowControl(int targetPos, double speed) {
+        elbowControl(double targetPos, double speed) {
             this.target = targetPos;
             this.speed = speed;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            goTo(target, speed);
-            if (target-30 < getElbowTicks() && getElbowTicks() < target+30) {
+            setTargetAngleAndSpeed(target, speed);
+            if (target-1 < getElbowAngle() && getElbowAngle() < target+1) {
                 elbowMotor.setPower(0);
 
                 //holdPos();
@@ -104,7 +104,7 @@ public class Elbow {
 
 
     }
-    public Action elbowControl(int targetPos, double speed) {
+    public Action elbowControl(double targetPos, double speed) {
         return new elbowControl(targetPos, speed);
     }
 
