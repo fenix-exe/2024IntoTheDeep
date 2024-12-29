@@ -125,7 +125,7 @@ public class TeleOpV5 extends LinearOpMode {
 
             //manual control for claw
             if (driverControls.openCloseClaw()){
-                if (clawServo.getPosition() == RobotConstants.OPEN_POSITION){
+                if (clawServo.getPosition() == RobotConstants.INTERMEDIATE_POSITION){
                     claw.closeClaw();
                 } else {
                     claw.intermediateClaw();
@@ -137,7 +137,7 @@ public class TeleOpV5 extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(0,-90,58,0);
+            /*StateModels.presetPositionDriveStateModel(0,-90,58,0);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,-90,12,4);
             StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
@@ -145,17 +145,17 @@ public class TeleOpV5 extends LinearOpMode {
             StateModels.depositSampleIntoBucketStateModel(0,-90,58,0);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,-90,7,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,1,10,58,0);
-            StateModels.presetPositionPickupSpecimensStateModel(0,90,18,0);
-            StateModels.presetPositionDepositSpecimensStateModel(90,90,90,2.5);
+            StateModels.presetPositionPickupSpecimensStateModel(0,-90,18,0);
+            StateModels.presetPositionDepositSpecimensStateModel(90,-90,85,3);*/
 
             //telemetry
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Slide Length", arm.getSlideExtension());
             telemetry.addData("Wrist Pitch", pitch.getPosition());
             telemetry.addData("Wrist Roll", roll.getPosition());
-            telemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
+            /*telemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
             telemetry.addData("Y Cycle", StateModels.depositCycle);
-            telemetry.addData("At intake position?", StateModels.intakePosition);
+            telemetry.addData("At intake position?", StateModels.intakePosition);*/
             telemetry.update();
 
         }
