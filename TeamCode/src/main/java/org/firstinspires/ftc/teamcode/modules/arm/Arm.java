@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules.arm;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 
@@ -23,10 +24,10 @@ public class Arm {
         int max_extension = getSlideMaxLengthIn42Inches(getElbowAngleInTicks());
         double power;
         if (!remove_arm_rules){
-            if (slide.getSlideExtensionInInches() > max_extension
+            if (slide.getSlideExtensionInInches() > max_extension - RobotConstants.SLIDE_TOLERANCE
                     && slideMovement > 0){ //top limit
                 power = 0;
-            } else if (slide.getSlideExtensionInInches() < 0
+            } else if (slide.getSlideExtensionInInches() < RobotConstants.SLIDE_TOLERANCE
                     && slideMovement < 0){ //bottom limit
                 power = 0;
             } else {

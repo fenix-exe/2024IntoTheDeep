@@ -159,6 +159,9 @@ public class DriverControls implements DriveControlMap {
     public boolean submersibleIntakeReady() {
         return gamepad2current.a && !gamepad2previous.a && !gamepad2previous.left_stick_button;
     }
+    public boolean openCloseClaw(){
+        return (gamepad2current.right_trigger > 0.1) && !(gamepad2previous.right_trigger >0.1);
+    }
     public boolean grabSampleFromOutside(){
         return gamepad2current.left_bumper && !gamepad2previous.left_bumper;
     }
@@ -195,6 +198,15 @@ public class DriverControls implements DriveControlMap {
     public boolean leaveDeposit(){
         return gamepad2current.y && !gamepad2previous.y;
     }
+    public boolean pickupSpecimenPreset(){
+        return gamepad2current.start && !gamepad2previous.start;
+    }
+    public boolean depositSpecimenPreset(){
+        return gamepad2current.back && !gamepad2previous.back;
+    }
+    public boolean depositBack(){
+        return gamepad2current.y && !gamepad2previous.y;
+    }
     public boolean intakeDown(){
         return gamepad2current.start;
     }
@@ -216,10 +228,10 @@ public class DriverControls implements DriveControlMap {
     public boolean wristDown(){return gamepad2current.back;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
     public boolean removeArmRules(){return gamepad2current.left_bumper;}
-    public boolean diffUp(){return gamepad2current.dpad_down;}
-    public boolean diffDown(){return gamepad2current.dpad_up;}
-    public boolean diffLeft(){return gamepad2current.dpad_right;}
-    public boolean diffRight(){return gamepad2current.dpad_left;}
+    public boolean diffUp(){return gamepad2current.dpad_up && !gamepad2previous.dpad_up;}
+    public boolean diffDown(){return gamepad2current.dpad_down && !gamepad2previous.dpad_down;}
+    public boolean diffLeft(){return gamepad2current.dpad_left && !gamepad2previous.dpad_left;}
+    public boolean diffRight(){return gamepad2current.dpad_right && !gamepad2previous.dpad_right;}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();

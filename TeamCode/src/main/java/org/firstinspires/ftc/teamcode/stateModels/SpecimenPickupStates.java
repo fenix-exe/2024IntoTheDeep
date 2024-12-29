@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.stateModels;
 
-public enum DriveStates {
+public enum SpecimenPickupStates {
     START,
     MOVING_WRIST,
-    RETRACTING_SLIDE,
+    RETRACTING_SLIDES,
     MOVING_ELBOW,
-    EXTENDING_SLIDE
+    EXTENDING_SLIDES,
+    OPENING_CLAW
 }

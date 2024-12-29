@@ -6,10 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class HomeTeleOp extends LinearOpMode {
+    Servo pitch;
     DcMotorEx slide;
     DcMotorEx pivot;
     RevTouchSensor limitSwitch;
@@ -17,6 +18,7 @@ public class HomeTeleOp extends LinearOpMode {
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        pitch = hardwareMap.get(Servo.class, "pitch");
 
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -31,6 +33,9 @@ public class HomeTeleOp extends LinearOpMode {
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+
+        pitch.setPosition(0.5);
+        waitForStart();
 
         home();
 
