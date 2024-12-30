@@ -17,7 +17,7 @@ public class Slide {
     //pulleyCirc is the circumference of the pulley
     double PULLEYCIRC= 4.724757;
     //encoderRes is how many encoder ticks happen after 1 rotation of the motor
-    double ENCODERRES = 384.5;
+    double ENCODERRES = 384.5; //TODO: 537.7
     //slideLength is the length of 1 stage of the slides
     //300 mm is the length of a misumi 330 slide, and 1 in = 25.4 mm
     double SLIDELENGTH = 300/25.4;
@@ -76,7 +76,7 @@ public class Slide {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setSlideExtensionLength(targetPos);
-            if (targetPos-0.5 < slideMotor.getCurrentPosition() && slideMotor.getCurrentPosition() < targetPos+0.5) {
+            if (targetPos-5 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos+5) {
                 setSlideExtensionLength(targetPos);
                 return false;
             }
