@@ -11,9 +11,12 @@ import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
 public class StateModels {
 
     public enum DepositCycles {GO_TO_SAFE_DRIVE, GO_TO_DEPOSIT, LEAVE_DEPOSIT}
+    public enum SpecimenCycles {GO_TO_SPECIMEN_INTAKE, GO_TO_SPECIMEN_DEPOSIT}
+    public enum BlockPickupType {NONE, INSIDE, OUTSIDE}
     static DriveStates drivePresetState;
     static IntakeStates intakePresetState;
     static LeaveSubmersibleStates submersibleLeaveStates;
+    public static EnterIntakePositionStates enterIntakePositionStates;
     static DepositStates depositPresetState;
     public static DepositStates depositBackPresetState;
     static ExitDepositStates exitDepositPresetState;
@@ -27,6 +30,8 @@ public class StateModels {
     static DriverControls driverControls;
     static ElapsedTime timer;
     public static DepositCycles depositCycle;
+    public static SpecimenCycles specimenCycle;
+    public static BlockPickupType blockPickupType;
     public static boolean intakePosition;
 
     public static void initialize(Arm arm, Wrist wrist, Claw claw, DriverControls driverControls){
@@ -45,14 +50,17 @@ public class StateModels {
         pickupSpecimenState= SpecimenPickupStates.START;
         depositSpecimenState = SpecimenDepositStates.START;
         depositBackPresetState = DepositStates.START;
+        enterIntakePositionStates = EnterIntakePositionStates.START;
         depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+        specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+        blockPickupType = BlockPickupType.NONE;
         intakePosition = false;
     }
 
     public static void presetPositionDriveStateModel(double pitch, double roll, double elbowAngle, double slideLength){
         switch (drivePresetState){
             case START:
-                if (driverControls.drivingPos() || (driverControls.depositBack() && depositCycle == DepositCycles.GO_TO_SAFE_DRIVE)){
+                if (driverControls.drivingPos()){
                     timer = new ElapsedTime();
                     timer.reset();
                     wrist.presetPosition(pitch, roll);
@@ -65,8 +73,10 @@ public class StateModels {
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     drivePresetState = DriveStates.MOVING_WRIST;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
                 }
                 break;
@@ -102,7 +112,6 @@ public class StateModels {
                 break;
             case EXTENDING_SLIDE:
                 if (Math.abs(arm.getSlideExtension() -  arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
-                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
                     drivePresetState = DriveStates.START;
                 }
                 if (driverControls.escapePresets()){
@@ -129,8 +138,10 @@ public class StateModels {
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     intakePresetState = IntakeStates.MOVING_WRIST;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
                 }
                 break;
@@ -166,15 +177,6 @@ public class StateModels {
                 break;
             case MOVING_SLIDE:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
-                    intakePresetState = IntakeStates.WAITING_FOR_USER_INPUT;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    intakePresetState = IntakeStates.START;
-                }
-                break;
-            case WAITING_FOR_USER_INPUT: // waiting for drivers to say that the wrist has crossed the submersible's threshold and it is safe for it to come down
-                if (driverControls.submersibleIntakeReady()){
                     timer.reset();
                     wrist.presetPosition(downPitch, downRoll);
                     intakePresetState = IntakeStates.MOVING_WRIST_DOWN;
@@ -186,7 +188,7 @@ public class StateModels {
                 break;
             case MOVING_WRIST_DOWN:
                 if (timer.milliseconds() > 500){
-                    intakePosition = true;
+                    //intakePosition = true;
                     intakePresetState = IntakeStates.START;
                 }
                 if (driverControls.escapePresets()){
@@ -202,7 +204,11 @@ public class StateModels {
                 if (driverControls.submersibleIntakeReady() && intakePosition) {
                     timer = new ElapsedTime();
                     timer.reset();
-                    wrist.presetPosition(pitch, roll);
+                    if (blockPickupType == BlockPickupType.INSIDE){
+                        wrist.presetPosition(pitch, roll);
+                    } else {
+                        wrist.presetPosition(pitch, roll+90);
+                    }
                     drivePresetState = DriveStates.START;
                     depositPresetState = DepositStates.START;
                     depositBackPresetState = DepositStates.START;
@@ -212,22 +218,14 @@ public class StateModels {
                     pickupSpecimenState = SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     intakePresetState = IntakeStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.MOVING_WRIST;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                 }
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 500){
-                    arm.moveElbowToAngle(elbowAngle);
-                    submersibleLeaveStates = LeaveSubmersibleStates.MOVING_ELBOW_TO_EXIT;
-                }
-                if (driverControls.escapePresets()) {
-                    arm.holdArm();
-                    submersibleLeaveStates = LeaveSubmersibleStates.START;
-                }
-                break;
-            case MOVING_ELBOW_TO_EXIT:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE) {
                     arm.moveSlideToLength(0);
                     submersibleLeaveStates = LeaveSubmersibleStates.RETRACTING_SLIDES;
                 }
@@ -254,7 +252,12 @@ public class StateModels {
                 if (driverControls.depositReadyFrontTopBucket() && depositCycle == DepositCycles.GO_TO_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
-                    wrist.presetPosition(pitch,roll);
+                    wrist.presetPosition(pitch, roll);
+                    /*if (blockPickupType == BlockPickupType.INSIDE){
+                        wrist.presetPosition(pitch, roll);
+                    } else {
+                        wrist.presetPosition(pitch, roll+90);
+                    }*/
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
@@ -264,7 +267,9 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     depositBackPresetState = DepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     depositPresetState = DepositStates.MOVING_WRIST;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
                 }
                 break;
@@ -281,26 +286,18 @@ public class StateModels {
             case RETRACTING_SLIDE:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
                     arm.moveElbowToAngle(elbowAngle);
-                    depositPresetState = DepositStates.MOVING_ELBOW;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    depositPresetState = DepositStates.START;
-                }
-                break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
-                    depositPresetState = DepositStates.MOVING_SLIDE;
+                    depositPresetState = DepositStates.MOVING_ELBOW_AND_SLIDE;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     depositPresetState = DepositStates.START;
                 }
                 break;
-            case MOVING_SLIDE:
-                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
-                    depositCycle = DepositCycles.LEAVE_DEPOSIT;
+            case MOVING_ELBOW_AND_SLIDE:
+                if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
+                        && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)){
+                    arm.moveSlideToLength(slideLength);
                     depositPresetState = DepositStates.START;
                 }
                 if (driverControls.escapePresets()){
@@ -316,6 +313,7 @@ public class StateModels {
                 if (driverControls.depositBack() && depositCycle == DepositCycles.GO_TO_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
+                    wrist.presetPositionPitch(0);
                     arm.moveSlideToLength(0);
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
@@ -326,34 +324,32 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     depositPresetState = DepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     depositBackPresetState = DepositStates.RETRACTING_SLIDE;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
                 }
                 break;
             case RETRACTING_SLIDE:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
                     arm.moveElbowToAngle(elbowAngle);
-                    depositBackPresetState = DepositStates.MOVING_ELBOW;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    depositBackPresetState = DepositStates.START;
-                }
-                break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
-                    depositBackPresetState = DepositStates.MOVING_SLIDE;
+                    depositBackPresetState = DepositStates.MOVING_ELBOW_AND_SLIDE;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     depositBackPresetState = DepositStates.START;
                 }
                 break;
-            case MOVING_SLIDE:
-                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
+            case MOVING_ELBOW_AND_SLIDE:
+                if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
+                        && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)){
                     timer.reset();
-                    wrist.presetPosition(pitch,roll);
+                    if (blockPickupType == BlockPickupType.INSIDE){
+                        wrist.presetPosition(pitch, roll-90);
+                    } else {
+                        wrist.presetPosition(pitch, roll);
+                    }
                     depositBackPresetState = DepositStates.MOVING_WRIST;
                 }
                 if (driverControls.escapePresets()){
@@ -379,7 +375,11 @@ public class StateModels {
                 if (driverControls.depositBack() && depositCycle == DepositCycles.LEAVE_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
-                    claw.openClaw();
+                    if (blockPickupType == BlockPickupType.OUTSIDE){
+                        claw.openClaw();
+                    } else {
+                        claw.closeClaw();
+                    }
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
@@ -389,12 +389,15 @@ public class StateModels {
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     exitDepositPresetState = ExitDepositStates.OPENING_CLAW;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
                 }
                 break;
             case OPENING_CLAW:
                 if (timer.milliseconds() > 250){
+                    blockPickupType = BlockPickupType.NONE;
                     timer.reset();
                     wrist.presetPosition(pitch,roll);
                     exitDepositPresetState = ExitDepositStates.MOVING_WRIST;
@@ -439,7 +442,7 @@ public class StateModels {
     public static void presetPositionGrabBlockFromOutsideStateModel(double downPitch, double upPitch, double upRoll, double elbowIntakeDownAngle, double elbowIntakeUpAngle, double elbowAngle, double slideLength){
         switch (grabBlockFromOutsidePresetState){
             case START:
-                if (driverControls.grabSampleFromOutside()){
+                if (driverControls.grabSampleFromOutside() && depositCycle != DepositCycles.LEAVE_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
                     claw.openClaw();
@@ -453,8 +456,11 @@ public class StateModels {
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.ELBOW_DOWN;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+                    blockPickupType = BlockPickupType.OUTSIDE;
                 }
                 break;
             case ELBOW_DOWN:
@@ -524,7 +530,7 @@ public class StateModels {
     public static void presetPositionGrabBlockFromInsideStateModel(double downPitch, double upPitch, double upRoll, double elbowDownAngle, double elbowUpAngle, double elbowAngle, double slideLength){
         switch (grabBlockFromInsidePresetState){
             case START:
-                if (driverControls.grabSampleFromInside()){
+                if (driverControls.grabSampleFromInside() && depositCycle != DepositCycles.LEAVE_DEPOSIT){
                     timer = new ElapsedTime();
                     arm.moveElbowToAngle(elbowDownAngle);
                     drivePresetState = DriveStates.START;
@@ -536,12 +542,15 @@ public class StateModels {
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.ELBOW_INTAKE_DOWN;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+                    blockPickupType = BlockPickupType.INSIDE;
                 }
                 break;
             case ELBOW_INTAKE_DOWN:{
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowAngleInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
                     timer.reset();
                     claw.openClaw();
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.INTAKE_GRABBING_BLOCK;
@@ -604,10 +613,54 @@ public class StateModels {
                 break;*/
         }
     }
-    public static void presetPositionPickupSpecimensStateModel(double pitch, double roll, double elbowAngle, double slideLength){
+    public static void dropBlockAndMoveWristDown (double downPitch){
+        switch (enterIntakePositionStates){
+            case START:
+                if (driverControls.enterIntakePosition() && intakePosition){
+                    timer = new ElapsedTime();
+                    timer.reset();
+                    claw.intermediateClaw();
+                    drivePresetState = DriveStates.START;
+                    intakePresetState = IntakeStates.START;
+                    submersibleLeaveStates = LeaveSubmersibleStates.START;
+                    depositPresetState = DepositStates.START;
+                    depositBackPresetState = DepositStates.START;
+                    exitDepositPresetState = ExitDepositStates.START;
+                    grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
+                    pickupSpecimenState= SpecimenPickupStates.START;
+                    depositSpecimenState = SpecimenDepositStates.START;
+                    grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.INTERMEDIATE_CLAW;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+                }
+                break;
+            case INTERMEDIATE_CLAW:
+                if (timer.milliseconds() > 500){
+                    timer.reset();
+                    wrist.presetPosition(downPitch, 0);
+                    enterIntakePositionStates = EnterIntakePositionStates.WRIST_MOVING_DOWN;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
+                }
+                break;
+            case WRIST_MOVING_DOWN:
+                if (timer.milliseconds() > 500){
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
+                }
+                break;
+        }
+    }
+    public static void presetPositionPickupSpecimensStateModel(double pitch, double roll, double elbowAngle, double slideLength, double elbowUpAngle){
         switch (pickupSpecimenState){
             case START:
-                if (driverControls.pickupSpecimenPreset()){
+                if (driverControls.pickupSpecimenPreset() && specimenCycle == SpecimenCycles.GO_TO_SPECIMEN_INTAKE){
                     timer = new ElapsedTime();
                     timer.reset();
                     claw.openClaw();
@@ -620,8 +673,9 @@ public class StateModels {
                     depositPresetState = DepositStates.START;
                     depositBackPresetState = DepositStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
                     pickupSpecimenState= SpecimenPickupStates.OPENING_CLAW;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
                 }
                 break;
             case OPENING_CLAW:
@@ -667,6 +721,50 @@ public class StateModels {
                 break;
             case EXTENDING_SLIDES:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
+                    pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    pickupSpecimenState = SpecimenPickupStates.START;
+                }
+                break;
+            case WAITING_FOR_USER_INPUT:
+                if (driverControls.pickupSpecimenPreset()){
+                    timer.reset();
+                    claw.closeClaw();
+                    pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    pickupSpecimenState = SpecimenPickupStates.START;
+                }
+                break;
+            case CLOSE_CLAW:
+                if (timer.milliseconds() > 500){
+                    pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT_AGAIN;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    pickupSpecimenState = SpecimenPickupStates.START;
+                }
+                if (driverControls.enterIntakePosition()){
+                    arm.holdArm();
+                    pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
+                }
+                break;
+            case WAITING_FOR_USER_INPUT_AGAIN:
+                if (driverControls.pickupSpecimenPreset()){
+                    arm.moveElbowToAngle(elbowUpAngle);
+                    pickupSpecimenState = SpecimenPickupStates.ELBOW_SLIGHTLY_UP;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    pickupSpecimenState = SpecimenPickupStates.START;
+                }
+                break;
+            case ELBOW_SLIGHTLY_UP:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_DEPOSIT;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 if (driverControls.escapePresets()){
@@ -674,16 +772,15 @@ public class StateModels {
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
-
         }
     }
-    public static void presetPositionDepositSpecimensStateModel(double pitch, double roll, double elbowAngle, double slideDepositLength){
+    public static void presetPositionDepositSpecimensStateModel(double pitch, double roll, double elbowAngle, double elbowDownAngle, double slideStartLength, double slideDepositLength){
         switch (depositSpecimenState){
             case START:
-                if (driverControls.depositSpecimenPreset()){
+                if (driverControls.pickupSpecimenPreset() && specimenCycle == SpecimenCycles.GO_TO_SPECIMEN_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
-                    arm.moveSlideToLength(0);
+                    arm.moveSlideToLength(slideStartLength);
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
@@ -693,32 +790,13 @@ public class StateModels {
                     depositPresetState = DepositStates.START;
                     depositBackPresetState = DepositStates.START;
                     pickupSpecimenState= SpecimenPickupStates.START;
-                    depositSpecimenState = SpecimenDepositStates.RETRACTING_SLIDES;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
+                    depositSpecimenState = SpecimenDepositStates.MOVING_SLIDES;
+                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
                 }
                 break;
-            case RETRACTING_SLIDES:
+            case MOVING_SLIDES:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
-                    arm.moveElbowToAngle(elbowAngle);
-                    depositSpecimenState = SpecimenDepositStates.MOVING_ELBOW;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    depositSpecimenState = SpecimenDepositStates.START;
-                }
-                break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
-                    arm.moveSlideToLength(slideDepositLength);
-                    depositSpecimenState = SpecimenDepositStates.EXTENDING_SLIDES;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    depositSpecimenState = SpecimenDepositStates.START;
-                }
-                break;
-            case EXTENDING_SLIDES:
-                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
                     timer.reset();
                     wrist.presetPosition(pitch,roll);
                     depositSpecimenState = SpecimenDepositStates.MOVING_WRIST;
@@ -730,33 +808,95 @@ public class StateModels {
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250){
-                    depositSpecimenState = SpecimenDepositStates.START;
+                    arm.moveElbowToAngle(elbowAngle);
+                    depositSpecimenState = SpecimenDepositStates.MOVING_ELBOW;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
                 break;
-            /*case OPENING_CLAW:
-                if (timer.milliseconds() > 100){
+            case MOVING_ELBOW:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+                    arm.moveSlideToLength(slideStartLength);
+                    depositSpecimenState = SpecimenDepositStates.WAITING_FOR_USER_INPUT;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+            case WAITING_FOR_USER_INPUT:
+                if (driverControls.pickupSpecimenPreset()){
+                    arm.moveSlideToLength(slideDepositLength);
+                    depositSpecimenState = SpecimenDepositStates.SLIGHTLY_EXTEND_SLIDES;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+            case SLIGHTLY_EXTEND_SLIDES:
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.LOW_SLIDE_TOLERANCE){
+                    depositSpecimenState = SpecimenDepositStates.WAITING_AGAIN_FOR_USER_INPUT;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+            case WAITING_AGAIN_FOR_USER_INPUT:
+                if (driverControls.pickupSpecimenPreset()){
+                    timer.reset();
+                    claw.openClaw();
+                    depositSpecimenState = SpecimenDepositStates.OPEN_CLAW;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+            case OPEN_CLAW:
+                if (timer.milliseconds() > 500){
+                    timer.reset();
+                    wrist.presetPosition(-pitch, roll);
+                    depositSpecimenState = SpecimenDepositStates.MOVING_WRIST_TO_SAFE;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+            case MOVING_WRIST_TO_SAFE:
+                if (timer.milliseconds() > 500){
                     arm.moveSlideToLength(0);
-                    depositSpecimenState = SpecimenDepositStates.RETRACTING_SLIDES_AT_END;
+                    depositSpecimenState = SpecimenDepositStates.RETRACT_SLIDES;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
                 break;
-            case RETRACTING_SLIDES_AT_END:
-                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
+            case RETRACT_SLIDES:
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    arm.moveElbowToAngle(elbowDownAngle);
+                    depositSpecimenState = SpecimenDepositStates.MOVING_ELBOW_TO_SAFE;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+            case MOVING_ELBOW_TO_SAFE:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
-                break;*/
-
+                break;
         }
     }
 

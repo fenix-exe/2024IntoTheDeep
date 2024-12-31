@@ -3,9 +3,14 @@ package org.firstinspires.ftc.teamcode.stateModels;
 public enum SpecimenDepositStates {
     START,
     MOVING_WRIST,
-    RETRACTING_SLIDES,
+    MOVING_SLIDES,
     MOVING_ELBOW,
     EXTENDING_SLIDES,
-    OPENING_CLAW,
-    RETRACTING_SLIDES_AT_END
+    WAITING_FOR_USER_INPUT,
+    SLIGHTLY_EXTEND_SLIDES,
+    WAITING_AGAIN_FOR_USER_INPUT,
+    OPEN_CLAW,
+    MOVING_WRIST_TO_SAFE,
+    RETRACT_SLIDES,
+    MOVING_ELBOW_TO_SAFE
 }
