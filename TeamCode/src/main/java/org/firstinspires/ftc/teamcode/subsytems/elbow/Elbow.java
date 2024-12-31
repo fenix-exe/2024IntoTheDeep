@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import androidx.annotation.NonNull;
 
 import static java.lang.Math.floor;
@@ -57,7 +59,7 @@ public class Elbow {
         //goToTargetPosition(elbowMotor.getCurrentPosition());
     }
     public double ticksToDegrees(int ticks){
-        return ticks/24.22;
+        return ticks/24.22; //TODO: 41.821
     }
     public int degreesToTicks(double degrees){
         return (int) floor(degrees * 24.22);
@@ -92,10 +94,8 @@ public class Elbow {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setTargetAngleAndSpeed(target, speed);
-            if (target-1 < getElbowAngle() && getElbowAngle() < target+1) {
+            if (target-5 < getElbowAngle() && getElbowAngle() < target+5) {
                 elbowMotor.setPower(0);
-
-                //holdPos();
                 return false;
             } else {
                 return true;
