@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DriverControls implements DriveControlMap {
+    public enum scoringType {SAMPLE, SPECIMEN}
+    scoringType gameStrategyMode;
     Gamepad gamepad1current;
     Gamepad gamepad2current;
     Gamepad gamepad1previous;
@@ -30,6 +32,8 @@ public class DriverControls implements DriveControlMap {
 
         gamepad1current.copy(gamepad1);
         gamepad2current.copy(gamepad2);
+
+        gameStrategyMode = scoringType.SAMPLE;
     }
 
     public void update(){
@@ -208,7 +212,10 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public boolean depositReadyBackTopBucket() {
-        return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
+        if (gameStrategyMode == scoringType.SAMPLE) {
+            return gamepad2current.y && !gamepad2previous.y;
+        }
+        return false;
     }
 
     @Override
@@ -225,8 +232,20 @@ public class DriverControls implements DriveControlMap {
     public boolean leaveDeposit(){
         return gamepad2current.y && !gamepad2previous.y;
     }
-    public boolean pickupSpecimenPreset(){
-        return gamepad2current.start && !gamepad2previous.start;
+    public boolean pickupAndDepositSpecimens(){
+        if (gameStrategyMode == scoringType.SPECIMEN){
+            return gamepad2current.y && !gamepad2previous.y;
+        }
+        return false;
+    }
+    public boolean switchStrategy(){
+        return gamepad2current.start && !gamepad1previous.start;
+    }
+    public scoringType getGameStrategyMode(){
+        return gameStrategyMode;
+    }
+    public void setGameStrategyMode(scoringType type){
+        gameStrategyMode = type;
     }
     public boolean depositSpecimenPreset(){
         return gamepad2current.back && !gamepad2previous.back;

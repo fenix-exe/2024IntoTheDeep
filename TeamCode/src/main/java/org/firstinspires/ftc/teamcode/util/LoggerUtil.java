@@ -23,39 +23,39 @@ public class LoggerUtil {
         isLoggingEnabled = logEnable;
     }
     public static void setWriteToFile(boolean writeToFile){LoggerUtil.writeToFile = writeToFile;}
-    public static void debug(String message){
+    public static void debug(String type, String message){
         if(isLoggingEnabled) {
-            RobotLog.dd(TAG, message);
+            RobotLog.dd(TAG + ":" + type, message);
             if(writeToFile){
                 printToLogFile("debug", message);
             }
         }
     }
-    public static void verbose(String message){
+    public static void verbose(String type, String message){
         if(isLoggingEnabled) {
-            RobotLog.vv(TAG, message);
+            RobotLog.vv(TAG + ":" + type, message);
             if(writeToFile){
                 printToLogFile("verbose", message);
             }
         }
     }
-    public static void error(String message){
+    public static void error(String type, String message){
         if(isLoggingEnabled) {
-            RobotLog.ee(TAG, message);
+            RobotLog.ee(TAG + ":" + type, message);
             if(writeToFile){
                 printToLogFile("error", message);
             }
         }
     }
-    public static void info(String message){
+    public static void info(String type, String message){
         if(isLoggingEnabled) {
-            RobotLog.ii(TAG, message);
+            RobotLog.ii(TAG + ":" + type, message);
             if(writeToFile){
                 printToLogFile("info", message);
             }
         }
     }
-    public static void warning(String message){
+    public static void warning(String type, String message){
         if(isLoggingEnabled) {
             RobotLog.ww(TAG, message);
             if(writeToFile){

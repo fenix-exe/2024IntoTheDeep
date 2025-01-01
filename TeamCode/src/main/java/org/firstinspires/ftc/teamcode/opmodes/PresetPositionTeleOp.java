@@ -108,20 +108,20 @@ public class PresetPositionTeleOp extends LinearOpMode {
     }
 
     private static void updateLogging(String directives, String actions_list, HashMap arm_debugInfo, HashMap endEffector_debugInfo, HashMap driveTrain_debugInfo) {
-        LoggerUtil.debug("Directive: " + directives);
-        LoggerUtil.debug("Actions: " + actions_list);
-        LoggerUtil.debug("Slide Extension: " + arm_debugInfo.get("Slide Extension"));
-        LoggerUtil.debug("Slide Limit: " + arm_debugInfo.get("Slide Limit"));
-        LoggerUtil.debug("Slide Current: " + arm_debugInfo.get("Slide Current"));
-        LoggerUtil.debug("Elbow Angle: " + arm_debugInfo.get("Elbow Angle"));
-        LoggerUtil.debug("Elbow Current: " + arm_debugInfo.get("Elbow Current"));
-        LoggerUtil.debug("Differential Pitch: " + endEffector_debugInfo.get("Differential Pitch"));
-        LoggerUtil.debug("Differential Roll: " + endEffector_debugInfo.get("Differential Roll"));
-        LoggerUtil.debug("Active Intake Power: " + endEffector_debugInfo.get("Active Intake Power"));
-        LoggerUtil.debug("DriveTrain Motor Powers: " + driveTrain_debugInfo.get("FL Power") + ", " + driveTrain_debugInfo.get("FR Power") + ", " + driveTrain_debugInfo.get("BL Power") + ", " + driveTrain_debugInfo.get("BR Power"));
-        LoggerUtil.debug("DriveTrain Motor Currents: " + driveTrain_debugInfo.get("FL Current") + ", " + driveTrain_debugInfo.get("FR Current") + ", " + driveTrain_debugInfo.get("BL Current") + ", " + driveTrain_debugInfo.get("BR Current"));
-        LoggerUtil.debug("IMU Yaw: " + driveTrain_debugInfo.get("IMU Yaw"));
-        LoggerUtil.debug("Drive Type: " + driveTrain_debugInfo.get("Drive Type"));
+        LoggerUtil.debug("general", "Directive: " + directives);
+        LoggerUtil.debug("general", "Actions: " + actions_list);
+        LoggerUtil.debug("subsystem", "Slide Extension: " + arm_debugInfo.get("Slide Extension"));
+        LoggerUtil.debug("subsystem", "Slide Limit: " + arm_debugInfo.get("Slide Limit"));
+        LoggerUtil.debug("power", "Slide Current: " + arm_debugInfo.get("Slide Current"));
+        LoggerUtil.debug("subsystem", "Elbow Angle: " + arm_debugInfo.get("Elbow Angle"));
+        LoggerUtil.debug("subsystem", "Elbow Current: " + arm_debugInfo.get("Elbow Current"));
+        LoggerUtil.debug("subsystem", "Differential Pitch: " + endEffector_debugInfo.get("Differential Pitch"));
+        LoggerUtil.debug("subsystem", "Differential Roll: " + endEffector_debugInfo.get("Differential Roll"));
+        LoggerUtil.debug("power", "Active Intake Power: " + endEffector_debugInfo.get("Active Intake Power"));
+        LoggerUtil.debug("power", "DriveTrain Motor Powers: " + driveTrain_debugInfo.get("FL Power") + ", " + driveTrain_debugInfo.get("FR Power") + ", " + driveTrain_debugInfo.get("BL Power") + ", " + driveTrain_debugInfo.get("BR Power"));
+        LoggerUtil.debug("power", "DriveTrain Motor Currents: " + driveTrain_debugInfo.get("FL Current") + ", " + driveTrain_debugInfo.get("FR Current") + ", " + driveTrain_debugInfo.get("BL Current") + ", " + driveTrain_debugInfo.get("BR Current"));
+        LoggerUtil.debug("subsystem", "IMU Yaw: " + driveTrain_debugInfo.get("IMU Yaw"));
+        LoggerUtil.debug("subsystem", "Drive Type: " + driveTrain_debugInfo.get("Drive Type"));
     }
 
     private void updateTelemetry(Set directive, String actions_list, HashMap arm_debugInfo, HashMap endEffector_debugInfo, HashMap driveTrain_debugInfo) {

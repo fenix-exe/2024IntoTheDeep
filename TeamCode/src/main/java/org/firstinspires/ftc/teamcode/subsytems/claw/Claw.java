@@ -16,4 +16,7 @@ public class Claw {
     }
     public void closeClaw(){claw.setPosition(RobotConstants.CLOSED_POSITION);}
     public void intermediateClaw(){claw.setPosition(RobotConstants.INTERMEDIATE_POSITION);}
+    public double getClawPosition(){
+        return claw.getPosition();
+    }
 }

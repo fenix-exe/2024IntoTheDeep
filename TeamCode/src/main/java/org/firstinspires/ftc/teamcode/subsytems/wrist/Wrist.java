@@ -45,5 +45,11 @@ public class Wrist {
         presetPositionPitch(pitch);
         presetPositionRoll(roll);
     }
+    public double getRollAngle(){
+        return 180 * roll.getPosition() - 90;
+    }
+    public double getPitchAngle(){
+        return 300 * roll.getPosition() - 150;
+    }
 
 }

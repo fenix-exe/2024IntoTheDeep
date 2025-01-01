@@ -4,6 +4,8 @@ import org.firstinspires.ftc.teamcode.modules.endEffectorV1.EndEffector;
 import org.firstinspires.ftc.teamcode.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
 
+import java.util.HashMap;
+
 public class EndEffectorV2 {
     Wrist wrist;
     Claw claw;
@@ -27,6 +29,13 @@ public class EndEffectorV2 {
     }
     public void closeClaw(){
         claw.closeClaw();
+    }
+    public HashMap getDebugInfo(){
+        HashMap debugMap = new HashMap();
+        debugMap.put("Pitch Angle", wrist.getPitchAngle());
+        debugMap.put("Roll Angle", wrist.getRollAngle());
+        debugMap.put("Claw Servo Position", claw.getClawPosition());
+        return debugMap;
     }
 
 }

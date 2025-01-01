@@ -29,6 +29,13 @@ import org.firstinspires.ftc.teamcode.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.util.FrequencyCounter;
+import org.firstinspires.ftc.teamcode.util.LoggerUtil;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Logger;
+
 @Config
 @TeleOp
 public class TeleOpV5 extends LinearOpMode {
@@ -85,11 +92,11 @@ public class TeleOpV5 extends LinearOpMode {
             //speed adjustments
             if (driverControls.microDriveAdjustments()){
                 speedMultiplier = RobotConstants.EXTRA_SLOW;
-            } else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
+            } /*else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             } else if (arm.getElbowAngleInDegrees() > RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE) {
                 speedMultiplier = RobotConstants.EXTRA_SLOW;
-            } else {
+            }*/ else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
@@ -141,9 +148,18 @@ public class TeleOpV5 extends LinearOpMode {
                 claw.closeClaw();
             }
 
+            //switching modes
+            if(driverControls.switchStrategy()) {
+                if (driverControls.getGameStrategyMode() == DriverControls.scoringType.SAMPLE){
+                    driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
+                } else {
+                    driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
+                }
+            }
+
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(0,-90,58,0);
+            StateModels.presetPositionDriveStateModel(0,58,0);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
@@ -168,6 +184,12 @@ public class TeleOpV5 extends LinearOpMode {
             multiTelemetry.addData("At intake position?", StateModels.intakePosition);
             multiTelemetry.addData("Block Pickup Type", StateModels.blockPickupType);
             multiTelemetry.update();
+
+            //logging
+            logDriveTrain();
+            logArm();
+            logEndEffector();
+            logStateModels();
 
         }
     }
@@ -242,7 +264,45 @@ public class TeleOpV5 extends LinearOpMode {
         endEffector = new EndEffectorV2(wrist, claw);
     }
 
-
+    private void logDriveTrain(){
+        HashMap driveTrainInfo = driveTrain.getDebugInfo();
+        ArrayList values = new ArrayList();
+        values.add(driveTrainInfo.get("FL Power"));
+        values.add(driveTrainInfo.get("BL Power"));
+        values.add(driveTrainInfo.get("FR Power"));
+        values.add(driveTrainInfo.get("BR Power"));
+        values.add(driveTrainInfo.get("FL Current"));
+        values.add(driveTrainInfo.get("BL Current"));
+        values.add(driveTrainInfo.get("FR Current"));
+        values.add(driveTrainInfo.get("BR Current"));
+        String debugString = String.join(",", values);
+        LoggerUtil.debug("drivetrain", debugString);
+    }
+    private void logArm(){
+        HashMap armInfo = arm.getDebugInfo();
+        ArrayList values = new ArrayList();
+        values.add(armInfo.get("Slide Extension"));
+        values.add(armInfo.get("Slide Limit"));
+        values.add(armInfo.get("Slide Power"));
+        values.add(armInfo.get("Slide Current"));
+        values.add(armInfo.get("Elbow Angle"));
+        values.add(armInfo.get("Elbow Power"));
+        values.add(armInfo.get("Elbow Current"));
+        String debugString = String.join(",", values);
+        LoggerUtil.debug("arm", debugString);
+    }
+    private void logEndEffector(){
+        HashMap endEffectorInfo = endEffector.getDebugInfo();
+        ArrayList values = new ArrayList();
+        values.add(endEffectorInfo.get("Pitch Angle"));
+        values.add(endEffectorInfo.get("Roll Angle"));
+        values.add(endEffectorInfo.get("Claw Servo Position"));
+        String debugString = String.join(",", values);
+        LoggerUtil.debug("endEffector", debugString);
+    }
+    private void logStateModels(){
+        LoggerUtil.debug("stateModels", StateModels.getDebugString());
+    }
 
 
 }
