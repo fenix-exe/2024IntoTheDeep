@@ -64,7 +64,7 @@ public class ConfigUtil {
                 ArmPresetPosition.INTAKE_DOWN = presetPosition;
                 break;
             default:
-                LoggerUtil.error("Read Unknown Arm Preset," + presetPosition.toString());
+                LoggerUtil.error("configUtil", "Read Unknown Arm Preset," + presetPosition.toString());
                 break;
         }
     }
@@ -96,7 +96,7 @@ public class ConfigUtil {
                 EndEffectorPresetPosition.INTAKE_DOWN = presetPosition;
                 break;
             default:
-                LoggerUtil.error("Read Unknown End Effector Preset," + presetPosition.toString());
+                LoggerUtil.error("configUtil", "Read Unknown End Effector Preset," + presetPosition.toString());
                 break;
         }
     }

@@ -10,21 +10,19 @@ import java.util.HashMap;
 public class Arm {
     Slide slide;
     public Elbow elbow;
-    int physicalMaxExtension;
-    double MaxSlideExtensionInches;
 
-    public Arm(Slide slide, Elbow elbow, int initialTopHeight){
+    public Arm(Slide slide, Elbow elbow){
         this.slide = slide;
         this.elbow = elbow;
-        this.physicalMaxExtension = initialTopHeight;
         ArmSpeedController.slide = slide;
     }
 
     public void moveSlide(double slideMovement, boolean remove_arm_rules) {
-        int max_extension = getSlideMaxLengthIn42Inches(getElbowAngleInTicks());
+        //max_extension already includes tolerance
+        double max_extension = getMaximumSlideExtensionAllowedInInches();
         double power;
         if (!remove_arm_rules){
-            if (slide.getSlideExtensionInInches() > max_extension - RobotConstants.SLIDE_TOLERANCE
+            if (slide.getSlideExtensionInInches() > max_extension
                     && slideMovement > 0){ //top limit
                 power = 0;
             } else if (slide.getSlideExtensionInInches() < RobotConstants.SLIDE_TOLERANCE
@@ -53,18 +51,18 @@ public class Arm {
             elbow.elbowJoystick(power);
     }
 
-    public int getSlideMaxLengthIn42Inches(int angleInTicks){
-        int topHeight;
-        double theta = elbow.ticksToDegrees(angleInTicks);
-        if (theta != 90) {
-            MaxSlideExtensionInches = ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES/(Math.cos(Math.toRadians(theta)));
-        } else {
-            MaxSlideExtensionInches = ArmConstants.SLIDEMAX;
+    private double getMaximumSlideExtensionAllowedInInches(){
+        double theta = elbow.getElbowAngle();
+        double MaxSlideExtensionInches = RobotConstants.PHYSICAL_MAX_EXTENSION_IN_INCHES;
+        if (!(Math.abs(90-theta) < 1)) { //tolerance of 1 degree around 90 degrees, I cannot compare double directly to int
+            MaxSlideExtensionInches = Math.min(RobotConstants.PHYSICAL_MAX_EXTENSION_IN_INCHES,
+                    ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES/(Math.cos(Math.toRadians(theta))));
         }
-        int MaxSlideExtensionEncoderTicks = slide.inchesToTicksPivotPoint(MaxSlideExtensionInches);
-        topHeight = Math.min(physicalMaxExtension, MaxSlideExtensionEncoderTicks);
-        return (int) Math.floor(Math.abs(topHeight));
+        //add 1 inch safety margin
+        MaxSlideExtensionInches -= RobotConstants.SLIDE_TOLERANCE;
+        return MaxSlideExtensionInches;
     }
+
     public void resetEncoders(){
         elbow.resetEncoder();
         slide.resetEncoder();
@@ -104,9 +102,11 @@ public class Arm {
         }
     }
     public void moveSlideToLength(double inches){
+
         slide.setSlideExtensionLength(inches);
     }
     public void moveElbowToAngle(double deg){
+
         elbow.setTargetAngle(deg);
     }
 
@@ -115,6 +115,7 @@ public class Arm {
                 Math.abs(slide.getSlideExtensionInInches() - position.slideLength) < ArmConstants.SLIDEPRESETTOLERANCE; // slide is within 1 inch of target
     }
     public double getSlideExtension(){
+
         return slide.getSlideExtensionInInches();
     }
 
@@ -122,7 +123,7 @@ public class Arm {
 
         HashMap debugInfo = new HashMap<>();
         debugInfo.put("Slide Extension", this.getSlideExtension());
-        debugInfo.put("Slide Limit", this.getSlideMaxLengthIn42Inches(this.getElbowAngleInTicks()));
+        debugInfo.put("Slide Limit", this.getMaximumSlideExtensionAllowedInInches());
         debugInfo.put("Slide Power", this.slide.slideMotor.getPower());
         debugInfo.put("Slide Current", this.slide.slideMotor.getCurrent(CurrentUnit.MILLIAMPS));
         debugInfo.put("Elbow Angle", this.getElbowAngleInDegrees());

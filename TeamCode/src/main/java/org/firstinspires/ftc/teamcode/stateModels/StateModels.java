@@ -307,14 +307,14 @@ public class StateModels {
                 break;
         }
     }
-    public static void presetPositionDepositBackStateModel(double pitch, double roll, double elbowAngle, double slideLength){
+    public static void presetPositionDepositBackStateModel(double pitch, double roll, double elbowAngle, double slideLength, double slideRetractionLength){
         switch (depositBackPresetState){
             case START:
                 if (driverControls.depositBack() && depositCycle == DepositCycles.GO_TO_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
                     wrist.presetPositionPitch(0);
-                    arm.moveSlideToLength(0);
+                    arm.moveSlideToLength(slideRetractionLength);
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;

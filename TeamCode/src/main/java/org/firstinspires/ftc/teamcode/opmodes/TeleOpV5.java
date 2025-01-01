@@ -31,10 +31,8 @@ import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.util.LoggerUtil;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 @Config
 @TeleOp
@@ -159,11 +157,11 @@ public class TeleOpV5 extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(0,58,0);
+            StateModels.presetPositionDriveStateModel(0,58,4);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
-            //StateModels.leaveSubmersibleStateModel(0,-90,2);
+            StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositBackStateModel(75,0,90,24);
+            StateModels.presetPositionDepositBackStateModel(75,0,90,24, 4);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,0);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,3,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,0,10,58,0);
@@ -238,9 +236,9 @@ public class TeleOpV5 extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Slide slideControl = new Slide(slide, RobotConstants.PHYSICAL_MAX_EXTENSION);
+        Slide slideControl = new Slide(slide);
         Elbow elbow = new Elbow(pivot, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
-        arm = new Arm(slideControl, elbow, RobotConstants.PHYSICAL_MAX_EXTENSION);
+        arm = new Arm(slideControl, elbow);
 
         slide.setTargetPosition(0);
         pivot.setTargetPosition(0);

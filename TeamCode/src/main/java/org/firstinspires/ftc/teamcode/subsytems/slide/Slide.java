@@ -23,10 +23,8 @@ public class Slide {
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
     double SLIDETOELBOW = 2.5;
     int currentTargetPos;
-    public Slide(DcMotorEx slideMotor, double maxPhysicalExtensionInches){
+    public Slide(DcMotorEx slideMotor){
         this.slideMotor =slideMotor;
-        this.maxPhysicalExtensionInches = maxPhysicalExtensionInches;
-        maxPhysicalExtensionTicks = inchesToTicks(maxPhysicalExtensionInches);
     }
     public void setSlideExtensionLength(double lengthInInches){
         int targetPosition = inchesToTicks(lengthInInches);
