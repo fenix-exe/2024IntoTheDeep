@@ -61,7 +61,7 @@ public class RobotActions {
         }
         for (IRobotAction action : actionsToRemove) {
             actions.remove(action);
-            LoggerUtil.info(action.toString());
+            LoggerUtil.info("action", action.toString());
         }
     }
 

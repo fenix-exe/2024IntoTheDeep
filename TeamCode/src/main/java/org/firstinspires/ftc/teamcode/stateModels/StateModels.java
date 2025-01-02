@@ -14,7 +14,7 @@ public class StateModels {
     public enum SpecimenCycles {GO_TO_SPECIMEN_INTAKE, GO_TO_SPECIMEN_DEPOSIT}
     public enum BlockPickupType {NONE, INSIDE, OUTSIDE}
     static DriveStates drivePresetState;
-    static IntakeStates intakePresetState;
+    public static IntakeStates intakePresetState;
     static LeaveSubmersibleStates submersibleLeaveStates;
     public static EnterIntakePositionStates enterIntakePositionStates;
     static DepositStates depositPresetState;
@@ -177,7 +177,7 @@ public class StateModels {
                 }
                 break;
             case MOVING_SLIDE:
-                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
                     timer.reset();
                     wrist.presetPosition(downPitch, downRoll);
                     intakePresetState = IntakeStates.MOVING_WRIST_DOWN;
@@ -481,7 +481,7 @@ public class StateModels {
                 }
                 break;
             case INTAKE_CLOSING:
-                if (timer.milliseconds()>500){
+                if (timer.milliseconds()>200){
                     arm.moveElbowToAngle(elbowIntakeUpAngle);
                     //wrist.presetPosition(upPitch, upRoll);
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.ELBOW_UP;
@@ -568,7 +568,7 @@ public class StateModels {
                 break;
             }
             case INTAKE_GRABBING_BLOCK:
-                if (timer.milliseconds()>500){
+                if (timer.milliseconds()>200){
                     arm.moveElbowToAngle(elbowUpAngle);
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.ELBOW_SLIGHTLY_UP;
                 }

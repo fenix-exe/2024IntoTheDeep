@@ -11,7 +11,7 @@
             <goBILDA5202SeriesMotor name="BL" port="2" />
             <goBILDA5202SeriesMotor name="BR" port="3" />
             <Servo name="pitch" port="0" />
-            <Servo name="roll" port="1" />
+            <Servo name="roll" port="3" />
             <Servo name="claw" port="2" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <RevColorSensorV3 name="activeIntakeSensor" port="1" bus="1" />

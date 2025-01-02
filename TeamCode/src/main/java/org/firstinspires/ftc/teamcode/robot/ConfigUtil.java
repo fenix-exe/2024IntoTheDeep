@@ -30,7 +30,7 @@ public class ConfigUtil {
                 }
             }
         } catch (Exception e){
-            LoggerUtil.logException(e);
+            LoggerUtil.logException("configUtil", e);
         }
     }
 
@@ -117,7 +117,7 @@ public class ConfigUtil {
                 return new EndEffectorPresetPosition(name, pitch, roll);
             }
         }catch(Exception e){
-            LoggerUtil.logException(e);
+            LoggerUtil.logException("configUtil",e);
         }
         return null;
     }
@@ -150,7 +150,7 @@ public class ConfigUtil {
 
             writer.close();
         } catch (Exception e){
-            LoggerUtil.logException(e);
+            LoggerUtil.logException("configUtil",e);
         }
     }
 }

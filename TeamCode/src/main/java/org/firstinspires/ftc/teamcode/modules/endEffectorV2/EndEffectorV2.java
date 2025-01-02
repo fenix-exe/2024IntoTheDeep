@@ -32,9 +32,9 @@ public class EndEffectorV2 {
     }
     public HashMap getDebugInfo(){
         HashMap debugMap = new HashMap();
-        debugMap.put("Pitch Angle", wrist.getPitchAngle());
-        debugMap.put("Roll Angle", wrist.getRollAngle());
-        debugMap.put("Claw Servo Position", claw.getClawPosition());
+        debugMap.put("Pitch Angle", String.valueOf(wrist.getPitchAngle()));
+        debugMap.put("Roll Angle", String.valueOf(wrist.getRollAngle()));
+        debugMap.put("Claw Servo Position", String.valueOf(claw.getClawPosition()));
         return debugMap;
     }
 

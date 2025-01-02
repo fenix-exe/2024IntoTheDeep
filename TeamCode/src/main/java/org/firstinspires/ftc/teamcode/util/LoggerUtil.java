@@ -27,7 +27,7 @@ public class LoggerUtil {
         if(isLoggingEnabled) {
             RobotLog.dd(TAG + ":" + type, message);
             if(writeToFile){
-                printToLogFile("debug", message);
+                printToLogFile(TAG + ":" + type, "debug", message);
             }
         }
     }
@@ -35,7 +35,7 @@ public class LoggerUtil {
         if(isLoggingEnabled) {
             RobotLog.vv(TAG + ":" + type, message);
             if(writeToFile){
-                printToLogFile("verbose", message);
+                printToLogFile(TAG + ":" + type, "verbose", message);
             }
         }
     }
@@ -43,7 +43,7 @@ public class LoggerUtil {
         if(isLoggingEnabled) {
             RobotLog.ee(TAG + ":" + type, message);
             if(writeToFile){
-                printToLogFile("error", message);
+                printToLogFile(TAG + ":" + type,"error", message);
             }
         }
     }
@@ -51,27 +51,27 @@ public class LoggerUtil {
         if(isLoggingEnabled) {
             RobotLog.ii(TAG + ":" + type, message);
             if(writeToFile){
-                printToLogFile("info", message);
+                printToLogFile(TAG + ":" + type,"info", message);
             }
         }
     }
     public static void warning(String type, String message){
         if(isLoggingEnabled) {
-            RobotLog.ww(TAG, message);
+            RobotLog.ww(TAG + ":", message);
             if(writeToFile){
-                printToLogFile("warning", message);
+                printToLogFile(TAG + ":" + type,"warning", message);
             }
         }
     }
-    public static void logException(Exception e){
+    public static void logException(String type, Exception e){
         if(isLoggingEnabled) {
             RobotLog.logStackTrace(e);
             if(writeToFile){
-                printToLogFile("debug", e.getMessage());
+                printToLogFile(TAG + ":" + type,"debug", e.getMessage());
             }
         }
     }
-    private static void printToLogFile(String typeOfMessage, String message){
+    private static void printToLogFile(String tag, String typeOfMessage, String message){
         try{
             if (stream == null){
                 File file = new File(logFileName);
@@ -81,7 +81,7 @@ public class LoggerUtil {
             }
             //writing logs
             String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").format(Calendar.getInstance().getTime());
-            stream.println(timeStamp + "    " + typeOfMessage + "   " + message);
+            stream.println(timeStamp + "\t" + tag + "\t" + typeOfMessage + "\t" + message);
         } catch (Exception e){
             RobotLog.logStackTrace(e);
             //LoggerUtil.logException(e);

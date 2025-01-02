@@ -122,13 +122,13 @@ public class Arm {
     public HashMap getDebugInfo() {
 
         HashMap debugInfo = new HashMap<>();
-        debugInfo.put("Slide Extension", this.getSlideExtension());
-        debugInfo.put("Slide Limit", this.getMaximumSlideExtensionAllowedInInches());
-        debugInfo.put("Slide Power", this.slide.slideMotor.getPower());
-        debugInfo.put("Slide Current", this.slide.slideMotor.getCurrent(CurrentUnit.MILLIAMPS));
-        debugInfo.put("Elbow Angle", this.getElbowAngleInDegrees());
-        debugInfo.put("Elbow Power", this.elbow.elbowMotor.getPower());
-        debugInfo.put("Elbow Current", this.elbow.elbowMotor.getCurrent(CurrentUnit.MILLIAMPS));
+        debugInfo.put("Slide Extension", String.valueOf(this.getSlideExtension()));
+        debugInfo.put("Slide Limit", String.valueOf(this.getMaximumSlideExtensionAllowedInInches()));
+        debugInfo.put("Slide Power", String.valueOf(this.slide.slideMotor.getPower()));
+        debugInfo.put("Slide Current", String.valueOf(this.slide.slideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+        debugInfo.put("Elbow Angle", String.valueOf(this.getElbowAngleInDegrees()));
+        debugInfo.put("Elbow Power", String.valueOf(this.elbow.elbowMotor.getPower()));
+        debugInfo.put("Elbow Current", String.valueOf(this.elbow.elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
         return debugInfo;
     }
 

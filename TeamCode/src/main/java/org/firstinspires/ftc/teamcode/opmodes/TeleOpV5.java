@@ -157,14 +157,14 @@ public class TeleOpV5 extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(0,58,4);
+            StateModels.presetPositionDriveStateModel(0,58,8);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
-            StateModels.leaveSubmersibleStateModel(0,-90,2);
+            //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositBackStateModel(75,0,90,24, 4);
+            StateModels.presetPositionDepositBackStateModel(75,0,85,24, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,0);
-            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,3,10, 58,0);
-            StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,0,10,58,0);
+            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
+            StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 32);
             StateModels.presetPositionDepositSpecimensStateModel(90,90,85,58,3,13);
             StateModels.dropBlockAndMoveWristDown(-90);
@@ -178,9 +178,11 @@ public class TeleOpV5 extends LinearOpMode {
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
             multiTelemetry.addData("Dropping Block State Model", StateModels.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
+            multiTelemetry.addData("Intake State Model", StateModels.intakePresetState);
             multiTelemetry.addData("Y Cycle", StateModels.depositCycle);
             multiTelemetry.addData("At intake position?", StateModels.intakePosition);
             multiTelemetry.addData("Block Pickup Type", StateModels.blockPickupType);
+            multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.update();
 
             //logging
@@ -188,6 +190,7 @@ public class TeleOpV5 extends LinearOpMode {
             logArm();
             logEndEffector();
             logStateModels();
+            logButtonPressed();
 
         }
     }
@@ -300,6 +303,9 @@ public class TeleOpV5 extends LinearOpMode {
     }
     private void logStateModels(){
         LoggerUtil.debug("stateModels", StateModels.getDebugString());
+    }
+    private void logButtonPressed(){
+        LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
     }
 
 

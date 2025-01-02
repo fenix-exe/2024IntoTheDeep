@@ -36,7 +36,7 @@ public class PIDTest extends LinearOpMode {
             telemetry.addData("Elbow Power", elbow.getPower());
             telemetry.addData("Elbow Position", elbow.getCurrentPosition());
             telemetry.update();
-            LoggerUtil.debug("V1\t"+power+"\t"+targetPosition+"\t"+elbow.getCurrentPosition());
+            LoggerUtil.debug("test", "V1\t"+power+"\t"+targetPosition+"\t"+elbow.getCurrentPosition());
         }
     }
 }

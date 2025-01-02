@@ -251,7 +251,10 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.back && !gamepad2previous.back;
     }
     public boolean depositBack(){
-        return gamepad2current.y && !gamepad2previous.y;
+        if (gameStrategyMode == scoringType.SAMPLE){
+            return gamepad2current.y && !gamepad2previous.y;
+        }
+        return false;
     }
     public boolean intakeDown(){
         return gamepad2current.start;

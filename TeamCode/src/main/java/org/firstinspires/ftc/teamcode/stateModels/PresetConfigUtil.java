@@ -25,7 +25,7 @@ public class PresetConfigUtil {
                 }
             }
         } catch (Exception e){
-            LoggerUtil.logException(e);
+            LoggerUtil.logException("updatePresets",e);
         }
     }
     private static void updatePresetPosition(PresetPositions presetPosition){
@@ -40,7 +40,7 @@ public class PresetConfigUtil {
                 PresetPositions.SAFE_DRIVING_POSITION = presetPosition;
                 break;
             default:
-                LoggerUtil.error("Read Unknown Preset," + presetPosition.toString());
+                LoggerUtil.error("updatePresets", "Read Unknown Preset," + presetPosition.toString());
                 break;
         }
     }
@@ -54,7 +54,7 @@ public class PresetConfigUtil {
             double slideExtension = Double.parseDouble(readValues[4]);
             return new PresetPositions(name, pitch, roll, elbowAngle, slideExtension);
         }catch(Exception e){
-            LoggerUtil.logException(e);
+            LoggerUtil.logException("updatePresets",e);
         }
         return null;
     }
@@ -73,7 +73,7 @@ public class PresetConfigUtil {
             //close writer
             writer.close();
         } catch (Exception e){
-            LoggerUtil.logException(e);
+            LoggerUtil.logException("updatePresets",e);
         }
     }
 }

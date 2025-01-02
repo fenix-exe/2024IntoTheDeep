@@ -128,16 +128,16 @@ public class DriveTrain {
         telemetry.addData("Elbow target position", pivot.getTargetPosition());*/
 
         HashMap debugInfo = new HashMap<>();
-        debugInfo.put("IMU Yaw", imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        debugInfo.put("FL Power", FL.getPower());
-        debugInfo.put("BL Power", BL.getPower());
-        debugInfo.put("FR Power", FR.getPower());
-        debugInfo.put("BR Power", BR.getPower());
-        debugInfo.put("FL Current", FL.getCurrent(CurrentUnit.MILLIAMPS));
-        debugInfo.put("BL Current", BL.getCurrent(CurrentUnit.MILLIAMPS));
-        debugInfo.put("FR Current", FR.getCurrent(CurrentUnit.MILLIAMPS));
-        debugInfo.put("BR Current", BR.getCurrent(CurrentUnit.MILLIAMPS));
-        debugInfo.put("Drive Type", driveType);
+        debugInfo.put("IMU Yaw", String.valueOf(imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)));
+        debugInfo.put("FL Power", String.valueOf(FL.getPower()));
+        debugInfo.put("BL Power", String.valueOf(BL.getPower()));
+        debugInfo.put("FR Power", String.valueOf(FR.getPower()));
+        debugInfo.put("BR Power", String.valueOf(BR.getPower()));
+        debugInfo.put("FL Current", String.valueOf(FL.getCurrent(CurrentUnit.MILLIAMPS)));
+        debugInfo.put("BL Current", String.valueOf(BL.getCurrent(CurrentUnit.MILLIAMPS)));
+        debugInfo.put("FR Current", String.valueOf(FR.getCurrent(CurrentUnit.MILLIAMPS)));
+        debugInfo.put("BR Current", String.valueOf(BR.getCurrent(CurrentUnit.MILLIAMPS)));
+        debugInfo.put("Drive Type", String.valueOf(driveType));
         return debugInfo;
     }
 }
