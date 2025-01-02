@@ -76,11 +76,12 @@ public class Slide {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setSlideExtensionLength(targetPos);
-            if (targetPos-5 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos+5) {
+            if (targetPos-0.5 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos+0.5) {
                 setSlideExtensionLength(targetPos);
                 return false;
             }
             else {
+                setSlideExtensionLength(targetPos);
                 return true;
             }
         }

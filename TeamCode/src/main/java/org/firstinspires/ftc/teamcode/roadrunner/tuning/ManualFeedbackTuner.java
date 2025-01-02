@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.tuning;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -13,17 +14,22 @@ public final class ManualFeedbackTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         if (TuningOpModes.DRIVE_CLASS.equals(PinpointDrive.class)) {
-            PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+            PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(-7, 65, 0));
 
             waitForStart();
+           while (opModeIsActive()) {
+               drive.updatePoseEstimate();
+               telemetry.addData("pose x", drive.pose.position.toString());
+               telemetry.addData("pose head", drive.pose.heading.toDouble());
+               telemetry.update();
 
-            while (opModeIsActive()) {
-                Actions.runBlocking(
-                        drive.actionBuilder(new Pose2d(0, 0, 0))
-                                .lineToX(DISTANCE)
-                                .lineToX(0)
-                                .build());
-            }
+               Actions.runBlocking(
+                       drive.actionBuilder(new Pose2d(0, 0, 0))
+                               .lineToX(DISTANCE)
+                               .lineToX(0)
+                               .build());
+
+           }
         }else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));
 
