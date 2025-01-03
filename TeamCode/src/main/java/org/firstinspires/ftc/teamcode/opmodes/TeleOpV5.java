@@ -162,10 +162,10 @@ public class TeleOpV5 extends LinearOpMode {
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
             StateModels.presetPositionDepositBackStateModel(75,0,85,24, 8);
-            StateModels.depositSampleIntoBucketStateModel(0,0,58,0);
+            StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
-            StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 32);
+            StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 85);
             StateModels.presetPositionDepositSpecimensStateModel(90,90,85,58,3,13);
             StateModels.dropBlockAndMoveWristDown(-90);
 

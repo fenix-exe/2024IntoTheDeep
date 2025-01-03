@@ -364,6 +364,7 @@ public class StateModels {
                     } else {
                         claw.closeClaw();
                     }
+                    blockPickupType = BlockPickupType.NONE;
                     depositCycle = DepositCycles.LEAVE_DEPOSIT;
                     depositBackPresetState = DepositStates.START;
                 }
