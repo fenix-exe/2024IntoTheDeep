@@ -95,21 +95,20 @@ public class DriveTrain {
         double rotX;
         double fielddenom;
 
+        botHeading = imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-
-        botHeading = imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
         rx = gamepad1.right_stick_x * 1;
         telemetry.addData("BotH", botHeading);
 
-        rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));
-        rotY = x * Math.sin(-botHeading / 180 * Math.PI) + y * Math.cos(-botHeading / 180 * Math.PI);
-        fielddenom = Math.max(1, Math.abs(rotX+rotY));
+        rotX = 1.1 * (x * Math.cos(-botHeading) - y * Math.sin(-botHeading));
+        rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        fielddenom = Math.max(1, Math.abs(rotX) + Math.abs(rotY) + Math.abs(rx));
         FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplier);
-        BL.setPower((((rotY - rotX) + rx) / fielddenom) * speedMultiplier);
-        FR.setPower((((rotY - rotX) - rx) / fielddenom) * speedMultiplier);
-        BR.setPower((((rotY + rotX) - rx) / fielddenom) * speedMultiplier);
+        BL.setPower(((rotY - rotX + rx) / fielddenom) * speedMultiplier);
+        FR.setPower(((rotY - rotX - rx) / fielddenom) * speedMultiplier);
+        BR.setPower(((rotY + rotX - rx) / fielddenom) * speedMultiplier);
     }
     public void stopDriveTrain(){
         FL.setPower(0);

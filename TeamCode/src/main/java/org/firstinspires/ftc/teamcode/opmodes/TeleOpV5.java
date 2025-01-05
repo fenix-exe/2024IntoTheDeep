@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
@@ -161,12 +162,12 @@ public class TeleOpV5 extends LinearOpMode {
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositBackStateModel(75,0,85,24, 8);
+            StateModels.presetPositionDepositBackStateModel(75,0,87,24, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
-            StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 85);
-            StateModels.presetPositionDepositSpecimensStateModel(90,90,85,58,3,13);
+            StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 77, 3, 90, 90);
+            StateModels.presetPositionDepositSpecimensStateModel(90,90,77,58,3,16);
             StateModels.dropBlockAndMoveWristDown(-90);
 
             //telemetry
@@ -176,13 +177,16 @@ public class TeleOpV5 extends LinearOpMode {
             multiTelemetry.addData("Slide Current", slide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", pitch.getPosition());
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
+            multiTelemetry.addData("imu", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             multiTelemetry.addData("Dropping Block State Model", StateModels.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModels.intakePresetState);
             multiTelemetry.addData("Y Cycle", StateModels.depositCycle);
             multiTelemetry.addData("At intake position?", StateModels.intakePosition);
+            multiTelemetry.addData("Specimen Pickup State", StateModels.pickupSpecimenState);
             multiTelemetry.addData("Block Pickup Type", StateModels.blockPickupType);
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
+            multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.update();
 
             //logging
@@ -216,8 +220,8 @@ public class TeleOpV5 extends LinearOpMode {
         //imu initializations
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         imu.initialize(parameters);
         //imu.resetYaw();
 
