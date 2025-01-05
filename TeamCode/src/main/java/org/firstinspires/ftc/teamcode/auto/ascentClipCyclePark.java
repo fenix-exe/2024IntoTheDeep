@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
@@ -37,7 +38,7 @@ public class ascentClipCyclePark extends LinearOpMode {
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
     int ELBOW_START = 870;
     int SLIDE_START = 0;
-    double PITCH_START = 0;
+    double PITCH_START = 0.5;
     double ROLL_START = 0.2;
     double CLAW_START = 1;
 
@@ -52,6 +53,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
     Elbow elbow;
     DcMotorEx elbowMotor;
+    ElapsedTime timer;
 
     PIDController controllerPivotPIDF;
 
@@ -116,7 +118,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         while(!gamepad1.a && !isStopRequested()) {
 
         }
-        pitch.setPosition(PITCH_START);
+        pitch.setPosition(0.5);
 
         while (!limitSwitch.isPressed() && !isStopRequested()){
             elbowMotor.setPower(-0.2);
@@ -159,7 +161,7 @@ public class ascentClipCyclePark extends LinearOpMode {
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
 
-            else if ((XareSame && YareSame) && !AngleareSame) {
+            else if (XareSame && YareSame && !AngleareSame) {
                 traj1 = traj1
                        .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
@@ -172,7 +174,7 @@ public class ascentClipCyclePark extends LinearOpMode {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .strafeTo(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ))
+                        .strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)))
                         .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));

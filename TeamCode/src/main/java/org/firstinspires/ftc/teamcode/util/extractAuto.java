@@ -53,7 +53,7 @@ public class extractAuto {
                 double claw = Double.parseDouble(values[8].trim());
                 double wait = Double.parseDouble(values[9].trim());
                 autoPath.add(new PositionInSpace(x_value, y_value, angle, elbow_phi, elbow_speed,linear_slide, pitch, roll, claw, wait));
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 telemetry.addData("Error", "Invalid number format in line: " + line);
                 telemetry.update();
             } finally {

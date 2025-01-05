@@ -64,7 +64,7 @@ public class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
-        public double lateralInPerTick = 1.2; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
+        public double lateralInPerTick = 1; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
         public double trackWidthTicks = 11.967659255937588;
 
         // feedforward parameters (in tick units)
@@ -74,21 +74,25 @@ public class MecanumDrive {
 
         // path profile parameters (in inches)
         public double maxWheelVel = 100;
-        public double minProfileAccel = -30;
-        public double maxProfileAccel = 30;
+        public double minProfileAccel = -82;
+        public double maxProfileAccel = 82;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 7.0;
+        public double axialGain = 1.0;
         public double lateralGain = 7.0;
-        public double headingGain = 5.0; // shared with turn
+        public double headingGain = 8.0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
+
+        public double time_increase = 0;
+        public double accuracy = 1;
+        public double velocity = 0.5;
     }
 
     public static Params PARAMS = new Params();
@@ -297,7 +301,7 @@ public class MecanumDrive {
 
 
             if (t >= timeTrajectory.duration && error.position.norm() < 2
-                    && robotVelRobot.linearVel.norm() < 0.5 || t >= timeTrajectory.duration + 1) {
+                    && robotVelRobot.linearVel.norm() < 0.5 || t >= timeTrajectory.duration + PARAMS.time_increase) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
