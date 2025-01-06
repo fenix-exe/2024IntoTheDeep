@@ -1,0 +1,17 @@
+package org.firstinspires.ftc.teamcode.teleop.stateModels;
+
+public enum SpecimenPickupStates {
+    START,
+    MOVING_WRIST,
+    RETRACTING_SLIDES,
+    MOVING_ELBOW,
+    EXTENDING_SLIDES,
+    OPENING_CLAW,
+    WAITING_FOR_USER_INPUT,
+    CLOSE_CLAW,
+    WAITING_FOR_USER_INPUT_AGAIN,
+    ELBOW_SLIGHTLY_UP,
+    MOVING_SLIDES,
+    MOVING_ELBOW_TO_DEPOSIT,
+    MOVING_WRIST_TO_DEPOSIT
+}

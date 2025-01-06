@@ -1,0 +1,12 @@
+package org.firstinspires.ftc.teamcode.teleop.modules.arm;
+
+import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
+
+public class ArmSpeedController {
+    public static Slide slide;
+
+    public static double getElbowPowerLimit(){
+        //TODO tune
+        return 1;
+    }
+}
