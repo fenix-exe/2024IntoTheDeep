@@ -56,7 +56,6 @@ public class PresentationTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initializeGamePads();
-        initializeDriveTrain();
         initializeArmAndHome();
         initializeEndEffector();
         PresetConfigUtil.loadPresetsFromConfig();
@@ -153,7 +152,6 @@ public class PresentationTeleOp extends LinearOpMode {
             multiTelemetry.update();
 
             //logging
-            logDriveTrain();
             logArm();
             logEndEffector();
             logStateModels();
@@ -164,31 +162,6 @@ public class PresentationTeleOp extends LinearOpMode {
 
     private void initializeGamePads() {
         driverControls = new DriverControls(gamepad1, gamepad2);
-    }
-
-    private void initializeDriveTrain(){
-        DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FL");
-        DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FR");
-        DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BL");
-        DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BR");
-
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
-        BL.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //imu initializations
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        imu.initialize(parameters);
-        //imu.resetYaw();
-
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
     }
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
@@ -232,20 +205,6 @@ public class PresentationTeleOp extends LinearOpMode {
         endEffector = new EndEffectorV2(wrist, claw);
     }
 
-    private void logDriveTrain(){
-        HashMap driveTrainInfo = driveTrain.getDebugInfo();
-        ArrayList values = new ArrayList();
-        values.add(driveTrainInfo.get("FL Power"));
-        values.add(driveTrainInfo.get("BL Power"));
-        values.add(driveTrainInfo.get("FR Power"));
-        values.add(driveTrainInfo.get("BR Power"));
-        values.add(driveTrainInfo.get("FL Current"));
-        values.add(driveTrainInfo.get("BL Current"));
-        values.add(driveTrainInfo.get("FR Current"));
-        values.add(driveTrainInfo.get("BR Current"));
-        String debugString = String.join(",", values);
-        LoggerUtil.debug("drivetrain", debugString);
-    }
     private void logArm(){
         HashMap armInfo = arm.getDebugInfo();
         ArrayList values = new ArrayList();

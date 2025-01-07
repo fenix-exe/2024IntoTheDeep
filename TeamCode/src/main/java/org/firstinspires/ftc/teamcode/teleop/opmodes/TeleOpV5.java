@@ -23,6 +23,10 @@ import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModels;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
@@ -50,10 +54,11 @@ public class TeleOpV5 extends LinearOpMode {
     EndEffectorV2 endEffector;
     Wrist wrist;
     Claw claw;
-    IMU imu;
+    IIMU imu;
     RevTouchSensor limitSwitch;
     FrequencyCounter freqCounter;
     double speedMultiplier;
+    boolean USEREVIMU = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -177,7 +182,7 @@ public class TeleOpV5 extends LinearOpMode {
             multiTelemetry.addData("Slide Current", slide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", pitch.getPosition());
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
-            multiTelemetry.addData("imu", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            multiTelemetry.addData("imu", Math.toDegrees(imu.getYaw()));
             multiTelemetry.addData("Dropping Block State Model", StateModels.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModels.intakePresetState);
@@ -218,12 +223,19 @@ public class TeleOpV5 extends LinearOpMode {
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //imu initializations
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        imu.initialize(parameters);
-        //imu.resetYaw();
+        if (USEREVIMU){
+
+            IMU revIMU = hardwareMap.get(IMU.class, "imu");
+            IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                    RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+            revIMU.initialize(parameters);
+            //imu.resetYaw();
+            imu = new IMUforREV(revIMU);
+        } else {
+            GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+            imu = new IMUforPinpoint(pinpointIMU);
+        }
 
         driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
     }

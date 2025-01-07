@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 
 public class DriveTrainTest extends LinearOpMode {
@@ -87,7 +89,8 @@ public class DriveTrainTest extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
         //imu.resetYaw();
+        IIMU iimu = new IMUforREV(imu);
 
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, iimu, telemetry);
     }
 }

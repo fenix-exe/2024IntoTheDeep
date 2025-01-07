@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 
 import java.util.HashMap;
 
@@ -17,13 +18,13 @@ public class DriveTrain {
     DcMotorEx FR;
     DcMotorEx BL;
     DcMotorEx BR;
-    IMU imu_IMU;
+    IIMU imu_IMU;
     public double speedMultiplier = 1;
 
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
 
     Telemetry telemetry;
-    public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IMU imu, Telemetry telemetry){
+    public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, Telemetry telemetry){
         this.gamepad1=gamepad1;
         this.FL=FL;
         this.FR=FR;
@@ -72,7 +73,7 @@ public class DriveTrain {
 
 
 
-        botHeading = imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        botHeading = imu_IMU.getYaw();
         y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
         rx = gamepad1.right_stick_x * 1;
@@ -95,7 +96,7 @@ public class DriveTrain {
         double rotX;
         double fielddenom;
 
-        botHeading = imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        botHeading = imu_IMU.getYaw();
 
         y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
@@ -127,7 +128,7 @@ public class DriveTrain {
         telemetry.addData("Elbow target position", pivot.getTargetPosition());*/
 
         HashMap debugInfo = new HashMap<>();
-        debugInfo.put("IMU Yaw", String.valueOf(imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)));
+        debugInfo.put("IMU Yaw", String.valueOf(imu_IMU.getYaw()));
         debugInfo.put("FL Power", String.valueOf(FL.getPower()));
         debugInfo.put("BL Power", String.valueOf(BL.getPower()));
         debugInfo.put("FR Power", String.valueOf(FR.getPower()));
