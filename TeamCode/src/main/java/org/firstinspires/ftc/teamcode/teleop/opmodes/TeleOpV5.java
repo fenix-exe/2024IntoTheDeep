@@ -78,6 +78,7 @@ public class TeleOpV5 extends LinearOpMode {
         while (opModeIsActive()){
 
             driverControls.update();
+            imu.update();
 
             //driving code
             if (driverControls.driveTypeSwitch()){
@@ -224,7 +225,6 @@ public class TeleOpV5 extends LinearOpMode {
 
         //imu initializations
         if (USEREVIMU){
-
             IMU revIMU = hardwareMap.get(IMU.class, "imu");
             IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
                     RevHubOrientationOnRobot.LogoFacingDirection.UP,

@@ -9,6 +9,12 @@ public class IMUforREV implements IIMU {
     public IMUforREV(IMU imu){
         this.imu=imu;
     }
+
+    @Override
+    public void update() {
+
+    }
+
     @Override
     public double getYaw() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);

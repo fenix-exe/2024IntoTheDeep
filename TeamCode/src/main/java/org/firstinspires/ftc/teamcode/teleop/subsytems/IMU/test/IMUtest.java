@@ -27,6 +27,7 @@ public class IMUtest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()){
+            PinpointIMU.update();
             if (gamepad1.a){
                 RevIMU.resetYaw();
                 PinpointIMU.resetYaw();
