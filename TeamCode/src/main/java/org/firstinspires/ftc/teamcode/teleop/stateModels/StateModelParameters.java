@@ -72,7 +72,7 @@ public class StateModelParameters {
         public static double slideDepositLength = 16;
     }
     public static class DropBlockAndMoveWristDown{
-        public static double pitch = -90
+        public static double pitch = -90;
     }
 
 }
