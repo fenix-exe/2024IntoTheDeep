@@ -676,6 +676,7 @@ public class StateModels {
                     enterIntakePositionStates = EnterIntakePositionStates.START;
                     pickupSpecimenState= SpecimenPickupStates.OPENING_CLAW;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    intakePosition = false;
                 }
                 break;
             case OPENING_CLAW:
@@ -818,6 +819,7 @@ public class StateModels {
                     enterIntakePositionStates = EnterIntakePositionStates.START;
                     depositSpecimenState = SpecimenDepositStates.SLIGHTLY_EXTEND_SLIDES;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    intakePosition = false;
                 }
                 break;
             case SLIGHTLY_EXTEND_SLIDES:
