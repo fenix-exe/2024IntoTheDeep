@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.test;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
-
+@TeleOp
 public class IMUtest extends LinearOpMode {
     IIMU RevIMU;
     IIMU PinpointIMU;
@@ -20,7 +21,7 @@ public class IMUtest extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         revIMU.initialize(parameters);
         RevIMU = new IMUforREV(revIMU);
-        GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint1");
         PinpointIMU = new IMUforPinpoint(pinpointIMU);
 
 
@@ -38,8 +39,8 @@ public class IMUtest extends LinearOpMode {
             if (gamepad1.x){
                 PinpointIMU.resetYaw();
             }
-            telemetry.addData("REV IMU ANGLE", RevIMU.getYaw());
-            telemetry.addData("PINPOINT IMU ANGLE", PinpointIMU.getYaw());
+            telemetry.addData("REV IMU ANGLE", Math.toDegrees(RevIMU.getYaw()));
+            telemetry.addData("PINPOINT IMU ANGLE", Math.toDegrees(PinpointIMU.getYaw()));
             telemetry.update();
         }
     }

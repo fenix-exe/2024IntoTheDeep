@@ -16,7 +16,6 @@
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <RevTouchSensor name="limit switch" port="1"  />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="1" />
-
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

@@ -233,7 +233,7 @@ public class TeleOpV5 extends LinearOpMode {
             //imu.resetYaw();
             imu = new IMUforREV(revIMU);
         } else {
-            GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+            GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint1");
             imu = new IMUforPinpoint(pinpointIMU);
         }
 
