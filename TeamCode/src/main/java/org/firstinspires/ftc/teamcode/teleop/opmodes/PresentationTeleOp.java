@@ -20,8 +20,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
+import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModels;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
@@ -49,13 +54,16 @@ public class PresentationTeleOp extends LinearOpMode {
     EndEffectorV2 endEffector;
     Wrist wrist;
     Claw claw;
-    IMU imu;
+    IIMU imu;
     RevTouchSensor limitSwitch;
     FrequencyCounter freqCounter;
+    double speedMultiplier;
+    boolean USEREVIMU = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
         initializeGamePads();
+        initializeDriveTrain();
         initializeArmAndHome();
         initializeEndEffector();
         PresetConfigUtil.loadPresetsFromConfig();
@@ -70,6 +78,7 @@ public class PresentationTeleOp extends LinearOpMode {
         while (opModeIsActive()){
 
             driverControls.update();
+            imu.update();
 
             //manual control for arm
             if (Math.abs(driverControls.slideMovement()) > 0){
@@ -118,13 +127,17 @@ public class PresentationTeleOp extends LinearOpMode {
                 }
             }
 
+            if (driverControls.resetEncoders()){
+                arm.resetEncoders();
+            }
+
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(0,58,8);
+            StateModels.presetPositionDriveStateModel(0,73,8);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositBackStateModel(75,0,87,24, 8);
+            StateModels.presetPositionDepositBackStateModel(-45,0,73,26, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
@@ -139,7 +152,7 @@ public class PresentationTeleOp extends LinearOpMode {
             multiTelemetry.addData("Slide Current", slide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", pitch.getPosition());
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
-            multiTelemetry.addData("imu", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            multiTelemetry.addData("imu", Math.toDegrees(imu.getYaw()));
             multiTelemetry.addData("Dropping Block State Model", StateModels.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModels.intakePresetState);
@@ -152,6 +165,7 @@ public class PresentationTeleOp extends LinearOpMode {
             multiTelemetry.update();
 
             //logging
+            logDriveTrain();
             logArm();
             logEndEffector();
             logStateModels();
@@ -162,6 +176,37 @@ public class PresentationTeleOp extends LinearOpMode {
 
     private void initializeGamePads() {
         driverControls = new DriverControls(gamepad1, gamepad2);
+    }
+
+    private void initializeDriveTrain(){
+        DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FL");
+        DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FR");
+        DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BL");
+        DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BR");
+
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //imu initializations
+        if (USEREVIMU){
+            IMU revIMU = hardwareMap.get(IMU.class, "imu");
+            IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                    RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+            revIMU.initialize(parameters);
+            //imu.resetYaw();
+            imu = new IMUforREV(revIMU);
+        } else {
+            GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint1");
+            imu = new IMUforPinpoint(pinpointIMU);
+        }
+
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
     }
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
@@ -205,6 +250,20 @@ public class PresentationTeleOp extends LinearOpMode {
         endEffector = new EndEffectorV2(wrist, claw);
     }
 
+    private void logDriveTrain(){
+        HashMap driveTrainInfo = driveTrain.getDebugInfo();
+        ArrayList values = new ArrayList();
+        values.add(driveTrainInfo.get("FL Power"));
+        values.add(driveTrainInfo.get("BL Power"));
+        values.add(driveTrainInfo.get("FR Power"));
+        values.add(driveTrainInfo.get("BR Power"));
+        values.add(driveTrainInfo.get("FL Current"));
+        values.add(driveTrainInfo.get("BL Current"));
+        values.add(driveTrainInfo.get("FR Current"));
+        values.add(driveTrainInfo.get("BR Current"));
+        String debugString = String.join(",", values);
+        LoggerUtil.debug("drivetrain", debugString);
+    }
     private void logArm(){
         HashMap armInfo = arm.getDebugInfo();
         ArrayList values = new ArrayList();

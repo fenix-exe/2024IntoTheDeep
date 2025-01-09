@@ -162,13 +162,17 @@ public class TeleOpV5 extends LinearOpMode {
                 }
             }
 
+            if (driverControls.resetEncoders()){
+                arm.resetEncoders();
+            }
+
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(0,58,8);
+            StateModels.presetPositionDriveStateModel(0,73,8);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositBackStateModel(75,0,87,24, 8);
+            StateModels.presetPositionDepositBackStateModel(-45,0,73,26, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
