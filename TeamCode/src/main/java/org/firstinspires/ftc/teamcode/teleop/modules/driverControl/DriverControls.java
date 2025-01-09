@@ -282,7 +282,7 @@ public class DriverControls implements DriveControlMap {
     public boolean diffLeft(){return (gamepad2current.dpad_left && !gamepad2previous.dpad_left) || (gamepad1current.a && !gamepad1previous.a);}
     public boolean diffRight(){return (gamepad2current.dpad_right && !gamepad2previous.dpad_right) || (gamepad1current.b && !gamepad1previous.b);}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
-    public boolean resetEncoders(){return (gamepad2current.start && !gamepad2previous.start) && !gamepad2current.b;}
+    public boolean resetEncoders(){return false;}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){
