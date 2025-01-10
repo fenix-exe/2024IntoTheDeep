@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
-@TeleOp
 public class PIDTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

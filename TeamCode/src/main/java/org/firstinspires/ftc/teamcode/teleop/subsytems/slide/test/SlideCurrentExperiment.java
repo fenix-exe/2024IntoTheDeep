@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-@TeleOp(name = "SlideCurrentExperiment (Blocks to Java)")
+//@TeleOp(name = "SlideCurrentExperiment (Blocks to Java)")
 public class SlideCurrentExperiment extends LinearOpMode {
     MultipleTelemetry multiTelem;
 

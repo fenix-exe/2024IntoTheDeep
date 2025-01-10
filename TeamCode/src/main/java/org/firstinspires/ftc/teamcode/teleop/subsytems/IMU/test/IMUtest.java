@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
-@TeleOp
 public class IMUtest extends LinearOpMode {
     IIMU RevIMU;
     IIMU PinpointIMU;

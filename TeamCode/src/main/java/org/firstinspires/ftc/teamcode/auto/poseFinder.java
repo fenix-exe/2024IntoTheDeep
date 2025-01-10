@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 
 @Config
-@TeleOp(name = "POSE FINDER")
+//@TeleOp(name = "POSE FINDER")
 public class poseFinder extends LinearOpMode {
 
 

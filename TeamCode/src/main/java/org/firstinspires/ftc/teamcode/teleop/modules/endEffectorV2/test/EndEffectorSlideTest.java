@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
-@TeleOp
 public class EndEffectorSlideTest extends LinearOpMode {
     Servo pitchServo;
     Servo rollServo;

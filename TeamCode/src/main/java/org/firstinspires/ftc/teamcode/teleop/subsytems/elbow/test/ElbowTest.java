@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.PIDControl;
 
 
-@TeleOp
 //@Disabled
 public class ElbowTest extends LinearOpMode {
     DcMotorEx elbowMotor;

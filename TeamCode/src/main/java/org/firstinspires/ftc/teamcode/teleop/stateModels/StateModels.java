@@ -846,7 +846,7 @@ public class StateModels {
                 break;
             case MOVING_WRIST_TO_SAFE:
                 if (timer.milliseconds() > 250){
-                    arm.moveSlideToLength(0);
+                    arm.moveSlideToLength(2.2);
                     depositSpecimenState = SpecimenDepositStates.RETRACT_SLIDES;
                 }
                 if (driverControls.escapePresets()){

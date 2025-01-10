@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 @Config
-@TeleOp
 public class diffTELEOP extends LinearOpMode {
     ServoImplEx pitch;
     ServoImplEx claw;
