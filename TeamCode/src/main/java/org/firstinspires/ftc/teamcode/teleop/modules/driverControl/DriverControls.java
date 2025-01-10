@@ -76,7 +76,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.a && gamepad1current.b;
     }
     public boolean microDriveAdjustments(){
-        return false;
+        return gamepad1current.right_bumper;
     }
     public boolean removeSpeedRules(){return false;}
 

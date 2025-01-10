@@ -176,7 +176,7 @@ public class TeleOpV5 extends LinearOpMode {
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
-            StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 77, 3, 90, 90);
+            StateModels.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
             StateModels.presetPositionDepositSpecimensStateModel(90,90,77,58,3,16);
             StateModels.dropBlockAndMoveWristDown(-90);
 
@@ -197,6 +197,7 @@ public class TeleOpV5 extends LinearOpMode {
             multiTelemetry.addData("Block Pickup Type", StateModels.blockPickupType);
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
+            multiTelemetry.addData("speed multipler", speedMultiplier);
             multiTelemetry.update();
 
             //logging
