@@ -761,6 +761,7 @@ public class StateModels {
                 if (driverControls.enterIntakePosition()){
                     arm.holdArm();
                     claw.openClaw();
+                    pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
