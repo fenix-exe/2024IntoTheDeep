@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - Ascent Clip Park")
+@Autonomous(name = "AUTO - CLIP 4!!!")
 public class ascentClipCyclePark extends LinearOpMode {
 
     //initialize auto extractor
