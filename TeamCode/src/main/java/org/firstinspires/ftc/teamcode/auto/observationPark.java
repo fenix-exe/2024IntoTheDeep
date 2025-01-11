@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - OBSERVATION!")
+@Autonomous(name = "AUTO - OBSERVATION!", preselectTeleOp = "TeleOpV5Specimen")
 public class observationPark extends LinearOpMode {
 
     //initialize auto extractor

@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - CLIP 1 BUCKET 3!!!!")
+@Autonomous(name = "AUTO - CLIP 1 BUCKET 3!!!!", preselectTeleOp = "TeleOpV5Sample")
 public class clipBucketPark extends LinearOpMode {
 
     //initialize auto extractor
