@@ -36,9 +36,9 @@ public class ascentPreloadPark extends LinearOpMode {
 
     //initialize auto extractor
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
-    int ELBOW_START = 870;
+    int ELBOW_START = 750;
     int SLIDE_START = 0;
-    double PITCH_START = 0.5;
+    double PITCH_START = 0.8;
     double ROLL_START = 0.2;
     double CLAW_START = 1;
 
