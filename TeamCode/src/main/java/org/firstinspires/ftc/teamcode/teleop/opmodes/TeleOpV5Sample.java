@@ -15,9 +15,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
@@ -41,7 +41,7 @@ import java.util.HashMap;
 
 @Config
 @TeleOp
-public class TeleOpV5 extends LinearOpMode {
+public class TeleOpV5Sample extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;
     Arm arm;
@@ -212,6 +212,7 @@ public class TeleOpV5 extends LinearOpMode {
 
     private void initializeGamePads() {
         driverControls = new DriverControls(gamepad1, gamepad2);
+        driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
     }
 
     private void initializeDriveTrain(){
@@ -251,6 +252,7 @@ public class TeleOpV5 extends LinearOpMode {
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
