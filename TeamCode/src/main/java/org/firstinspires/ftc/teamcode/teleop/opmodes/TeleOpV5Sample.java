@@ -73,7 +73,6 @@ public class TeleOpV5Sample extends LinearOpMode {
 
 
         waitForStart();
-        wrist.presetPosition(0,0);
 
         while (opModeIsActive()){
 
