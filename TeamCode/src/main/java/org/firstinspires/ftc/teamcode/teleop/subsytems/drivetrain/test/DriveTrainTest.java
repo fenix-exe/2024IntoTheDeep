@@ -20,7 +20,7 @@ public class DriveTrainTest extends LinearOpMode {
     double speedMultiplier;
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
     }
 
     @Override

@@ -211,7 +211,7 @@ public class TeleOpV5Specimen extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2, 1/2, 3, -1/2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
         driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
     }
 

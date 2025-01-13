@@ -54,6 +54,7 @@ public class PresentationTeleOp extends LinearOpMode {
     Claw claw;
     IIMU imu;
     RevTouchSensor limitSwitch;
+    RevTouchSensor homingSwitch;
     FrequencyCounter freqCounter;
     double speedMultiplier;
     boolean USEREVIMU = true;
@@ -173,7 +174,7 @@ public class PresentationTeleOp extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
     }
 
     private void initializeDriveTrain(){
@@ -215,6 +216,8 @@ public class PresentationTeleOp extends LinearOpMode {
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
+
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -222,8 +225,8 @@ public class PresentationTeleOp extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Slide slideControl = new Slide(slide);
-        Elbow elbow = new Elbow(pivot, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
+        Slide slideControl = new Slide(slide, homingSwitch);
+        Elbow elbow = new Elbow(pivot, limitSwitch, 90);
         arm = new Arm(slideControl, elbow);
 
         slide.setTargetPosition(0);

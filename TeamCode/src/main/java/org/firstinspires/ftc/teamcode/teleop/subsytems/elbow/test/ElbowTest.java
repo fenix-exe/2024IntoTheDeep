@@ -23,7 +23,7 @@ public class ElbowTest extends LinearOpMode {
         elbowMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0, 24.22), 2300);
+        elbow = new Elbow(elbowMotor, limitSwitch, 90);
         waitForStart();
 
         while (opModeIsActive()){
