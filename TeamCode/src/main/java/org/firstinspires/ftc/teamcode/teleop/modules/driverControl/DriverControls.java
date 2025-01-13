@@ -14,15 +14,16 @@ public class DriverControls implements DriveControlMap {
     Gamepad gamepad2previous;
     Gamepad physicalGamepad1;
     Gamepad physicalGamepad2;
-    public DriverControls(Gamepad gamepad1, Gamepad gamepad2, Gamepad gamepad1previous, Gamepad gamepad2previous){
-        this.gamepad1current=gamepad1;
-        this.gamepad2current = gamepad2;
-        this.gamepad1previous = gamepad1previous;
-        this.gamepad2previous= gamepad2previous;
-    }
-    public DriverControls (Gamepad gamepad1, Gamepad gamepad2){
+
+    double dilation;
+    double base;
+    double shift;
+    public DriverControls (Gamepad gamepad1, Gamepad gamepad2, double dilation, double base, double shift){
         this.physicalGamepad1 = gamepad1;
         this.physicalGamepad2 = gamepad2;
+        this.dilation = dilation;
+        this.base = base;
+        this.shift = shift;
 
         gamepad1current = new Gamepad();
         gamepad2current = new Gamepad();
@@ -43,6 +44,9 @@ public class DriverControls implements DriveControlMap {
             gamepad1current.copy(physicalGamepad1);
             gamepad2current.copy(physicalGamepad2);
 
+    }
+    public double gamepadStickValue(double stickValue){
+        return dilation*(Math.pow(base, stickValue)) + shift;
     }
 
     @Override
