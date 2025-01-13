@@ -13,11 +13,9 @@ public class Elbow {
     public RevTouchSensor limitSwitch;
     int elbowPosition;
     public int topPosition;
-    PIDControl controller;
-    public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, PIDControl controller, int topPosition){
+    public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPositionInDegrees){
         this.elbowMotor = elbow;
-        this.controller = controller;
-        this.topPosition = topPosition;
+        this.topPosition = degreesToTicks(topPositionInDegrees);
         this.limitSwitch = limitSwitch;
     }
     private void goToTargetPosition(int targetPosition){
@@ -64,6 +62,9 @@ public class Elbow {
     }
     public void setElbowPower(double power){
         elbowMotor.setPower(power);
+    }
+    public boolean getLimitSwitchState(){
+        return limitSwitch.isPressed();
     }
 
 

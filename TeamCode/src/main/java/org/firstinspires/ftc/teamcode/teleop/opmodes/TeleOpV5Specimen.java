@@ -170,8 +170,8 @@ public class TeleOpV5Specimen extends LinearOpMode {
             StateModels.presetPositionDriveStateModel(0,73,8);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
-            StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
-            StateModels.presetPositionDepositBackStateModel(-45,0,75,28, 8);
+            //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
+            StateModels.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
@@ -262,7 +262,7 @@ public class TeleOpV5Specimen extends LinearOpMode {
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Slide slideControl = new Slide(slide);
-        Elbow elbow = new Elbow(pivot, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
+        Elbow elbow = new Elbow(pivot, limitSwitch,90);
         arm = new Arm(slideControl, elbow);
 
         slide.setTargetPosition(0);

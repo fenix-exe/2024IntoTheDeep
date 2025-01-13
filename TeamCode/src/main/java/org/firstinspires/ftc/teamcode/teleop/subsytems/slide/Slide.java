@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.slide;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import static java.lang.Math.floor;
@@ -11,8 +12,7 @@ import androidx.annotation.NonNull;
 
 public class Slide {
     public DcMotorEx slideMotor;
-    double maxPhysicalExtensionInches;
-    int maxPhysicalExtensionTicks;
+    public RevTouchSensor homingSwitch;
     //pulleyCirc is the circumference of the pulley
     double PULLEYCIRC= 4.724757;
     //encoderRes is how many encoder ticks happen after 1 rotation of the motor
@@ -22,9 +22,9 @@ public class Slide {
     double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
     double SLIDETOELBOW = 2.5;
-    int currentTargetPos;
-    public Slide(DcMotorEx slideMotor){
-        this.slideMotor =slideMotor;
+    public Slide(DcMotorEx slideMotor, RevTouchSensor homingSwitch){
+        this.slideMotor = slideMotor;
+        this.homingSwitch = homingSwitch;
     }
     public void setSlideExtensionLength(double lengthInInches){
         int targetPosition = inchesToTicks(lengthInInches);
@@ -62,6 +62,12 @@ public class Slide {
     public void resetEncoder(){
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void setSlidePower(double power){
+        slideMotor.setPower(power);
+    }
+    public boolean getHomingSwitchState(){
+        return homingSwitch.isPressed();
     }
 
 

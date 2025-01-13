@@ -307,7 +307,7 @@ public class StateModels {
                 break;
         }
     }
-    public static void presetPositionDepositBackStateModel(double pitch, double roll, double elbowAngle, double slideLength, double slideRetractionLength){
+    public static void presetPositionDepositFrontStateModel(double pitch, double roll, double elbowAngle, double slideLength, double slideRetractionLength){
         switch (depositBackPresetState){
             case START:
                 if (driverControls.depositBack() && depositCycle == DepositCycles.GO_TO_DEPOSIT){
