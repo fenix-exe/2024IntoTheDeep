@@ -19,10 +19,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.subsytems.claw.autoClaw;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
+import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.util.RobotWideFunctions;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
 
@@ -62,6 +64,8 @@ public class ascentClipCyclePark extends LinearOpMode {
 
     RevTouchSensor limitSwitch;
     autoClaw autoClaw;
+    Wrist wrist;
+    Claw clawy;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -85,6 +89,8 @@ public class ascentClipCyclePark extends LinearOpMode {
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
         autoClaw = new autoClaw(pitch, roll, claw);
+        wrist = new Wrist(pitch, roll);
+        clawy = new Claw(claw);
 
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
         elbowMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -156,7 +162,9 @@ public class ascentClipCyclePark extends LinearOpMode {
                 traj1 = traj1
                         .stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
+                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
@@ -166,7 +174,9 @@ public class ascentClipCyclePark extends LinearOpMode {
                        .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .turnTo(extractAuto.getAngleFromList(vector.get(i)))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
+                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
@@ -175,7 +185,9 @@ public class ascentClipCyclePark extends LinearOpMode {
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
+                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
@@ -184,7 +196,9 @@ public class ascentClipCyclePark extends LinearOpMode {
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
+                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }

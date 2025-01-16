@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.teleop.opmodes;
+package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -11,15 +13,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
+import org.firstinspires.ftc.teamcode.teleop.opmodes.TeleOpV5Specimen;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModels;
@@ -35,13 +40,14 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
+import org.firstinspires.ftc.teamcode.util.writeAuto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Config
 @TeleOp
-public class TeleOpV5Specimen extends LinearOpMode {
+public class TeleOpPose extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;
     Arm arm;
@@ -59,6 +65,15 @@ public class TeleOpV5Specimen extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     boolean USEREVIMU = true;
+    public static double x = -7;
+    public static double y = 65;
+    public static double heading = 0;
+    TelemetryPacket p;
+    Gamepad gamepad1current;
+    Gamepad gamepad2current;
+    Gamepad gamepad1previous;
+    Gamepad gamepad2previous;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,7 +85,16 @@ public class TeleOpV5Specimen extends LinearOpMode {
         StateModels.initialize(arm, wrist, claw, driverControls);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        writeAuto writer= new writeAuto("/sdcard/Download/test1.csv");
+        PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(x, y, Math.toRadians(heading)));
+        gamepad1current = new Gamepad();
+        gamepad2current = new Gamepad();
 
+        gamepad1previous = new Gamepad();
+        gamepad2previous = new Gamepad();
+
+        gamepad1current.copy(gamepad1);
+        gamepad2current.copy(gamepad2);
 
         waitForStart();
 
@@ -78,6 +102,12 @@ public class TeleOpV5Specimen extends LinearOpMode {
 
             driverControls.update();
             imu.update();
+            drive.updatePoseEstimate();
+            gamepad1previous.copy(gamepad1current);
+            gamepad2previous.copy(gamepad2current);
+
+            gamepad1current.copy(gamepad1);
+            gamepad2current.copy(gamepad2);
 
             //driving code
             if (driverControls.driveTypeSwitch()){
@@ -205,13 +235,16 @@ public class TeleOpV5Specimen extends LinearOpMode {
             logEndEffector();
             logStateModels();
             logButtonPressed();
+            if (gamepad1current.dpad_up && !gamepad1previous.dpad_up) {
+                writer.writeToFile(drive.pose.position.x, drive.pose.position.y,drive.pose.heading.toDouble(),arm.getElbowAngleInDegrees(),arm.getSlideExtension(), pitch.getPosition(), roll.getPosition(), clawServo.getPosition());
+            }
 
         }
     }
 
     private void initializeGamePads() {
         driverControls = new DriverControls(gamepad1, gamepad2);
-        driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
+        driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
     }
 
     private void initializeDriveTrain(){
@@ -251,7 +284,7 @@ public class TeleOpV5Specimen extends LinearOpMode {
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 19;
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 

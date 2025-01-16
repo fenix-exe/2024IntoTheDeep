@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsytems.wrist;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.subsytems.claw.autoClaw;
+
+import androidx.annotation.NonNull;
 
 public class Wrist {
     Servo pitch;
@@ -44,6 +50,27 @@ public class Wrist {
         //0.5 is the middle position of the servo, maximum of -90 to 90 degrees
         presetPositionPitch(pitch/300 + 0.5);
         presetPositionRoll(roll/180 + 0.5);
+    }
+
+    public class wristControl implements Action {
+        private final double pitchPos;
+        private final double rollPos;
+
+        wristControl(double pitchPos, double rollPos){
+            this.pitchPos = pitchPos;
+            this.rollPos = rollPos;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            presetPositionPitch(pitchPos);
+            presetPositionRoll(rollPos);
+            return false;
+        }
+    }
+
+    public Action wristControl(double pitchPos, double rollPos){
+        return new wristControl(pitchPos, rollPos);
     }
 
 }

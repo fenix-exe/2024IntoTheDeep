@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 
 @Config
-//@TeleOp(name = "POSE FINDER")
+@TeleOp(name = "POSE FINDER")
 public class poseFinder extends LinearOpMode {
 
 
@@ -39,7 +39,7 @@ public class poseFinder extends LinearOpMode {
 
         while (opModeIsActive()) {
             drive.updatePoseEstimate();
-            telemetry.addData("pose x", drive.pose.position.toString());
+            telemetry.addData("pose x", drive.pose.position.x);
             telemetry.addData("pose head", Math.toDegrees(drive.pose.heading.toDouble()));
             telemetry.update();
             c.setStroke("#3F51B5");
