@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
@@ -26,10 +28,9 @@ public class HomeTeleOp extends LinearOpMode {
         slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
 
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -46,6 +47,10 @@ public class HomeTeleOp extends LinearOpMode {
         pitch = hardwareMap.get(Servo.class, "pitch");
 
         pitch.setPosition(0.5);
+        while (opModeInInit()){
+            telemetry.addData("slide homing switch", slide.getHomingSwitchState());
+            telemetry.update();
+        }
         waitForStart();
 
         home();
@@ -68,7 +73,10 @@ public class HomeTeleOp extends LinearOpMode {
 
         //homing the slide
         while (!slide.getHomingSwitchState() && !isStopRequested()){
-            slide.setSlidePower(0.2);
+            slide.setSlidePower(-0.2);
+            telemetry.addData("slide switch state", slide.getHomingSwitchState());
+            telemetry.addData("Elbow Angle", elbow.getElbowAngle());
+            telemetry.update();
         }
         slide.setSlidePower(0);
 

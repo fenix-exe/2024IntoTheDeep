@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,8 +16,10 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
+import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModels;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
@@ -28,7 +29,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
@@ -39,7 +39,7 @@ import java.util.HashMap;
 
 @Config
 @TeleOp
-public class PresentationTeleOp extends LinearOpMode {
+public class TeleOpV5SampleFawkes extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;
     Arm arm;
@@ -72,12 +72,46 @@ public class PresentationTeleOp extends LinearOpMode {
 
 
         waitForStart();
-        wrist.presetPosition(0,0);
 
         while (opModeIsActive()){
 
             driverControls.update();
             imu.update();
+
+            //driving code
+            if (driverControls.driveTypeSwitch()){
+                if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
+                    DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
+                } else{
+                    DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
+                }
+
+            }
+
+            if (driverControls.resetIMU()){
+                driveTrain.resetIMU();
+            }
+
+            //speed adjustments
+            if (driverControls.microDriveAdjustments()){
+                speedMultiplier = RobotConstants.EXTRA_SLOW;
+            } /*else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
+                speedMultiplier = RobotConstants.NORMAL_SPEED;
+            } else if (arm.getElbowAngleInDegrees() > RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE) {
+                speedMultiplier = RobotConstants.EXTRA_SLOW;
+            }*/ else {
+                speedMultiplier = RobotConstants.NORMAL_SPEED;
+            }
+
+
+            switch (DriveTrain.driveType) {
+                case ROBOT_CENTRIC:
+                    driveTrain.RobotCentric_Drive(speedMultiplier);
+                    break;
+                case FIELD_CENTRIC:
+                    driveTrain.FieldCentricDrive(speedMultiplier);
+                    break;
+            }
 
             //manual control for arm
             if (Math.abs(driverControls.slideMovement()) > 0){
@@ -135,13 +169,13 @@ public class PresentationTeleOp extends LinearOpMode {
             StateModels.presetPositionDriveStateModel(0,73,8);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
-            StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositFrontStateModel(-45,0,73,26, 8);
+            //StateModels.presetPositionDepositStateModel(-30,0,73,33.5);
+            StateModels.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
-            StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 77, 3, 90, 90);
-            StateModels.presetPositionDepositSpecimensStateModel(90,90,-10,90,77,58,3,16);
+            StateModels.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
+            StateModels.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
             StateModels.dropBlockAndMoveWristDown(-90);
 
             //telemetry
@@ -161,6 +195,7 @@ public class PresentationTeleOp extends LinearOpMode {
             multiTelemetry.addData("Block Pickup Type", StateModels.blockPickupType);
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
+            multiTelemetry.addData("speed multipler", speedMultiplier);
             multiTelemetry.update();
 
             //logging
@@ -175,6 +210,7 @@ public class PresentationTeleOp extends LinearOpMode {
 
     private void initializeGamePads() {
         driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
+        driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
     }
 
     private void initializeDriveTrain(){
@@ -210,13 +246,14 @@ public class PresentationTeleOp extends LinearOpMode {
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

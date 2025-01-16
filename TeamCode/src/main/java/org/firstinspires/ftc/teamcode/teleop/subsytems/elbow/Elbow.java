@@ -43,10 +43,10 @@ public class Elbow {
         //goToTargetPosition(elbowMotor.getCurrentPosition());
     }
     public double ticksToDegrees(int ticks){
-        return ticks/24.22;
+        return ticks/11.29;
     }
     public int degreesToTicks(double degrees){
-        return (int) floor(degrees * 24.22);
+        return (int) floor(degrees * 11.29);
     }
     public double getElbowAngle(){
         return ticksToDegrees(elbowMotor.getCurrentPosition());
