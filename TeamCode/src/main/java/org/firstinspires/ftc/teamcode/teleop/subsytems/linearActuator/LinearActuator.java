@@ -12,11 +12,14 @@ public class LinearActuator {
     public LinearActuator(DcMotorEx linearActuatorMotor){
         this.linearActuatorMotor = linearActuatorMotor;
     }
-    private double ticksToInches(int ticks){
+    public double ticksToInches(int ticks){
         return (ticks/ ENCODER_RES)*(LEAD_MM * MM_TO_INCHES);
     }
-    private int inchesToTicks(double inches){
+    public int inchesToTicks(double inches){
         return (int) (Math.floor(((inches/MM_TO_INCHES)/LEAD_MM)) * ENCODER_RES);
+    }
+    public double getLinearActuatorPositionInches(){
+        return ticksToInches(linearActuatorMotor.getCurrentPosition());
     }
     public void goToTargetPositionInches(double position){
         int positionInTicks = inchesToTicks(position);

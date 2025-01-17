@@ -1,0 +1,10 @@
+package org.firstinspires.ftc.teamcode.teleop.stateModels;
+
+public enum HangStates {
+    START,
+    LINEAR_ACTUATOR_DOWN,
+    ELBOW_AND_SLIDES_TO_SLIDE_EXTENSION_POSITION,
+    ELBOW_TO_HANG_POSITION,
+    SLIDES_RETRACT,
+    ELBOW_TO_SAFE
+}

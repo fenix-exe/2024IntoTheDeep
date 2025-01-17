@@ -61,9 +61,6 @@ public class HomeTeleOp extends LinearOpMode {
     private void home(){
         //Homing the elbow
         while (!elbow.getLimitSwitchState() && !isStopRequested()){
-            elbow.setElbowPower(-0.2);
-        }
-        while (elbow.getLimitSwitchState() && !isStopRequested()){
             elbow.setElbowPower(0.2);
         }
         elbow.setElbowPower(0);
