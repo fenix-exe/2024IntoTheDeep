@@ -32,6 +32,7 @@ public class EndEffectorSlideTest extends LinearOpMode {
     DcMotorEx elbowMotor;
     DcMotorEx slideMotor;
     RevTouchSensor limitSwitch;
+    RevTouchSensor homingSwitch;
 
 
     @Override
@@ -52,6 +53,7 @@ public class EndEffectorSlideTest extends LinearOpMode {
         elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -59,8 +61,8 @@ public class EndEffectorSlideTest extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slide= new Slide(slideMotor);
-        elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
+        slide= new Slide(slideMotor, homingSwitch);
+        elbow = new Elbow(elbowMotor, limitSwitch, 90);
         arm = new Arm(slide, elbow);
 
         slideMotor.setTargetPosition(0);

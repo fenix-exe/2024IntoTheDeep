@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -30,7 +29,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
@@ -41,7 +39,7 @@ import java.util.HashMap;
 
 @Config
 @TeleOp
-public class TeleOpV5Specimen extends LinearOpMode {
+public class TeleOpV5SampleZapdos extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;
     Arm arm;
@@ -56,6 +54,7 @@ public class TeleOpV5Specimen extends LinearOpMode {
     Claw claw;
     IIMU imu;
     RevTouchSensor limitSwitch;
+    RevTouchSensor homingSwitch;
     FrequencyCounter freqCounter;
     double speedMultiplier;
     boolean USEREVIMU = true;
@@ -170,13 +169,13 @@ public class TeleOpV5Specimen extends LinearOpMode {
             StateModels.presetPositionDriveStateModel(0,73,8);
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
-            StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositBackStateModel(-45,0,75,28, 8);
+            //StateModels.presetPositionDepositStateModel(-30,0,73,33.5);
+            StateModels.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModels.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
-            StateModels.presetPositionDepositSpecimensStateModel(90,90,77,16.5,3,16);
+            StateModels.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
             StateModels.dropBlockAndMoveWristDown(-90);
 
             //telemetry
@@ -210,8 +209,8 @@ public class TeleOpV5Specimen extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2);
-        driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
+        driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
     }
 
     private void initializeDriveTrain(){
@@ -247,13 +246,15 @@ public class TeleOpV5Specimen extends LinearOpMode {
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 19;
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
-        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -261,8 +262,8 @@ public class TeleOpV5Specimen extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Slide slideControl = new Slide(slide);
-        Elbow elbow = new Elbow(pivot, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
+        Slide slideControl = new Slide(slide, homingSwitch);
+        Elbow elbow = new Elbow(pivot, limitSwitch, 90);
         arm = new Arm(slideControl, elbow);
 
         slide.setTargetPosition(0);

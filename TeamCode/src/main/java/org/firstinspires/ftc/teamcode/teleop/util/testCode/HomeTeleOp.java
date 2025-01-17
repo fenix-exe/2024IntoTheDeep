@@ -8,55 +8,80 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
+
 @TeleOp
 public class HomeTeleOp extends LinearOpMode {
+    Elbow elbow;
+    Slide slide;
     Servo pitch;
-    DcMotorEx slide;
+    DcMotorEx slideMotor;
     DcMotorEx pivot;
     RevTouchSensor limitSwitch;
+    RevTouchSensor homingSwitch;
 
     private void initializeArmAndHome(){
-        slide = hardwareMap.get(DcMotorEx.class, "slide");
+        slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
-        pitch = hardwareMap.get(Servo.class, "pitch");
+        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
 
-        slide.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        slide = new Slide(slideMotor, homingSwitch);
+        elbow = new Elbow(pivot, limitSwitch,90);
+
+        pitch = hardwareMap.get(Servo.class, "pitch");
 
         pitch.setPosition(0.5);
+        while (opModeInInit()){
+            telemetry.addData("slide homing switch", slide.getHomingSwitchState());
+            telemetry.update();
+        }
         waitForStart();
 
         home();
 
-        slide.setTargetPosition(0);
+        slideMotor.setTargetPosition(0);
         pivot.setTargetPosition(0);
     }
     private void home(){
         //Homing the elbow
-        while (!limitSwitch.isPressed() && !isStopRequested()){
-            pivot.setPower(-0.2);
+        while (!elbow.getLimitSwitchState() && !isStopRequested()){
+            elbow.setElbowPower(-0.2);
         }
-        while (limitSwitch.isPressed() && !isStopRequested()){
-            pivot.setPower(0.2);
+        while (elbow.getLimitSwitchState() && !isStopRequested()){
+            elbow.setElbowPower(0.2);
         }
-        pivot.setPower(0);
+        elbow.setElbowPower(0);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //homing the slide
+        while (!slide.getHomingSwitchState() && !isStopRequested()){
+            slide.setSlidePower(-0.2);
+            telemetry.addData("slide switch state", slide.getHomingSwitchState());
+            telemetry.addData("Elbow Angle", elbow.getElbowAngle());
+            telemetry.update();
+        }
+        slide.setSlidePower(0);
+
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
