@@ -15,15 +15,11 @@ public class DriverControls implements DriveControlMap {
     Gamepad physicalGamepad1;
     Gamepad physicalGamepad2;
 
-    double dilation;
-    double base;
-    double shift;
-    public DriverControls (Gamepad gamepad1, Gamepad gamepad2, double dilation, double base, double shift){
+    double y;
+    public DriverControls (Gamepad gamepad1, Gamepad gamepad2, double y){
         this.physicalGamepad1 = gamepad1;
         this.physicalGamepad2 = gamepad2;
-        this.dilation = dilation;
-        this.base = base;
-        this.shift = shift;
+        this.y = y;
 
         gamepad1current = new Gamepad();
         gamepad2current = new Gamepad();
@@ -46,7 +42,7 @@ public class DriverControls implements DriveControlMap {
 
     }
     public double gamepadStickValue(double stickValue){
-        return dilation*(Math.pow(base, stickValue)) + shift;
+        return Math.pow(stickValue, y);
     }
 
     @Override
@@ -287,6 +283,7 @@ public class DriverControls implements DriveControlMap {
     public boolean diffRight(){return (gamepad2current.dpad_right && !gamepad2previous.dpad_right) || (gamepad1current.b && !gamepad1previous.b);}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public boolean resetEncoders(){return false;}
+    public boolean hang(){return false;}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){

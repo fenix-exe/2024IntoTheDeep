@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
-
+@TeleOp
 public class LinearActuatorTest extends LinearOpMode {
-    private DcMotorEx linearActuatorMotor;
-    private LinearActuator linearActuator;
+    DcMotorEx linearActuatorMotor;
+    LinearActuator linearActuator;
     @Override
     public void runOpMode() throws InterruptedException {
+        Gamepad gp1 = new Gamepad();
+        gp1.copy(gamepad1);
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class,"linear actuator");
         linearActuator = new LinearActuator(linearActuatorMotor);
         linearActuator.resetEncoders();
@@ -18,13 +23,14 @@ public class LinearActuatorTest extends LinearOpMode {
         while (opModeIsActive()){
             if (gamepad1.a){
                 linearActuator.goToTargetPositionInches(0);
-            }
-            if (gamepad1.b){
+            } else if (gamepad1.b){
+                linearActuator.goToTargetPositionInches(9.5);
+            } else if (gamepad1.x){
                 linearActuator.goToTargetPositionInches(6);
+            } else if (Math.abs(gamepad1.right_stick_y) > 0){
+                linearActuator.goToTargetPositionInches(linearActuator.ticksToInches(linearActuatorMotor.getCurrentPosition()) - 3*gamepad1.right_stick_y);
             }
-            if (gamepad1.x){
-                linearActuator.goToTargetPositionInches(5);
-            }
+            gp1.copy(gamepad1);
         }
     }
 }

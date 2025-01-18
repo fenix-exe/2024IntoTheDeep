@@ -91,8 +91,19 @@ public class PresetConfigUtil {
                 StateModelParameters.DepositSpecimensStateParameters.slideStartLength = Double.parseDouble(configValues[5]);
                 StateModelParameters.DepositSpecimensStateParameters.slideDepositLength = Double.parseDouble(configValues[6]);
                 break;
-            case "DROP_BLOCK_AND_MOVE_WRIST_DOWN":
+            case "DROP_BLOCK_AND_MOVE_WRIST_DOWN_STATE_MODEL_PARAMS":
                 StateModelParameters.DropBlockAndMoveWristDown.pitch = Double.parseDouble(configValues[1]);
+                break;
+            case "HANG_STATE_MODEL_PARAMS":
+                StateModelParameters.Hang.pitch = Double.parseDouble(configValues[1]);
+                StateModelParameters.Hang.roll = Double.parseDouble(configValues[2]);
+                StateModelParameters.Hang.linearActuatorRetraction = Double.parseDouble(configValues[3]);
+                StateModelParameters.Hang.initialElbowAngle = Double.parseDouble(configValues[4]);
+                StateModelParameters.Hang.slideExtension = Double.parseDouble(configValues[5]);
+                StateModelParameters.Hang.hangElbowAngle = Double.parseDouble(configValues[6]);
+                StateModelParameters.Hang.slideRetraction = Double.parseDouble(configValues[7]);
+                StateModelParameters.Hang.endElbowAngle = Double.parseDouble(configValues[8]);
+                break;
             default:
                 LoggerUtil.error("updatePresets", "Read Unknown Preset," + preset_name );
                 break;

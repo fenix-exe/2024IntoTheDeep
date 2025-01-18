@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,7 +19,7 @@ import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModels;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsFawkes;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
@@ -28,7 +27,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
@@ -66,7 +64,7 @@ public class PresentationTeleOp extends LinearOpMode {
         initializeArmAndHome();
         initializeEndEffector();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModels.initialize(arm, wrist, claw, driverControls);
+        StateModelsFawkes.initialize(arm, wrist, claw, driverControls);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -132,17 +130,17 @@ public class PresentationTeleOp extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModels.presetPositionDriveStateModel(0,73,8);
-            StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
+            StateModelsFawkes.presetPositionDriveStateModel(0,73,8);
+            StateModelsFawkes.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
-            StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositFrontStateModel(-45,0,73,26, 8);
-            StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
-            StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
-            StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
-            StateModels.presetPositionPickupSpecimensStateModel(-10,90,25,0, 77, 3, 90, 90);
-            StateModels.presetPositionDepositSpecimensStateModel(90,90,-10,90,77,58,3,16);
-            StateModels.dropBlockAndMoveWristDown(-90);
+            StateModelsFawkes.presetPositionDepositStateModel(-30,0,73,30.5);
+            StateModelsFawkes.presetPositionDepositFrontStateModel(-45,0,73,26, 8);
+            StateModelsFawkes.depositSampleIntoBucketStateModel(0,0,58,8);
+            StateModelsFawkes.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
+            StateModelsFawkes.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
+            StateModelsFawkes.presetPositionPickupSpecimensStateModel(-10,90,25,0, 77, 3, 90, 90);
+            StateModelsFawkes.presetPositionDepositSpecimensStateModel(90,90,-10,90,77,58,3,16);
+            StateModelsFawkes.dropBlockAndMoveWristDown(-90);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -152,13 +150,13 @@ public class PresentationTeleOp extends LinearOpMode {
             multiTelemetry.addData("Wrist Pitch", pitch.getPosition());
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
             multiTelemetry.addData("imu", Math.toDegrees(imu.getYaw()));
-            multiTelemetry.addData("Dropping Block State Model", StateModels.enterIntakePositionStates);
-            multiTelemetry.addData("Deposit State Model", StateModels.depositBackPresetState);
-            multiTelemetry.addData("Intake State Model", StateModels.intakePresetState);
-            multiTelemetry.addData("Y Cycle", StateModels.depositCycle);
-            multiTelemetry.addData("At intake position?", StateModels.intakePosition);
-            multiTelemetry.addData("Specimen Pickup State", StateModels.pickupSpecimenState);
-            multiTelemetry.addData("Block Pickup Type", StateModels.blockPickupType);
+            multiTelemetry.addData("Dropping Block State Model", StateModelsFawkes.enterIntakePositionStates);
+            multiTelemetry.addData("Deposit State Model", StateModelsFawkes.depositBackPresetState);
+            multiTelemetry.addData("Intake State Model", StateModelsFawkes.intakePresetState);
+            multiTelemetry.addData("Y Cycle", StateModelsFawkes.depositCycle);
+            multiTelemetry.addData("At intake position?", StateModelsFawkes.intakePosition);
+            multiTelemetry.addData("Specimen Pickup State", StateModelsFawkes.pickupSpecimenState);
+            multiTelemetry.addData("Block Pickup Type", StateModelsFawkes.blockPickupType);
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.update();
@@ -174,7 +172,7 @@ public class PresentationTeleOp extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1);
     }
 
     private void initializeDriveTrain(){
@@ -288,7 +286,7 @@ public class PresentationTeleOp extends LinearOpMode {
         LoggerUtil.debug("endEffector", debugString);
     }
     private void logStateModels(){
-        LoggerUtil.debug("stateModels", StateModels.getDebugString());
+        LoggerUtil.debug("stateModels", StateModelsFawkes.getDebugString());
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));

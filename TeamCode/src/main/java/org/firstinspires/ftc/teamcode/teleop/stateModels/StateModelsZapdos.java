@@ -6,9 +6,10 @@ import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
-public class StateModels {
+public class StateModelsZapdos {
 
     public enum DepositCycles {GO_TO_SAFE_DRIVE, GO_TO_DEPOSIT, LEAVE_DEPOSIT}
     public enum SpecimenCycles {GO_TO_SPECIMEN_INTAKE, GO_TO_SPECIMEN_DEPOSIT}
@@ -24,9 +25,11 @@ public class StateModels {
     public static GrabBlockFromInsideStates grabBlockFromInsidePresetState;
     public static SpecimenPickupStates pickupSpecimenState;
     static SpecimenDepositStates depositSpecimenState;
+    static HangStates hangState;
     static Arm arm;
     static Wrist wrist;
     static Claw claw;
+    static LinearActuator linearActuator;
     static DriverControls driverControls;
     static ElapsedTime timer;
     public static DepositCycles depositCycle;
@@ -35,11 +38,12 @@ public class StateModels {
     public static boolean intakePosition;
     public static boolean endSpecimenDeposit;
 
-    public static void initialize(Arm arm, Wrist wrist, Claw claw, DriverControls driverControls){
-        StateModels.arm = arm;
-        StateModels.wrist = wrist;
-        StateModels.driverControls = driverControls;
-        StateModels.claw = claw;
+    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls){
+        StateModelsZapdos.arm = arm;
+        StateModelsZapdos.wrist = wrist;
+        StateModelsZapdos.driverControls = driverControls;
+        StateModelsZapdos.claw = claw;
+        StateModelsZapdos.linearActuator = linearActuator;
 
         drivePresetState = DriveStates.START;
         intakePresetState = IntakeStates.START;
@@ -54,6 +58,7 @@ public class StateModels {
         enterIntakePositionStates = EnterIntakePositionStates.START;
         depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
         specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+        hangState = HangStates.START;
         blockPickupType = BlockPickupType.NONE;
         intakePosition = false;
         endSpecimenDeposit = false;
@@ -76,6 +81,7 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     drivePresetState = DriveStates.MOVING_WRIST;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
@@ -143,6 +149,7 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     intakePresetState = IntakeStates.MOVING_WRIST;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
@@ -223,6 +230,7 @@ public class StateModels {
                     pickupSpecimenState = SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     intakePresetState = IntakeStates.START;
+                    hangState = HangStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.MOVING_WRIST;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
@@ -274,6 +282,7 @@ public class StateModels {
                     depositSpecimenState = SpecimenDepositStates.START;
                     depositBackPresetState = DepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     depositPresetState = DepositStates.MOVING_WRIST;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
@@ -331,6 +340,7 @@ public class StateModels {
                     depositSpecimenState = SpecimenDepositStates.START;
                     depositPresetState = DepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     depositBackPresetState = DepositStates.RETRACTING_SLIDE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
@@ -397,6 +407,7 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     exitDepositPresetState = ExitDepositStates.OPENING_CLAW;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
@@ -465,6 +476,7 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.ELBOW_DOWN;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
@@ -552,6 +564,7 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.ELBOW_INTAKE_DOWN;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
@@ -640,6 +653,7 @@ public class StateModels {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
+                    hangState = HangStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.INTERMEDIATE_CLAW;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
@@ -684,6 +698,7 @@ public class StateModels {
                     depositBackPresetState = DepositStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     if (endSpecimenDeposit){
                         claw.closeClaw();
                         pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;
@@ -835,6 +850,7 @@ public class StateModels {
                     depositBackPresetState = DepositStates.START;
                     pickupSpecimenState= SpecimenPickupStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
                     depositSpecimenState = SpecimenDepositStates.SLIGHTLY_EXTEND_SLIDES;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     intakePosition = false;
@@ -895,6 +911,90 @@ public class StateModels {
                 }
                 break;
         }
+    }
+    public static void hang(double pitch, double roll, double linearActuatorRetraction, double initialElbowAngle, double slideExtension, double hangElbowAngle, double slideRetration, double endElbowAngle){
+        switch(hangState){
+            case START:
+                if (driverControls.hang()){
+                    timer = new ElapsedTime();
+                    timer.reset();
+                    wrist.presetPosition(pitch, roll);
+                    linearActuator.goToTargetPositionInches(linearActuatorRetraction);
+                    drivePresetState = DriveStates.START;
+                    intakePresetState = IntakeStates.START;
+                    submersibleLeaveStates = LeaveSubmersibleStates.START;
+                    grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
+                    grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
+                    exitDepositPresetState = ExitDepositStates.START;
+                    depositPresetState = DepositStates.START;
+                    depositBackPresetState = DepositStates.START;
+                    pickupSpecimenState= SpecimenPickupStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
+                    depositSpecimenState = SpecimenDepositStates.START;
+                    hangState = HangStates.LINEAR_ACTUATOR_DOWN;
+                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    intakePosition = false;
+                    endSpecimenDeposit = false;
+                }
+                break;
+            case LINEAR_ACTUATOR_DOWN:
+                if ((Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuatorRetraction) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)
+                        && driverControls.hang()){
+                    arm.moveElbowToAngle(initialElbowAngle);
+                    arm.moveSlideToLength(slideExtension);
+                    hangState = HangStates.ELBOW_AND_SLIDES_TO_SLIDE_EXTENSION_POSITION;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    hangState = HangStates.START;
+                }
+                break;
+            case ELBOW_AND_SLIDES_TO_SLIDE_EXTENSION_POSITION:
+                if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
+                        && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)
+                        && driverControls.hang()){
+                    arm.moveElbowToAngle(hangElbowAngle);
+                    hangState = HangStates.ELBOW_TO_HANG_POSITION;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    hangState = HangStates.START;
+                }
+                break;
+            case ELBOW_TO_HANG_POSITION:
+                if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
+                        && driverControls.hang()){
+                    arm.moveSlideToLength(slideRetration);
+                    hangState = HangStates.SLIDES_RETRACT;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    hangState = HangStates.START;
+                }
+                break;
+            case SLIDES_RETRACT:
+                if ((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)
+                        && driverControls.hang()){
+                    arm.moveElbowToAngle(endElbowAngle);
+                    linearActuator.goToTargetPositionInches(0);
+                    hangState = HangStates.ELBOW_TO_SAFE;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    hangState = HangStates.START;
+                }
+                break;
+            case ELBOW_TO_SAFE:
+                if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)){
+                    hangState = HangStates.START;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    hangState = HangStates.START;
+                }
+                break;
+        }
+
     }
     public static String getDebugString(){
         return drivePresetState + ", " + intakePresetState + ", " + submersibleLeaveStates + ", "
