@@ -177,6 +177,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             //checking if linear actuator should automatically go up
             if (matchTimer.seconds() > 100 && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
+                liftedLinearActuator = true;
             }
 
 
@@ -270,7 +271,6 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 19;
-
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
