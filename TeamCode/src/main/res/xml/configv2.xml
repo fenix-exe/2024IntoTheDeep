@@ -5,7 +5,6 @@
             <goBILDA5202SeriesMotor name="FL" port="0" />
             <goBILDA5202SeriesMotor name="FR" port="1" />
             <goBILDA5202SeriesMotor name="linear actuator" port="2" />
-            <Servo name="roll" port="0"/>
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="BL" port="0" />
@@ -14,6 +13,7 @@
             <goBILDA5202SeriesMotor name="pivot" port="1" />
             <Servo name="pitch" port="0" />
             <Servo name="claw" port="2" />
+            <Servo name="roll" port="5"/>
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <RevTouchSensor name="limit switch" port="1"  />
             <RevTouchSensor name="slide homing switch" port="3" />

@@ -24,7 +24,6 @@ import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
-import org.firstinspires.ftc.teamcode.teleop.opmodes.TeleOpV5Specimen;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModels;
@@ -42,7 +41,11 @@ import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 import org.firstinspires.ftc.teamcode.util.writeAuto;
 
+import java.io.File;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 @Config
@@ -74,6 +77,9 @@ public class TeleOpPose extends LinearOpMode {
     Gamepad gamepad1previous;
     Gamepad gamepad2previous;
 
+    DecimalFormat df = new DecimalFormat("#.##");
+    public static String filename = "test1";
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -85,7 +91,7 @@ public class TeleOpPose extends LinearOpMode {
         StateModels.initialize(arm, wrist, claw, driverControls);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        writeAuto writer= new writeAuto("/sdcard/Download/test1.csv");
+        writeAuto writer= new writeAuto(filename);
         PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(x, y, Math.toRadians(heading)));
         gamepad1current = new Gamepad();
         gamepad2current = new Gamepad();
@@ -95,6 +101,9 @@ public class TeleOpPose extends LinearOpMode {
 
         gamepad1current.copy(gamepad1);
         gamepad2current.copy(gamepad2);
+
+        df.setRoundingMode(RoundingMode.CEILING);
+
 
         waitForStart();
 
@@ -201,12 +210,10 @@ public class TeleOpPose extends LinearOpMode {
             StateModels.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModels.presetPositionDepositStateModel(-30,0,73,30.5);
-            StateModels.presetPositionDepositBackStateModel(-45,0,75,28, 8);
             StateModels.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModels.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModels.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModels.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
-            StateModels.presetPositionDepositSpecimensStateModel(90,90,77,16.5,3,16);
             StateModels.dropBlockAndMoveWristDown(-90);
 
             //telemetry
@@ -236,14 +243,17 @@ public class TeleOpPose extends LinearOpMode {
             logStateModels();
             logButtonPressed();
             if (gamepad1current.dpad_up && !gamepad1previous.dpad_up) {
-                writer.writeToFile(drive.pose.position.x, drive.pose.position.y,drive.pose.heading.toDouble(),arm.getElbowAngleInDegrees(),arm.getSlideExtension(), pitch.getPosition(), roll.getPosition(), clawServo.getPosition());
+                writer.writeToFile(Double.parseDouble(df.format(drive.pose.position.x)), Double.parseDouble(df.format(drive.pose.position.y)),Double.parseDouble(df.format(drive.pose.heading.toDouble())),Double.parseDouble(df.format(arm.getElbowAngleInDegrees())),Double.parseDouble(df.format(arm.getSlideExtension())), pitch.getPosition(), roll.getPosition(), clawServo.getPosition());
+            }
+            if (gamepad1.left_bumper) {
+                Arrays.stream(new File("/sdcard/Download/autoLogger").listFiles()).forEach(File::delete);
             }
 
         }
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
         driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
     }
 
@@ -283,6 +293,7 @@ public class TeleOpPose extends LinearOpMode {
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RevTouchSensor homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
@@ -294,8 +305,8 @@ public class TeleOpPose extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Slide slideControl = new Slide(slide);
-        Elbow elbow = new Elbow(pivot, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2300);
+        Slide slideControl = new Slide(slide, homingSwitch);
+        Elbow elbow = new Elbow(pivot, limitSwitch, 90);
         arm = new Arm(slideControl, elbow);
 
         slide.setTargetPosition(0);
