@@ -16,7 +16,7 @@
             <Servo name="roll" port="5"/>
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <RevTouchSensor name="limit switch" port="1"  />
-            <RevTouchSensor name="homing switch" port="3" />
+            <RevTouchSensor name="slide homing switch" port="3" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
             <RevColorSensorV3 name="color sensor" port="0" bus="1" />
         </LynxModule>
