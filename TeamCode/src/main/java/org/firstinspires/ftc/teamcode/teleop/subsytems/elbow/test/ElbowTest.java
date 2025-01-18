@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.PIDControl;
 
 
-//@Disabled
+@TeleOp
 public class ElbowTest extends LinearOpMode {
     DcMotorEx elbowMotor;
     Elbow elbow;
@@ -27,7 +27,7 @@ public class ElbowTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()){
-            elbowMotor.setPower(0);
+            //elbowMotor.setPower(0);
             if(gamepad1.a){
                 elbow.setTargetAngle(90);
             }
@@ -38,5 +38,7 @@ public class ElbowTest extends LinearOpMode {
                 elbow.setTargetAngle(45);
             }
         }
+        telemetry.addData("Elbow Position", elbow.getElbowAngle());
     }
+
 }

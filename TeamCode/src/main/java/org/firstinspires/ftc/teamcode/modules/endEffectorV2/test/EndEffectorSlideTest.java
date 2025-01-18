@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.modules.endEffectorV2.test;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
-
+@TeleOp
 public class EndEffectorSlideTest extends LinearOpMode {
     Servo pitchServo;
     Servo rollServo;
@@ -101,6 +102,7 @@ public class EndEffectorSlideTest extends LinearOpMode {
 
             telemetry.addData("Pitch position", pitchPosition);
             telemetry.addData("Roll position", rollPosition);
+            telemetry.addData("Slide Position",arm.getSlideExtension());
             telemetry.update();
         }
     }
