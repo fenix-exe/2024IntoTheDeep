@@ -225,7 +225,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1);
         driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
     }
 
@@ -295,7 +295,6 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         pitch.setDirection(Servo.Direction.REVERSE);
-        roll.setDirection(Servo.Direction.REVERSE);
         wrist = new Wrist(pitch, roll);
     }
     private void initializeEndEffector(){

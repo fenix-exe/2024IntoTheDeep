@@ -74,5 +74,15 @@ public class StateModelParameters {
     public static class DropBlockAndMoveWristDown{
         public static double pitch = -90;
     }
+    public static class Hang{
+        public static double pitch = 0;
+        public static double roll = 0;
+        public static double linearActuatorRetraction = 6;
+        public static double initialElbowAngle = 60;
+        public static double slideExtension = 28;
+        public static double hangElbowAngle = 90;
+        public static double slideRetraction = 0;
+        public static double endElbowAngle = 15;
+    }
 
 }

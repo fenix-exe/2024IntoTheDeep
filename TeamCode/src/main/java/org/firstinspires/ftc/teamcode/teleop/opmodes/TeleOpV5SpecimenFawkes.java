@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Config
-@TeleOp
 public class TeleOpV5SpecimenFawkes extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;
@@ -209,7 +208,7 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1);
         driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
     }
 

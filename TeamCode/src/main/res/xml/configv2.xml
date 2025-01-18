@@ -18,6 +18,7 @@
             <RevTouchSensor name="limit switch" port="1"  />
             <RevTouchSensor name="slide homing switch" port="3" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="1" />
+            <RevColorSensorV3 name="color sensor" port="1" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

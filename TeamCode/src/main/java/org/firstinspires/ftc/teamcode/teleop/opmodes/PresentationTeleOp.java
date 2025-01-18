@@ -172,7 +172,7 @@ public class PresentationTeleOp extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2, 1.0/2, 3, -1.0/2);
+        driverControls = new DriverControls(gamepad1, gamepad2, 1);
     }
 
     private void initializeDriveTrain(){
