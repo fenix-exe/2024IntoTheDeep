@@ -183,12 +183,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //state models for preset positions
             StateModelsZapdos.presetPositionDriveStateModel(0,73,8);
-            StateModelsZapdos.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
+            StateModelsZapdos.presetPositionIntakeStateModel(0,-90,-50,0,0,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             StateModelsZapdos.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
             StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,58,8);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-50, 0,0,4,10, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
@@ -213,6 +213,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.addData("Speed Multipler", speedMultiplier);
+            multiTelemetry.addData("linear actuator", linearActuator.getLinearActuatorPositionInches());
             multiTelemetry.update();
 
             //logging
@@ -261,10 +262,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
-        slide.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide.setDirection(DcMotorSimple.Direction.FORWARD);
 
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

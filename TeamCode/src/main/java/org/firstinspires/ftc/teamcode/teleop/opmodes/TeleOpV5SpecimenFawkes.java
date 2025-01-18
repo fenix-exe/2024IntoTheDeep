@@ -245,7 +245,7 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         slide.setDirection(DcMotorSimple.Direction.REVERSE);

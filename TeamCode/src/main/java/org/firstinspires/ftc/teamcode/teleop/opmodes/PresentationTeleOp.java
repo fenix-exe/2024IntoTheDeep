@@ -214,7 +214,7 @@ public class PresentationTeleOp extends LinearOpMode {
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
 
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

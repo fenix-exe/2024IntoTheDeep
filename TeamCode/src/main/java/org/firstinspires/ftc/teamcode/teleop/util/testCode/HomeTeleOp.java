@@ -28,9 +28,9 @@ public class HomeTeleOp extends LinearOpMode {
         slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
 
-        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -48,7 +48,7 @@ public class HomeTeleOp extends LinearOpMode {
 
         pitch.setPosition(0.5);
         while (opModeInInit()){
-            telemetry.addData("slide homing switch", slide.getHomingSwitchState());
+            telemetry.addData("homing switch", slide.getHomingSwitchState());
             telemetry.update();
         }
         waitForStart();
