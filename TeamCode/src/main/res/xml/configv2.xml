@@ -12,13 +12,13 @@
             <goBILDA5202SeriesMotor name="slide" port="3" />
             <goBILDA5202SeriesMotor name="pivot" port="1" />
             <Servo name="pitch" port="0" />
-            <Servo name="claw" port="2" />
+            <Servo name="claw" port="1" />
             <Servo name="roll" port="5"/>
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <RevTouchSensor name="limit switch" port="1"  />
             <RevTouchSensor name="slide homing switch" port="3" />
-            <goBILDAPinpointRR name="pinpoint" port="0" bus="1" />
-            <RevColorSensorV3 name="color sensor" port="1" bus="0" />
+            <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
+            <RevColorSensorV3 name="color sensor" port="0" bus="1" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
