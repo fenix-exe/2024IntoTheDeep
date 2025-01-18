@@ -2,28 +2,28 @@ package org.firstinspires.ftc.teamcode.modules.driverControl;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.modules.driverControl.DriveControlMap;
-import org.firstinspires.ftc.teamcode.modules.driverControl.UserDirective;
-
 import java.util.HashSet;
 import java.util.Set;
 
 public class DriverControls implements DriveControlMap {
+    public enum scoringType {SAMPLE, SPECIMEN}
+    scoringType gameStrategyMode;
     Gamepad gamepad1current;
     Gamepad gamepad2current;
     Gamepad gamepad1previous;
     Gamepad gamepad2previous;
     Gamepad physicalGamepad1;
     Gamepad physicalGamepad2;
-    public DriverControls(Gamepad gamepad1, Gamepad gamepad2, Gamepad gamepad1previous, Gamepad gamepad2previous){
-        this.gamepad1current=gamepad1;
-        this.gamepad2current = gamepad2;
-        this.gamepad1previous = gamepad1previous;
-        this.gamepad2previous= gamepad2previous;
-    }
-    public DriverControls (Gamepad gamepad1, Gamepad gamepad2){
+
+    double dilation;
+    double base;
+    double shift;
+    public DriverControls (Gamepad gamepad1, Gamepad gamepad2, double dilation, double base, double shift){
         this.physicalGamepad1 = gamepad1;
         this.physicalGamepad2 = gamepad2;
+        this.dilation = dilation;
+        this.base = base;
+        this.shift = shift;
 
         gamepad1current = new Gamepad();
         gamepad2current = new Gamepad();
@@ -33,6 +33,8 @@ public class DriverControls implements DriveControlMap {
 
         gamepad1current.copy(gamepad1);
         gamepad2current.copy(gamepad2);
+
+        gameStrategyMode = scoringType.SAMPLE;
     }
 
     public void update(){
@@ -43,6 +45,9 @@ public class DriverControls implements DriveControlMap {
             gamepad2current.copy(physicalGamepad2);
 
     }
+    public double gamepadStickValue(double stickValue){
+        return dilation*(Math.pow(base, stickValue)) + shift;
+    }
 
     @Override
     public boolean slowMode() {
@@ -51,12 +56,12 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public boolean driveTypeSwitch() {
-        return gamepad1current.right_bumper && !gamepad1previous.right_bumper;
+        return gamepad1current.dpad_down && !gamepad1previous.dpad_down;
     }
 
     @Override
     public boolean resetIMU() {
-        return gamepad1current.left_bumper;
+        return gamepad1current.dpad_up;
     }
 
     @Override
@@ -75,9 +80,9 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.a && gamepad1current.b;
     }
     public boolean microDriveAdjustments(){
-        return gamepad1current.left_trigger > 0.5;
+        return gamepad1current.right_bumper;
     }
-    public boolean removeSpeedRules(){return gamepad1current.right_trigger > 0.5;}
+    public boolean removeSpeedRules(){return false;}
 
     @Override
     public boolean slidesFullyUp() {
@@ -116,13 +121,37 @@ public class DriverControls implements DriveControlMap {
         }
         return 0;
     }
+    public boolean pivotManualStopped(){
+        if (Math.abs(gamepad2previous.left_stick_y) > 0.65 && ! (Math.abs(gamepad2current.left_stick_y) > 0.65)){
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public double slideMovement() {
         if (Math.abs(gamepad2current.right_stick_y) > 0.5){ // setting the threshold at which we want to set a positive or negative value
             return -gamepad2current.right_stick_y;
         }
+        if (gamepad1current.right_trigger > 0.3){
+            return gamepad1current.right_trigger;
+        }
+        if (gamepad1current.left_trigger > 0.3){
+            return -gamepad1current.left_trigger;
+        }
         return 0;
+    }
+    public boolean slideStopped() {
+        if (Math.abs(gamepad2previous.right_stick_y) > 0.5 && !(Math.abs(gamepad2current.right_stick_y) > 0.5)){
+            return true;
+        }
+        if ((gamepad1previous.right_trigger > 0.3) && !(gamepad1current.right_trigger > 0.3)){
+            return true;
+        }
+        if ((gamepad1previous.left_trigger > 0.3) && !(gamepad1current.left_trigger > 0.3)) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -159,11 +188,20 @@ public class DriverControls implements DriveControlMap {
     public boolean submersibleIntakeReady() {
         return gamepad2current.a && !gamepad2previous.a && !gamepad2previous.left_stick_button;
     }
+    public boolean openClaw(){
+        return (gamepad2current.left_bumper) && !(gamepad2previous.left_bumper);
+    }
+    public boolean closeClaw(){
+        return (gamepad2current.right_bumper) && !(gamepad2previous.right_bumper);
+    }
     public boolean grabSampleFromOutside(){
-        return gamepad2current.left_bumper && !gamepad2previous.left_bumper;
+        return ((gamepad2current.right_trigger > 0.1) && !(gamepad2previous.right_trigger > 0.1)) || ((gamepad1current.x) && !(gamepad1previous.x));
     }
     public boolean grabSampleFromInside(){
-        return gamepad2current.right_bumper && !gamepad2previous.right_bumper;
+        return ((gamepad2current.left_trigger > 0.1) && !(gamepad2previous.left_trigger > 0.1)) || (gamepad1current.y && !gamepad1previous.y);
+    }
+    public boolean enterIntakePosition(){
+        return (gamepad2current.b) && !(gamepad2previous.b);
     }
 
     @Override
@@ -178,12 +216,15 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public boolean depositReadyBackTopBucket() {
-        return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
+        if (gameStrategyMode == scoringType.SAMPLE) {
+            return gamepad2current.y && !gamepad2previous.y;
+        }
+        return false;
     }
 
     @Override
     public boolean depositReadyFrontTopBucket() {
-        return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
+        return false;
     }
 
     public boolean depositReadyBackBottomBucket(){
@@ -194,6 +235,30 @@ public class DriverControls implements DriveControlMap {
     }
     public boolean leaveDeposit(){
         return gamepad2current.y && !gamepad2previous.y;
+    }
+    public boolean pickupAndDepositSpecimens(){
+        if (gameStrategyMode == scoringType.SPECIMEN){
+            return gamepad2current.y && !gamepad2previous.y;
+        }
+        return false;
+    }
+    public boolean switchStrategy(){
+        return gamepad2current.back && !gamepad2previous.back;
+    }
+    public scoringType getGameStrategyMode(){
+        return gameStrategyMode;
+    }
+    public void setGameStrategyMode(scoringType type){
+        gameStrategyMode = type;
+    }
+    public boolean depositSpecimenPreset(){
+        return gamepad2current.back && !gamepad2previous.back;
+    }
+    public boolean depositBack(){
+        if (gameStrategyMode == scoringType.SAMPLE){
+            return gamepad2current.y && !gamepad2previous.y;
+        }
+        return false;
     }
     public boolean intakeDown(){
         return gamepad2current.start;
@@ -216,11 +281,12 @@ public class DriverControls implements DriveControlMap {
     public boolean wristDown(){return gamepad2current.back;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
     public boolean removeArmRules(){return gamepad2current.left_bumper;}
-    public boolean diffUp(){return gamepad2current.dpad_down;}
-    public boolean diffDown(){return gamepad2current.dpad_up;}
-    public boolean diffLeft(){return gamepad2current.dpad_right;}
-    public boolean diffRight(){return gamepad2current.dpad_left;}
+    public boolean diffUp(){return (gamepad2current.dpad_up && !gamepad2previous.dpad_up) || (gamepad1current.dpad_left && !gamepad1previous.dpad_left);}
+    public boolean diffDown(){return gamepad2current.dpad_down && !gamepad2previous.dpad_down;}
+    public boolean diffLeft(){return (gamepad2current.dpad_left && !gamepad2previous.dpad_left) || (gamepad1current.a && !gamepad1previous.a);}
+    public boolean diffRight(){return (gamepad2current.dpad_right && !gamepad2previous.dpad_right) || (gamepad1current.b && !gamepad1previous.b);}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
+    public boolean resetEncoders(){return false;}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){

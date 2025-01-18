@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.arm;
 
-import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
 public class ArmSpeedController {
     public static Slide slide;

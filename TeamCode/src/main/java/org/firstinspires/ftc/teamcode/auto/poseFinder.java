@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import android.os.FileUtils;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -14,8 +16,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 
+import java.io.File;
+import java.util.Arrays;
+
 @Config
-//@TeleOp(name = "POSE FINDER")
+@TeleOp(name = "POSE FINDER")
 public class poseFinder extends LinearOpMode {
 
 
@@ -39,11 +44,14 @@ public class poseFinder extends LinearOpMode {
 
         while (opModeIsActive()) {
             drive.updatePoseEstimate();
-            telemetry.addData("pose x", drive.pose.position.toString());
+            telemetry.addData("pose x", drive.pose.position.x);
             telemetry.addData("pose head", Math.toDegrees(drive.pose.heading.toDouble()));
             telemetry.update();
             c.setStroke("#3F51B5");
             Drawing.drawRobot(c, drive.pose);
+            if (gamepad1.a) {
+                Arrays.stream(new File("/sdcard/Download/autoLogger").listFiles()).forEach(File::delete);
+            }
         }
 
     }
