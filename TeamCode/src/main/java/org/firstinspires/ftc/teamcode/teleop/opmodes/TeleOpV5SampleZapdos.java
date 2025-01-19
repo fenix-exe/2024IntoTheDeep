@@ -266,6 +266,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         slide.setDirection(DcMotorSimple.Direction.FORWARD);
+        pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

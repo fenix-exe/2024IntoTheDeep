@@ -20,7 +20,7 @@ public class ElbowTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
         RevTouchSensor limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
-        elbowMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        elbowMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elbow = new Elbow(elbowMotor, limitSwitch, 90);
@@ -36,6 +36,14 @@ public class ElbowTest extends LinearOpMode {
             }
             if(gamepad1.x){
                 elbow.setTargetAngle(45);
+            }
+            if(gamepad1.dpad_down){
+                double currentAngle = elbow.getElbowAngle();
+                elbow.setTargetAngle(currentAngle-3);
+            }
+            if(gamepad1.dpad_up){
+                double currentAngle = elbow.getElbowAngle();
+                elbow.setTargetAngle(currentAngle+3);
             }
         }
         telemetry.addData("Elbow Position", elbow.getElbowAngle());
