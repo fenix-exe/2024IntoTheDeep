@@ -14,7 +14,7 @@
             <Servo name="pitch" port="0" />
             <Servo name="claw" port="1" />
             <Servo name="roll" port="5"/>
-            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+            <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <RevTouchSensor name="limit switch" port="1"  />
             <RevTouchSensor name="homing switch" port="3" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />

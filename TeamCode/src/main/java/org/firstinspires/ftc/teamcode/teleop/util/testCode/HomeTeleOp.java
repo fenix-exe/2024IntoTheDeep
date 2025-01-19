@@ -59,15 +59,6 @@ public class HomeTeleOp extends LinearOpMode {
         pivot.setTargetPosition(0);
     }
     private void home(){
-        //Homing the elbow
-        while (!elbow.getLimitSwitchState() && !isStopRequested()){
-            elbow.setElbowPower(0.2);
-        }
-        elbow.setElbowPower(0);
-
-        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         //homing the slide
         while (!slide.getHomingSwitchState() && !isStopRequested()){
             slide.setSlidePower(-0.2);
@@ -79,6 +70,16 @@ public class HomeTeleOp extends LinearOpMode {
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Homing the elbow
+        while (!elbow.getLimitSwitchState() && !isStopRequested()){
+            elbow.setElbowPower(0.2);
+        }
+        elbow.setElbowPower(0);
+
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override

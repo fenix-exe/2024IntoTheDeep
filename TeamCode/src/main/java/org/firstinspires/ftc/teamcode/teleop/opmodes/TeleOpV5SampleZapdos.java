@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
+import org.firstinspires.ftc.teamcode.teleop.modules.arm.ElbowIntakeAngleFunction;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
@@ -175,29 +176,31 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
 
             //checking if linear actuator should automatically go up
-            if (matchTimer.seconds() > 100 && !liftedLinearActuator){
+            if (matchTimer.seconds() > 10 && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
                 liftedLinearActuator = true;
             }
 
 
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(0,73,8);
-            StateModelsZapdos.presetPositionIntakeStateModel(0,-90,-50,0,0,12);
+            StateModelsZapdos.presetPositionDriveStateModel(0,93,0);
+            StateModelsZapdos.presetPositionIntakeStateModel(-45,-60,-105,-3,6,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
+            //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(80,-30,93,28, 8);
             StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,58,8);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-50, 0,0,4,10, 58,0);
-            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-50, 0,-60, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),2, 58,0);
+            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,30,2,10,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
-            StateModelsZapdos.dropBlockAndMoveWristDown(-90);
-            StateModelsZapdos.hang(0,0,6,60,28,90,0,15);
+            StateModelsZapdos.dropBlockAndMoveWristDown(-105, 6);
+            StateModelsZapdos.hang(0,0,6,83,26,96,0,15);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
+            multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
             multiTelemetry.addData("Slide Current", slide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
@@ -280,7 +283,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Slide slideControl = new Slide(slide, homingSwitch);
-        Elbow elbow = new Elbow(pivot, limitSwitch, 90);
+        Elbow elbow = new Elbow(pivot, limitSwitch, 100);
         arm = new Arm(slideControl, elbow);
 
         slide.setTargetPosition(0);
@@ -305,11 +308,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     }
     private void initializeLinearActuator(){
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
-        linearActuatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         linearActuator = new LinearActuator(linearActuatorMotor);
-
-        linearActuator.resetEncoders();
 
         linearActuator.goToTargetPositionInches(0);
     }

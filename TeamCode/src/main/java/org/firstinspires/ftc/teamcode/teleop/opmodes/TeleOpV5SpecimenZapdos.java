@@ -192,7 +192,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
-            StateModelsZapdos.dropBlockAndMoveWristDown(-90);
+            StateModelsZapdos.dropBlockAndMoveWristDown(-90,6);
             StateModelsZapdos.hang(0,0,6,60,28,90,0,15);
 
             //telemetry
@@ -267,7 +267,6 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

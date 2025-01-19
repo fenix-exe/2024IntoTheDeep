@@ -207,7 +207,7 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public boolean drivingPos() {
-        return gamepad2current.x && !gamepad2current.left_stick_button;
+        return false;
     }
 
     @Override
@@ -283,7 +283,7 @@ public class DriverControls implements DriveControlMap {
     public boolean diffRight(){return (gamepad2current.dpad_right && !gamepad2previous.dpad_right) || (gamepad1current.b && !gamepad1previous.b);}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public boolean resetEncoders(){return false;}
-    public boolean hang(){return false;}
+    public boolean hang(){return gamepad2current.x;}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){

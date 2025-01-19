@@ -49,7 +49,7 @@ public class Wrist {
         return 180 * roll.getPosition() - 90;
     }
     public double getPitchAngle(){
-        return 300 * roll.getPosition() - 150;
+        return 300 * pitch.getPosition() - 150;
     }
 
 }
