@@ -8,11 +8,12 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class LoggerUtil {
     private static final String TAG = "Fenix";
 
-    private static final String logFileName = "/sdcard/Download/logs/logs.tsv";
+    private static final String logFileNameTemplate = "/sdcard/Download/logs/logs-%s.tsv";
 
     private static boolean isLoggingEnabled = true;
     private static boolean writeToFile = true;
@@ -74,6 +75,8 @@ public class LoggerUtil {
     private static void printToLogFile(String tag, String typeOfMessage, String message){
         try{
             if (stream == null){
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
+                String logFileName = String.format(logFileNameTemplate, dateFormat.format(Calendar.getInstance().getTime()));
                 File file = new File(logFileName);
                 file.getParentFile().mkdirs();
                 file.createNewFile();

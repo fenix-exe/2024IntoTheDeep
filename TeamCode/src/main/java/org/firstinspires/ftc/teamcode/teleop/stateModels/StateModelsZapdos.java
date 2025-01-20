@@ -834,13 +834,13 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void presetPositionDepositSpecimensStateModel(double pitch, double roll, double endPitch, double endRoll, double elbowAngle, double elbowDownAngle, double slideStartLength, double slideDepositLength){
+    public static void presetPositionDepositSpecimensStateModel(double pitch, double roll, double endPitch, double endRoll, double elbowAngle, double elbowDownAngle, double slidePreClipLength, double slideDepositLength){
         switch (depositSpecimenState){
             case START:
                 if (driverControls.pickupAndDepositSpecimens() && specimenCycle == SpecimenCycles.GO_TO_SPECIMEN_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
-                    arm.moveSlideToLength(slideDepositLength);
+                    arm.moveSlideToLength(slidePreClipLength);
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
@@ -859,6 +859,17 @@ public class StateModelsZapdos {
                 }
                 break;
             case SLIGHTLY_EXTEND_SLIDES:
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.LOW_SLIDE_TOLERANCE){
+                    arm.moveElbowToAngle(elbowAngle);
+                    arm.moveSlideToLength(slideDepositLength);
+                    depositSpecimenState = SpecimenDepositStates.SLIDES_TO_DEPOSIT;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+            case SLIDES_TO_DEPOSIT:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.LOW_SLIDE_TOLERANCE){
                     claw.openClaw();
                     depositSpecimenState = SpecimenDepositStates.OPEN_CLAW;

@@ -175,10 +175,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
 
             //checking if linear actuator should automatically go up
-            if (matchTimer.seconds() > 10 && !liftedLinearActuator){
+            /*if (matchTimer.seconds() > 10 && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
                 liftedLinearActuator = true;
-            }
+            }*/
 
 
             //state models for preset positions
@@ -191,8 +191,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,58,8);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-50, 0,-60, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),2, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,30,2,10,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(-15,28,0,2.2, 80, 7, 90, 25);
+            StateModelsZapdos.presetPositionDepositSpecimensStateModel(90,25,-15,28,82,0,7,14);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 6);
             StateModelsZapdos.hang(0,0,6,83,26,96,0,15);
 
