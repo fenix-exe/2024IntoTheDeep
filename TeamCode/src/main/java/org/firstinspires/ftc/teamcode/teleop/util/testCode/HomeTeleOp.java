@@ -21,14 +21,20 @@ public class HomeTeleOp extends LinearOpMode {
     Servo pitch;
     DcMotorEx slideMotor;
     DcMotorEx pivot;
+    DcMotorEx linearActuator;
     RevTouchSensor limitSwitch;
     RevTouchSensor homingSwitch;
+    RevTouchSensor actuatorSwitch;
+
 
     private void initializeArmAndHome(){
         slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        linearActuator = hardwareMap.get(DcMotorEx.class, "linear actuator");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
+        actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
+
 
         slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -57,6 +63,7 @@ public class HomeTeleOp extends LinearOpMode {
 
         slideMotor.setTargetPosition(0);
         pivot.setTargetPosition(0);
+        linearActuator.setTargetPosition(0);
     }
     private void home(){
         //homing the slide
@@ -79,6 +86,14 @@ public class HomeTeleOp extends LinearOpMode {
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while (!actuatorSwitch.isPressed() && !isStopRequested()){
+            linearActuator.setPower(-0.5);
+        }
+        linearActuator.setPower(0);
+
+        linearActuator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearActuator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
