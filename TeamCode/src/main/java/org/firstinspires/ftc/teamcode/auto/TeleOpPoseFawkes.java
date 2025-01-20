@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -16,7 +15,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
@@ -27,7 +25,6 @@ import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsFawkes;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
@@ -35,7 +32,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
@@ -50,31 +46,26 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 @Config
-@TeleOp(name = "TeleOPPoseZapdos")
-public class TeleOpPose extends LinearOpMode {
+@TeleOp
+public class TeleOpPoseFawkes extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;
     Arm arm;
     DriverControls driverControls;
     DcMotorEx slide;
     DcMotorEx pivot;
-    DcMotorEx linearActuatorMotor;
     Servo clawServo;
     Servo pitch;
     Servo roll;
     EndEffectorV2 endEffector;
     Wrist wrist;
     Claw claw;
-    LinearActuator linearActuator;
     IIMU imu;
     RevTouchSensor limitSwitch;
     RevTouchSensor homingSwitch;
     FrequencyCounter freqCounter;
-    ElapsedTime matchTimer;
     double speedMultiplier;
     boolean USEREVIMU = true;
-    boolean liftedLinearActuator = false;
-    TelemetryPacket p;
     Gamepad gamepad1current;
     Gamepad gamepad2current;
     Gamepad gamepad1previous;
@@ -85,21 +76,16 @@ public class TeleOpPose extends LinearOpMode {
     public static double y = 65;
     public static double heading = 0;
 
-
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         initializeGamePads();
         initializeDriveTrain();
         initializeArmAndHome();
         initializeEndEffector();
-        initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls);
+        StateModelsFawkes.initialize(arm, wrist, claw, driverControls);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        matchTimer = new ElapsedTime();
 
         writeAuto writer= new writeAuto(filename);
         PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(x, y, Math.toRadians(heading)));
@@ -114,11 +100,7 @@ public class TeleOpPose extends LinearOpMode {
 
         df.setRoundingMode(RoundingMode.CEILING);
 
-
-
-
         waitForStart();
-        matchTimer.reset();
 
         while (opModeIsActive()){
 
@@ -211,25 +193,19 @@ public class TeleOpPose extends LinearOpMode {
                 arm.resetEncoders();
             }
 
-            //checking if linear actuator should automatically go up
-            if (matchTimer.seconds() > 100 && !liftedLinearActuator){
-                linearActuator.goToTargetPositionInches(9.5);
-            }
-
 
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(0,73,8);
-            StateModelsZapdos.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
+            StateModelsFawkes.presetPositionDriveStateModel(0,73,8);
+            StateModelsFawkes.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
-            //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,58,8);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
-            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
-            StateModelsZapdos.dropBlockAndMoveWristDown(-90,6);
-            StateModelsZapdos.hang(0,0,6,60,28,90,0,15);
+            //StateModels.presetPositionDepositStateModel(-30,0,73,33.5);
+            StateModelsFawkes.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
+            StateModelsFawkes.depositSampleIntoBucketStateModel(0,0,58,8);
+            StateModelsFawkes.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
+            StateModelsFawkes.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
+            StateModelsFawkes.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
+            StateModelsFawkes.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
+            StateModelsFawkes.dropBlockAndMoveWristDown(-90);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -270,7 +246,7 @@ public class TeleOpPose extends LinearOpMode {
 
     private void initializeGamePads() {
         driverControls = new DriverControls(gamepad1, gamepad2, 1);
-        driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
+        driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
     }
 
     private void initializeDriveTrain(){
@@ -306,14 +282,14 @@ public class TeleOpPose extends LinearOpMode {
     private void initializeArmAndHome(){
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "slide homing switch");
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 19;
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -323,7 +299,7 @@ public class TeleOpPose extends LinearOpMode {
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Slide slideControl = new Slide(slide, homingSwitch);
-        Elbow elbow = new Elbow(pivot, limitSwitch,90);
+        Elbow elbow = new Elbow(pivot, limitSwitch, 90);
         arm = new Arm(slideControl, elbow);
 
         slide.setTargetPosition(0);
@@ -339,20 +315,13 @@ public class TeleOpPose extends LinearOpMode {
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         pitch.setDirection(Servo.Direction.REVERSE);
+        roll.setDirection(Servo.Direction.REVERSE);
         wrist = new Wrist(pitch, roll);
     }
     private void initializeEndEffector(){
         initializeDifferential();
         initializeIntake();
         endEffector = new EndEffectorV2(wrist, claw);
-    }
-    private void initializeLinearActuator(){
-        linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
-        linearActuatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        linearActuator = new LinearActuator(linearActuatorMotor);
-
-        linearActuator.resetEncoders();
     }
 
     private void logDriveTrain(){
