@@ -350,7 +350,9 @@ public class TeleOpPose extends LinearOpMode {
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
         linearActuatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        linearActuator = new LinearActuator(linearActuatorMotor);
+        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "actuator switch");
+
+        linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
         linearActuator.resetEncoders();
     }

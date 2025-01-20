@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.test;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,9 +16,13 @@ public class LinearActuatorTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Gamepad gp1 = new Gamepad();
         gp1.copy(gamepad1);
-        linearActuatorMotor = hardwareMap.get(DcMotorEx.class,"linear actuator");
-        linearActuator = new LinearActuator(linearActuatorMotor);
-        linearActuator.resetEncoders();
+        linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
+        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "actuator switch");
+
+        linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
+
+        linearActuator.goToTargetPositionInches(0);
+
         waitForStart();
 
         while (opModeIsActive()){

@@ -310,11 +310,11 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
     }
     private void initializeLinearActuator(){
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
-        linearActuatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "actuator switch");
 
-        linearActuator = new LinearActuator(linearActuatorMotor);
+        linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
-        linearActuator.resetEncoders();
+        linearActuator.goToTargetPositionInches(0);
     }
 
     private void logDriveTrain(){

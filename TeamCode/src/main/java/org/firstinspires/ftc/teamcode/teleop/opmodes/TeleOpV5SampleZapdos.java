@@ -307,8 +307,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     }
     private void initializeLinearActuator(){
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
+        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "actuator switch");
 
-        linearActuator = new LinearActuator(linearActuatorMotor);
+        linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
         linearActuator.goToTargetPositionInches(0);
     }

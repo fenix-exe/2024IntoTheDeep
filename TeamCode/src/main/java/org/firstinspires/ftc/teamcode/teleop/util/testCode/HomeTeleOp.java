@@ -12,16 +12,18 @@ import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
 @TeleOp
 public class HomeTeleOp extends LinearOpMode {
     Elbow elbow;
     Slide slide;
+    LinearActuator linearActuator;
     Servo pitch;
     DcMotorEx slideMotor;
     DcMotorEx pivot;
-    DcMotorEx linearActuator;
+    DcMotorEx linearActuatorMotor;
     RevTouchSensor limitSwitch;
     RevTouchSensor homingSwitch;
     RevTouchSensor actuatorSwitch;
@@ -30,7 +32,7 @@ public class HomeTeleOp extends LinearOpMode {
     private void initializeArmAndHome(){
         slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
-        linearActuator = hardwareMap.get(DcMotorEx.class, "linear actuator");
+        linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
@@ -49,6 +51,7 @@ public class HomeTeleOp extends LinearOpMode {
 
         slide = new Slide(slideMotor, homingSwitch);
         elbow = new Elbow(pivot, limitSwitch,90);
+        linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
         pitch = hardwareMap.get(Servo.class, "pitch");
 
@@ -61,9 +64,9 @@ public class HomeTeleOp extends LinearOpMode {
 
         home();
 
-        slideMotor.setTargetPosition(0);
-        pivot.setTargetPosition(0);
-        linearActuator.setTargetPosition(0);
+        slide.setSlideExtensionLength(0);
+        elbow.setTargetAngle(0);
+        linearActuator.goToTargetPositionInches(0);
     }
     private void home(){
         //homing the slide
@@ -87,13 +90,13 @@ public class HomeTeleOp extends LinearOpMode {
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (!actuatorSwitch.isPressed() && !isStopRequested()){
-            linearActuator.setPower(-0.5);
+        //homing the linear actuator
+        while (!linearActuator.getLimitSwitchState() && !isStopRequested()){
+            linearActuator.setLinearActuatorPower(-0.5);
         }
-        linearActuator.setPower(0);
+        linearActuator.setLinearActuatorPower(0);
 
-        linearActuator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearActuator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearActuator.resetEncoders();
 
 
 

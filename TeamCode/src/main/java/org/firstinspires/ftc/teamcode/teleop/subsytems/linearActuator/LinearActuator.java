@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator;
 
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -9,8 +10,10 @@ public class LinearActuator {
     protected double LEAD_MM = 8;
     protected double MM_TO_INCHES = 1/25.4;
     DcMotorEx linearActuatorMotor;
-    public LinearActuator(DcMotorEx linearActuatorMotor){
+    RevTouchSensor limitSwitch;
+    public LinearActuator(DcMotorEx linearActuatorMotor, RevTouchSensor limitSwitch){
         this.linearActuatorMotor = linearActuatorMotor;
+        this.limitSwitch = limitSwitch;
     }
     public double ticksToInches(int ticks){
         return (ticks/ ENCODER_RES)*(LEAD_MM * MM_TO_INCHES);
@@ -30,5 +33,11 @@ public class LinearActuator {
     public void resetEncoders(){
         linearActuatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearActuatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public boolean getLimitSwitchState(){
+        return limitSwitch.isPressed();
+    }
+    public void setLinearActuatorPower(double power){
+        linearActuatorMotor.setPower(power);
     }
 }
