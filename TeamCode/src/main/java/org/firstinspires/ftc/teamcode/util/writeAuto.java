@@ -38,4 +38,21 @@ public class writeAuto {
         pw.flush();
         pw.close();
     }
+
+    public void timer(double time) {
+        FileWriter fw;
+
+        try {
+            fw = new FileWriter(filename,true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        BufferedWriter bw= new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
+
+        pw.println(time);
+        pw.flush();
+        pw.close();
+    }
 }

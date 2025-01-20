@@ -45,6 +45,7 @@ public class poseFinder extends LinearOpMode {
         while (opModeIsActive()) {
             drive.updatePoseEstimate();
             telemetry.addData("pose x", drive.pose.position.x);
+            telemetry.addData("pose y", drive.pose.position.y);
             telemetry.addData("pose head", Math.toDegrees(drive.pose.heading.toDouble()));
             telemetry.update();
             c.setStroke("#3F51B5");

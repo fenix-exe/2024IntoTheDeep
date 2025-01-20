@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.util.RobotWideFunctions;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
+import org.firstinspires.ftc.teamcode.util.writeAuto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -77,6 +78,8 @@ public class ascentPreloadPark extends LinearOpMode {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        writeAuto writer = new writeAuto("ascentPreloadTIme");
 
         //set up rr
 
@@ -224,8 +227,11 @@ public class ascentPreloadPark extends LinearOpMode {
 
         autoClaw.setClaw(CLAW_START);
 
+        ElapsedTime timer = new ElapsedTime();
+
 
         waitForStart();
+        timer.reset();
 
         if (isStopRequested()) {
             return;
@@ -233,6 +239,8 @@ public class ascentPreloadPark extends LinearOpMode {
 
 
         Actions.runBlocking(action1);
+
+        writer.timer(timer.time());
 
 
 

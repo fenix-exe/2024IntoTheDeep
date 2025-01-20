@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Config
+@TeleOp
 public class TeleOpV5SpecimenFawkes extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;

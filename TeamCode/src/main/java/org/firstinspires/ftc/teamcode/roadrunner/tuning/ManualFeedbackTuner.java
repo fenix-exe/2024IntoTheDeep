@@ -24,6 +24,7 @@ public final class ManualFeedbackTuner extends LinearOpMode {
                        drive.actionBuilder(new Pose2d(0, 0, 0))
                                .lineToX(DISTANCE)
                                .lineToX(0)
+                               .waitSeconds(1)
                                .build());
 
            }

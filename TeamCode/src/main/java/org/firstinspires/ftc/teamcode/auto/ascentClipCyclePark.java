@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.util.RobotWideFunctions;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
+import org.firstinspires.ftc.teamcode.util.writeAuto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
