@@ -24,7 +24,6 @@ import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControl
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsFawkes;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
@@ -206,13 +205,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
             multiTelemetry.addData("Wrist Roll", wrist.getRollAngle());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
-            multiTelemetry.addData("Dropping Block State Model", StateModelsFawkes.enterIntakePositionStates);
-            multiTelemetry.addData("Deposit State Model", StateModelsFawkes.depositBackPresetState);
-            multiTelemetry.addData("Intake State Model", StateModelsFawkes.intakePresetState);
-            multiTelemetry.addData("Y Cycle", StateModelsFawkes.depositCycle);
-            multiTelemetry.addData("At intake position?", StateModelsFawkes.intakePosition);
-            multiTelemetry.addData("Specimen Pickup State", StateModelsFawkes.pickupSpecimenState);
-            multiTelemetry.addData("Block Pickup Type", StateModelsFawkes.blockPickupType);
+            multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
+            multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
+            multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
+            multiTelemetry.addData("Y Cycle", StateModelsZapdos.depositCycle);
+            multiTelemetry.addData("At intake position?", StateModelsZapdos.intakePosition);
+            multiTelemetry.addData("Specimen Pickup State", StateModelsZapdos.pickupSpecimenState);
+            multiTelemetry.addData("Block Pickup Type", StateModelsZapdos.blockPickupType);
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.addData("Speed Multipler", speedMultiplier);
@@ -355,11 +354,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         LoggerUtil.debug("endEffector", debugString);
     }
     private void logStateModels(){
-        LoggerUtil.debug("stateModels", StateModelsFawkes.getDebugString());
+        LoggerUtil.debug("stateModels", StateModelsZapdos.getDebugString());
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
     }
-
-
 }

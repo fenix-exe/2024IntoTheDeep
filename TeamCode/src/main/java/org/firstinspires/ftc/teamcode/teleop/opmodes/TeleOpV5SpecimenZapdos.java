@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
@@ -37,7 +38,12 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 @Config
@@ -203,13 +209,13 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             multiTelemetry.addData("Wrist Pitch", pitch.getPosition());
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
             multiTelemetry.addData("imu", Math.toDegrees(imu.getYaw()));
-            multiTelemetry.addData("Dropping Block State Model", StateModelsFawkes.enterIntakePositionStates);
-            multiTelemetry.addData("Deposit State Model", StateModelsFawkes.depositBackPresetState);
-            multiTelemetry.addData("Intake State Model", StateModelsFawkes.intakePresetState);
-            multiTelemetry.addData("Y Cycle", StateModelsFawkes.depositCycle);
-            multiTelemetry.addData("At intake position?", StateModelsFawkes.intakePosition);
-            multiTelemetry.addData("Specimen Pickup State", StateModelsFawkes.pickupSpecimenState);
-            multiTelemetry.addData("Block Pickup Type", StateModelsFawkes.blockPickupType);
+            multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
+            multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
+            multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
+            multiTelemetry.addData("Y Cycle", StateModelsZapdos.depositCycle);
+            multiTelemetry.addData("At intake position?", StateModelsZapdos.intakePosition);
+            multiTelemetry.addData("Specimen Pickup State", StateModelsZapdos.pickupSpecimenState);
+            multiTelemetry.addData("Block Pickup Type", StateModelsZapdos.blockPickupType);
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.addData("speed multipler", speedMultiplier);
@@ -348,11 +354,9 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
         LoggerUtil.debug("endEffector", debugString);
     }
     private void logStateModels(){
-        LoggerUtil.debug("stateModels", StateModelsFawkes.getDebugString());
+        LoggerUtil.debug("stateModels", StateModelsZapdos.getDebugString());
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
     }
-
-
 }
