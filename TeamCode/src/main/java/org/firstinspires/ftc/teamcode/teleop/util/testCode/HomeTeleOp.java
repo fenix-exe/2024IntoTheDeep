@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActu
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
 @TeleOp
-public class HomeTeleOpUp extends LinearOpMode {
+public class HomeTeleOp extends LinearOpMode {
     Elbow elbow;
     Slide slide;
     LinearActuator linearActuator;
@@ -24,6 +24,29 @@ public class HomeTeleOpUp extends LinearOpMode {
     RevTouchSensor limitSwitch;
     RevTouchSensor homingSwitch;
     RevTouchSensor actuatorSwitch;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        initializeArmAndHome();
+
+        waitForStart();
+        while (opModeIsActive()){
+            if(gamepad1.a){
+                homeDown();
+                slide.setSlideExtensionLength(0);
+                elbow.setTargetAngle(0);
+                linearActuator.goToTargetPositionInches(0);
+            }
+            if(gamepad1.b){
+                homeUp();
+                slide.setSlideExtensionLength(0);
+                elbow.setTargetAngle(0);
+                linearActuator.goToTargetPositionInches(0);
+            }
+        }
+
+
+    }
 
 
     private void initializeArmAndHome(){
@@ -57,15 +80,9 @@ public class HomeTeleOpUp extends LinearOpMode {
             telemetry.addData("homing switch", slide.isHomingSwitchPressed());
             telemetry.update();
         }
-        waitForStart();
 
-        home();
-
-        slide.setSlideExtensionLength(0);
-        elbow.setTargetAngle(0);
-        linearActuator.goToTargetPositionInches(0);
     }
-    private void home(){
+    private void homeDown(){
         //homing the slide
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
@@ -85,6 +102,42 @@ public class HomeTeleOpUp extends LinearOpMode {
         while (elbow.isLimitSwitchPressed() && !isStopRequested()){
             elbow.setElbowPower(-0.4);
         }
+        while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
+            elbow.setElbowPower(0.4);
+        }
+        elbow.setElbowPower(0);
+
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //homing the linear actuator
+        while (!linearActuator.getLimitSwitchState() && !isStopRequested()){
+            linearActuator.setLinearActuatorPower(-0.5);
+        }
+        linearActuator.setLinearActuatorPower(0);
+
+        linearActuator.resetEncoders();
+
+
+
+    }
+    private void homeUp(){
+        //homing the slide
+        while (!slide.isHomingSwitchPressed() && !isStopRequested()){
+            slide.setSlidePower(-0.2);
+            telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
+            telemetry.addData("Elbow Angle", elbow.getElbowAngle());
+            telemetry.update();
+        }
+        slide.setSlidePower(0);
+
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Homing the elbow
+        while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
+            elbow.setElbowPower(0.2);
+        }
         elbow.setElbowPower(0);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -102,10 +155,7 @@ public class HomeTeleOpUp extends LinearOpMode {
 
     }
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        initializeArmAndHome();
-    }
+
 }
 
 
