@@ -17,7 +17,7 @@ public class LinearActuatorTest extends LinearOpMode {
         Gamepad gp1 = new Gamepad();
         gp1.copy(gamepad1);
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
-        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "actuator switch");
+        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
 
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 

@@ -834,13 +834,13 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void presetPositionDepositSpecimensStateModel(double pitch, double roll, double endPitch, double endRoll, double elbowAngle, double elbowDownAngle, double slidePreClipLength, double slideDepositLength){
+    public static void presetPositionDepositSpecimensStateModel(double pitch, double roll, double endPitch, double endRoll,double elbowDownAngle, double slideDepositLength){
         switch (depositSpecimenState){
             case START:
                 if (driverControls.pickupAndDepositSpecimens() && specimenCycle == SpecimenCycles.GO_TO_SPECIMEN_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
-                    arm.moveSlideToLength(slidePreClipLength);
+                    arm.moveSlideToLength(slideDepositLength);
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
@@ -852,21 +852,10 @@ public class StateModelsZapdos {
                     pickupSpecimenState= SpecimenPickupStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
                     hangState = HangStates.START;
-                    depositSpecimenState = SpecimenDepositStates.SLIGHTLY_EXTEND_SLIDES;
+                    depositSpecimenState = SpecimenDepositStates.SLIDES_TO_DEPOSIT;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     intakePosition = false;
                     endSpecimenDeposit = false;
-                }
-                break;
-            case SLIGHTLY_EXTEND_SLIDES:
-                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.LOW_SLIDE_TOLERANCE){
-                    arm.moveElbowToAngle(elbowAngle);
-                    arm.moveSlideToLength(slideDepositLength);
-                    depositSpecimenState = SpecimenDepositStates.SLIDES_TO_DEPOSIT;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    depositSpecimenState = SpecimenDepositStates.START;
                 }
                 break;
             case SLIDES_TO_DEPOSIT:
@@ -916,6 +905,7 @@ public class StateModelsZapdos {
                     endSpecimenDeposit = true;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     depositSpecimenState = SpecimenDepositStates.START;
+                    pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();

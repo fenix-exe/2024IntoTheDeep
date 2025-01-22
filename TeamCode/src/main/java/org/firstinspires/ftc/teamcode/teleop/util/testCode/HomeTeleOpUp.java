@@ -8,15 +8,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robot.RobotConstants;
-import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
-import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
 @TeleOp
-public class HomeTeleOp extends LinearOpMode {
+public class HomeTeleOpUp extends LinearOpMode {
     Elbow elbow;
     Slide slide;
     LinearActuator linearActuator;
@@ -57,7 +54,7 @@ public class HomeTeleOp extends LinearOpMode {
 
         pitch.setPosition(0.5);
         while (opModeInInit()){
-            telemetry.addData("homing switch", slide.getHomingSwitchState());
+            telemetry.addData("homing switch", slide.isHomingSwitchPressed());
             telemetry.update();
         }
         waitForStart();
@@ -70,9 +67,9 @@ public class HomeTeleOp extends LinearOpMode {
     }
     private void home(){
         //homing the slide
-        while (!slide.getHomingSwitchState() && !isStopRequested()){
+        while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
-            telemetry.addData("slide switch state", slide.getHomingSwitchState());
+            telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
             telemetry.addData("Elbow Angle", elbow.getElbowAngle());
             telemetry.update();
         }
@@ -82,8 +79,11 @@ public class HomeTeleOp extends LinearOpMode {
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
-        while (!elbow.getLimitSwitchState() && !isStopRequested()){
-            elbow.setElbowPower(0.2);
+        while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
+            elbow.setElbowPower(-0.2);
+        }
+        while (elbow.isLimitSwitchPressed() && !isStopRequested()){
+            elbow.setElbowPower(-0.4);
         }
         elbow.setElbowPower(0);
 
@@ -107,4 +107,5 @@ public class HomeTeleOp extends LinearOpMode {
         initializeArmAndHome();
     }
 }
+
 

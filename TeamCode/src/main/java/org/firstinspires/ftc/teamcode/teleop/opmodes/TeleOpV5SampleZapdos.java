@@ -65,6 +65,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     boolean liftedLinearActuator = false;
+    boolean touchSensorPressedLastLoop = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -174,6 +175,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.resetEncoders();
             }
 
+            if (arm.isSlideTouchSensorPressed() && !touchSensorPressedLastLoop){
+                arm.resetSlideEncoders();
+            }
+
             //checking if linear actuator should automatically go up
             /*if (matchTimer.seconds() > 10 && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
@@ -182,19 +187,19 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(0,93,0);
-            StateModelsZapdos.presetPositionIntakeStateModel(-45,-60,-105,-3,6,12);
+            StateModelsZapdos.presetPositionDriveStateModel(20,93,0);
+            StateModelsZapdos.presetPositionIntakeStateModel(-25,-60,-105,-3,6,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(80,-30,93,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,58,8);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-50, 0,-60, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),2, 58,0);
-            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,30,2,10,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(-15,28,0,2.2, 80, 7, 90, 25);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(90,25,-15,28,82,0,7,14);
-            StateModelsZapdos.dropBlockAndMoveWristDown(-105, 6);
-            StateModelsZapdos.hang(0,0,6,83,26,96,0,15);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(100,-30,93,28, 8);
+            StateModelsZapdos.depositSampleIntoBucketStateModel(20,0,58,8);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-60, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),2, 58,0);
+            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,30,2,10,58,0);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,28,0,2.2, 81, 4.5, 90, 25);
+            StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,25,15,28,0,15);
+            StateModelsZapdos.dropBlockAndMoveWristDown(-85, 6);
+            StateModelsZapdos.hang(20,0,6,83,26,96,0,15);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -225,6 +230,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             logStateModels();
             logButtonPressed();
 
+            touchSensorPressedLastLoop = arm.isSlideTouchSensorPressed();
         }
     }
 
@@ -274,7 +280,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
-
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -307,7 +312,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     }
     private void initializeLinearActuator(){
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
-        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "actuator switch");
+        RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
 
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 

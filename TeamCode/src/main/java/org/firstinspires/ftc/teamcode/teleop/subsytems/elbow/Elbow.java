@@ -63,7 +63,7 @@ public class Elbow {
     public void setElbowPower(double power){
         elbowMotor.setPower(power);
     }
-    public boolean getLimitSwitchState(){
+    public boolean isLimitSwitchPressed(){
         return limitSwitch.isPressed();
     }
 

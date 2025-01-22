@@ -69,6 +69,12 @@ public class Arm {
         elbow.setTargetAngle(0);
         slide.setSlideExtensionLength(0);
     }
+    public void resetSlideEncoders(){
+        slide.resetEncoder();
+    }
+    public boolean isSlideTouchSensorPressed(){
+        return slide.isHomingSwitchPressed();
+    }
     public void setElbowPower(double power){
         elbow.setElbowPower(power);
     }

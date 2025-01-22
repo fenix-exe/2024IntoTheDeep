@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.slide;
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import static java.lang.Math.floor;
-
-
-import androidx.annotation.NonNull;
 
 public class Slide {
     public DcMotorEx slideMotor;
@@ -66,7 +61,7 @@ public class Slide {
     public void setSlidePower(double power){
         slideMotor.setPower(power);
     }
-    public boolean getHomingSwitchState(){
+    public boolean isHomingSwitchPressed(){
         return homingSwitch.isPressed();
     }
 
