@@ -43,6 +43,9 @@ public class HomeTeleOp extends LinearOpMode {
                 elbow.setTargetAngle(0);
                 linearActuator.goToTargetPositionInches(0);
             }
+            telemetry.addLine("IF ELBOW ABOVE THE PARALLEL POSITION, PRESS A");
+            telemetry.addLine("IF ELBOW BELOW THE PARALLEL POSITION, PRESS B");
+            telemetry.update();
         }
 
 
