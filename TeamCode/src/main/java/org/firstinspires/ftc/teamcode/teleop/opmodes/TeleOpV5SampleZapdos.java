@@ -175,9 +175,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.resetEncoders();
             }
 
-            if (arm.isSlideTouchSensorPressed() && !touchSensorPressedLastLoop){
+            /*if (arm.isSlideTouchSensorPressed() && !touchSensorPressedLastLoop){
                 arm.resetSlideEncoders();
-            }
+            }*/
 
             //checking if linear actuator should automatically go up
             /*if (matchTimer.seconds() > 10 && !liftedLinearActuator){
@@ -192,12 +192,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(100,-30,93,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(20,0,58,8);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-60, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),2, 58,0);
-            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,30,2,10,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,28,0,2.2, 81, 4.5, 90, 25);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,25,15,28,0,15);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(100,-60,93,28, 8);
+            StateModelsZapdos.depositSampleIntoBucketStateModel(20,-30,58,8);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-90, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),2, 58,0);
+            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,0,2,10,58,0);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,-2,0,2.2, 85, 4.8, 90, -2);
+            StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,-2,15,-2,0,14.5);
             StateModelsZapdos.dropBlockAndMoveWristDown(-85, 6);
             StateModelsZapdos.hang(20,0,6,83,26,96,0,15);
 
