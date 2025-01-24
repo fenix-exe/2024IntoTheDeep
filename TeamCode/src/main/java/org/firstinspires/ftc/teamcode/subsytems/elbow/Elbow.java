@@ -59,10 +59,10 @@ public class Elbow {
         //goToTargetPosition(elbowMotor.getCurrentPosition());
     }
     public double ticksToDegrees(int ticks){
-        return ticks/24.22; //TODO: 41.821
+        return ticks/11.29;
     }
     public int degreesToTicks(double degrees){
-        return (int) floor(degrees * 24.22);
+        return (int) floor(degrees * 11.29);
     }
     public double getElbowAngle(){
         return ticksToDegrees(elbowMotor.getCurrentPosition());
@@ -94,7 +94,7 @@ public class Elbow {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setTargetAngleAndSpeed(target, speed);
-            if (target-1 < getElbowAngle() && getElbowAngle() < target+1) {
+            if (target-0.75 < getElbowAngle() && getElbowAngle() < target+0.75) {
                 elbowMotor.setPower(0);
                 return false;
             } else {

@@ -13,18 +13,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
-import org.firstinspires.ftc.teamcode.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.subsytems.claw.autoClaw;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.subsytems.elbow.PIDControl;
 import org.firstinspires.ftc.teamcode.subsytems.slide.Slide;
-import org.firstinspires.ftc.teamcode.subsytems.wrist.Wrist;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.util.RobotWideFunctions;
 import org.firstinspires.ftc.teamcode.util.extractAuto;
 import org.firstinspires.ftc.teamcode.util.writeAuto;
@@ -34,15 +32,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - CLIP 4!!!", preselectTeleOp = "TeleOpV5Specimen")
+@Autonomous(name = "AUTO - CLIP 4!!!", preselectTeleOp = "TeleOpV5Sample")
 public class ascentClipCyclePark extends LinearOpMode {
 
     //initialize auto extractor
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
-    int ELBOW_START = 750;
+    int ELBOW_START = 7;
     int SLIDE_START = 0;
-    double PITCH_START = 0.8;
-    double ROLL_START = 0.2;
+    double PITCH_START = 0;
+    double ROLL_START = 0.5;
     double CLAW_START = 1;
 
 
@@ -53,20 +51,25 @@ public class ascentClipCyclePark extends LinearOpMode {
     ServoImplEx pitch;
     ServoImplEx roll;
     ServoImplEx claw;
+    autoClaw autoClaw;
 
     Elbow elbow;
     DcMotorEx elbowMotor;
+    RevTouchSensor limitSwitch;
+
     ElapsedTime timer;
 
     PIDController controllerPivotPIDF;
 
-    Slide slide;
     DcMotorEx slideMotor;
+    Slide slide;
+    RevTouchSensor homingSwitch;
 
-    RevTouchSensor limitSwitch;
-    autoClaw autoClaw;
-    Wrist wrist;
-    Claw clawy;
+
+    DcMotorEx linearActuatorMotor;
+    RevTouchSensor actuatorSwitch;
+    LinearActuator linearActuator;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,57 +86,80 @@ public class ascentClipCyclePark extends LinearOpMode {
             throw new RuntimeException(e);
         }
 
+        writeAuto writer = new writeAuto("ascentPreloadTIme");
+
         //set up rr
 
 
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
+        pitch.setDirection(Servo.Direction.REVERSE);
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
         autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitch, roll);
-        clawy = new Claw(claw);
+
+
+        linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
+        actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
+        linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
+
+
+
 
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
-        elbowMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        //Homing the pivot
-        /*while (!limitSwitch.isPressed()){
-            pivot.setPower(-0.5);
-        }
-        pivot.setPower(0);*/
-
-
 
         slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide = new Slide(slideMotor, 3000);
+        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
+        slide = new Slide(slideMotor, homingSwitch);
 
 
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
         elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2500);
 
 
-
-        while(!gamepad1.a && !isStopRequested()) {
+        while (!gamepad1.a) {
 
         }
+
+        //HOMING
         pitch.setPosition(0.5);
 
-        while (!limitSwitch.isPressed() && !isStopRequested()){
-            elbowMotor.setPower(-0.2);
+        while (!slide.isHomingSwitchPressed() && !isStopRequested()){
+            slide.setSlidePower(-0.2);
+            telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
+            telemetry.addData("Elbow Angle", elbow.getElbowAngle());
+            telemetry.update();
         }
-        while (limitSwitch.isPressed() && !isStopRequested()){
-            elbowMotor.setPower(0.2);
+        slide.setSlidePower(0);
+
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Homing the elbow
+        while (!limitSwitch.isPressed() && !isStopRequested()) {
+            elbow.setElbowPower(0.2);
         }
-        elbowMotor.setPower(0);
+
+        elbow.setElbowPower(0);
+
+        elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //homing the linear actuator
+        while (!linearActuator.getLimitSwitchState() && !isStopRequested()){
+            linearActuator.setLinearActuatorPower(-0.5);
+        }
+        linearActuator.setLinearActuatorPower(0);
+
+        linearActuator.resetEncoders();
 
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -163,21 +189,17 @@ public class ascentClipCyclePark extends LinearOpMode {
                 traj1 = traj1
                         .stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
-                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
 
             else if (XareSame && YareSame && !AngleareSame) {
                 traj1 = traj1
-                       .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
+                        .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .turnTo(extractAuto.getAngleFromList(vector.get(i)))
-                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
-                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
@@ -186,9 +208,7 @@ public class ascentClipCyclePark extends LinearOpMode {
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)))
-                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
-                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
@@ -197,9 +217,7 @@ public class ascentClipCyclePark extends LinearOpMode {
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
                         .strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)))
-                        //.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i))))
-                        .stopAndAdd(clawy.clawControl(extractAuto.getClawFromList(vector.get(i))))
+                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
                         .stopAndAdd(robot.vectorLog(i,telemetry))
                         .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
@@ -220,7 +238,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         Action action1 = traj1.build();
 
 
-        elbow.goTo(ELBOW_START, 1);
+        elbow.goTo(elbow.degreesToTicks(ELBOW_START), 1);
         autoClaw.setPitch(PITCH_START);
         autoClaw.setRoll(ROLL_START);
 
@@ -235,12 +253,16 @@ public class ascentClipCyclePark extends LinearOpMode {
         while(!gamepad1.y && !isStopRequested()) {
 
         }
+
         elbowMotor.setPower(0);
 
         autoClaw.setClaw(CLAW_START);
 
+        ElapsedTime timer = new ElapsedTime();
+
 
         waitForStart();
+        timer.reset();
 
         if (isStopRequested()) {
             return;
@@ -248,6 +270,8 @@ public class ascentClipCyclePark extends LinearOpMode {
 
 
         Actions.runBlocking(action1);
+
+        writer.timer(timer.time());
 
 
 

@@ -65,12 +65,15 @@ public class MecanumDrive {
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
         public double lateralInPerTick = 1; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
-        public double trackWidthTicks = 12;
+        public double trackWidthTicks = 11.478871416511444;
+                //12;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.9290648042282834;
-        public double kV = 0.18;
-        public double kA = 0.027;
+        public double kS = 0.05;
+                //0.9290648042282834;
+        public double kV = 0.16;
+                        //0.18;
+        public double kA = 0.04;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 75;
@@ -82,9 +85,9 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 7.0;
-        public double lateralGain = 2.0;
-        public double headingGain = 3.0; // shared with turn
+        public double axialGain = 6.0;
+        public double lateralGain = 5.0;
+        public double headingGain = 7.0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -300,8 +303,8 @@ public class MecanumDrive {
             Pose2d error = txWorldTarget.value().minusExp(pose);
 
 
-            if (t >= timeTrajectory.duration && error.position.norm() < 2
-                    && robotVelRobot.linearVel.norm() < 0.5 || t >= timeTrajectory.duration + PARAMS.time_increase) {
+            if (t >= timeTrajectory.duration && error.position.norm() < PARAMS.accuracy
+                    && robotVelRobot.linearVel.norm() < PARAMS.velocity || t >= timeTrajectory.duration + PARAMS.time_increase) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
