@@ -180,10 +180,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }*/
 
             //checking if linear actuator should automatically go up
-            /*if (matchTimer.seconds() > 10 && !liftedLinearActuator){
+            if (matchTimer.seconds() > 10 && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
                 liftedLinearActuator = true;
-            }*/
+            }
 
 
             //state models for preset positions
@@ -199,7 +199,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,-2,0,2.2, 85, 4.8, 90, -2);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,-2,15,-2,0,14.5);
             StateModelsZapdos.dropBlockAndMoveWristDown(-85, 6);
-            StateModelsZapdos.hang(20,0,6,83,26,96,0,15);
+            StateModelsZapdos.hang(20,0,6,83,26,95,45,0,15);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());

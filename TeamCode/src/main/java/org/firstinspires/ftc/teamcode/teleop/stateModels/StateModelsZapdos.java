@@ -597,7 +597,7 @@ public class StateModelsZapdos {
             case ELBOW_SLIGHTLY_UP:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
                     timer.reset();
-                    wrist.presetPosition(upPitch, upRoll);
+                    wrist.presetPositionPitch(upPitch);
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.WRIST_MOVING_UP;
                 }
                 if (driverControls.escapePresets()){
@@ -607,6 +607,7 @@ public class StateModelsZapdos {
                 break;
             case WRIST_MOVING_UP:
                 if (timer.milliseconds() > 250) {
+                    wrist.presetPositionRoll(upRoll);
                     //arm.moveSlideToLength(slideLength);
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
                 }
@@ -914,7 +915,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void hang(double pitch, double roll, double linearActuatorRetraction, double initialElbowAngle, double slideExtension, double hangElbowAngle, double slideRetration, double endElbowAngle){
+    public static void hang(double pitch, double roll, double linearActuatorRetraction, double initialElbowAngle, double slideExtension, double hangElbowAngle, double elbowSlideCrossover, double slideRetration, double endElbowAngle){
         switch(hangState){
             case START:
                 if (driverControls.hang()){
@@ -977,19 +978,28 @@ public class StateModelsZapdos {
                         && driverControls.hang()){
                     arm.moveSlideToLength(slideExtension/2);
                     linearActuator.goToTargetPositionInches(0);
-                    hangState = HangStates.SLIDES_RETRACT_AND_ELBOW_TO_SAFE;
+                    hangState = HangStates.SLIDES_RETRACT;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     hangState = HangStates.START;
                 }
                 break;
-            case SLIDES_RETRACT_AND_ELBOW_TO_SAFE:
+            case SLIDES_RETRACT:
                 if (((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE))
                         && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
                         && driverControls.hang()){
-                    arm.moveSlideToLength(slideRetration);
                     arm.moveElbowToAngle(endElbowAngle);
+                    hangState = HangStates.ELBOW_TO_SAFE;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    hangState = HangStates.START;
+                }
+                break;
+            case ELBOW_TO_SAFE:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+                    arm.moveSlideToLength(slideRetration);
                     hangState = HangStates.START;
                 }
                 if (driverControls.escapePresets()){
