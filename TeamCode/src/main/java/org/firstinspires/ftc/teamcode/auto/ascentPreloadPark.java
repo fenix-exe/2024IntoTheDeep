@@ -41,7 +41,7 @@ public class ascentPreloadPark extends LinearOpMode {
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
     int ELBOW_START = 7;
     int SLIDE_START = 0;
-    double PITCH_START = 0;
+    double PITCH_START = 0.17;
     double ROLL_START = 0.5;
     double CLAW_START = 1;
 
@@ -88,7 +88,7 @@ public class ascentPreloadPark extends LinearOpMode {
             throw new RuntimeException(e);
         }
 
-        writeAuto writer = new writeAuto("ascentPreloadTIme");
+        writeAuto writer = new writeAuto("ascentPreloadTime");
 
         //set up rr
 

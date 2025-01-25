@@ -86,7 +86,7 @@ public class ascentClipCyclePark extends LinearOpMode {
             throw new RuntimeException(e);
         }
 
-        writeAuto writer = new writeAuto("ascentPreloadTIme");
+        writeAuto writer = new writeAuto("ascentClipCycleParkTime");
 
         //set up rr
 
@@ -144,11 +144,18 @@ public class ascentClipCyclePark extends LinearOpMode {
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
-        while (!limitSwitch.isPressed() && !isStopRequested()) {
-            elbow.setElbowPower(0.2);
+        while (!limitSwitch.isPressed() && !isStopRequested()){
+            elbow.setElbowPower(-0.2);
+        }
+        while (limitSwitch.isPressed() && !isStopRequested()){
+            elbow.setElbowPower(-0.4);
+        }
+        while (!limitSwitch.isPressed() && !isStopRequested()){
+            elbow.setElbowPower(0.4);
         }
 
         elbow.setElbowPower(0);
+
 
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
