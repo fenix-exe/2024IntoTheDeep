@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -51,6 +52,7 @@ import java.util.HashMap;
 
 @Config
 @TeleOp(name = "TeleOPPoseZapdos")
+@Disabled
 public class TeleOpPose extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     DriveTrain driveTrain;
@@ -223,7 +225,7 @@ public class TeleOpPose extends LinearOpMode {
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             StateModelsZapdos.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,58,8);
+            StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,83,58,8);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);

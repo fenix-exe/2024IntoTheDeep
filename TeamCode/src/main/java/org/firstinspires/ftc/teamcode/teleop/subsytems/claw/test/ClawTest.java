@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.claw.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 @TeleOp
+@Disabled
 public class ClawTest extends LinearOpMode {
     Servo claw;
     Claw clawCode;

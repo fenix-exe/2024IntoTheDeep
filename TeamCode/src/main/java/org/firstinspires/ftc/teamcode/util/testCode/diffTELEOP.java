@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util.testCode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.subsytems.differential.Differential;
 @Config
 @TeleOp
+@Disabled
 public class diffTELEOP extends LinearOpMode {
     ServoImplEx pitch;
     ServoImplEx claw;

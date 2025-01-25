@@ -386,7 +386,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void depositSampleIntoBucketStateModel(double pitch, double roll, double elbowAngle, double slideLength){
+    public static void depositSampleIntoBucketStateModel(double pitch, double roll, double elbowAngle, double intermediateElbowAngle, double slideLength){
         switch (exitDepositPresetState){
             case START:
                 if (driverControls.depositBack() && depositCycle == DepositCycles.LEAVE_DEPOSIT){
@@ -428,26 +428,18 @@ public class StateModelsZapdos {
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250){
+                    arm.moveElbowToAngle(intermediateElbowAngle);
                     arm.moveSlideToLength(slideLength);
-                    exitDepositPresetState = ExitDepositStates.RETRACTING_SLIDES;
+                    exitDepositPresetState = ExitDepositStates.RETRACTING_SLIDES_AND_MOVING_ELBOW;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     exitDepositPresetState = ExitDepositStates.START;
                 }
                 break;
-            case RETRACTING_SLIDES:
-                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
-                    arm.moveElbowToAngle(elbowAngle);
-                    exitDepositPresetState = ExitDepositStates.MOVING_ELBOW;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    exitDepositPresetState = ExitDepositStates.START;
-                }
-                break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+            case RETRACTING_SLIDES_AND_MOVING_ELBOW:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE &&
+                        (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)){
                     depositCycle = DepositCycles.GO_TO_DEPOSIT;
                     exitDepositPresetState = ExitDepositStates.START;
                 }
@@ -496,7 +488,7 @@ public class StateModelsZapdos {
                 }
                 break;
             case INTAKE_CLOSING:
-                if (timer.milliseconds()>200){
+                if (timer.milliseconds()>300){
                     arm.moveElbowToAngle(elbowIntakeUpAngle);
                     //wrist.presetPosition(upPitch, upRoll);
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.ELBOW_UP;
@@ -976,8 +968,7 @@ public class StateModelsZapdos {
             case ELBOW_TO_HANG_POSITION:
                 if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
                         && driverControls.hang()){
-                    arm.moveSlideToLength(7.5);
-                    linearActuator.goToTargetPositionInches(0);
+                    arm.moveSlideToLength(12.5);
                     hangState = HangStates.SLIDES_RETRACT;
                 }
                 if (driverControls.escapePresets()){
@@ -990,6 +981,7 @@ public class StateModelsZapdos {
                         && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
                         && driverControls.hang()){
                     arm.moveElbowToAngle(endElbowAngle);
+                    linearActuator.goToTargetPositionInches(9.5);
                     hangState = HangStates.ELBOW_TO_SAFE;
                 }
                 if (driverControls.escapePresets()){

@@ -180,26 +180,26 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }*/
 
             //checking if linear actuator should automatically go up
-            if (matchTimer.seconds() > 10 && !liftedLinearActuator){
+            /*if (matchTimer.seconds() > 10 && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
                 liftedLinearActuator = true;
-            }
+            }*/
 
 
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(20,93,0);
-            StateModelsZapdos.presetPositionIntakeStateModel(-25,-60,-105,-3,6,12);
+            StateModelsZapdos.presetPositionDriveStateModel(20,58,8);
+            StateModelsZapdos.presetPositionIntakeStateModel(-25,-60,-105,-3,2.4,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(100,-60,93,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(20,-30,58,8);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-90, 0,2, 58,0);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(100,-60,80,28, 8);
+            StateModelsZapdos.depositSampleIntoBucketStateModel(20,-30,83,75,8);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-60, 0,2, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,0,2,10,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,-2,0,2.2, 85, 4.8, 90, -2);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,-2,15,-2,0,14.5);
-            StateModelsZapdos.dropBlockAndMoveWristDown(-85, 6);
-            StateModelsZapdos.hang(20,0,6,83,26,99,45,3,15);
+            StateModelsZapdos.dropBlockAndMoveWristDown(-85, 2.4);
+            StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());

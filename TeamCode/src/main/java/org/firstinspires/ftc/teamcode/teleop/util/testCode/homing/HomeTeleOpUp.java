@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.util.testCode;
+package org.firstinspires.ftc.teamcode.teleop.util.testCode.homing;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActu
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
 @TeleOp
-public class HomeTeleOp extends LinearOpMode {
+public class HomeTeleOpUp extends LinearOpMode {
     Elbow elbow;
     Slide slide;
     LinearActuator linearActuator;
@@ -31,21 +31,10 @@ public class HomeTeleOp extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()){
-            if(gamepad1.a){
-                homeDown();
-                slide.setSlideExtensionLength(0);
-                elbow.setTargetAngle(0);
-                linearActuator.goToTargetPositionInches(0);
-            }
-            if(gamepad1.b){
                 homeUp();
                 slide.setSlideExtensionLength(0);
                 elbow.setTargetAngle(0);
                 linearActuator.goToTargetPositionInches(0);
-            }
-            telemetry.addLine("IF ELBOW ABOVE THE PARALLEL POSITION, PRESS A");
-            telemetry.addLine("IF ELBOW BELOW THE PARALLEL POSITION, PRESS B");
-            telemetry.update();
         }
 
 

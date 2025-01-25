@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.endEffectorV2.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @TeleOp
+@Disabled
 public class EndEffectorTest extends LinearOpMode {
     Servo pitchServo;
     Servo rollServo;
