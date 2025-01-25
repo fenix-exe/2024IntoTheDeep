@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.test;
 //imports
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "BackLeftDrivetrainMotor")
+@Disabled
 public class BackLeftDrivetrainMotor extends LinearOpMode {
 
     private DcMotor BL;

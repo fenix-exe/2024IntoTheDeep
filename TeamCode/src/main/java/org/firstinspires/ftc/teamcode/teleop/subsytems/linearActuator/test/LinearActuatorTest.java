@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.test;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 @TeleOp
+@Disabled
 public class LinearActuatorTest extends LinearOpMode {
     DcMotorEx linearActuatorMotor;
     LinearActuator linearActuator;

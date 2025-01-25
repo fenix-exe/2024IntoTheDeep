@@ -976,7 +976,7 @@ public class StateModelsZapdos {
             case ELBOW_TO_HANG_POSITION:
                 if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
                         && driverControls.hang()){
-                    arm.moveSlideToLength(slideExtension/2);
+                    arm.moveSlideToLength(7.5);
                     linearActuator.goToTargetPositionInches(0);
                     hangState = HangStates.SLIDES_RETRACT;
                 }
