@@ -180,10 +180,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }*/
 
             //checking if linear actuator should automatically go up
-            /*if (matchTimer.seconds() > 10 && !liftedLinearActuator){
+            if (matchTimer.seconds() > 100 && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
                 liftedLinearActuator = true;
-            }*/
+            }
 
 
             //state models for preset positions
