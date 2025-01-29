@@ -180,9 +180,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }*/
 
             //checking if linear actuator should automatically go up
-            if (matchTimer.seconds() > 100 && !liftedLinearActuator){
+            if ((matchTimer.seconds() > 100 || driverControls.linearActuatorUp()) && !liftedLinearActuator){
                 linearActuator.goToTargetPositionInches(9.5);
                 liftedLinearActuator = true;
+            }
+            if (driverControls.linearActuatorDown()){
+                linearActuator.goToTargetPositionInches(5.75);
+                liftedLinearActuator = false;
             }
 
 
