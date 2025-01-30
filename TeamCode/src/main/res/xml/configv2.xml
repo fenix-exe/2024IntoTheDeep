@@ -12,7 +12,7 @@
             <goBILDA5202SeriesMotor name="slide" port="3" />
             <goBILDA5202SeriesMotor name="pivot" port="1" />
             <Servo name="pitch" port="0" />
-            <Servo name="claw" port="1" />
+            <Servo name="claw" port="3" />
             <Servo name="roll" port="5"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
