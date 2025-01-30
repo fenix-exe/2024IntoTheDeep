@@ -29,8 +29,11 @@ public class Slide {
     }
     private void setSlideExtensionLengthInTicks(int ticks){
         rightSlideMotor.setTargetPosition(ticks);
+        leftSlideMotor.setTargetPosition(ticks);
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlideMotor.setPower(1);
+        leftSlideMotor.setPower(1);
     }
 
     public void joystickControl(double slideMovement){
@@ -39,8 +42,11 @@ public class Slide {
     }
     public void holdPosition(){
         rightSlideMotor.setTargetPosition(rightSlideMotor.getCurrentPosition());
+        leftSlideMotor.setTargetPosition(leftSlideMotor.getCurrentPosition());
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlideMotor.setPower(1);
+        leftSlideMotor.setPower(1);
     }
     public int inchesToTicksPivotPoint(double inches){
         //encoderRes * (inches - slideLength - slideToElbow)/pulleyCirc
