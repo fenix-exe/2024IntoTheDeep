@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import static java.lang.Math.floor;
 
 public class Slide {
-    public DcMotorEx slideMotor;
+    public DcMotorEx leftSlideMotor;
+    public DcMotorEx rightSlideMotor;
     public RevTouchSensor homingSwitch;
     //pulleyCirc is the circumference of the pulley
     double PULLEYCIRC= 4.724757 * 1.25;
@@ -17,8 +18,9 @@ public class Slide {
     double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
     double SLIDETOELBOW = 2.5;
-    public Slide(DcMotorEx slideMotor, RevTouchSensor homingSwitch){
-        this.slideMotor = slideMotor;
+    public Slide(DcMotorEx leftSlideMotor,DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
+        this.leftSlideMotor = leftSlideMotor;
+        this.rightSlideMotor = rightSlideMotor;
         this.homingSwitch = homingSwitch;
     }
     public void setSlideExtensionLength(double lengthInInches){
@@ -26,19 +28,19 @@ public class Slide {
         setSlideExtensionLengthInTicks(targetPosition);
     }
     private void setSlideExtensionLengthInTicks(int ticks){
-        slideMotor.setTargetPosition(ticks);
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(1);
+        rightSlideMotor.setTargetPosition(ticks);
+        rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlideMotor.setPower(1);
     }
 
     public void joystickControl(double slideMovement){
-        int targetPos = (int) (slideMotor.getCurrentPosition() + 400*slideMovement);
+        int targetPos = (int) (rightSlideMotor.getCurrentPosition() + 400*slideMovement);
         setSlideExtensionLengthInTicks(targetPos);
     }
     public void holdPosition(){
-        slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(1);
+        rightSlideMotor.setTargetPosition(rightSlideMotor.getCurrentPosition());
+        rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlideMotor.setPower(1);
     }
     public int inchesToTicksPivotPoint(double inches){
         //encoderRes * (inches - slideLength - slideToElbow)/pulleyCirc
@@ -52,17 +54,20 @@ public class Slide {
         return (int) floor(ENCODERRES/PULLEYCIRC*inches);
     }
     public double getSlideExtensionInInches(){
-        return ticksToInches(slideMotor.getCurrentPosition());
+        return ticksToInches(rightSlideMotor.getCurrentPosition());
     }
     public void resetEncoder(){
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void setSlidePower(double power){
-        slideMotor.setPower(power);
+        rightSlideMotor.setPower(power);
     }
     public boolean isHomingSwitchPressed(){
         return homingSwitch.isPressed();
+    }
+    public void setLeftSlideMotorPowerToRightSlideMotorPower(){
+        leftSlideMotor.setPower(rightSlideMotor.getPower());
     }
 
 

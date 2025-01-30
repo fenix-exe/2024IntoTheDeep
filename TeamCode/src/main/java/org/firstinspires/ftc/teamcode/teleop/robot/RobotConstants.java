@@ -11,7 +11,7 @@ public class RobotConstants {
     public static double LOW_ELBOW_TOLERANCE = 1.5;
     public static double LINEAR_ACTUATOR_TOLERANCE = 0.5;
     public static double PHYSICAL_MAX_EXTENSION_IN_INCHES = 30.7;
-    public static double OPEN_POSITION = 0.1;
+    public static double OPEN_POSITION = 0.7;
     public static double CLOSED_POSITION = 1;
     public static double INTERMEDIATE_POSITION = 0.55;
     public static double EXTRA_SLOW = 0.3;

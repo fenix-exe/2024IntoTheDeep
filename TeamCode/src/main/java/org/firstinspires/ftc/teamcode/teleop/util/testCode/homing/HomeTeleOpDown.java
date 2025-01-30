@@ -18,7 +18,8 @@ public class HomeTeleOpDown extends LinearOpMode {
     Slide slide;
     LinearActuator linearActuator;
     Servo pitch;
-    DcMotorEx slideMotor;
+    DcMotorEx leftSlide;
+    DcMotorEx rightSlide;
     DcMotorEx pivot;
     DcMotorEx linearActuatorMotor;
     RevTouchSensor limitSwitch;
@@ -42,7 +43,8 @@ public class HomeTeleOpDown extends LinearOpMode {
 
 
     private void initializeArmAndHome(){
-        slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
+        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
@@ -50,18 +52,18 @@ public class HomeTeleOpDown extends LinearOpMode {
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
 
 
-        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        slide = new Slide(slideMotor, homingSwitch);
+        slide = new Slide(leftSlide,rightSlide, homingSwitch);
         elbow = new Elbow(pivot, limitSwitch,90);
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
@@ -78,14 +80,16 @@ public class HomeTeleOpDown extends LinearOpMode {
         //homing the slide
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
+            slide.setLeftSlideMotorPowerToRightSlideMotorPower();
             telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
             telemetry.addData("Elbow Angle", elbow.getElbowAngle());
             telemetry.update();
         }
         slide.setSlidePower(0);
+        slide.setLeftSlideMotorPowerToRightSlideMotorPower();
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
@@ -123,8 +127,8 @@ public class HomeTeleOpDown extends LinearOpMode {
         }
         slide.setSlidePower(0);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !isStopRequested()){

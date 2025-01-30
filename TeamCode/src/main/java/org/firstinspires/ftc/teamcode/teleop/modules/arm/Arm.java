@@ -36,6 +36,9 @@ public class Arm {
         }
         slide.joystickControl(power);
     }
+    public void setRightSlidePowerToLeftSlidePower(){
+        slide.setLeftSlideMotorPowerToRightSlideMotorPower();
+    }
 
     public void moveElbow(double elbowMovement){
             double power;
@@ -94,7 +97,7 @@ public class Arm {
         return elbow.ticksToDegrees(elbow.elbowMotor.getTargetPosition());
     }
     public double getSlideTargetPositionInInches(){
-        return slide.ticksToInches(slide.slideMotor.getTargetPosition());
+        return slide.ticksToInches(slide.leftSlideMotor.getTargetPosition());
     }
 
     public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
@@ -130,8 +133,8 @@ public class Arm {
         HashMap debugInfo = new HashMap<>();
         debugInfo.put("Slide Extension", String.valueOf(this.getSlideExtension()));
         debugInfo.put("Slide Limit", String.valueOf(this.getMaximumSlideExtensionAllowedInInches()));
-        debugInfo.put("Slide Power", String.valueOf(this.slide.slideMotor.getPower()));
-        debugInfo.put("Slide Current", String.valueOf(this.slide.slideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+        debugInfo.put("Slide Power", String.valueOf(this.slide.leftSlideMotor.getPower()));
+        debugInfo.put("Slide Current", String.valueOf(this.slide.leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
         debugInfo.put("Elbow Angle", String.valueOf(this.getElbowAngleInDegrees()));
         debugInfo.put("Elbow Power", String.valueOf(this.elbow.elbowMotor.getPower()));
         debugInfo.put("Elbow Current", String.valueOf(this.elbow.elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));

@@ -61,7 +61,7 @@ public class EndEffectorSlideTest extends LinearOpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slide= new Slide(slideMotor, homingSwitch);
+        slide= new Slide(slideMotor,null, homingSwitch);
         elbow = new Elbow(elbowMotor, limitSwitch, 90);
         arm = new Arm(slide, elbow);
 

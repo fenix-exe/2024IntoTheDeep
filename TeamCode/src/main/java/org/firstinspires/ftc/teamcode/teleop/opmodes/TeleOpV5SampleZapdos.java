@@ -47,7 +47,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     DriveTrain driveTrain;
     Arm arm;
     DriverControls driverControls;
-    DcMotorEx slide;
+    DcMotorEx leftSlide;
+    DcMotorEx rightSlide;
     DcMotorEx pivot;
     DcMotorEx linearActuatorMotor;
     Servo clawServo;
@@ -198,19 +199,19 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
             StateModelsZapdos.presetPositionDepositFrontStateModel(100,-60,80,28, 8);
             StateModelsZapdos.depositSampleIntoBucketStateModel(5,-30,83,58,8);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-60, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),1.9, 58,0);
-            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,0,2,10,58,0);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-60, 1.9,1.9, 58,0);
+            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,0,1.9,1.9,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-2,0,2.2, 85, 7.3, 90, -2);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,-2,0,-2,0,14.5);
             StateModelsZapdos.dropBlockAndMoveWristDown(-85, 1.9);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
-
+            arm.setRightSlidePowerToLeftSlidePower();
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
-            multiTelemetry.addData("Slide Current", slide.getCurrent(CurrentUnit.MILLIAMPS));
+            multiTelemetry.addData("Slide Current", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
             multiTelemetry.addData("Wrist Roll", wrist.getRollAngle());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
@@ -272,15 +273,16 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
     }
     private void initializeArmAndHome(){
-        slide = hardwareMap.get(DcMotorEx.class, "slide");
+        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
-        slide.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
@@ -288,13 +290,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Slide slideControl = new Slide(slide, homingSwitch);
+        Slide slideControl = new Slide(leftSlide, rightSlide, homingSwitch);
         Elbow elbow = new Elbow(pivot, limitSwitch, 100);
         arm = new Arm(slideControl, elbow);
 
-        slide.setTargetPosition(0);
+        leftSlide.setTargetPosition(0);
         pivot.setTargetPosition(0);
 
     }

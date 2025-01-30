@@ -21,12 +21,12 @@ public class Arm {
         //max_extension already includes tolerance
         double max_extension = getMaximumSlideExtensionAllowedInInches();
         double power;
-        if (!remove_arm_rules){
+        if (!remove_arm_rules) {
             if (slide.getSlideExtensionInInches() > max_extension
-                    && slideMovement > 0){ //top limit
+                    && slideMovement > 0) { //top limit
                 power = 0;
             } else if (slide.getSlideExtensionInInches() < RobotConstants.SLIDE_TOLERANCE
-                    && slideMovement < 0){ //bottom limit
+                    && slideMovement < 0) { //bottom limit
                 power = 0;
             } else {
                 power = slideMovement;
@@ -35,6 +35,9 @@ public class Arm {
             power = slideMovement;
         }
         slide.joystickControl(power);
+    }
+    public void setRightSlidePowerToLeftSlidePower(){
+        slide.setLeftSlideMotorPowerToRightSlideMotorPower();
     }
 
     public void moveElbow(double elbowMovement){
@@ -88,7 +91,7 @@ public class Arm {
         return elbow.ticksToDegrees(elbow.elbowMotor.getTargetPosition());
     }
     public double getSlideTargetPositionInInches(){
-        return slide.ticksToInches(slide.slideMotor.getTargetPosition());
+        return slide.ticksToInches(slide.leftSlideMotor.getTargetPosition());
     }
 
     public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
@@ -124,8 +127,8 @@ public class Arm {
         HashMap debugInfo = new HashMap<>();
         debugInfo.put("Slide Extension", String.valueOf(this.getSlideExtension()));
         debugInfo.put("Slide Limit", String.valueOf(this.getMaximumSlideExtensionAllowedInInches()));
-        debugInfo.put("Slide Power", String.valueOf(this.slide.slideMotor.getPower()));
-        debugInfo.put("Slide Current", String.valueOf(this.slide.slideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+        debugInfo.put("Slide Power", String.valueOf(this.slide.leftSlideMotor.getPower()));
+        debugInfo.put("Slide Current", String.valueOf(this.slide.leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
         debugInfo.put("Elbow Angle", String.valueOf(this.getElbowAngleInDegrees()));
         debugInfo.put("Elbow Power", String.valueOf(this.elbow.elbowMotor.getPower()));
         debugInfo.put("Elbow Current", String.valueOf(this.elbow.elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));

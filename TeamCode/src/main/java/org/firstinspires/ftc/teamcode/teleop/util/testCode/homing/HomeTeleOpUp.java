@@ -18,7 +18,8 @@ public class HomeTeleOpUp extends LinearOpMode {
     Slide slide;
     LinearActuator linearActuator;
     Servo pitch;
-    DcMotorEx slideMotor;
+    DcMotorEx LeftSlideMotor;
+    DcMotorEx RightSlideMotor;
     DcMotorEx pivot;
     DcMotorEx linearActuatorMotor;
     RevTouchSensor limitSwitch;
@@ -42,7 +43,7 @@ public class HomeTeleOpUp extends LinearOpMode {
 
 
     private void initializeArmAndHome(){
-        slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
+        LeftSlideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
@@ -50,18 +51,18 @@ public class HomeTeleOpUp extends LinearOpMode {
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
 
 
-        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        LeftSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LeftSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        slide = new Slide(slideMotor, homingSwitch);
+        slide = new Slide(LeftSlideMotor,null, homingSwitch);
         elbow = new Elbow(pivot, limitSwitch,90);
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
@@ -84,8 +85,8 @@ public class HomeTeleOpUp extends LinearOpMode {
         }
         slide.setSlidePower(0);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
@@ -123,8 +124,8 @@ public class HomeTeleOpUp extends LinearOpMode {
         }
         slide.setSlidePower(0);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
