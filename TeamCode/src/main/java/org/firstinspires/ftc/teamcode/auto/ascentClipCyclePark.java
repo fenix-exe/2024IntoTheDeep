@@ -113,7 +113,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
 
 
-        slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
+        slideMotor = hardwareMap.get(DcMotorEx.class, "rightSlide");
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -130,9 +130,9 @@ public class ascentClipCyclePark extends LinearOpMode {
         }
 
         //HOMING
-        pitch.setPosition(0.5);
+        pitch.setPosition(0);
 
-        while (!slide.isHomingSwitchPressed() && !isStopRequested()){
+        /*while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
             telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
             telemetry.addData("Elbow Angle", elbow.getElbowAngle());
@@ -141,7 +141,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         slide.setSlidePower(0);
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
         //Homing the elbow
         while (!limitSwitch.isPressed() && !isStopRequested()){
@@ -186,48 +186,65 @@ public class ascentClipCyclePark extends LinearOpMode {
         boolean XareSame = false;
         boolean YareSame = false;
         boolean AngleareSame = false;
+        boolean ElbowareSame = false;
+        boolean SlideareSame = false;
+        boolean PitchareSame = false;
+        boolean RollareSame = false;
+        boolean ClawareSame = false;
+        boolean waitZero = false;
         //build trajectory based on file data
         for (int i = 1; i < vector.size(); i++) {
             XareSame = ((extractAuto.getXFromList(vector.get(i-1)) == extractAuto.getXFromList(vector.get(i))));
             YareSame = ((extractAuto.getYFromList(vector.get(i-1)) == extractAuto.getYFromList(vector.get(i))));
             AngleareSame = ((extractAuto.getAngleFromList(vector.get(i-1)) == extractAuto.getAngleFromList(vector.get(i))));
+            PitchareSame = (extractAuto.getPitchFromList(vector.get(i-1)) == extractAuto.getPitchFromList(vector.get(i)));
+            RollareSame = (extractAuto.getRollFromList(vector.get(i-1)) == extractAuto.getRollFromList(vector.get(i)));
+            ClawareSame = (extractAuto.getClawFromList(vector.get(i-1)) == extractAuto.getClawFromList(vector.get(i)));
+            waitZero = extractAuto.getWaitFromList(vector.get(i)) == 0;
             if (XareSame && YareSame && AngleareSame) {
-                //This is when the robot does not move.
-                traj1 = traj1
-                        .stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(robot.vectorLog(i,telemetry))
-                        .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
+                if (!ElbowareSame) {
+                    traj1 = traj1.stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))));
+                }
+                if (!SlideareSame) {
+                    traj1 = traj1.stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                }
             }
-
             else if (XareSame && YareSame && !AngleareSame) {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .turnTo(extractAuto.getAngleFromList(vector.get(i)))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(robot.vectorLog(i,telemetry))
-                        .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
+                        .turnTo(extractAuto.getAngleFromList(vector.get(i)));
             }
             else if ((!XareSame || !YareSame) && AngleareSame) {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(robot.vectorLog(i,telemetry))
-                        .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
+                    traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)));
+                }
+                else {
+                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)));
+                }
             }
             else {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)))
-                        .stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))))
-                        .stopAndAdd(robot.vectorLog(i,telemetry))
-                        .waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
+                    traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)));
+                }
+                else {
+                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)));
+                }
             }
+            if (!PitchareSame || !RollareSame || !ClawareSame) {
+                traj1 = traj1.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))));
+            }
+
+            if (!waitZero) {
+                traj1 = traj1.waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
+            }
+
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
@@ -243,7 +260,6 @@ public class ascentClipCyclePark extends LinearOpMode {
         }
 
         Action action1 = traj1.build();
-
 
         elbow.goTo(elbow.degreesToTicks(ELBOW_START), 1);
         autoClaw.setPitch(PITCH_START);
