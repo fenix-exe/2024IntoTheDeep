@@ -55,4 +55,21 @@ public class writeAuto {
         pw.flush();
         pw.close();
     }
+
+    public void string(double string) {
+        FileWriter fw;
+
+        try {
+            fw = new FileWriter(filename,true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        BufferedWriter bw= new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
+
+        pw.println(string);
+        pw.flush();
+        pw.close();
+    }
 }

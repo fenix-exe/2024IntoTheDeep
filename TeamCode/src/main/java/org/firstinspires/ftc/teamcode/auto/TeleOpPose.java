@@ -215,9 +215,6 @@ public class TeleOpPose extends LinearOpMode {
             }
 
             //checking if linear actuator should automatically go up
-            if (matchTimer.seconds() > 100 && !liftedLinearActuator){
-                linearActuator.goToTargetPositionInches(9.5);
-            }
 
 
             //state models for preset positions

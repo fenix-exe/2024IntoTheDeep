@@ -22,22 +22,6 @@ public final class SplineTest extends LinearOpMode {
 
             Actions.runBlocking(
                 drive.actionBuilder(beginPose)
-                        .strafeToLinearHeading(new Vector2d(-5.39, 42), Math.toRadians(-90.00))
-                        .strafeToLinearHeading(new Vector2d(-34.84, 42), Math.toRadians(-90.00))
-                        .splineToLinearHeading(new Pose2d(-42.55, 11.94, Math.toRadians(-90.00)), Math.toRadians(-90.00))
-                        .strafeToLinearHeading(new Vector2d(-53.71, 63.72), Math.toRadians(-90.00))
-                        .splineToLinearHeading(new Pose2d(-54.10, 15.79, Math.toRadians(-90.00)), Math.toRadians(-86.98))
-                        .strafeToLinearHeading(new Vector2d(-61.03, 64.88), Math.toRadians(-90.00))
-                        .splineToLinearHeading(new Pose2d(-63.34, 12.13, Math.toRadians(-90.00)), Math.toRadians(267.79))
-                        .strafeToLinearHeading(new Vector2d(-68.92, 58.14), Math.toRadians(-90.00))
-                        .strafeToLinearHeading(new Vector2d(-41.01, 64.88), Math.toRadians(-90.00))
-                        .strafeToLinearHeading(new Vector2d(-3.66, 26.95), Math.toRadians(-46.02))
-                        .strafeToLinearHeading(new Vector2d(-41.01, 64.88), Math.toRadians(-90.00))
-                        .strafeToLinearHeading(new Vector2d(-3.66, 26.95), Math.toRadians(-46.02))
-                        .strafeToLinearHeading(new Vector2d(-41.01, 64.88), Math.toRadians(-90.00))
-                        .strafeToLinearHeading(new Vector2d(-3.66, 26.95), Math.toRadians(-46.02))
-                        .strafeToLinearHeading(new Vector2d(-41.01, 64.88), Math.toRadians(-90.00))
-                        .strafeToLinearHeading(new Vector2d(-3.66, 26.95), Math.toRadians(-46.02))
                         .build());
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap, beginPose);
