@@ -52,7 +52,7 @@ public class HomeTeleOpDown extends LinearOpMode {
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
 
 
-        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -90,6 +90,8 @@ public class HomeTeleOpDown extends LinearOpMode {
 
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
@@ -129,6 +131,8 @@ public class HomeTeleOpDown extends LinearOpMode {
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !isStopRequested()){
