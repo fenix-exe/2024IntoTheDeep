@@ -120,7 +120,6 @@ public class ascentPreloadPark extends LinearOpMode {
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
-        slide = new Slide(slideMotor, homingSwitch);
 
 
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);

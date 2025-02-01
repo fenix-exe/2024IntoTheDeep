@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -14,6 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -120,8 +123,10 @@ public class ascentClipCyclePark extends LinearOpMode {
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         slide = new Slide(leftSlide,rightSlide, homingSwitch);
 
@@ -218,7 +223,7 @@ public class ascentClipCyclePark extends LinearOpMode {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
-                        .turnTo(extractAuto.getAngleFromList(vector.get(i)));
+                        .turnTo(extractAuto.getAngleFromList(vector.get(i)), new TurnConstraints(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01, extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01, extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01));
             }
             else if ((!XareSame || !YareSame) && AngleareSame) {
                 traj1 = traj1
@@ -253,6 +258,9 @@ public class ascentClipCyclePark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Line Type", extractAuto.getMoveTypeFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Tangent", extractAuto.getTangentFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Velocity", extractAuto.getVelocityFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Elbow Phi", extractAuto.getElbowPhiFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Elbow Speed", extractAuto.getElbowSpeedFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Linear Slide", extractAuto.getLinearSlideFromList(vector.get(i)));
@@ -300,12 +308,5 @@ public class ascentClipCyclePark extends LinearOpMode {
         Actions.runBlocking(action1);
 
         writer.timer(timer.time());
-
-
-
-
-
-
-        return;
     }
 }
