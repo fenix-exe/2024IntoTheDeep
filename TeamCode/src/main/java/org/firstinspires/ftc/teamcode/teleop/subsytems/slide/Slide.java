@@ -10,7 +10,7 @@ public class Slide {
     public DcMotorEx rightSlideMotor;
     public RevTouchSensor homingSwitch;
     //pulleyCirc is the circumference of the pulley
-    double PULLEYCIRC= 4.724757 * 1.25;
+    double PULLEYCIRC= 4.724757;
     //encoderRes is how many encoder ticks happen after 1 rotation of the motor
     double ENCODERRES = 537.7; // old value is 384.5;
     //slideLength is the length of 1 stage of the slides

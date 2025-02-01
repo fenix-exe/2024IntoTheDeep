@@ -225,10 +225,10 @@ public class ascentClipCyclePark extends LinearOpMode {
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
                 if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
-                    traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))/MecanumDrive.PARAMS.maxWheelVel));
+                    traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
                 else {
-                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))/MecanumDrive.PARAMS.maxWheelVel));
+                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
             }
             else {
@@ -236,10 +236,10 @@ public class ascentClipCyclePark extends LinearOpMode {
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
                         .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
                 if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
-                    traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))/MecanumDrive.PARAMS.maxWheelVel));
+                    traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
                 else {
-                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))/MecanumDrive.PARAMS.maxWheelVel));
+                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
             }
             if (!PitchareSame || !RollareSame || !ClawareSame) {
