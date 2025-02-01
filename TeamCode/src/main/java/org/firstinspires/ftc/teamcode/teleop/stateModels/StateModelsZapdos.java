@@ -56,7 +56,7 @@ public class StateModelsZapdos {
         depositSpecimenState = SpecimenDepositStates.START;
         depositBackPresetState = DepositStates.START;
         enterIntakePositionStates = EnterIntakePositionStates.START;
-        depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+        depositCycle = DepositCycles.LEAVE_DEPOSIT;
         specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
         hangState = HangStates.START;
         blockPickupType = BlockPickupType.NONE;
@@ -134,10 +134,10 @@ public class StateModelsZapdos {
     public static void presetPositionIntakeStateModel(double pitch, double roll, double downPitch, double downRoll, double elbowAngle, double slideLength){
         switch (intakePresetState){
             case START:
-                if (driverControls.submersibleIntakeReady()){ //intakePosition is true when the robot is ready to pick up a sample
+                if (driverControls.depositBack() && depositCycle == DepositCycles.LEAVE_DEPOSIT){ //intakePosition is true when the robot is ready to pick up a sample
                     timer = new ElapsedTime();
                     timer.reset();
-                    claw.intermediateClaw();
+                    claw.openClaw();
                     wrist.presetPosition(pitch,roll);
                     drivePresetState = DriveStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
@@ -151,7 +151,6 @@ public class StateModelsZapdos {
                     enterIntakePositionStates = EnterIntakePositionStates.START;
                     hangState = HangStates.START;
                     intakePresetState = IntakeStates.MOVING_WRIST;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     intakePosition = false;
                     endSpecimenDeposit = false;
@@ -201,6 +200,7 @@ public class StateModelsZapdos {
             case MOVING_WRIST_DOWN:
                 if (timer.milliseconds() > 250){
                     intakePosition = true;
+                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     intakePresetState = IntakeStates.START;
                 }
                 if (driverControls.escapePresets()){
@@ -440,7 +440,8 @@ public class StateModelsZapdos {
             case RETRACTING_SLIDES_AND_MOVING_ELBOW:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE &&
                         (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)){
-                    depositCycle = DepositCycles.GO_TO_DEPOSIT;
+                    intakePosition = true;
+                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     exitDepositPresetState = ExitDepositStates.START;
                 }
                 if (driverControls.escapePresets()){
@@ -635,7 +636,7 @@ public class StateModelsZapdos {
                 if (driverControls.enterIntakePosition() && intakePosition){
                     timer = new ElapsedTime();
                     timer.reset();
-                    claw.intermediateClaw();
+                    claw.openClaw();
                     arm.moveElbowToAngle(elbowAngle);
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;

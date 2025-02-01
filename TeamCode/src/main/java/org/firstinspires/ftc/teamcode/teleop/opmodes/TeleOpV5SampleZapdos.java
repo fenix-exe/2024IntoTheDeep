@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ElbowIntakeAngleFunction;
@@ -62,6 +64,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     IIMU imu;
     RevTouchSensor limitSwitch;
     RevTouchSensor homingSwitch;
+    RevColorSensorV3 colorSensor;
     ElapsedTime matchTimer;
     FrequencyCounter freqCounter;
     double speedMultiplier;
@@ -199,10 +202,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
             StateModelsZapdos.presetPositionDepositFrontStateModel(100,-60,80,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(5,-30,83,58,8);
+            StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,83,1.5,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-60, 1.9,1.9, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,0,1.9,1.9,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-2,0,2.2, 85, 7.3, 90, -2);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-2,0,0, 85, 7.3, 90, -2);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,-2,0,-2,0,14.5);
             StateModelsZapdos.dropBlockAndMoveWristDown(-85, 1.9);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
@@ -212,7 +215,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
-            multiTelemetry.addData("Slide Current", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+            multiTelemetry.addData("Slide Current Left", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+            multiTelemetry.addData("Slide Current Right", rightSlide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
             multiTelemetry.addData("Wrist Roll", wrist.getRollAngle());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
@@ -227,6 +231,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.addData("Speed Multipler", speedMultiplier);
             multiTelemetry.addData("linear actuator", linearActuator.getLinearActuatorPositionInches());
+            multiTelemetry.addData("Claw Distance in CM", colorSensor.getDistance(DistanceUnit.CM));
             multiTelemetry.update();
 
             //logging
@@ -304,6 +309,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     }
     private void initializeIntake(){
         clawServo = hardwareMap.get(Servo.class, "claw");
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color sensor");
         claw = new Claw(clawServo);
 
     }

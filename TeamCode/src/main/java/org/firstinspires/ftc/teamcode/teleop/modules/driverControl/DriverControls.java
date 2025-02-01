@@ -187,7 +187,7 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public boolean submersibleIntakeReady() {
-        return gamepad2current.a && !gamepad2previous.a && !gamepad2previous.left_stick_button;
+        return false;
     }
     public boolean openClaw(){
         return (gamepad2current.left_bumper) && !(gamepad2previous.left_bumper);
@@ -199,7 +199,7 @@ public class DriverControls implements DriveControlMap {
         return ((gamepad2current.right_trigger > 0.1) && !(gamepad2previous.right_trigger > 0.1)) || ((gamepad1current.x) && !(gamepad1previous.x));
     }
     public boolean grabSampleFromInside(){
-        return ((gamepad2current.left_trigger > 0.1) && !(gamepad2previous.left_trigger > 0.1)) || (gamepad1current.y && !gamepad1previous.y);
+        return false;
     }
     public boolean enterIntakePosition(){
         return (gamepad2current.b) && !(gamepad2previous.b);
