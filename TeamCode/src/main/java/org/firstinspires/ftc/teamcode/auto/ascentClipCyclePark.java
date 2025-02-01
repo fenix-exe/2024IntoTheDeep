@@ -98,7 +98,6 @@ public class ascentClipCyclePark extends LinearOpMode {
 
 
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
-        pitch.setDirection(Servo.Direction.REVERSE);
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
         autoClaw = new autoClaw(pitch, roll, claw);
