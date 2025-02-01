@@ -14,6 +14,7 @@ public class extractAuto {
         public double angle;
         public String moveType;
         public double tangent;
+        public double velocity;
         public double elbow_phi;
         public double elbow_speed;
         public double linear_slide;
@@ -22,12 +23,13 @@ public class extractAuto {
         public double claw;
         public double wait;
 
-        PositionInSpace(double x_value, double y_value, double angle, String moveType, double tangent, double elbow_phi, double elbow_speed, double linear_slide, double pitch, double roll, double claw, double wait) {
+        PositionInSpace(double x_value, double y_value, double angle, String moveType, double tangent, double velocity, double elbow_phi, double elbow_speed, double linear_slide, double pitch, double roll, double claw, double wait) {
             this.x_value = x_value;
             this.y_value = y_value;
             this.angle = angle;
             this.moveType = moveType;
             this.tangent = tangent;
+            this.velocity = velocity;
             this.elbow_phi = elbow_phi;
             this.elbow_speed = elbow_speed;
             this.linear_slide = linear_slide;
@@ -51,14 +53,15 @@ public class extractAuto {
                 double angle = Double.parseDouble(values[2].trim());
                 String moveType = values[3].trim();
                 double tangent = Double.parseDouble(values[4].trim());
-                double elbow_phi = Double.parseDouble(values[5].trim());
-                double elbow_speed = Double.parseDouble(values[6].trim());
-                double linear_slide = Double.parseDouble(values[7].trim());
-                double pitch = Double.parseDouble(values[8].trim());
-                double roll = Double.parseDouble(values[9].trim());
-                double claw = Double.parseDouble(values[10].trim());
-                double wait = Double.parseDouble(values[11].trim());
-                autoPath.add(new PositionInSpace(x_value, y_value, angle, moveType,tangent,elbow_phi, elbow_speed,linear_slide, pitch, roll, claw, wait));
+                double velocity = Double.parseDouble(values[5].trim());
+                double elbow_phi = Double.parseDouble(values[6].trim());
+                double elbow_speed = Double.parseDouble(values[7].trim());
+                double linear_slide = Double.parseDouble(values[8].trim());
+                double pitch = Double.parseDouble(values[9].trim());
+                double roll = Double.parseDouble(values[10].trim());
+                double claw = Double.parseDouble(values[11].trim());
+                double wait = Double.parseDouble(values[12].trim());
+                autoPath.add(new PositionInSpace(x_value, y_value, angle, moveType,tangent,velocity,elbow_phi, elbow_speed,linear_slide, pitch, roll, claw, wait));
             } catch (Exception e) {
                 telemetry.addData("Error", "Invalid number format in line: " + line);
                 telemetry.update();
@@ -88,6 +91,10 @@ public class extractAuto {
 
     public double getTangentFromList(PositionInSpace position) {
         return Math.toRadians(position.tangent);
+    }
+
+    public double getVelocityFromList(PositionInSpace position) {
+        return position.velocity;
     }
 
     public double getElbowPhiFromList(PositionInSpace position) {
