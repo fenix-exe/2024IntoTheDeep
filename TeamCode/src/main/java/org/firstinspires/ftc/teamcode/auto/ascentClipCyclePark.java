@@ -44,8 +44,8 @@ public class ascentClipCyclePark extends LinearOpMode {
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
     int ELBOW_START = 7;
     int SLIDE_START = 0;
-    double PITCH_START = 0;
-    double ROLL_START = 0.5;
+    double PITCH_START = 0.8;
+    double ROLL_START = 0.15;
     double CLAW_START = 1;
 
 

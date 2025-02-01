@@ -202,12 +202,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
             StateModelsZapdos.presetPositionDepositFrontStateModel(100,-60,80,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,83,1.5,12);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-30, 0,-60, 1.9,1.9, 58,0);
-            StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-70,0,0,1.9,1.9,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-2,0,0, 85, 7.3, 90, -2);
+            StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,83,1.9,12);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,1.9,1.9,58,0);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-105,0,0, 85, 7.3, 90, -2);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,-2,0,-2,0,14.5);
-            StateModelsZapdos.dropBlockAndMoveWristDown(-85, 1.9);
+            StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
             arm.setRightSlidePowerToLeftSlidePower();
             //telemetry
@@ -219,6 +218,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Slide Current Right", rightSlide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
             multiTelemetry.addData("Wrist Roll", wrist.getRollAngle());
+            multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
+            multiTelemetry.addData("Roll Servo Pos", roll.getPosition());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
             multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
@@ -226,12 +227,17 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Y Cycle", StateModelsZapdos.depositCycle);
             multiTelemetry.addData("At intake position?", StateModelsZapdos.intakePosition);
             multiTelemetry.addData("Specimen Pickup State", StateModelsZapdos.pickupSpecimenState);
+            multiTelemetry.addData("Sample Intake State", StateModelsZapdos.grabBlockFromOutsidePresetState);
             multiTelemetry.addData("Block Pickup Type", StateModelsZapdos.blockPickupType);
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
-            multiTelemetry.addData("Speed Multipler", speedMultiplier);
+            multiTelemetry.addData("Speed Multiplier", speedMultiplier);
             multiTelemetry.addData("linear actuator", linearActuator.getLinearActuatorPositionInches());
             multiTelemetry.addData("Claw Distance in CM", colorSensor.getDistance(DistanceUnit.CM));
+            multiTelemetry.addData("Claw Alpha", colorSensor.alpha());
+            multiTelemetry.addData("Red", colorSensor.red());
+            multiTelemetry.addData("Blue", colorSensor.blue());
+            multiTelemetry.addData("Green", colorSensor.green());
             multiTelemetry.update();
 
             //logging

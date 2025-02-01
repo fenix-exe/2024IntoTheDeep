@@ -189,6 +189,9 @@ public class DriverControls implements DriveControlMap {
     public boolean submersibleIntakeReady() {
         return false;
     }
+    public boolean specimenSampleIntake(){
+        return gamepad2current.a && !gamepad2previous.a;
+    }
     public boolean openClaw(){
         return (gamepad2current.left_bumper) && !(gamepad2previous.left_bumper);
     }

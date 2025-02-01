@@ -11,7 +11,7 @@ public class Wrist {
         this.roll = roll;
     }
     public void manualControlPitch(double stepSizeInDegrees){
-        double targetPosition = stepSizeInDegrees/300 + pitch.getPosition();
+        double targetPosition = stepSizeInDegrees/180 + pitch.getPosition();
         if (targetPosition > 1){
             targetPosition = 1;
         }
@@ -22,7 +22,7 @@ public class Wrist {
     }
     public void manualControlRoll(double stepSizeInDegrees){
         //step size is divided because it is in angles, not servo position
-        double targetPosition = stepSizeInDegrees/180 + roll.getPosition();
+        double targetPosition = stepSizeInDegrees/300 + roll.getPosition();
         if (targetPosition > 1){
             targetPosition = 1;
         }
@@ -32,10 +32,10 @@ public class Wrist {
         roll.setPosition(targetPosition);
     }
     public void presetPositionPitch (double presetPosition){
-        pitch.setPosition(presetPosition/300 + 0.5);
+        pitch.setPosition(presetPosition/180 + 0.5);
     }
     public void presetPositionRoll (double presetPosition){
-        roll.setPosition(presetPosition/180 + 0.5);
+        roll.setPosition(presetPosition/300 + 0.5);
     }
     public void presetPosition(double pitch, double roll){
         //divide by 300 to convert angles to servo positions for pitch
@@ -46,10 +46,10 @@ public class Wrist {
         presetPositionRoll(roll);
     }
     public double getRollAngle(){
-        return 180 * roll.getPosition() - 90;
+        return 300 * roll.getPosition() - 150;
     }
     public double getPitchAngle(){
-        return 300 * pitch.getPosition() - 150;
+        return 180 * pitch.getPosition() - 90;
     }
 
 }

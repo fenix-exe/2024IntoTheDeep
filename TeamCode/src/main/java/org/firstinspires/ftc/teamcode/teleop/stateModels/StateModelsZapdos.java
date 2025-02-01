@@ -11,8 +11,9 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 public class StateModelsZapdos {
 
-    public enum DepositCycles {GO_TO_SAFE_DRIVE, GO_TO_DEPOSIT, LEAVE_DEPOSIT}
+    public enum DepositCycles {START, GO_TO_SAFE_DRIVE, GO_TO_DEPOSIT, LEAVE_DEPOSIT}
     public enum SpecimenCycles {GO_TO_SPECIMEN_INTAKE, GO_TO_SPECIMEN_DEPOSIT}
+    public enum IntakingSamplesForSpecimen {DROP_SAMPLE, GO_TO_SAMPLE_INTAKE}
     public enum BlockPickupType {NONE, INSIDE, OUTSIDE}
     static DriveStates drivePresetState;
     public static IntakeStates intakePresetState;
@@ -20,8 +21,9 @@ public class StateModelsZapdos {
     public static EnterIntakePositionStates enterIntakePositionStates;
     static DepositStates depositPresetState;
     public static DepositStates depositBackPresetState;
+    static DepositSampleIntoObservationZone depositSampleIntoObservationZone;
     static ExitDepositStates exitDepositPresetState;
-    static GrabBlockFromOutsideStates grabBlockFromOutsidePresetState;
+   public static GrabBlockFromOutsideStates grabBlockFromOutsidePresetState;
     public static GrabBlockFromInsideStates grabBlockFromInsidePresetState;
     public static SpecimenPickupStates pickupSpecimenState;
     static SpecimenDepositStates depositSpecimenState;
@@ -34,6 +36,7 @@ public class StateModelsZapdos {
     static ElapsedTime timer;
     public static DepositCycles depositCycle;
     public static SpecimenCycles specimenCycle;
+    public static IntakingSamplesForSpecimen specimenSampleIntake;
     public static BlockPickupType blockPickupType;
     public static boolean intakePosition;
     public static boolean endSpecimenDeposit;
@@ -55,9 +58,11 @@ public class StateModelsZapdos {
         pickupSpecimenState= SpecimenPickupStates.START;
         depositSpecimenState = SpecimenDepositStates.START;
         depositBackPresetState = DepositStates.START;
+        depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
         enterIntakePositionStates = EnterIntakePositionStates.START;
-        depositCycle = DepositCycles.LEAVE_DEPOSIT;
+        depositCycle = DepositCycles.START;
         specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+        specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_SAMPLE_INTAKE;
         hangState = HangStates.START;
         blockPickupType = BlockPickupType.NONE;
         intakePosition = false;
@@ -134,7 +139,7 @@ public class StateModelsZapdos {
     public static void presetPositionIntakeStateModel(double pitch, double roll, double downPitch, double downRoll, double elbowAngle, double slideLength){
         switch (intakePresetState){
             case START:
-                if (driverControls.depositBack() && depositCycle == DepositCycles.LEAVE_DEPOSIT){ //intakePosition is true when the robot is ready to pick up a sample
+                if ((driverControls.depositBack() && depositCycle == DepositCycles.START) ||(driverControls.specimenSampleIntake() && specimenSampleIntake == IntakingSamplesForSpecimen.GO_TO_SAMPLE_INTAKE)){ //intakePosition is true when the robot is ready to pick up a sample
                     timer = new ElapsedTime();
                     timer.reset();
                     claw.openClaw();
@@ -201,6 +206,7 @@ public class StateModelsZapdos {
                 if (timer.milliseconds() > 250){
                     intakePosition = true;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.DROP_SAMPLE;
                     intakePresetState = IntakeStates.START;
                 }
                 if (driverControls.escapePresets()){
@@ -454,7 +460,7 @@ public class StateModelsZapdos {
     public static void presetPositionGrabBlockFromOutsideStateModel(double downPitch, double upPitch, double upRoll, double elbowIntakeDownAngle, double elbowIntakeUpAngle, double elbowAngle, double slideLength){
         switch (grabBlockFromOutsidePresetState){
             case START:
-                if (driverControls.grabSampleFromOutside() && depositCycle != DepositCycles.LEAVE_DEPOSIT){
+                if (driverControls.grabSampleFromOutside()){
                     timer = new ElapsedTime();
                     timer.reset();
                     claw.openClaw();
@@ -675,6 +681,19 @@ public class StateModelsZapdos {
                     enterIntakePositionStates = EnterIntakePositionStates.START;
                 }
                 break;
+        }
+    }
+    public static void depositSampleIntoObservationZone(){
+        switch (depositSampleIntoObservationZone){
+            case START:
+                if (driverControls.specimenSampleIntake()){
+                    arm.moveSlideToLength(0);
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.RETRACT_SLIDES;
+                }
+            case RETRACT_SLIDES:
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.WAIT_FOR_USER_INPUT;
+                }
         }
     }
     public static void presetPositionPickupSpecimensStateModel(double pitch, double roll, double elbowAngle, double slideLength, double elbowUpAngle, double endSlideLength, double pitchEnd, double rollEnd){
