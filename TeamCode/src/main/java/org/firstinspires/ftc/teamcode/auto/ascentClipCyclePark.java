@@ -202,6 +202,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         boolean RollareSame = false;
         boolean ClawareSame = false;
         boolean waitZero = false;
+        boolean correctionAreSame = false;
         //build trajectory based on file data
         for (int i = 1; i < vector.size(); i++) {
             XareSame = ((extractAuto.getXFromList(vector.get(i-1)) == extractAuto.getXFromList(vector.get(i))));
@@ -211,6 +212,12 @@ public class ascentClipCyclePark extends LinearOpMode {
             RollareSame = (extractAuto.getRollFromList(vector.get(i-1)) == extractAuto.getRollFromList(vector.get(i)));
             ClawareSame = (extractAuto.getClawFromList(vector.get(i-1)) == extractAuto.getClawFromList(vector.get(i)));
             waitZero = extractAuto.getWaitFromList(vector.get(i)) == 0;
+            correctionAreSame = (extractAuto.getCorrectionFromList(vector.get(i-1)) == extractAuto.getCorrectionFromList(vector.get(i)));
+
+            if (!correctionAreSame) {
+                traj1 = traj1.stopAndAdd(robot.correctionChanger(extractAuto.getCorrectionFromList(vector.get(i))));
+            }
+
             if (XareSame && YareSame && AngleareSame) {
                 if (!ElbowareSame) {
                     traj1 = traj1.stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))));
@@ -269,7 +276,6 @@ public class ascentClipCyclePark extends LinearOpMode {
             telemetry.addData("Vector " + (i) + " Claw", extractAuto.getClawFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Wait", extractAuto.getWaitFromList(vector.get(i)));
             telemetry.update();
-
         }
 
         Action action1 = traj1.build();
@@ -279,7 +285,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         autoClaw.setRoll(ROLL_START);
 
 
-        if (ELBOW_START-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < ELBOW_START+30) {
+        if (elbow.degreesToTicks(ELBOW_START)-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < elbow.degreesToTicks(ELBOW_START)+30) {
             elbowMotor.setPower(0);
 
         } else {
