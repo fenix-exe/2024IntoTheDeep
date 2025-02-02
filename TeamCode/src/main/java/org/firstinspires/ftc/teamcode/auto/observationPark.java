@@ -119,7 +119,6 @@ public class observationPark extends LinearOpMode {
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
 
-
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
         elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2500);
 

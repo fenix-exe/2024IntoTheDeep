@@ -174,6 +174,17 @@ public class ascentPreloadPark extends LinearOpMode {
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        elbowMotor.setTargetPosition(-217);
+        elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbowMotor.setPower(0.2);
+        while (elbowMotor.getCurrentPosition() > -205) {
+
+        }
+        elbowMotor.setPower(0);
+
+        elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //homing the linear actuator
         while (!linearActuator.getLimitSwitchState() && !isStopRequested()){
             linearActuator.setLinearActuatorPower(-0.5);
