@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -70,6 +71,7 @@ public class ascentPreloadPark extends LinearOpMode {
     public DcMotorEx rightSlide;
     Slide slide;
     RevTouchSensor homingSwitch;
+    public GoBildaPinpointDriverRR pinpoint;
 
 
     DcMotorEx linearActuatorMotor;
@@ -129,19 +131,24 @@ public class ascentPreloadPark extends LinearOpMode {
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         slide = new Slide(leftSlide,rightSlide, homingSwitch);
 
-        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
-        PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
-
-
+        pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        pinpoint.resetPosAndIMU();
+        // wait for pinpoint to finish calibrating
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        pinpoint.setPosition(new Pose2d(0,0,0));
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
         elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2500);
 
 
         while (!gamepad1.a && !isStopRequested()) {
-            drive.updatePoseEstimate();
-            telemetry.addData("pose x", drive.pose.position.x);
-            telemetry.addData("pose y", drive.pose.position.y);
-            telemetry.addData("pose head", Math.toDegrees(drive.pose.heading.toDouble()));
+            pinpoint.update();
+            telemetry.addData("pose x", pinpoint.getPositionRR().position.x);
+            telemetry.addData("pose y", pinpoint.getPositionRR().position.y);
+            telemetry.addData("pose head", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
             telemetry.update();
         }
 
@@ -204,6 +211,10 @@ public class ascentPreloadPark extends LinearOpMode {
         while(!gamepad1.b && !isStopRequested()) {
 
         }
+
+        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
+
+        PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
 
         drive.pinpoint.setPosition(beginPose);
 

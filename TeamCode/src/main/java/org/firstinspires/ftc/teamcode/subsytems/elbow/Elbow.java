@@ -94,7 +94,7 @@ public class Elbow {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setTargetAngleAndSpeed(target, speed);
-            if (target-1.5 < getElbowAngle() && getElbowAngle() < target+1.5) {
+            if (target-0.5 < getElbowAngle() && getElbowAngle() < target+0.5) {
                 elbowMotor.setPower(0);
                 return false;
             } else {
