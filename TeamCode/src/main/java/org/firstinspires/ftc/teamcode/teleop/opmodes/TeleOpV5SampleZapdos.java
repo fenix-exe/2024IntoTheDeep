@@ -167,15 +167,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 claw.closeClaw();
             }
 
-            //switching modes
-            if(driverControls.switchStrategy()) {
-                if (driverControls.getGameStrategyMode() == DriverControls.scoringType.SAMPLE){
-                    driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
-                } else {
-                    driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
-                }
-            }
-
             if (driverControls.resetEncoders()){
                 arm.resetEncoders();
             }
