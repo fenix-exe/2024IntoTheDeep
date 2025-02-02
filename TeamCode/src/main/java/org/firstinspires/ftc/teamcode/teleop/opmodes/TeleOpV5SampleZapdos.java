@@ -301,8 +301,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        leftSlide.setTargetPositionTolerance(50);
-        rightSlide.setTargetPositionTolerance(50);
+        leftSlide.setTargetPositionTolerance(25);
+        rightSlide.setTargetPositionTolerance(25);
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
