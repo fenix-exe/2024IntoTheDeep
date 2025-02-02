@@ -4,6 +4,6 @@ public enum DriveStates {
     START,
     MOVING_WRIST,
     RETRACTING_SLIDE,
+    WAITING_FOR_USER_INPUT,
     MOVING_ELBOW,
-    EXTENDING_SLIDE
 }

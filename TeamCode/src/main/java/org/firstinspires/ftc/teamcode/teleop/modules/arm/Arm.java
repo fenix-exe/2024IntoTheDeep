@@ -74,6 +74,7 @@ public class Arm {
     }
     public void resetSlideEncoders(){
         slide.resetEncoder();
+        slide.setSlideExtensionLength(0);
     }
     public boolean isSlideTouchSensorPressed(){
         return slide.isHomingSwitchPressed();

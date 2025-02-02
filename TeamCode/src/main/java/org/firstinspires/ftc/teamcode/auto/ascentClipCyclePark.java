@@ -46,7 +46,7 @@ public class ascentClipCyclePark extends LinearOpMode {
     int SLIDE_START = 0;
     double PITCH_START = 0.8;
     double ROLL_START = 0.15;
-    double CLAW_START = 1;
+    double CLAW_START = 0.8;
 
 
     extractAuto extractAuto = new extractAuto();
@@ -135,7 +135,6 @@ public class ascentClipCyclePark extends LinearOpMode {
 
 
         while (!gamepad1.a && !isStopRequested()) {
-
         }
 
         //HOMING

@@ -21,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
-import org.firstinspires.ftc.teamcode.teleop.modules.arm.ElbowIntakeAngleFunction;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
@@ -66,6 +65,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     RevTouchSensor homingSwitch;
     RevColorSensorV3 colorSensor;
     ElapsedTime matchTimer;
+    ElapsedTime debounceTimer;
     FrequencyCounter freqCounter;
     double speedMultiplier;
     boolean liftedLinearActuator = false;
@@ -86,6 +86,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
 
         waitForStart();
+        wrist.presetPosition(0,0);
         matchTimer.reset();
 
         while (opModeIsActive()){
@@ -179,9 +180,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.resetEncoders();
             }
 
-            /*if (arm.isSlideTouchSensorPressed() && !touchSensorPressedLastLoop){
+            if (arm.isSlideTouchSensorPressed() && debounceTimer.milliseconds() >2000){
                 arm.resetSlideEncoders();
-            }*/
+                debounceTimer.reset();
+            }
 
             //checking if linear actuator should automatically go up
             if ((driverControls.linearActuatorUp()) && !liftedLinearActuator){
@@ -194,19 +196,19 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
             //matchTimer.seconds() > 100 ||
 
-
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(20,58,8);
-            StateModelsZapdos.presetPositionIntakeStateModel(-40,-60,-105,-3,1.9,12);
+            StateModelsZapdos.presetPositionDriveStateModel(0,58,8);
+            StateModelsZapdos.presetPositionIntakeStateModel(-40,-60,-105,-3,1.3,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(100,-60,80,28, 8);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,83,1.9,12);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,1.9,1.9,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-105,0,0, 85, 7.3, 90, -2);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(110,-2,0,-2,0,14.5);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,80,28, 6);
+            StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,83,1.3,12);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-105,0,0, 23.48, 9.4, 33, -105);
+            StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-105,23.48,0);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
+            StateModelsZapdos.depositSampleIntoObservationZone(3,16);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
             arm.setRightSlidePowerToLeftSlidePower();
             //telemetry
@@ -214,6 +216,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
+            multiTelemetry.addData("Slide Encoder Left", leftSlide.getCurrentPosition());
+            multiTelemetry.addData("Slide Encoder Right", rightSlide.getCurrentPosition());
             multiTelemetry.addData("Slide Current Left", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Slide Current Right", rightSlide.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
@@ -291,12 +295,18 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
 
+        debounceTimer = new ElapsedTime();
+        debounceTimer.reset();
+
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        leftSlide.setTargetPositionTolerance(50);
+        rightSlide.setTargetPositionTolerance(50);
+
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 22;
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -64,7 +64,11 @@ public class Slide {
     }
     public void resetEncoder(){
         rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlideMotor.setPower(0);
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlideMotor.setPower(0);
+        leftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void setSlidePower(double power){
         rightSlideMotor.setPower(power);

@@ -190,7 +190,7 @@ public class DriverControls implements DriveControlMap {
         return false;
     }
     public boolean specimenSampleIntake(){
-        return gamepad2current.a && !gamepad2previous.a;
+        return gamepad2current.b && !gamepad2previous.b && !gamepad2current.start;
     }
     public boolean openClaw(){
         return (gamepad2current.left_bumper) && !(gamepad2previous.left_bumper);
@@ -205,7 +205,7 @@ public class DriverControls implements DriveControlMap {
         return false;
     }
     public boolean enterIntakePosition(){
-        return (gamepad2current.b) && !(gamepad2previous.b);
+        return (gamepad2current.left_trigger > 0.1) && !(gamepad2previous.left_trigger > 0.1);
     }
 
     @Override
@@ -220,10 +220,7 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public boolean depositReadyBackTopBucket() {
-        if (gameStrategyMode == scoringType.SAMPLE) {
-            return gamepad2current.y && !gamepad2previous.y;
-        }
-        return false;
+        return gamepad2current.a && !gamepad2previous.a;
     }
 
     @Override
@@ -241,10 +238,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean pickupAndDepositSpecimens(){
-        if (gameStrategyMode == scoringType.SPECIMEN){
-            return gamepad2current.y && !gamepad2previous.y;
-        }
-        return false;
+        return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean switchStrategy(){
         return gamepad2current.back && !gamepad2previous.back;
@@ -259,10 +253,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.back && !gamepad2previous.back;
     }
     public boolean depositBack(){
-        if (gameStrategyMode == scoringType.SAMPLE){
-            return gamepad2current.y && !gamepad2previous.y;
-        }
-        return false;
+        return gamepad2current.a && !gamepad2previous.a;
     }
     public boolean intakeDown(){
         return gamepad2current.start;

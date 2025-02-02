@@ -93,7 +93,7 @@ public class StateModelsFawkes {
                     drivePresetState = DriveStates.START;
                 }
                 break;
-            case RETRACTING_SLIDE:
+            /*case RETRACTING_SLIDE:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
                     arm.moveElbowToAngle(elbowAngle);
                     drivePresetState = DriveStates.MOVING_ELBOW;
@@ -122,7 +122,7 @@ public class StateModelsFawkes {
                     arm.holdArm();
                     drivePresetState = DriveStates.START;
                 }
-                break;
+                break;*/
         }
     }
     public static void presetPositionIntakeStateModel(double pitch, double roll, double downPitch, double downRoll, double elbowAngle, double slideLength){
@@ -382,11 +382,7 @@ public class StateModelsFawkes {
                 if (driverControls.depositBack() && depositCycle == DepositCycles.LEAVE_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
-                    if (blockPickupType == BlockPickupType.OUTSIDE){
-                        claw.openClaw();
-                    } else {
-                        claw.closeClaw();
-                    }
+                    claw.closeClaw();
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
