@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - CLIP 4!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
+@Autonomous(name = "AUTO - CLIP 5!!!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
 public class ascentClipCyclePark extends LinearOpMode {
 
     //initialize auto extractor
@@ -134,12 +134,12 @@ public class ascentClipCyclePark extends LinearOpMode {
         elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2500);
 
 
-        while (!gamepad1.a) {
+        while (!gamepad1.a && !isStopRequested()) {
 
         }
 
         //HOMING
-        pitch.setPosition(0);
+        pitch.setPosition(1);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
