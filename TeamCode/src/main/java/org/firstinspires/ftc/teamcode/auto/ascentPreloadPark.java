@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - BUCKET 4!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
+@Autonomous(name = "AUTO - BUCKET 4!!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
 public class ascentPreloadPark extends LinearOpMode {
 
     //initialize auto extractor
@@ -129,13 +129,20 @@ public class ascentPreloadPark extends LinearOpMode {
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         slide = new Slide(leftSlide,rightSlide, homingSwitch);
 
+        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
+        PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
+
 
         controllerPivotPIDF = new PIDController(0.014, 0, 0.0004);
         elbow = new Elbow(elbowMotor, limitSwitch, new PIDControl(new PIDController(0.019, 0.006, 0.00022), 0,24.22), 2500);
 
 
         while (!gamepad1.a && !isStopRequested()) {
-
+            drive.updatePoseEstimate();
+            telemetry.addData("pose x", drive.pose.position.x);
+            telemetry.addData("pose y", drive.pose.position.y);
+            telemetry.addData("pose head", Math.toDegrees(drive.pose.heading.toDouble()));
+            telemetry.update();
         }
 
         //HOMING
@@ -187,9 +194,9 @@ public class ascentPreloadPark extends LinearOpMode {
 
         }
 
+        drive.pinpoint.setPosition(beginPose);
 
-        Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
-        PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
+
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
         boolean XareSame = false;
