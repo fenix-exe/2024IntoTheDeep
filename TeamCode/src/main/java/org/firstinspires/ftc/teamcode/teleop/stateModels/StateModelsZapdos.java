@@ -692,7 +692,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void depositSampleIntoObservationZone(double retractionLength, double extensionLength){
+    public static void depositSampleIntoObservationZone(double retractionLength, double pitchDown, double extensionLength){
         switch (depositSampleIntoObservationZone){
             case START:
                 if (driverControls.specimenSampleIntake() && specimenSampleIntake == IntakingSamplesForSpecimen.GO_TO_DROP_AND_BRING_IN){
@@ -723,6 +723,8 @@ public class StateModelsZapdos {
                 break;
             case RETRACT_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    timer.reset();
+                    wrist.presetPositionPitch(pitchDown);
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.WAIT_FOR_USER_INPUT;
                 }
                 if (driverControls.escapePresets()){

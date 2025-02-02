@@ -199,7 +199,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-105,0,0, 23.48, 9.4, 33, -105);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-105,23.48,0);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
-            StateModelsZapdos.depositSampleIntoObservationZone(3,16);
+            StateModelsZapdos.depositSampleIntoObservationZone(3,-105,20);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
             arm.setRightSlidePowerToLeftSlidePower();
             //telemetry
@@ -294,10 +294,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
         leftSlide.setTargetPositionTolerance(25);
         rightSlide.setTargetPositionTolerance(25);
+        pivot.setTargetPositionTolerance(10);
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 22;
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
