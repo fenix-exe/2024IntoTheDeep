@@ -872,37 +872,36 @@ public class StateModelsZapdos {
                 break;
             case CLOSE_CLAW:
                 if (timer.milliseconds() > 200){
+                    arm.moveElbowToAngle(elbowUpAngle);
+                    pickupSpecimenState = SpecimenPickupStates.ELBOW_SLIGHTLY_UP;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    pickupSpecimenState = SpecimenPickupStates.START;
+                }
+                if (driverControls.enterIntakePosition()){
+                    arm.holdArm();
+                    claw.openClaw();
+                }
+                break;
+            case ELBOW_SLIGHTLY_UP:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
                     pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT_AGAIN;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
-                if (driverControls.enterIntakePosition()){
-                    arm.holdArm();
-                    claw.openClaw();
-                }
                 break;
             case WAITING_FOR_USER_INPUT_AGAIN:
                 if (driverControls.pickupAndDepositSpecimens()){
-                    arm.moveElbowToAngle(elbowUpAngle);
+                    arm.moveSlideToLength(endSlideLength);
                     pickupSpecimenState = SpecimenPickupStates.ELBOW_SLIGHTLY_UP;
                 }
                 if (driverControls.enterIntakePosition()){
                     arm.holdArm();
                     claw.openClaw();
                     pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    pickupSpecimenState = SpecimenPickupStates.START;
-                }
-                break;
-            case ELBOW_SLIGHTLY_UP:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
-                    arm.moveSlideToLength(endSlideLength);
-                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_DEPOSIT;
-                    pickupSpecimenState = SpecimenPickupStates.MOVING_SLIDES;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
@@ -922,6 +921,7 @@ public class StateModelsZapdos {
                 break;
             case MOVING_WRIST_TO_DEPOSIT:
                 if (timer.milliseconds() > 250){
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_DEPOSIT;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 if (driverControls.escapePresets()){

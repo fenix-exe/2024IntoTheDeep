@@ -202,8 +202,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,86,28, 6);
             StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,80,0,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-105,0,0, 31, 9.4, 18, -105);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-105,28,0);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,0, 38, 4.45, 18, -90);
+            StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-90,28,0);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.depositSampleIntoObservationZone(3,0,16,-105,-3);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
