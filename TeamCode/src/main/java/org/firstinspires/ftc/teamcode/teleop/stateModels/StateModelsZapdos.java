@@ -901,6 +901,7 @@ public class StateModelsZapdos {
                 if (driverControls.enterIntakePosition()){
                     arm.holdArm();
                     claw.openClaw();
+                    arm.moveElbowToAngle(elbowAngle);
                     pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
                 }
                 if (driverControls.escapePresets()){

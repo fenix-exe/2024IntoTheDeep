@@ -17,7 +17,7 @@
             <Servo name="roll" port="5"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
-            <RevColorSensorV3 name="color sensor" port="0" bus="1" />
+            <RevColorSensorV3 name="color sensor" port="1" bus="0" />
             <RevTouchSensor name="limit switch" port="1"  />
             <RevTouchSensor name="homing switch" port="3" />
             <RevTouchSensor name="linear actuator switch" port="5" />
