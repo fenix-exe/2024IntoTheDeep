@@ -99,7 +99,7 @@ public class TeleOpPose extends LinearOpMode {
         initializeEndEffector();
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls);
+        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, null);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
@@ -226,7 +226,7 @@ public class TeleOpPose extends LinearOpMode {
             StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,83,58,8);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 7,90, 90);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(15,130,16.5,16);
             StateModelsZapdos.dropBlockAndMoveWristDown(-90,6);
             StateModelsZapdos.hang(0,0,6,60,28,90,45, 0,15);

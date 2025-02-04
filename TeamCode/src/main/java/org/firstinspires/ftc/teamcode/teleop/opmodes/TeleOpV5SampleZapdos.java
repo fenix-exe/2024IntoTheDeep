@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
@@ -58,6 +59,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     EndEffectorV2 endEffector;
     Wrist wrist;
     Claw claw;
+    ColorSensor color;
     LinearActuator linearActuator;
     Localization localization;
     IIMU imu;
@@ -79,7 +81,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeEndEffector();
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls);
+        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
@@ -199,17 +201,17 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,86,28, 6);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,87,28, 6);
             StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,80,0,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,0, 38, 4.45, 18, -90);
+            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,4.75, 31, 3,7, 23, -90);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-90,28,0);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.depositSampleIntoObservationZone(3,0,16,-105,-3);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
 
             //telemetry
-            multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
@@ -224,7 +226,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
             multiTelemetry.addData("Roll Servo Pos", roll.getPosition());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
-            /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
+            multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
             multiTelemetry.addData("Y Cycle", StateModelsZapdos.depositCycle);
@@ -327,6 +329,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         clawServo = hardwareMap.get(Servo.class, "claw");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color sensor");
         claw = new Claw(clawServo);
+        color = new ColorSensor(colorSensor);
 
     }
     private void initializeDifferential(){

@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
@@ -32,6 +34,7 @@ public class StateModelsZapdos {
     static Arm arm;
     static Wrist wrist;
     static Claw claw;
+    static ColorSensor color;
     static LinearActuator linearActuator;
     static DriverControls driverControls;
     static ElapsedTime timer;
@@ -42,12 +45,13 @@ public class StateModelsZapdos {
     public static boolean intakePosition;
     public static boolean endSpecimenDeposit;
 
-    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls){
+    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls, ColorSensor color){
         StateModelsZapdos.arm = arm;
         StateModelsZapdos.wrist = wrist;
         StateModelsZapdos.driverControls = driverControls;
         StateModelsZapdos.claw = claw;
         StateModelsZapdos.linearActuator = linearActuator;
+        StateModelsZapdos.color = color;
 
         drivePresetState = DriveStates.START;
         intakePresetState = IntakeStates.START;
@@ -776,7 +780,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void presetPositionPickupSpecimensStateModel(double pitch, double roll, double elbowAngle, double slideLength, double elbowUpAngle, double endSlideLength, double pitchEnd, double rollEnd){
+    public static void presetPositionPickupSpecimensStateModel(double pitch, double roll, double elbowAngle, double slideLength, double elbowUpAngle, double pickupSlideLength, double endSlideLength, double pitchEnd, double rollEnd){
         switch (pickupSpecimenState){
             case START:
                 if (driverControls.pickupAndDepositSpecimens() && specimenCycle == SpecimenCycles.GO_TO_SPECIMEN_INTAKE){
@@ -860,7 +864,11 @@ public class StateModelsZapdos {
                 }
                 break;
             case WAITING_FOR_USER_INPUT:
-                if (driverControls.pickupAndDepositSpecimens()){
+                double distance = color.getDistance(DistanceUnit.MM);
+                if (driverControls.pickupAndDepositSpecimens() || (distance < 20)){
+                    if (color.getDistance(DistanceUnit.MM) < 25){
+                        arm.moveSlideToLength(pickupSlideLength);
+                    }
                     timer.reset();
                     claw.closeClaw();
                     pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;
@@ -896,13 +904,13 @@ public class StateModelsZapdos {
             case WAITING_FOR_USER_INPUT_AGAIN:
                 if (driverControls.pickupAndDepositSpecimens()){
                     arm.moveSlideToLength(endSlideLength);
-                    pickupSpecimenState = SpecimenPickupStates.ELBOW_SLIGHTLY_UP;
+                    pickupSpecimenState = SpecimenPickupStates.MOVING_SLIDES;
                 }
                 if (driverControls.enterIntakePosition()){
                     arm.holdArm();
                     claw.openClaw();
                     arm.moveElbowToAngle(elbowAngle);
-                    pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
+                    pickupSpecimenState = SpecimenPickupStates.MOVING_ELBOW;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();

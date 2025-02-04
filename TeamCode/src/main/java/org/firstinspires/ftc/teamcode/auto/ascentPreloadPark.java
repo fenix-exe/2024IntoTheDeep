@@ -45,7 +45,7 @@ public class ascentPreloadPark extends LinearOpMode {
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
     int ELBOW_START = 7;
     int SLIDE_START = 0;
-    double PITCH_START = 0.8;
+    double PITCH_START = 1;
     double ROLL_START = 0.15;
     double CLAW_START = 0.8;
 
@@ -342,5 +342,6 @@ public class ascentPreloadPark extends LinearOpMode {
         Actions.runBlocking(action1);
 
         writer.timer(timer.time());
+        pitch.setPwmDisable();
     }
 }
