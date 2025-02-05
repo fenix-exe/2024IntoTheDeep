@@ -19,7 +19,7 @@
             <Servo name="roll" port="5"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
-            <RevColorSensorV3 name="color sensor" port="0" bus="3" />
+            <RevColorSensorV3 name="color sensor" port="1" bus="0" />
             <RevTouchSensor name="homing switch" port="1" />
         </LynxModule>
     </LynxUsbDevice>
