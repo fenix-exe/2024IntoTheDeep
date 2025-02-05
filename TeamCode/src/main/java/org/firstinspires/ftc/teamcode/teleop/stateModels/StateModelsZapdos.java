@@ -866,7 +866,7 @@ public class StateModelsZapdos {
             case WAITING_FOR_USER_INPUT:
                 double distance = color.getDistance(DistanceUnit.MM);
                 if (driverControls.pickupAndDepositSpecimens() || (distance < 20)){
-                    if (color.getDistance(DistanceUnit.MM) < 25){
+                    if (color.getDistance(DistanceUnit.MM) < 20){
                         arm.moveSlideToLength(pickupSlideLength);
                     }
                     timer.reset();
