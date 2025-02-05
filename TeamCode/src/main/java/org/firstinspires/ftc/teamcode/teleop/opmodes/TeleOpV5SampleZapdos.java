@@ -209,7 +209,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.depositSampleIntoObservationZone(3,0,16,-105,-3);
             StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
-
+ 
             //telemetry
            /* multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
