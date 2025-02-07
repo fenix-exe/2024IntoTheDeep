@@ -201,7 +201,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(-15,28,0,2.2, 80, 7,7, 90, 25);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(-15,28,0,14);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 6);
-            StateModelsZapdos.hang(0,0,6,83,26,96,45,0,15);
+            StateModelsZapdos.hang(0,0,9.5,6,83,26,96,45,0,15);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());

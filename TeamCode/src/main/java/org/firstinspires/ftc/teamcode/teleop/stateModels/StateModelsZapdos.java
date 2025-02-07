@@ -1011,14 +1011,14 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void hang(double pitch, double roll, double linearActuatorRetraction, double initialElbowAngle, double slideExtension, double hangElbowAngle, double elbowSlideCrossover, double slideRetration, double endElbowAngle){
+    public static void hang(double pitch, double roll, double linearActuatorExtension, double linearActuatorRetraction, double initialElbowAngle, double slideExtension, double hangElbowAngle, double elbowSlideCrossover, double slideRetration, double endElbowAngle){
         switch(hangState){
             case START:
                 if (driverControls.hang()){
                     timer = new ElapsedTime();
                     timer.reset();
                     wrist.presetPosition(pitch, roll);
-                    linearActuator.goToTargetPositionInches(linearActuatorRetraction);
+                    linearActuator.goToTargetPositionInches(linearActuatorExtension);
                     drivePresetState = DriveStates.START;
                     intakePresetState = IntakeStates.START;
                     submersibleLeaveStates = LeaveSubmersibleStates.START;
@@ -1031,12 +1031,23 @@ public class StateModelsZapdos {
                     enterIntakePositionStates = EnterIntakePositionStates.START;
                     depositSpecimenState = SpecimenDepositStates.START;
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
-                    hangState = HangStates.LINEAR_ACTUATOR_DOWN;
+                    hangState = HangStates.LINEAR_ACTUATOR_UP;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     intakePosition = false;
                     endSpecimenDeposit = false;
+                }
+                break;
+            case LINEAR_ACTUATOR_UP:
+                if ((Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuatorExtension) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)
+                        && driverControls.hang()){
+                    linearActuator.goToTargetPositionInches(linearActuatorRetraction);
+                    hangState = HangStates.LINEAR_ACTUATOR_DOWN;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    hangState = HangStates.START;
                 }
                 break;
             case LINEAR_ACTUATOR_DOWN:

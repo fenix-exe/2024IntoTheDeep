@@ -133,11 +133,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //manual control for arm
             if (Math.abs(driverControls.slideMovement()) > 0){
-                if (driverControls.slideMovement() > 0){
-                    arm.moveSlide(1, driverControls.removeArmRules());
-                } else {
-                    arm.moveSlide(-1, driverControls.removeArmRules());
-                }
+                arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
                 multiTelemetry.addLine("MANUAL CONTROL MOVE");
                 multiTelemetry.addData("Slide Movement", driverControls.slideMovement());
             } else if (driverControls.slideStopped()){
@@ -185,14 +181,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
 
             //checking if linear actuator should automatically go up
-            if ((driverControls.linearActuatorUp()) && !liftedLinearActuator){
+            if (driverControls.linearActuatorUp()){
                 linearActuator.goToTargetPositionInches(9.5);
-                liftedLinearActuator = true;
             }
             if (driverControls.linearActuatorDown()){
-                linearActuator.goToTargetPositionInches(5.75);
-                liftedLinearActuator = false;
-            }
+                linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+            } /*else {
+                linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches());
+            }*/
             //matchTimer.seconds() > 100 ||
 
             //state models for preset positions
@@ -201,18 +197,18 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,87,28, 6);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,92,28, 6);
             StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,80,0,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,4.75, 31, 3,9, 30, -90);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-90,28,0);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.depositSampleIntoObservationZone(3,0,16,-105,-3);
-            StateModelsZapdos.hang(5,0,5.75,83,26,95,45,3,15);
+            StateModelsZapdos.hang(5,0,9.5,5.75,83,26,103,45,3,15);
  
             //telemetry
-           /* multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
-            multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
+            multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            /*multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
             multiTelemetry.addData("Slide Encoder Left", leftSlide.getCurrentPosition());
@@ -308,7 +304,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 16;
+        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 14;
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

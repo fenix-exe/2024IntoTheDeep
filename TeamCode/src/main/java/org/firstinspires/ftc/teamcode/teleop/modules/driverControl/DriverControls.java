@@ -153,7 +153,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.dpad_right && !gamepad1previous.dpad_right;
     }
     public boolean linearActuatorDown(){
-        return gamepad1current.dpad_left && !gamepad1previous.dpad_left;
+        return gamepad1current.dpad_left;
     }
     @Override
     public double degreeOfFreedomX() {
