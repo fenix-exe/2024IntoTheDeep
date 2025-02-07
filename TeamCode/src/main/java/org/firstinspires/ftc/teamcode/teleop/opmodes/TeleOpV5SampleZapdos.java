@@ -182,10 +182,22 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //checking if linear actuator should automatically go up
             if (driverControls.linearActuatorUp()){
-                linearActuator.goToTargetPositionInches(9.5);
+                if (driverControls.microDriveAdjustments()){
+                    telemetry.addLine("LINEAR ACTUATOR UP");
+                    double pos = linearActuator.getLinearActuatorPositionInches() + 0.25;
+                    linearActuator.goToTargetPositionInches(pos);
+                    telemetry.addData("pos", pos);
+                } else {
+                    linearActuator.goToTargetPositionInches(9.5);
+                }
             }
             if (driverControls.linearActuatorDown()){
-                linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                if (driverControls.microDriveAdjustments()){
+                    linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                } else {
+                    linearActuator.goToTargetPositionInches(5.75);
+                }
+
             } /*else {
                 linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches());
             }*/
@@ -208,6 +220,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
  
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
             /*multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
