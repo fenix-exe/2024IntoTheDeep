@@ -110,7 +110,7 @@ public class HomeTeleOpDown extends LinearOpMode {
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        pivot.setTargetPosition(-267);
+        pivot.setTargetPosition(-287);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivot.setPower(1);
 

@@ -54,7 +54,11 @@ public class DriveTrain {
 
         drive = gamepad1.left_stick_y * -1;
         strafe = gamepad1.left_stick_x * 1.1;
-        yaw = gamepad1.right_stick_x;
+        if (gamepad1.right_stick_x < -0.5  || gamepad1.right_stick_x > 0.5){
+            yaw = gamepad1.right_stick_x;
+        } else {
+            yaw = 0;
+        }
         double denominator = Math.max(1, Math.abs(drive+strafe+yaw));
         FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplier);
         BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplier);
@@ -75,7 +79,11 @@ public class DriveTrain {
         botHeading = imu_IMU.getYaw();
         y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
-        rx = gamepad1.right_stick_x * 1;
+        if (gamepad1.right_stick_x < -0.5 || gamepad1.right_stick_x > 0.5){
+            rx = gamepad1.right_stick_x * 1;
+        } else {
+            rx = 0;
+        }
         telemetry.addData("BotH", botHeading);
 
         rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));

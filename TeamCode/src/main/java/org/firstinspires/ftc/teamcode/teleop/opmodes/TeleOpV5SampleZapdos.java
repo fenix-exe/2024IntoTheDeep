@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -27,6 +28,7 @@ import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
@@ -70,7 +72,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     ElapsedTime debounceTimer;
     FrequencyCounter freqCounter;
     double speedMultiplier;
-    boolean liftedLinearActuator = false;
+    boolean linearActuatorSensorLastLoop = false;
     boolean touchSensorPressedLastLoop = false;
 
     @Override
@@ -193,18 +195,23 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
             if (driverControls.linearActuatorDown()){
                 if (driverControls.microDriveAdjustments()){
-                    linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                    if (!linearActuator.getLimitSwitchState()){
+                        linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                    }
                 } else {
                     linearActuator.goToTargetPositionInches(5.75);
                 }
 
-            } /*else {
+            }
+            if (linearActuator.getLimitSwitchState() && linearActuatorSensorLastLoop && !(linearActuatorMotor.getTargetPosition() > linearActuator.inchesToTicks(0.3))){
+                linearActuator.goToTargetPositionInches(0.25);
+            }/*else {
                 linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches());
             }*/
             //matchTimer.seconds() > 100 ||
 
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(0,58,8);
+            StateModelsZapdos.presetPositionDriveStateModel(0,92,8);
             StateModelsZapdos.presetPositionIntakeStateModel(-90,-3,-90,-3,0,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
@@ -262,6 +269,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             logButtonPressed();
 
             touchSensorPressedLastLoop = arm.isSlideTouchSensorPressed();
+            linearActuatorSensorLastLoop = linearActuator.getLimitSwitchState();
         }
     }
 
@@ -291,8 +299,16 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         revIMU.initialize(parameters);
         //imu.resetYaw();
-        imu = new IMUforREV(revIMU);
-        GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class, "pinpoint");
+        GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        /*pinpoint.resetPosAndIMU();
+        // wait for pinpoint to finish calibrating
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        pinpoint.setPosition(new Pose2d(0,0,0));*/
+        imu = new IMUforPinpoint(pinpoint);
 
         localization = new Localization(pinpoint, revIMU);
 
