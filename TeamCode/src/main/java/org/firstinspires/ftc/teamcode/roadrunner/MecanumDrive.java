@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.roadrunner;
 
 import androidx.annotation.NonNull;
+import page.j5155.expressway.ftc.motion.PIDFController;
+import page.j5155.expressway.ftc.motion.PIDToPoint;
+import page.j5155.expressway.ftc.motion.SquidController;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -50,6 +53,10 @@ import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import static java.lang.Math.PI;
 
 @Config
 public class MecanumDrive {
@@ -76,9 +83,9 @@ public class MecanumDrive {
         public double kA = 0.04;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 75;
-        public double minProfileAccel = -75;
-        public double maxProfileAccel = 75;
+        public double maxWheelVel = 10;
+        public double minProfileAccel = -10;
+        public double maxProfileAccel = 10;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
@@ -498,4 +505,96 @@ public class MecanumDrive {
                 defaultVelConstraint, defaultAccelConstraint
         );
     }
+    public Pose2d getPoseEstimate() {
+        updatePoseEstimate();
+        return pose;
+    }
+    private Vector2d getPosition(Pose2d pose) {
+        return pose.position;
+    }
+
+    private double distanceTo(Vector2d v1, Vector2d v2) {
+        return Math.sqrt(Math.pow(v1.x - v2.x, 2) + Math.pow(v1.y - v2.y, 2));
+    }
+
+    private Vector2d getLinearVel(PoseVelocity2d vel) {
+        return vel.linearVel;
+    }
+
+    private double getHeading(Pose2d pose) {
+        return pose.heading.toDouble();
+    }
+
+    public class PIDDrive implements Action {
+
+        private final Supplier<Pose2d> pose;
+        private final Supplier<PoseVelocity2d> vel;
+        private final Pose2d target;
+        private final Consumer<PoseVelocity2d> powerUpdater;
+        private final SquidController xController;
+        private final SquidController yController;
+        private final SquidController headingController;
+
+        public PIDDrive(
+                Supplier<Pose2d> pose,
+                Supplier<PoseVelocity2d> vel,
+                Pose2d target,
+                Consumer<PoseVelocity2d> powerUpdater,
+                PIDFController.PIDCoefficients axialCoefs,
+                PIDFController.PIDCoefficients lateralCoefs,
+                PIDFController.PIDCoefficients headingCoefs
+        ) {
+            this.pose = pose;
+            this.vel = vel;
+            this.target = target;
+            this.powerUpdater = powerUpdater;
+
+            this.xController = new SquidController(axialCoefs);
+            this.yController = new SquidController(lateralCoefs);
+            this.headingController = new SquidController(headingCoefs);
+
+            this.xController.setTargetPosition((int) target.position.x);
+            this.yController.setTargetPosition((int) target.position.y);
+
+            this.headingController.setTargetPosition((int) target.heading.toDouble());
+            this.headingController.setOutputBounds(-PI, PI);
+        }
+
+        @Override
+        public boolean run(TelemetryPacket p) {
+            PoseVelocity2d vel = this.vel.get();
+            Pose2d pose = this.pose.get();
+
+            if (distanceTo(getPosition(pose), getPosition(target)) < 5) {
+                powerUpdater.accept(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
+                return false;
+            }
+
+            Vector2d inputVector = new Vector2d(
+                    xController.update(getPosition(pose).x),
+                    yController.update(getPosition(pose).y)
+            );
+            inputVector = inputVector.times(Math.cos(getHeading(pose)));
+
+            PoseVelocity2d inputVels = new PoseVelocity2d(
+                    inputVector,
+                    headingController.update(getHeading(pose))
+            );
+
+            powerUpdater.accept(inputVels);
+            return true;
+        }
+    }
+
+
+    public PIDDrive pidToPointAction(Pose2d target) {
+        return new PIDDrive(
+                (this::getPoseEstimate), (this::updatePoseEstimate), target, // the target pose
+                (this::setDrivePowers), // setDrivePowers uses inverse kinematics to set the powers of the drivetrain motors
+                new PIDFController.PIDCoefficients(PARAMS.axialGain, 0, PARAMS.axialVelGain), // the axial PID coefficients
+                new PIDFController.PIDCoefficients(PARAMS.lateralGain, 0, PARAMS.lateralVelGain), // the lateral PID coefficients
+                new PIDFController.PIDCoefficients(PARAMS.headingGain, 0, PARAMS.headingVelGain) // the heading PID coefficients
+        );
+    }
+
 }
