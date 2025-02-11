@@ -201,17 +201,6 @@ public class StateModelsZapdos {
                 break;
             case MOVING_SLIDE:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
-                    timer.reset();
-                    wrist.presetPosition(downPitch, downRoll);
-                    intakePresetState = IntakeStates.MOVING_WRIST_DOWN;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    intakePresetState = IntakeStates.START;
-                }
-                break;
-            case MOVING_WRIST_DOWN:
-                if (timer.milliseconds() > 250){
                     intakePosition = true;
                     depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_DROP_AND_BRING_IN;

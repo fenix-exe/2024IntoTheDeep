@@ -155,11 +155,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 multiTelemetry.addLine("Wrist Up");
             }
             if (driverControls.diffLeft()){
-                wrist.manualControlRoll(-30);
+                wrist.manualControlRoll(-45);
                 multiTelemetry.addLine("Wrist Left");
             }
             if (driverControls.diffRight()){
-                wrist.manualControlRoll(30);
+                wrist.manualControlRoll(45);
                 multiTelemetry.addLine("Wrist Right");
             }
 
@@ -205,11 +205,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //state models for preset positions
             StateModelsZapdos.presetPositionDriveStateModel(0,58,8);
-            StateModelsZapdos.presetPositionIntakeStateModel(-40,-60,-105,-3,0,12);
+            StateModelsZapdos.presetPositionIntakeStateModel(-90,-3,-90,-3,0,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,92,28, 6);
+            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,92,26, 6);
             StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,80,0,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,4.75, 31, 3,9, 30, -90);
@@ -219,9 +219,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.hang(5,0,9.5,5.75,83,26,103,45,3,15);
  
             //telemetry
-            multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
-            /*multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
+            multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
             multiTelemetry.addData("Slide Length", arm.getSlideExtension());
             multiTelemetry.addData("Slide Encoder Left", leftSlide.getCurrentPosition());
