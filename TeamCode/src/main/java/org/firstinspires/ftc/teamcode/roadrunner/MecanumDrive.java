@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.roadrunner;
 import androidx.annotation.NonNull;
 import page.j5155.expressway.ftc.motion.PIDFController;
 import page.j5155.expressway.ftc.motion.PIDToPoint;
-import page.j5155.expressway.ftc.motion.SquidController;
+import page.j5155.expressway.ftc.motion.PIDFController;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -42,6 +42,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
@@ -57,6 +58,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 
 @Config
 public class MecanumDrive {
@@ -103,6 +105,19 @@ public class MecanumDrive {
         public double time_increase = 0;
         public double accuracy = 1;
         public double velocity = 0.5;
+
+        public double xMax = 1;
+        public double xP = 0.03;
+        public double xI = 0;
+        public double xD = 0;
+        public double yMax = 1;
+        public double yP = 0.4;
+        public double yI = 0;
+        public double yD = 0;
+        public double hP = 0;
+        public double hI = 0;
+        public double hD = 0;
+
     }
 
     public static Params PARAMS = new Params();
@@ -256,6 +271,26 @@ public class MecanumDrive {
         localizer = new DriveLocalizer();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    public Pose2d getPoseEstimate() {
+        updatePoseEstimate();
+        return pose;
+    }
+    private Vector2d getPosition(Pose2d pose) {
+        return pose.position;
+    }
+
+    private double distanceTo(Vector2d v1, Vector2d v2) {
+        return Math.sqrt(Math.pow(v1.x - v2.x, 2) + Math.pow(v1.y - v2.y, 2));
+    }
+
+    private Vector2d getLinearVel(PoseVelocity2d vel) {
+        return vel.linearVel;
+    }
+
+    private double getHeading(Pose2d pose) {
+        return pose.heading.toDouble();
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
@@ -505,25 +540,10 @@ public class MecanumDrive {
                 defaultVelConstraint, defaultAccelConstraint
         );
     }
-    public Pose2d getPoseEstimate() {
-        updatePoseEstimate();
-        return pose;
-    }
-    private Vector2d getPosition(Pose2d pose) {
-        return pose.position;
-    }
 
-    private double distanceTo(Vector2d v1, Vector2d v2) {
-        return Math.sqrt(Math.pow(v1.x - v2.x, 2) + Math.pow(v1.y - v2.y, 2));
-    }
 
-    private Vector2d getLinearVel(PoseVelocity2d vel) {
-        return vel.linearVel;
-    }
 
-    private double getHeading(Pose2d pose) {
-        return pose.heading.toDouble();
-    }
+
 
     public class PIDDrive implements Action {
 
@@ -531,9 +551,10 @@ public class MecanumDrive {
         private final Supplier<PoseVelocity2d> vel;
         private final Pose2d target;
         private final Consumer<PoseVelocity2d> powerUpdater;
-        private final SquidController xController;
-        private final SquidController yController;
-        private final SquidController headingController;
+        private final PIDFController xController;
+        private final PIDFController yController;
+        private final PIDFController headingController;
+        private final Telemetry telemetry;
 
         public PIDDrive(
                 Supplier<Pose2d> pose,
@@ -542,22 +563,26 @@ public class MecanumDrive {
                 Consumer<PoseVelocity2d> powerUpdater,
                 PIDFController.PIDCoefficients axialCoefs,
                 PIDFController.PIDCoefficients lateralCoefs,
-                PIDFController.PIDCoefficients headingCoefs
+                PIDFController.PIDCoefficients headingCoefs,
+                Telemetry telemetry
         ) {
             this.pose = pose;
             this.vel = vel;
             this.target = target;
             this.powerUpdater = powerUpdater;
 
-            this.xController = new SquidController(axialCoefs);
-            this.yController = new SquidController(lateralCoefs);
-            this.headingController = new SquidController(headingCoefs);
+            this.xController = new PIDFController(axialCoefs);
+            this.yController = new PIDFController(lateralCoefs);
+            this.headingController = new PIDFController(headingCoefs);
 
             this.xController.setTargetPosition((int) target.position.x);
+            this.xController.setOutputBounds(-MecanumDrive.PARAMS.xMax,MecanumDrive.PARAMS.xMax );
             this.yController.setTargetPosition((int) target.position.y);
+            this.yController.setOutputBounds(-MecanumDrive.PARAMS.xMax, MecanumDrive.PARAMS.xMax );
 
             this.headingController.setTargetPosition((int) target.heading.toDouble());
             this.headingController.setOutputBounds(-PI, PI);
+            this.telemetry = telemetry;
         }
 
         @Override
@@ -565,7 +590,7 @@ public class MecanumDrive {
             PoseVelocity2d vel = this.vel.get();
             Pose2d pose = this.pose.get();
 
-            if (distanceTo(getPosition(pose), getPosition(target)) < 5) {
+            if (distanceTo(getPosition(pose), getPosition(target)) < 1 && abs(getHeading(pose)-getHeading(target)) < Math.toRadians(10)) {
                 powerUpdater.accept(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
                 return false;
             }
@@ -574,6 +599,8 @@ public class MecanumDrive {
                     xController.update(getPosition(pose).x),
                     yController.update(getPosition(pose).y)
             );
+
+
             inputVector = inputVector.times(Math.cos(getHeading(pose)));
 
             PoseVelocity2d inputVels = new PoseVelocity2d(
@@ -581,19 +608,22 @@ public class MecanumDrive {
                     headingController.update(getHeading(pose))
             );
 
+
+
             powerUpdater.accept(inputVels);
             return true;
         }
     }
 
 
-    public PIDDrive pidToPointAction(Pose2d target) {
+    public PIDDrive pidToPointAction(Pose2d target, Telemetry telemetry) {
         return new PIDDrive(
                 (this::getPoseEstimate), (this::updatePoseEstimate), target, // the target pose
                 (this::setDrivePowers), // setDrivePowers uses inverse kinematics to set the powers of the drivetrain motors
-                new PIDFController.PIDCoefficients(PARAMS.axialGain, 0, PARAMS.axialVelGain), // the axial PID coefficients
-                new PIDFController.PIDCoefficients(PARAMS.lateralGain, 0, PARAMS.lateralVelGain), // the lateral PID coefficients
-                new PIDFController.PIDCoefficients(PARAMS.headingGain, 0, PARAMS.headingVelGain) // the heading PID coefficients
+                new PIDFController.PIDCoefficients(PARAMS.xP, PARAMS.xI, PARAMS.xD), // the axial PID coefficients
+                new PIDFController.PIDCoefficients(PARAMS.yP, PARAMS.yI, PARAMS.yD), // the lateral PID coefficients
+                new PIDFController.PIDCoefficients(PARAMS.hP, PARAMS.hI, PARAMS.hD),
+                telemetry// the heading PID coefficients
         );
     }
 
