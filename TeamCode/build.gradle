@@ -32,6 +32,7 @@ dependencies {
     implementation "page.j5155.roadrunner.expressway:core:0.3.7"
     implementation "page.j5155.roadrunner.expressway:ftc:0.3.7"
     implementation "page.j5155.roadrunner:ftc-otos:0.1.2+0.1.14"
+
 }
 repositories {
     maven {
@@ -39,5 +40,8 @@ repositories {
     }
     maven {
         url = 'https://repo.dairy.foundation/releases'
+    }
+    maven {
+        url= 'https://maven.pedropathing.com/'
     }
 }

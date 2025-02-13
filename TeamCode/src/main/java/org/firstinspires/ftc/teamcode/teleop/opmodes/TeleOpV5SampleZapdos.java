@@ -3,8 +3,12 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.PathBuilder;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -18,8 +22,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -28,14 +30,15 @@ import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainWithPedroPathing;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.TestPath;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.localization.Localization;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
@@ -48,7 +51,9 @@ import java.util.HashMap;
 @TeleOp
 public class TeleOpV5SampleZapdos extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
-    DriveTrain driveTrain;
+    IDriveTrain driveTrain;
+    IIMU rev_IMU;
+    IDriveTrain.DriveType driveType;
     Arm arm;
     DriverControls driverControls;
     DcMotorEx leftSlide;
@@ -63,8 +68,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     Claw claw;
     ColorSensor color;
     LinearActuator linearActuator;
-    Localization localization;
-    IIMU imu;
     RevTouchSensor limitSwitch;
     RevTouchSensor homingSwitch;
     RevColorSensorV3 colorSensor;
@@ -74,11 +77,18 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     double speedMultiplier;
     boolean linearActuatorSensorLastLoop = false;
     boolean touchSensorPressedLastLoop = false;
+    boolean usingPedroPathing = true;
+    PathBuilder builder = new PathBuilder();
 
     @Override
     public void runOpMode() throws InterruptedException {
         initializeGamePads();
-        initializeDriveTrain();
+        initRevIMU();
+        if (usingPedroPathing){
+            initializePedroPathing();
+        } else {
+            initializeDriveTrain();
+        }
         initializeArmAndHome();
         initializeEndEffector();
         initializeLinearActuator();
@@ -89,6 +99,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         matchTimer = new ElapsedTime();
 
 
+
         waitForStart();
         wrist.presetPosition(0,0);
         matchTimer.reset();
@@ -96,14 +107,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         while (opModeIsActive()){
 
             driverControls.update();
-            imu.update();
 
             //driving code
             if (driverControls.driveTypeSwitch()){
-                if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
-                    DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
+                if (driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
+                    driveType = IDriveTrain.DriveType.FIELD_CENTRIC;
                 } else{
-                    DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
+                    driveType = IDriveTrain.DriveType.ROBOT_CENTRIC;
                 }
 
             }
@@ -123,14 +133,17 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
+            driveTrain.setMaxPower(speedMultiplier);
+            driveTrain.Move(driveType, driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.heading());
 
-            switch (DriveTrain.driveType) {
-                case ROBOT_CENTRIC:
-                    driveTrain.RobotCentric_Drive(speedMultiplier);
-                    break;
-                case FIELD_CENTRIC:
-                    driveTrain.FieldCentricDrive(speedMultiplier);
-                    break;
+            //drivetrain presets
+            //create path
+            if (driverControls.presetPosDriveTrain()){
+                Pose currentPose = driveTrain.getCurrentPose();
+                if (currentPose != null){
+                    TestPath path = new TestPath(currentPose);
+                    driveTrain.Follow(path.getPathChain());
+                }
             }
 
             //manual control for arm
@@ -259,7 +272,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Red", colorSensor.red());
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
-            multiTelemetry.update();
 
             //logging
             logDriveTrain();
@@ -267,6 +279,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             logEndEffector();
             logStateModels();
             logButtonPressed();
+
+            multiTelemetry.update();
+            driveTrain.Update();
+
+
 
             touchSensorPressedLastLoop = arm.isSlideTouchSensorPressed();
             linearActuatorSensorLastLoop = linearActuator.getLimitSwitchState();
@@ -293,27 +310,24 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //imu initializations
+
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, rev_IMU, telemetry);
+    }
+
+    public void initializePedroPathing(){
+        GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(pinpoint.getPosX(), pinpoint.getPosY(), pinpoint.getHeading()));
+    }
+    public void initRevIMU(){
         IMU revIMU = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         revIMU.initialize(parameters);
         //imu.resetYaw();
-        GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        /*pinpoint.resetPosAndIMU();
-        // wait for pinpoint to finish calibrating
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        pinpoint.setPosition(new Pose2d(0,0,0));*/
-        imu = new IMUforPinpoint(pinpoint);
-
-        localization = new Localization(pinpoint, revIMU);
-
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
+        rev_IMU = new IMUforREV(revIMU);
     }
+
     private void initializeArmAndHome(){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -379,7 +393,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     private void logDriveTrain(){
         HashMap driveTrainInfo = driveTrain.getDebugInfo();
-        HashMap localizationInfo = localization.getDebugInfo();
+
+        telemetry.addData("X", driveTrainInfo.get("X"));
+        telemetry.addData("Y", driveTrainInfo.get("Y"));
+        telemetry.addData("BotH", driveTrainInfo.get("IMU Yaw"));
+
+
         ArrayList values = new ArrayList();
         values.add(driveTrainInfo.get("FL Power"));
         values.add(driveTrainInfo.get("BL Power"));
@@ -389,9 +408,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         values.add(driveTrainInfo.get("BL Current"));
         values.add(driveTrainInfo.get("FR Current"));
         values.add(driveTrainInfo.get("BR Current"));
-        values.add(localizationInfo.get("x"));
-        values.add(localizationInfo.get("y"));
-        values.add(localizationInfo.get("h"));
         String debugString = String.join(",", values);
         LoggerUtil.debug("drivetrain", debugString);
     }
