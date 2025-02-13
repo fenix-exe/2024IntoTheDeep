@@ -23,7 +23,7 @@ public class IMUforPinpoint implements IIMU {
 
     @Override
     public void resetYaw() {
-        driver.recalibrateIMU();
+        driver.resetYaw();
         offset = 0;
     }
 }
