@@ -6,8 +6,9 @@ import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
-public class SubmersibleToBucketBlueAlliance extends BasePath{
+import java.util.ArrayList;
 
+public class SubmersibleToBucketBlueAlliance extends BasePath{
 
     public SubmersibleToBucketBlueAlliance(Pose currentPose) {
         super(currentPose);
@@ -15,16 +16,15 @@ public class SubmersibleToBucketBlueAlliance extends BasePath{
 
     @Override
     public PathChain getPathChain() {
+        ArrayList<Point> pointList = (ArrayList<Point>) controlPoints.clone();
+        pointList.add(0, new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN));
+        pointList.add(endPoint);
         PathChain paths = builder
                 .addPath(
                         // Line 1
-                        new BezierCurve(
-                                new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN), //starting point near submersible
-                                new Point(currentPose.getX(), 134.000, Point.CARTESIAN), //control point
-                                new Point(9.500, 134.000, Point.CARTESIAN) //end point
-                        )
+                        new BezierCurve(pointList)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-32)) //heading change
+                .setLinearHeadingInterpolation(Math.toRadians(interpolationParam1), Math.toRadians(interpolationParam2)) //heading change
                 .build();
         return paths;
     }
