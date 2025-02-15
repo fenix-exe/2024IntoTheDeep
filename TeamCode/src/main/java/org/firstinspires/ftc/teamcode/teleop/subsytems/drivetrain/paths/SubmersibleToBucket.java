@@ -9,7 +9,7 @@ public class AscentSideSubmersibleToBucketBlueAlliance extends BasePath{
     boolean lockPath = false;
 
     public AscentSideSubmersibleToBucketBlueAlliance(Pose currentPose) {
-        super(currentPose, new Pose(15,125,Math.toRadians(-35)));
+        super(currentPose);
     }
 
     @Override
