@@ -33,6 +33,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainWithPedroPathing;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.PathParser;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToBucket;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToHumanPlayer;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipPath;
@@ -93,6 +94,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeEndEffector();
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
+        PathParser.readPathChains();
         StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

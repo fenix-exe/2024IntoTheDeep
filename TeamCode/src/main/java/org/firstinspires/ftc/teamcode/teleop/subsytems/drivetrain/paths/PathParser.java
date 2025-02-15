@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class PathParser {
+    public static String PRESETFILE = "/sdcard/Download/teleop/PathConfiguration.csv";
     public static void readPathChains(String filename){
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -40,5 +41,8 @@ public class PathParser {
         } catch (Exception e) {
             LoggerUtil.logException("PresetReading",e);
         }
+    }
+    public static void readPathChains(){
+        readPathChains(PRESETFILE);
     }
 }
