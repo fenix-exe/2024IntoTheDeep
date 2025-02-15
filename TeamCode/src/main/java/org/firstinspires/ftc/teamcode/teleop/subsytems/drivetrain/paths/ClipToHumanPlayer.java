@@ -20,8 +20,8 @@ public class ClipToHumanPlayer extends BasePath{
                         new BezierCurve(
                                 new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
                                 new Point(currentPose.getX(), 24, Point.CARTESIAN),
-                                new Point(14, currentPose.getY(), Point.CARTESIAN),
-                                new Point(44,24,Point.CARTESIAN)
+                                new Point(21.5, currentPose.getY(), Point.CARTESIAN),
+                                new Point(21.5,24,Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(currentPose.getHeading(), Math.PI)//heading change

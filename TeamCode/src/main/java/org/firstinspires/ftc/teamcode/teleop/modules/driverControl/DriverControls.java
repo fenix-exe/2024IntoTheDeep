@@ -264,7 +264,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean switchStrategy(){
-        return gamepad2current.back && !gamepad2previous.back;
+        return gamepad1current.back && !gamepad1previous.back;
     }
     public scoringType getGameStrategyMode(){
         return gameStrategyMode;

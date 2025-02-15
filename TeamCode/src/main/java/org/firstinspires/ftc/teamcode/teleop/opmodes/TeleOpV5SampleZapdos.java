@@ -36,6 +36,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.AscentSideSubmersibleToBucketBlueAlliance;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.AscentSideSubmersibleToHumanPlayer;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipPath;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipToHumanPlayer;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
@@ -160,7 +161,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 if (!driveTrain.isFollowingPath()) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        ClipPath path = new ClipPath(currentPose);
+                        ClipToHumanPlayer path = new ClipToHumanPlayer(currentPose);
                         if(!path.closeToDestination()) {
                             driveTrain.Follow(path.getPathChain());
                         }
@@ -169,6 +170,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             } else {
                 driveTrain.stopFollowing();
                 driveTrain.Move(driveType, driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.heading());
+            }
+            if (driverControls.switchStrategy()){
+                if (driverControls.getGameStrategyMode() == DriverControls.scoringType.SPECIMEN){
+                    driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
+                } else {
+                    driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
+                }
             }
 
             //manual control for arm
