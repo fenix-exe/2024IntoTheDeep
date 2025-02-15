@@ -43,7 +43,7 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
     }
     @Override
     public void Move(DriveType driveType, double forwardDrive, double strafeDrive, double heading) {
-        if (!manualDrive && (forwardDrive != 0 && strafeDrive != 0 && heading != 0)){
+        if (!manualDrive && (forwardDrive != 0 || strafeDrive != 0 || heading != 0)){
             follower.startTeleopDrive();
             manualDrive = true;
         }
@@ -57,9 +57,8 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
 
     @Override
     public void Follow(PathChain path) {
-        follower.breakFollowing();
-        follower.followPath(path, true);
         manualDrive = false;
+        follower.followPath(path, true);
     }
 
     @Override
@@ -98,5 +97,21 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
     @Override
     public Pose getCurrentPose() {
         return follower.getPose();
+    }
+
+    @Override
+    public void stopFollowing() {
+        if (!manualDrive){
+            follower.startTeleopDrive();
+            manualDrive=true;
+        }
+    }
+
+    @Override
+    public boolean isFollowingPath() {
+        return follower.isBusy();
+    }
+    public boolean atBucket(){
+        return follower.getPose().roughlyEquals(new Pose(12.6796, 129.6978));
     }
 }

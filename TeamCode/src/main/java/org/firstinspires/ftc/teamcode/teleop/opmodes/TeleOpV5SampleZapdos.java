@@ -5,10 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.PathBuilder;
-import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.pathgen.Point;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -36,7 +33,9 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainWithPedroPathing;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.TestPath;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.AscentSideSubmersibleToBucketBlueAlliance;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.AscentSideSubmersibleToHumanPlayer;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipPath;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
@@ -84,7 +83,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initializeGamePads();
         initRevIMU();
-        if (usingPedroPathing){
+        if (usingPedroPathing) {
             initializePedroPathing();
         } else {
             initializeDriveTrain();
@@ -99,31 +98,30 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         matchTimer = new ElapsedTime();
 
 
-
         waitForStart();
-        wrist.presetPosition(0,0);
+        wrist.presetPosition(0, 0);
         matchTimer.reset();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
 
             driverControls.update();
 
             //driving code
-            if (driverControls.driveTypeSwitch()){
-                if (driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
+            if (driverControls.driveTypeSwitch()) {
+                if (driveType == IDriveTrain.DriveType.ROBOT_CENTRIC) {
                     driveType = IDriveTrain.DriveType.FIELD_CENTRIC;
-                } else{
+                } else {
                     driveType = IDriveTrain.DriveType.ROBOT_CENTRIC;
                 }
 
             }
 
-            if (driverControls.resetIMU()){
+            if (driverControls.resetIMU()) {
                 driveTrain.resetIMU();
             }
 
             //speed adjustments
-            if (driverControls.microDriveAdjustments()){
+            if (driverControls.microDriveAdjustments()) {
                 speedMultiplier = RobotConstants.EXTRA_SLOW;
             } /*else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
@@ -134,16 +132,43 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
 
             driveTrain.setMaxPower(speedMultiplier);
-            driveTrain.Move(driveType, driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.heading());
+
 
             //drivetrain presets
             //create path
-            if (driverControls.presetPosDriveTrain()){
-                Pose currentPose = driveTrain.getCurrentPose();
-                if (currentPose != null){
-                    TestPath path = new TestPath(currentPose);
-                    driveTrain.Follow(path.getPathChain());
+            if (driverControls.presetPosDriveTrain()) {
+                if (!driveTrain.isFollowingPath()) {
+                    Pose currentPose = driveTrain.getCurrentPose();
+                    if (currentPose != null) {
+                        AscentSideSubmersibleToBucketBlueAlliance path = new AscentSideSubmersibleToBucketBlueAlliance(currentPose);
+                        if(!path.closeToDestination()) {
+                            driveTrain.Follow(path.getPathChain());
+                        }
+                    }
                 }
+            } else if (driverControls.submersibleToHumanPlayer()) {
+                if (!driveTrain.isFollowingPath()) {
+                    Pose currentPose = driveTrain.getCurrentPose();
+                    if (currentPose != null) {
+                        AscentSideSubmersibleToHumanPlayer path = new AscentSideSubmersibleToHumanPlayer(currentPose);
+                        if(!path.closeToDestination()) {
+                            driveTrain.Follow(path.getPathChain());
+                        }
+                    }
+                }
+            } else if (driverControls.humanPlayerToClip()) {
+                if (!driveTrain.isFollowingPath()) {
+                    Pose currentPose = driveTrain.getCurrentPose();
+                    if (currentPose != null) {
+                        ClipPath path = new ClipPath(currentPose);
+                        if(!path.closeToDestination()) {
+                            driveTrain.Follow(path.getPathChain());
+                        }
+                    }
+                }
+            } else {
+                driveTrain.stopFollowing();
+                driveTrain.Move(driveType, driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.heading());
             }
 
             //manual control for arm
@@ -316,7 +341,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     public void initializePedroPathing(){
         GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(pinpoint.getPosX(), pinpoint.getPosY(), pinpoint.getHeading()));
+        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(8, 87, 0));
+        ClipPath.amountOfClips = 0;
     }
     public void initRevIMU(){
         IMU revIMU = hardwareMap.get(IMU.class, "imu");

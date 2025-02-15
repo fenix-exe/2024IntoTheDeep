@@ -2,15 +2,15 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths;
 
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
-public class SubmersibleToBucketBlueAlliance extends BasePath{
+public class ClipPath extends BasePath{
+    boolean lockPath = false;
+    public static int amountOfClips;
 
-
-    public SubmersibleToBucketBlueAlliance(Pose currentPose) {
-        super(currentPose);
+    public ClipPath(Pose currentPose) {
+        super(currentPose, new Pose(26,amountOfClips * 2 + 70,0));
     }
 
     @Override
@@ -20,12 +20,17 @@ public class SubmersibleToBucketBlueAlliance extends BasePath{
                         // Line 1
                         new BezierCurve(
                                 new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN), //starting point near submersible
-                                new Point(currentPose.getX(), 134.000, Point.CARTESIAN), //control point
-                                new Point(9.500, 134.000, Point.CARTESIAN) //end point
+                                new Point(currentPose.getX(), amountOfClips * 2 + 70, Point.CARTESIAN),
+                                new Point(32, amountOfClips * 2 + 70, Point.CARTESIAN) //end point
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-32)) //heading change
+                .setLinearHeadingInterpolation(currentPose.getHeading(),0)//heading change
                 .build();
         return paths;
+    }
+
+    @Override
+    public void lockPath() {
+        lockPath = true;
     }
 }

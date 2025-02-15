@@ -175,4 +175,14 @@ public class DriveTrain implements IDriveTrain{
     public Pose getCurrentPose() {
         return null;
     }
+
+    @Override
+    public void stopFollowing() {
+
+    }
+
+    @Override
+    public boolean isFollowingPath() {
+        return false;
+    }
 }

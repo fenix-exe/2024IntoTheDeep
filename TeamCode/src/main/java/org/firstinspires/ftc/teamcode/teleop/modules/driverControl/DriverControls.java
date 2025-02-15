@@ -52,13 +52,13 @@ public class DriverControls implements DriveControlMap {
     }
     public double strafeDrive(){
         if (Math.abs(gamepad1current.left_stick_x) > 0.5){
-            return -gamepad1current.left_stick_x;
+            return gamepad1current.left_stick_x;
         }
         return 0;
     }
     public double heading(){
         if (Math.abs(gamepad1current.right_stick_x) > 0.5){
-            return -gamepad1current.right_stick_x;
+            return gamepad1current.right_stick_x;
         }
         return 0;
     }
@@ -96,7 +96,9 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.right_bumper;
     }
     public boolean removeSpeedRules(){return false;}
-    public boolean presetPosDriveTrain(){return gamepad1current.back;}
+    public boolean presetPosDriveTrain(){return gamepad2current.touchpad;}
+    public boolean submersibleToHumanPlayer(){return gamepad2current.back;}
+    public boolean humanPlayerToClip(){return gamepad2current.start && !gamepad2current.b;}
 
     @Override
     public boolean slidesFullyUp() {

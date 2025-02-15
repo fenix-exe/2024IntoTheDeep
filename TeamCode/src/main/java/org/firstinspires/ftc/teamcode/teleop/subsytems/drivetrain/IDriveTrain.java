@@ -16,4 +16,6 @@ public interface IDriveTrain {
     public void resetIMU();
     public HashMap getDebugInfo();
     public Pose getCurrentPose();
+    public void stopFollowing();
+    public boolean isFollowingPath();
 }

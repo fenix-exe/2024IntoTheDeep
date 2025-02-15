@@ -2,13 +2,16 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths;
 
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
-public class TestPath extends BasePath{
-    public TestPath(Pose currentPose) {
-        super(currentPose,null);
+public class AscentSideSubmersibleToHumanPlayer extends BasePath{
+    boolean lockPath = false;
+    public AscentSideSubmersibleToHumanPlayer(Pose currentPose) {
+        super(currentPose, new Pose(44,24,Math.PI));
     }
+
     @Override
     public PathChain getPathChain() {
         PathChain paths = builder
@@ -16,17 +19,17 @@ public class TestPath extends BasePath{
                         // Line 1
                         new BezierCurve(
                                 new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
-                                new Point(48.000, 24.000, Point.CARTESIAN),
-                                new Point(0.000, 48.000, Point.CARTESIAN)
+                                new Point(currentPose.getX(), 24, Point.CARTESIAN),
+                                new Point(44,24,Point.CARTESIAN)
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.PI)//heading change
                 .build();
         return paths;
     }
 
     @Override
     public void lockPath() {
-
+        lockPath=true;
     }
 }
