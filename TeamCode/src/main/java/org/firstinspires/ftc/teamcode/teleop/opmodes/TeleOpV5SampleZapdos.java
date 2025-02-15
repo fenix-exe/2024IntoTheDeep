@@ -33,8 +33,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainWithPedroPathing;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.AscentSideSubmersibleToBucketBlueAlliance;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.AscentSideSubmersibleToHumanPlayer;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToBucket;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToHumanPlayer;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipPath;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipToHumanPlayer;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
@@ -141,9 +141,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 if (!driveTrain.isFollowingPath()) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        AscentSideSubmersibleToBucketBlueAlliance path = new AscentSideSubmersibleToBucketBlueAlliance(currentPose);
-                        if(!path.closeToDestination()) {
-                            driveTrain.Follow(path.getPathChain());
+                        SubmersibleToBucket path = SubmersibleToBucket.getInstance();
+                        if(!path.closeToDestination(currentPose)) {
+                            driveTrain.Follow(path.getPathChain(currentPose));
                         }
                     }
                 }
@@ -151,9 +151,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 if (!driveTrain.isFollowingPath()) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        AscentSideSubmersibleToHumanPlayer path = new AscentSideSubmersibleToHumanPlayer(currentPose);
-                        if(!path.closeToDestination()) {
-                            driveTrain.Follow(path.getPathChain());
+                        SubmersibleToHumanPlayer path = SubmersibleToHumanPlayer.getInstance();
+                        if(!path.closeToDestination(currentPose)) {
+                            driveTrain.Follow(path.getPathChain(currentPose));
                         }
                     }
                 }
@@ -161,9 +161,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 if (!driveTrain.isFollowingPath()) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        ClipToHumanPlayer path = new ClipToHumanPlayer(currentPose);
-                        if(!path.closeToDestination()) {
-                            driveTrain.Follow(path.getPathChain());
+                        ClipToHumanPlayer path = ClipToHumanPlayer.getInstance();
+                        if(!path.closeToDestination(currentPose)) {
+                            driveTrain.Follow(path.getPathChain(currentPose));
                         }
                     }
                 }

@@ -6,31 +6,33 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
-public class ClipToHumanPlayer extends BasePath{
-    boolean lockPath = false;
-    public ClipToHumanPlayer(Pose currentPose) {
-        super(currentPose, new Pose(14,24,Math.PI));
-    }
+import java.util.ArrayList;
 
+public class ClipToHumanPlayer extends BasePath{
+
+    static ClipToHumanPlayer instance = null;
+    private ClipToHumanPlayer() {
+        super();
+    }
+    public static ClipToHumanPlayer getInstance(){
+        if (instance==null){
+            instance=new ClipToHumanPlayer();
+        }
+        return instance;
+    }
     @Override
-    public PathChain getPathChain() {
-        PathChain paths = builder
-                .addPath(
-                        // Line 1
-                        new BezierCurve(
-                                new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
-                                new Point(currentPose.getX(), 24, Point.CARTESIAN),
-                                new Point(21.5, currentPose.getY(), Point.CARTESIAN),
-                                new Point(21.5,24,Point.CARTESIAN)
-                        )
+    public PathChain getPathChain(Pose currentPose) {
+        ArrayList<Point> pointList = new ArrayList<Point>();
+        pointList.add(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN));
+        for(int i = 0; i < controlPoints.size(); i++){
+            pointList.add(convertToPoint(controlPoints.get(i), currentPose));
+        }
+        pointList.add(convertToPoint(endPointAsString, currentPose));
+        PathChain paths = builder.addPath(
+                        new BezierCurve(pointList)
                 )
-                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.PI)//heading change
+                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1))
                 .build();
         return paths;
-    }
-
-    @Override
-    public void lockPath() {
-        lockPath=true;
     }
 }

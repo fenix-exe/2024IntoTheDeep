@@ -5,28 +5,33 @@ import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
+import java.util.ArrayList;
+
 public class TestPath extends BasePath{
-    public TestPath(Pose currentPose) {
-        super(currentPose,null);
+    static TestPath instance = null;
+    private TestPath() {
+        super();
+    }
+    public static TestPath getInstance(){
+        if (instance==null){
+            instance=new TestPath();
+        }
+        return instance;
     }
     @Override
-    public PathChain getPathChain() {
-        PathChain paths = builder
-                .addPath(
-                        // Line 1
-                        new BezierCurve(
-                                new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
-                                new Point(48.000, 24.000, Point.CARTESIAN),
-                                new Point(0.000, 48.000, Point.CARTESIAN)
-                        )
+    public PathChain getPathChain(Pose currentPose) {
+        ArrayList<Point> pointList = new ArrayList<Point>();
+        pointList.add(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN));
+        for(int i = 0; i < controlPoints.size(); i++){
+            pointList.add(convertToPoint(controlPoints.get(i), currentPose));
+        }
+        pointList.add(convertToPoint(endPointAsString, currentPose));
+        PathChain paths = builder.addPath(
+                        new BezierCurve(pointList)
                 )
                 .setTangentHeadingInterpolation()
+                .setReversed(true)
                 .build();
         return paths;
-    }
-
-    @Override
-    public void lockPath() {
-
     }
 }

@@ -5,15 +5,21 @@ import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
+import java.util.ArrayList;
+
 public class ClipPath extends BasePath{
-    boolean lockPath = false;
+    static ClipPath instance = null;
     public static int amountOfClips;
 
-    public ClipPath(Pose currentPose) {
-        super(currentPose, new Pose(26,amountOfClips * 2 + 70,0));
+    private ClipPath() {
     }
-
-    @Override
+    public static ClipPath getInstance(){
+        if (instance==null){
+            instance=new ClipPath();
+        }
+        return instance;
+    }
+    /*@Override
     public PathChain getPathChain() {
         PathChain paths = builder
                 .addPath(
@@ -27,10 +33,22 @@ public class ClipPath extends BasePath{
                 .setLinearHeadingInterpolation(currentPose.getHeading(),0)//heading change
                 .build();
         return paths;
-    }
+    }*/
 
     @Override
-    public void lockPath() {
-        lockPath = true;
+    public PathChain getPathChain(Pose currentPose) {
+        ArrayList<Point> pointList = new ArrayList<Point>();
+        pointList.add(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN));
+        for(int i = 0; i < controlPoints.size(); i++){
+            pointList.add(convertToPoint(controlPoints.get(i), currentPose));
+        }
+        pointList.add(convertToPoint(endPointAsString, currentPose));
+
+        PathChain paths = builder.addPath(
+                        new BezierCurve(pointList)
+                )
+                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1))
+                .build();
+        return paths;
     }
 }
