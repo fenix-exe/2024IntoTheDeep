@@ -87,7 +87,7 @@ public class PinpointDrive extends MecanumDrive {
         if (PARAMS.usePinpointIMUForTuning) {
             lazyImu = new LazyImu(hardwareMap, PARAMS.pinpointDeviceName, new RevHubOrientationOnRobot(zyxOrientation(0, 0, 0)));
         }
-
+        //TODO: Change these params to match robot
         // RR localizer note: don't love this conversion (change driver?)
         pinpoint.setOffsets(DistanceUnit.MM.fromInches(PARAMS.xOffset), DistanceUnit.MM.fromInches(PARAMS.yOffset));
 
