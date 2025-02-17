@@ -298,7 +298,7 @@ public class TeleOpPose extends LinearOpMode {
             imu = new IMUforREV(revIMU);
         } else {
             GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint1");
-            imu = new IMUforPinpoint(pinpointIMU);
+            //imu = new IMUforPinpoint(pinpointIMU);
         }
 
         driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);

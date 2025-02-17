@@ -100,6 +100,11 @@ public class StateModelsZapdos {
                     intakePosition = false;
                     endSpecimenDeposit = false;
                 }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    drivePresetState = DriveStates.START;
+                }
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250){
@@ -108,6 +113,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     drivePresetState = DriveStates.START;
                 }
                 break;
@@ -117,6 +123,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     drivePresetState = DriveStates.START;
                 }
                 break;
@@ -127,6 +134,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     drivePresetState = DriveStates.START;
                 }
                 break;
@@ -138,6 +146,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     drivePresetState = DriveStates.START;
                 }
                 break;
@@ -168,6 +177,12 @@ public class StateModelsZapdos {
                     intakePosition = false;
                     endSpecimenDeposit = false;
                 }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
+                    drivePresetState = DriveStates.START;
+                }
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250){
@@ -176,6 +191,8 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     intakePresetState = IntakeStates.START;
                 }
                 break;
@@ -186,6 +203,8 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     intakePresetState = IntakeStates.START;
                 }
                 break;
@@ -196,6 +215,8 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     intakePresetState = IntakeStates.START;
                 }
                 break;
@@ -208,6 +229,8 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     intakePresetState = IntakeStates.START;
                 }
                 break;
@@ -353,6 +376,11 @@ public class StateModelsZapdos {
                     intakePosition = false;
                     endSpecimenDeposit = false;
                 }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    depositBackPresetState = DepositStates.START;
+                }
                 break;
             case RETRACTING_SLIDE:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
@@ -362,6 +390,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     depositBackPresetState = DepositStates.START;
                 }
                 break;
@@ -378,6 +407,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     depositBackPresetState = DepositStates.START;
                 }
                 break;
@@ -388,6 +418,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     depositBackPresetState = DepositStates.START;
                 }
                 break;
@@ -418,6 +449,11 @@ public class StateModelsZapdos {
                     intakePosition = false;
                     endSpecimenDeposit = false;
                 }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    depositCycle = DepositCycles.START;
+                    depositBackPresetState = DepositStates.START;
+                }
                 break;
             case OPENING_CLAW:
                 if (timer.milliseconds() > 200){
@@ -428,6 +464,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     exitDepositPresetState = ExitDepositStates.START;
                 }
                 break;
@@ -439,6 +476,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     exitDepositPresetState = ExitDepositStates.START;
                 }
                 break;
@@ -451,6 +489,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    depositCycle = DepositCycles.START;
                     exitDepositPresetState = ExitDepositStates.START;
                 }
                 break;
@@ -495,7 +534,7 @@ public class StateModelsZapdos {
                 }
                 break;
             case INTAKE_CLOSING:
-                if (timer.milliseconds()>300){
+                if (driverControls.letGoOfGrabSampleFromOutside()){
                     arm.moveElbowToAngle(elbowIntakeUpAngle);
                     //wrist.presetPosition(upPitch, upRoll);
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.ELBOW_UP;
@@ -711,6 +750,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -722,6 +762,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -732,6 +773,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -743,6 +785,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -754,6 +797,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -764,6 +808,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -801,6 +846,11 @@ public class StateModelsZapdos {
                     intakePosition = false;
                     endSpecimenDeposit = false;
                 }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
                 break;
             case OPENING_CLAW:
                 if (timer.milliseconds() > 200){
@@ -810,6 +860,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -820,6 +871,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -830,6 +882,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -840,6 +893,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -849,6 +903,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -864,6 +919,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -874,6 +930,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 if (driverControls.enterIntakePosition()){
@@ -887,6 +944,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -903,6 +961,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -914,6 +973,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -924,6 +984,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
@@ -954,6 +1015,11 @@ public class StateModelsZapdos {
                     intakePosition = false;
                     endSpecimenDeposit = false;
                 }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+                    depositSpecimenState = SpecimenDepositStates.START;
+                }
                 break;
             case OPEN_CLAW:
                 if (timer.milliseconds() > 250){
@@ -963,6 +1029,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
                 break;
@@ -973,6 +1040,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
                 break;
@@ -983,6 +1051,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
                 break;
@@ -995,6 +1064,7 @@ public class StateModelsZapdos {
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     depositSpecimenState = SpecimenDepositStates.START;
                 }
                 break;

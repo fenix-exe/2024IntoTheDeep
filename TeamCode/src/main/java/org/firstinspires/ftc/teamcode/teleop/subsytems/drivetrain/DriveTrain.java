@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain;
 
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.PathChain;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -10,7 +12,31 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 
 import java.util.HashMap;
-public class DriveTrain {
+public class DriveTrain implements IDriveTrain{
+    @Override
+    public void Move(IDriveTrain.DriveType driveType, double forwardDrive, double strafeDrive, double heading) {
+        if(driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
+            RobotCentric_Drive(speedMultiplier);
+        } else {
+            FieldCentricDrive(speedMultiplier);
+        }
+    }
+
+    @Override
+    public void setMaxPower(double maxPower) {
+        speedMultiplier = maxPower;
+    }
+
+    @Override
+    public void Follow(PathChain path) {
+
+    }
+
+    @Override
+    public void Update() {
+
+    }
+
     public enum DriveType {ROBOT_CENTRIC,FIELD_CENTRIC}
     Gamepad gamepad1;
     DcMotorEx FL;
@@ -21,8 +47,6 @@ public class DriveTrain {
     public double speedMultiplier = 1;
 
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
-
-    Telemetry telemetry;
     public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, Telemetry telemetry){
         this.gamepad1=gamepad1;
         this.FL=FL;
@@ -30,7 +54,6 @@ public class DriveTrain {
         this.BL=BL;
         this.BR=BR;
         this.imu_IMU = imu;
-        this.telemetry = telemetry;
     }
 
     public void RobotCentric_Drive() {
@@ -54,7 +77,11 @@ public class DriveTrain {
 
         drive = gamepad1.left_stick_y * -1;
         strafe = gamepad1.left_stick_x * 1.1;
-        yaw = gamepad1.right_stick_x;
+        if (gamepad1.right_stick_x < -0.5  || gamepad1.right_stick_x > 0.5){
+            yaw = gamepad1.right_stick_x;
+        } else {
+            yaw = 0;
+        }
         double denominator = Math.max(1, Math.abs(drive+strafe+yaw));
         FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplier);
         BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplier);
@@ -75,8 +102,11 @@ public class DriveTrain {
         botHeading = imu_IMU.getYaw();
         y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
-        rx = gamepad1.right_stick_x * 1;
-        telemetry.addData("BotH", botHeading);
+        if (gamepad1.right_stick_x < -0.5 || gamepad1.right_stick_x > 0.5){
+            rx = gamepad1.right_stick_x * 1;
+        } else {
+            rx = 0;
+        }
 
         rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));
         rotY = x * Math.sin(-botHeading / 180 * Math.PI) + y * Math.cos(-botHeading / 180 * Math.PI);
@@ -100,7 +130,6 @@ public class DriveTrain {
         y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
         rx = gamepad1.right_stick_x * 1;
-        telemetry.addData("BotH", botHeading);
 
         rotX = 1.1 * (x * Math.cos(-botHeading) - y * Math.sin(-botHeading));
         rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
@@ -127,6 +156,8 @@ public class DriveTrain {
         telemetry.addData("Elbow target position", pivot.getTargetPosition());*/
 
         HashMap debugInfo = new HashMap<>();
+        debugInfo.put("X",0);
+        debugInfo.put("Y",0);
         debugInfo.put("IMU Yaw", String.valueOf(imu_IMU.getYaw()));
         debugInfo.put("FL Power", String.valueOf(FL.getPower()));
         debugInfo.put("BL Power", String.valueOf(BL.getPower()));
@@ -138,5 +169,20 @@ public class DriveTrain {
         debugInfo.put("BR Current", String.valueOf(BR.getCurrent(CurrentUnit.MILLIAMPS)));
         debugInfo.put("Drive Type", String.valueOf(driveType));
         return debugInfo;
+    }
+
+    @Override
+    public Pose getCurrentPose() {
+        return null;
+    }
+
+    @Override
+    public void stopFollowing() {
+
+    }
+
+    @Override
+    public boolean isFollowingPath() {
+        return false;
     }
 }

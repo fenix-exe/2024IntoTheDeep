@@ -47,7 +47,7 @@ public class ascentPreloadPark extends LinearOpMode {
     int SLIDE_START = 0;
     double PITCH_START = 1;
     double ROLL_START = 0.15;
-    double CLAW_START = 0.8;
+    double CLAW_START = 0.86;
 
 
     extractAuto extractAuto = new extractAuto();

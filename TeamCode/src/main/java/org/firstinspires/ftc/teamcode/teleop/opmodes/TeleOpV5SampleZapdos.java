@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.PathBuilder;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -17,8 +19,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -31,9 +31,15 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainWithPedroPathing;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.PathParser;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToBucket;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToHumanPlayer;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipPath;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipToHumanPlayer;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.localization.Localization;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
@@ -46,7 +52,9 @@ import java.util.HashMap;
 @TeleOp
 public class TeleOpV5SampleZapdos extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
-    DriveTrain driveTrain;
+    IDriveTrain driveTrain;
+    IIMU rev_IMU;
+    IDriveTrain.DriveType driveType;
     Arm arm;
     DriverControls driverControls;
     DcMotorEx leftSlide;
@@ -61,8 +69,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     Claw claw;
     ColorSensor color;
     LinearActuator linearActuator;
-    Localization localization;
-    IIMU imu;
     RevTouchSensor limitSwitch;
     RevTouchSensor homingSwitch;
     RevColorSensorV3 colorSensor;
@@ -70,17 +76,25 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     ElapsedTime debounceTimer;
     FrequencyCounter freqCounter;
     double speedMultiplier;
-    boolean liftedLinearActuator = false;
+    boolean linearActuatorSensorLastLoop = false;
     boolean touchSensorPressedLastLoop = false;
+    boolean usingPedroPathing = true;
+    PathBuilder builder = new PathBuilder();
 
     @Override
     public void runOpMode() throws InterruptedException {
         initializeGamePads();
-        initializeDriveTrain();
+        initRevIMU();
+        if (usingPedroPathing) {
+            initializePedroPathing();
+        } else {
+            initializeDriveTrain();
+        }
         initializeArmAndHome();
         initializeEndEffector();
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
+        PathParser.readPathChains();
         StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -88,30 +102,29 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
 
         waitForStart();
-        wrist.presetPosition(0,0);
+        wrist.presetPosition(0, 0);
         matchTimer.reset();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
 
             driverControls.update();
-            imu.update();
 
             //driving code
-            if (driverControls.driveTypeSwitch()){
-                if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
-                    DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
-                } else{
-                    DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
+            if (driverControls.driveTypeSwitch()) {
+                if (driveType == IDriveTrain.DriveType.ROBOT_CENTRIC) {
+                    driveType = IDriveTrain.DriveType.FIELD_CENTRIC;
+                } else {
+                    driveType = IDriveTrain.DriveType.ROBOT_CENTRIC;
                 }
 
             }
 
-            if (driverControls.resetIMU()){
+            if (driverControls.resetIMU()) {
                 driveTrain.resetIMU();
             }
 
             //speed adjustments
-            if (driverControls.microDriveAdjustments()){
+            if (driverControls.microDriveAdjustments()) {
                 speedMultiplier = RobotConstants.EXTRA_SLOW;
             } /*else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
@@ -121,14 +134,51 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
+            driveTrain.setMaxPower(speedMultiplier);
 
-            switch (DriveTrain.driveType) {
-                case ROBOT_CENTRIC:
-                    driveTrain.RobotCentric_Drive(speedMultiplier);
-                    break;
-                case FIELD_CENTRIC:
-                    driveTrain.FieldCentricDrive(speedMultiplier);
-                    break;
+
+            //drivetrain presets
+            //create path
+            if (driverControls.presetPosDriveTrain()) {
+                if (!driveTrain.isFollowingPath()) {
+                    Pose currentPose = driveTrain.getCurrentPose();
+                    if (currentPose != null) {
+                        SubmersibleToBucket path = SubmersibleToBucket.getInstance();
+                        if(!path.closeToDestination(currentPose)) {
+                            driveTrain.Follow(path.getPathChain(currentPose));
+                        }
+                    }
+                }
+            } else if (driverControls.submersibleToHumanPlayer()) {
+                if (!driveTrain.isFollowingPath()) {
+                    Pose currentPose = driveTrain.getCurrentPose();
+                    if (currentPose != null) {
+                        SubmersibleToHumanPlayer path = SubmersibleToHumanPlayer.getInstance();
+                        if(!path.closeToDestination(currentPose)) {
+                            driveTrain.Follow(path.getPathChain(currentPose));
+                        }
+                    }
+                }
+            } else if (driverControls.humanPlayerToClip()) {
+                if (!driveTrain.isFollowingPath()) {
+                    Pose currentPose = driveTrain.getCurrentPose();
+                    if (currentPose != null) {
+                        ClipToHumanPlayer path = ClipToHumanPlayer.getInstance();
+                        if(!path.closeToDestination(currentPose)) {
+                            driveTrain.Follow(path.getPathChain(currentPose));
+                        }
+                    }
+                }
+            } else {
+                driveTrain.stopFollowing();
+                driveTrain.Move(driveType, driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.heading());
+            }
+            if (driverControls.switchStrategy()){
+                if (driverControls.getGameStrategyMode() == DriverControls.scoringType.SPECIMEN){
+                    driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
+                } else {
+                    driverControls.setGameStrategyMode(DriverControls.scoringType.SPECIMEN);
+                }
             }
 
             //manual control for arm
@@ -193,18 +243,23 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
             if (driverControls.linearActuatorDown()){
                 if (driverControls.microDriveAdjustments()){
-                    linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                    if (!linearActuator.getLimitSwitchState()){
+                        linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                    }
                 } else {
                     linearActuator.goToTargetPositionInches(5.75);
                 }
 
-            } /*else {
+            }
+            if (linearActuator.getLimitSwitchState() && linearActuatorSensorLastLoop && !(linearActuatorMotor.getTargetPosition() > linearActuator.inchesToTicks(0.3))){
+                linearActuator.goToTargetPositionInches(0.25);
+            }/*else {
                 linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches());
             }*/
             //matchTimer.seconds() > 100 ||
 
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(0,58,8);
+            StateModelsZapdos.presetPositionDriveStateModel(0,92,8);
             StateModelsZapdos.presetPositionIntakeStateModel(-90,-3,-90,-3,0,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
@@ -252,7 +307,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Red", colorSensor.red());
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
-            multiTelemetry.update();
 
             //logging
             logDriveTrain();
@@ -261,7 +315,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             logStateModels();
             logButtonPressed();
 
+            multiTelemetry.update();
+            driveTrain.Update();
+
+
+
             touchSensorPressedLastLoop = arm.isSlideTouchSensorPressed();
+            linearActuatorSensorLastLoop = linearActuator.getLimitSwitchState();
         }
     }
 
@@ -285,19 +345,25 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //imu initializations
+
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, rev_IMU, telemetry);
+    }
+
+    public void initializePedroPathing(){
+        GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(8, 87, 0));
+        ClipPath.amountOfClips = 0;
+    }
+    public void initRevIMU(){
         IMU revIMU = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         revIMU.initialize(parameters);
         //imu.resetYaw();
-        imu = new IMUforREV(revIMU);
-        GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class, "pinpoint");
-
-        localization = new Localization(pinpoint, revIMU);
-
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
+        rev_IMU = new IMUforREV(revIMU);
     }
+
     private void initializeArmAndHome(){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -363,7 +429,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     private void logDriveTrain(){
         HashMap driveTrainInfo = driveTrain.getDebugInfo();
-        HashMap localizationInfo = localization.getDebugInfo();
+
+        telemetry.addData("X", driveTrainInfo.get("X"));
+        telemetry.addData("Y", driveTrainInfo.get("Y"));
+        telemetry.addData("BotH", driveTrainInfo.get("IMU Yaw"));
+
+
         ArrayList values = new ArrayList();
         values.add(driveTrainInfo.get("FL Power"));
         values.add(driveTrainInfo.get("BL Power"));
@@ -373,9 +444,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         values.add(driveTrainInfo.get("BL Current"));
         values.add(driveTrainInfo.get("FR Current"));
         values.add(driveTrainInfo.get("BR Current"));
-        values.add(localizationInfo.get("x"));
-        values.add(localizationInfo.get("y"));
-        values.add(localizationInfo.get("h"));
         String debugString = String.join(",", values);
         LoggerUtil.debug("drivetrain", debugString);
     }

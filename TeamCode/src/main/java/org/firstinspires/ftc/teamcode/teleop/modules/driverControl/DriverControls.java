@@ -44,7 +44,24 @@ public class DriverControls implements DriveControlMap {
     public double gamepadStickValue(double stickValue){
         return Math.pow(stickValue, y);
     }
-
+    public double forwardDrive(){
+        if (Math.abs(gamepad1current.left_stick_y) > 0.5){
+            return -gamepad1current.left_stick_y;
+        }
+        return 0;
+    }
+    public double strafeDrive(){
+        if (Math.abs(gamepad1current.left_stick_x) > 0.5){
+            return gamepad1current.left_stick_x;
+        }
+        return 0;
+    }
+    public double heading(){
+        if (Math.abs(gamepad1current.right_stick_x) > 0.5){
+            return gamepad1current.right_stick_x;
+        }
+        return 0;
+    }
     @Override
     public boolean slowMode() {
         return false;
@@ -79,6 +96,9 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.right_bumper;
     }
     public boolean removeSpeedRules(){return false;}
+    public boolean presetPosDriveTrain(){return gamepad2current.touchpad;}
+    public boolean submersibleToHumanPlayer(){return gamepad2current.back;}
+    public boolean humanPlayerToClip(){return gamepad2current.start && !gamepad2current.b;}
 
     @Override
     public boolean slidesFullyUp() {
@@ -201,6 +221,9 @@ public class DriverControls implements DriveControlMap {
     public boolean grabSampleFromOutside(){
         return ((gamepad2current.right_trigger > 0.1) && !(gamepad2previous.right_trigger > 0.1)) || ((gamepad1current.x) && !(gamepad1previous.x));
     }
+    public boolean letGoOfGrabSampleFromOutside(){
+        return ((gamepad2previous.right_trigger > 0.1) && !(gamepad2current.right_trigger > 0.1) || ((gamepad1previous.x) && !gamepad1current.x));
+    }
     public boolean grabSampleFromInside(){
         return false;
     }
@@ -241,7 +264,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean switchStrategy(){
-        return gamepad2current.back && !gamepad2previous.back;
+        return gamepad1current.back && !gamepad1previous.back;
     }
     public scoringType getGameStrategyMode(){
         return gameStrategyMode;

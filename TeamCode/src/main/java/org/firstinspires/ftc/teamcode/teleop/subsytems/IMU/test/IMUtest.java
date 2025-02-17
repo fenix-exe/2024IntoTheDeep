@@ -21,7 +21,7 @@ public class IMUtest extends LinearOpMode {
         revIMU.initialize(parameters);
         RevIMU = new IMUforREV(revIMU);
         GoBildaPinpointDriver pinpointIMU = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint1");
-        PinpointIMU = new IMUforPinpoint(pinpointIMU);
+        PinpointIMU = new IMUforPinpoint(null);
 
 
         waitForStart();
