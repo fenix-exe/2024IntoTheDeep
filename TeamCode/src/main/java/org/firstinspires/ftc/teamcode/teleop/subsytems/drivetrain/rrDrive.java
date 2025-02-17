@@ -5,15 +5,16 @@ import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 
 import java.util.HashMap;
-public class DriveTrain implements IDriveTrain{
+
+import page.j5155.expressway.ftc.actions.ActionRunner;
+
+public class rrDrive implements IDriveTrain{
     @Override
     public void Move(IDriveTrain.DriveType driveType, double forwardDrive, double strafeDrive, double heading) {
         if(driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
@@ -46,9 +47,10 @@ public class DriveTrain implements IDriveTrain{
     DcMotorEx BR;
     IIMU imu_IMU;
     public double speedMultiplier = 1;
+    public ActionRunner runner = new ActionRunner();
 
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
-    public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, Telemetry telemetry){
+    public rrDrive(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, Telemetry telemetry){
         this.gamepad1=gamepad1;
         this.FL=FL;
         this.FR=FR;
@@ -189,6 +191,6 @@ public class DriveTrain implements IDriveTrain{
 
     @Override
     public void Follow(Action action) {
-
+        runner.runAsync(action);
     }
 }

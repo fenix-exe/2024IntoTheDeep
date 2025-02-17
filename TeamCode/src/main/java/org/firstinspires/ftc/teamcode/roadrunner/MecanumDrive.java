@@ -114,7 +114,7 @@ public class MecanumDrive {
         public double yP = 0.4;
         public double yI = 0;
         public double yD = 0;
-        public double hP = 0;
+        public double hP = 0.01;
         public double hI = 0;
         public double hD = 0;
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain;
 
+import com.acmerobotics.roadrunner.Action;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 
@@ -18,4 +19,5 @@ public interface IDriveTrain {
     public Pose getCurrentPose();
     public void stopFollowing();
     public boolean isFollowingPath();
+    public void Follow(Action action);
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathBuilder;
@@ -19,6 +20,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -34,10 +37,9 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainWithPedroPathing;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.PathParser;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToBucket;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.SubmersibleToHumanPlayer;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipPath;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipToHumanPlayer;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.rrDrive;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
@@ -80,6 +82,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     boolean touchSensorPressedLastLoop = false;
     boolean usingPedroPathing = true;
     PathBuilder builder = new PathBuilder();
+    rrDrive rrDrive;
+    PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0,0,0));
+    Pose2d humanPlayer = new Pose2d(24, 0, Math.toRadians(0));
+    Pose2d clip = new Pose2d(0,0,0);
+    MecanumDrive.PIDDrive humanPlayerMove = drive.pidToPointAction(humanPlayer, telemetry);
+    MecanumDrive.PIDDrive clipMove = drive.pidToPointAction(clip, telemetry);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -140,25 +148,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //drivetrain presets
             //create path
             if (driverControls.presetPosDriveTrain()) {
-                if (!driveTrain.isFollowingPath()) {
-                    Pose currentPose = driveTrain.getCurrentPose();
-                    if (currentPose != null) {
-                        SubmersibleToBucket path = SubmersibleToBucket.getInstance();
-                        if(!path.closeToDestination(currentPose)) {
-                            driveTrain.Follow(path.getPathChain(currentPose));
-                        }
-                    }
-                }
             } else if (driverControls.submersibleToHumanPlayer()) {
-                if (!driveTrain.isFollowingPath()) {
-                    Pose currentPose = driveTrain.getCurrentPose();
-                    if (currentPose != null) {
-                        SubmersibleToHumanPlayer path = SubmersibleToHumanPlayer.getInstance();
-                        if(!path.closeToDestination(currentPose)) {
-                            driveTrain.Follow(path.getPathChain(currentPose));
-                        }
-                    }
-                }
+                rrDrive.Follow(clipMove);
             } else if (driverControls.humanPlayerToClip()) {
                 if (!driveTrain.isFollowingPath()) {
                     Pose currentPose = driveTrain.getCurrentPose();
@@ -317,6 +308,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             multiTelemetry.update();
             driveTrain.Update();
+            rrDrive.runner.updateAsync();
 
 
 
@@ -347,6 +339,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         //imu initializations
 
         driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, rev_IMU, telemetry);
+        rrDrive = new rrDrive(gamepad1, FL, FR, BL, BR, rev_IMU, telemetry);
+
     }
 
     public void initializePedroPathing(){
