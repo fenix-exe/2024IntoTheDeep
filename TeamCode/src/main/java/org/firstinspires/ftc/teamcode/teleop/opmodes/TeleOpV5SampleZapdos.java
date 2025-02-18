@@ -3,7 +3,13 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.TurnConstraints;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathBuilder;
@@ -46,9 +52,15 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
+import org.firstinspires.ftc.teamcode.util.extractAuto;
+import org.firstinspires.ftc.teamcode.util.extractTeleOP;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import page.j5155.expressway.ftc.actions.ActionRunner;
 
 @Config
 @TeleOp
@@ -80,17 +92,31 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     double speedMultiplier;
     boolean linearActuatorSensorLastLoop = false;
     boolean touchSensorPressedLastLoop = false;
-    boolean usingPedroPathing = true;
+    boolean usingPedroPathing = false;
     PathBuilder builder = new PathBuilder();
     rrDrive rrDrive;
-    PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0,0,0));
-    Pose2d humanPlayer = new Pose2d(24, 0, Math.toRadians(0));
+    public ActionRunner runner = new ActionRunner();
+    PinpointDrive drive;
+    Pose2d humanPlayer = new Pose2d(10, 0, Math.toRadians(0));
     Pose2d clip = new Pose2d(0,0,0);
-    MecanumDrive.PIDDrive humanPlayerMove = drive.pidToPointAction(humanPlayer, telemetry);
-    MecanumDrive.PIDDrive clipMove = drive.pidToPointAction(clip, telemetry);
+    extractTeleOP extractTeleOP= new extractTeleOP();
+    ArrayList<extractTeleOP.PositionInSpace> vector = new ArrayList<>();
+    String FILE_NAME = "/sdcard/Download/autoPositions/testClip.csv";
+    public Action clipAction;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
+        try {
+            vector = extractTeleOP.SetUpListOfThings(telemetry, FILE_NAME);
+        } catch (FileNotFoundException e) {
+            telemetry.addData("No File Detected. File name is:", FILE_NAME);
+            telemetry.update();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         initializeGamePads();
         initRevIMU();
         if (usingPedroPathing) {
@@ -102,11 +128,33 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeEndEffector();
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
-        PathParser.readPathChains();
+        //PathParser.readPathChains();
         StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
+
+        drive = new PinpointDrive(hardwareMap, new Pose2d(-4,69,-90));
+        /*Action humanPlayerMove = drive.pidToPointAction(humanPlayer, telemetry);
+        MecanumDrive.PIDDrive clipMove = drive.pidToPointAction(clip, telemetry);
+        Action clipper = new SequentialAction(clipMove, humanPlayerMove);*/
+        TrajectoryActionBuilder traj1 = drive.actionBuilder(new Pose2d(-4,69,-90));
+        if (vector.isEmpty()) {
+            telemetry.addData("Error", "Vector list is empty");
+            telemetry.update();
+            return;
+        }
+
+        for (int i = 0; i < vector.size(); i++) {
+            traj1 = traj1.stopAndAdd(drive.pidToPointAction(new Pose2d(extractTeleOP.getXFromList(vector.get(i)), extractTeleOP.getYFromList(vector.get(i)), extractTeleOP.getAngleFromList(vector.get(i))), telemetry));
+            telemetry.addData("Vector " + (i) + " X", extractTeleOP.getXFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Y", extractTeleOP.getYFromList(vector.get(i)));
+            telemetry.addData("Vector " + (i) + " Heading", extractTeleOP.getAngleFromList(vector.get(i)));
+            telemetry.update();
+        }
+
+        clipAction = traj1.build();
+
 
 
         waitForStart();
@@ -149,8 +197,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //create path
             if (driverControls.presetPosDriveTrain()) {
             } else if (driverControls.submersibleToHumanPlayer()) {
-                rrDrive.Follow(clipMove);
-            } else if (driverControls.humanPlayerToClip()) {
+                if (!rrDrive.isFollowingPath()) {
+                    rrDrive.Follow(new SequentialAction(traj1.build()));
+                }
+            } /*else if (driverControls.humanPlayerToClip()) {
                 if (!driveTrain.isFollowingPath()) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
@@ -160,8 +210,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                         }
                     }
                 }
-            } else {
-                driveTrain.stopFollowing();
+            }*/ else {
+                rrDrive.removeAllActions();
                 driveTrain.Move(driveType, driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.heading());
             }
             if (driverControls.switchStrategy()){
@@ -305,10 +355,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             logEndEffector();
             logStateModels();
             logButtonPressed();
+            telemetry.addData("actions", runner.getRunningActions().toString());
 
             multiTelemetry.update();
             driveTrain.Update();
-            rrDrive.runner.updateAsync();
+            rrDrive.updateRunner();
 
 
 
@@ -339,7 +390,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         //imu initializations
 
         driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, rev_IMU, telemetry);
-        rrDrive = new rrDrive(gamepad1, FL, FR, BL, BR, rev_IMU, telemetry);
+        rrDrive = new rrDrive(gamepad1, FL, FR, BL, BR, rev_IMU, runner, telemetry);
 
     }
 
@@ -469,4 +520,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
     }
+
+
+
 }

@@ -5,6 +5,7 @@ import static com.pedropathing.follower.FollowerConstants.leftRearMotorName;
 import static com.pedropathing.follower.FollowerConstants.rightFrontMotorName;
 import static com.pedropathing.follower.FollowerConstants.rightRearMotorName;
 
+import com.acmerobotics.roadrunner.Action;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
@@ -111,6 +112,12 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
     public boolean isFollowingPath() {
         return follower.isBusy();
     }
+
+    @Override
+    public void Follow(Action action) {
+
+    }
+
     public boolean atBucket(){
         return follower.getPose().roughlyEquals(new Pose(12.6796, 129.6978));
     }

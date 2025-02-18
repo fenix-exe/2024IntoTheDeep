@@ -109,12 +109,12 @@ public class MecanumDrive {
         public double xMax = 1;
         public double xP = 0.03;
         public double xI = 0;
-        public double xD = 0;
+        public double xD = 0.01;
         public double yMax = 1;
-        public double yP = 0.4;
+        public double yP = 0.03;
         public double yI = 0;
         public double yD = 0;
-        public double hP = 0.01;
+        public double hP = 1;
         public double hI = 0;
         public double hD = 0;
 
@@ -589,7 +589,6 @@ public class MecanumDrive {
         public boolean run(TelemetryPacket p) {
             PoseVelocity2d vel = this.vel.get();
             Pose2d pose = this.pose.get();
-
             if (distanceTo(getPosition(pose), getPosition(target)) < 1 && abs(getHeading(pose)-getHeading(target)) < Math.toRadians(10)) {
                 powerUpdater.accept(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
                 return false;

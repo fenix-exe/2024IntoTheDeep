@@ -47,16 +47,17 @@ public class rrDrive implements IDriveTrain{
     DcMotorEx BR;
     IIMU imu_IMU;
     public double speedMultiplier = 1;
-    public ActionRunner runner = new ActionRunner();
+    public ActionRunner runner;
 
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
-    public rrDrive(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, Telemetry telemetry){
+    public rrDrive(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, ActionRunner runner, Telemetry telemetry){
         this.gamepad1=gamepad1;
         this.FL=FL;
         this.FR=FR;
         this.BL=BL;
         this.BR=BR;
         this.imu_IMU = imu;
+        this.runner = runner;
     }
 
     public void RobotCentric_Drive() {
@@ -186,11 +187,17 @@ public class rrDrive implements IDriveTrain{
 
     @Override
     public boolean isFollowingPath() {
-        return false;
+        return !runner.getRunningActions().isEmpty();
     }
 
     @Override
     public void Follow(Action action) {
         runner.runAsync(action);
+    }
+    public void updateRunner() {
+        runner.updateAsync();
+    }
+    public void removeAllActions() {
+        runner.getRunningActions().clear();
     }
 }

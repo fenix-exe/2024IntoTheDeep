@@ -24,13 +24,14 @@ import static page.j5155.expressway.core.geometry.GeometryHelpers.distanceTo;
 
 @TeleOp
 public class AutoTele extends LinearOpMode {
+    PinpointDrive drive;
+    Pose2d target = new Pose2d(10, 0, Math.toRadians(-90));
+    Pose2d home = new Pose2d(0,0,Math.toRadians(-90));
     @Override
     public void runOpMode() throws InterruptedException {
-        PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0,0,0));
-        Pose2d target = new Pose2d(24, 0, Math.toRadians(0));
-        Pose2d home = new Pose2d(0,0,0);
-        MecanumDrive.PIDDrive targetMove = drive.pidToPointAction(target, telemetry);
-        MecanumDrive.PIDDrive homeMove = drive.pidToPointAction(home, telemetry);
+        drive = new PinpointDrive(hardwareMap, new Pose2d(0,0,0));
+        Action targetMove = drive.pidToPointAction(target, telemetry);
+        Action homeMove = drive.pidToPointAction(home, telemetry);
         TelemetryPacket p = new TelemetryPacket();
         ActionRunner runner = new ActionRunner();
         float lateral;
@@ -52,14 +53,16 @@ public class AutoTele extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             drive.updatePoseEstimate();
-
             //Actions.runBlocking(targetMove);
             if (gamepad1.a) {
-                runner.runAsync(targetMove);
+                if (runner.getRunningActions().isEmpty()) {
+                    runner.runAsync(homeMove());
+                }
                 runner.updateAsync();
                 telemetry.addData("pin x",drive.pose.position.x);
                 telemetry.addData("pin y",drive.pose.position.y);
                 telemetry.addData("pin h",Math.toDegrees(drive.pose.heading.toDouble()));
+                telemetry.addData("runner", runner.getRunningActions().toString());
                 telemetry.update();
             } else {
                 runner.getRunningActions().clear();
@@ -74,16 +77,28 @@ public class AutoTele extends LinearOpMode {
                 telemetry.addData("pin x",drive.pose.position.x);
                 telemetry.addData("pin y",drive.pose.position.y);
                 telemetry.addData("pin h",Math.toDegrees(drive.pose.heading.toDouble()));
+                telemetry.addData("runner", runner.getRunningActions().toString());
                 telemetry.update();
             }
             telemetry.addData("pin x",drive.pose.position.x);
             telemetry.addData("pin y",drive.pose.position.y);
             telemetry.addData("pin h",Math.toDegrees(drive.pose.heading.toDouble()));
+            telemetry.addData("runner", runner.getRunningActions().toString());
             telemetry.update();
 
         }
     }
+    public Action homeMove() {
+        return drive.pidToPointAction(home, telemetry);
+    }
+    public Action targetMove() {
+        return drive.pidToPointAction(target, telemetry);
+    }
+    public Action clipper() {
+        return new SequentialAction(drive.pidToPointAction(home, telemetry), drive.pidToPointAction(target, telemetry));
+    }
 }
+
 
 
 
