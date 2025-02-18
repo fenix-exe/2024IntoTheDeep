@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -551,7 +552,7 @@ public class MecanumDrive {
         private final Supplier<PoseVelocity2d> vel;
         private final Pose2d target;
         private final Consumer<PoseVelocity2d> powerUpdater;
-        private final PIDFController xController;
+        private final com.arcrobotics.ftclib.controller.PIDFController xController;
         private final PIDFController yController;
         private final PIDFController headingController;
         private final Telemetry telemetry;
@@ -561,7 +562,7 @@ public class MecanumDrive {
                 Supplier<PoseVelocity2d> vel,
                 Pose2d target,
                 Consumer<PoseVelocity2d> powerUpdater,
-                PIDFController.PIDCoefficients axialCoefs,
+                double Xp, double Xi, double Xd,
                 PIDFController.PIDCoefficients lateralCoefs,
                 PIDFController.PIDCoefficients headingCoefs,
                 Telemetry telemetry
@@ -571,12 +572,12 @@ public class MecanumDrive {
             this.target = target;
             this.powerUpdater = powerUpdater;
 
-            this.xController = new PIDFController(axialCoefs);
+            this.xController = new com.arcrobotics.ftclib.controller.PIDFController(Xp,Xi,Xd,0);
             this.yController = new PIDFController(lateralCoefs);
             this.headingController = new PIDFController(headingCoefs);
 
-            this.xController.setTargetPosition((int) target.position.x);
-            this.xController.setOutputBounds(-MecanumDrive.PARAMS.xMax,MecanumDrive.PARAMS.xMax );
+            this.xController.setSetPoint(target.position.x);
+            this.xController.setIntegrationBounds(-MecanumDrive.PARAMS.xMax,MecanumDrive.PARAMS.xMax );
             this.yController.setTargetPosition((int) target.position.y);
             this.yController.setOutputBounds(-MecanumDrive.PARAMS.xMax, MecanumDrive.PARAMS.xMax );
 
@@ -595,7 +596,7 @@ public class MecanumDrive {
             }
 
             Vector2d inputVector = new Vector2d(
-                    xController.update(getPosition(pose).x),
+                    xController.calculate(getPosition(pose).x),
                     yController.update(getPosition(pose).y)
             );
 
@@ -619,7 +620,7 @@ public class MecanumDrive {
         return new PIDDrive(
                 (this::getPoseEstimate), (this::updatePoseEstimate), target, // the target pose
                 (this::setDrivePowers), // setDrivePowers uses inverse kinematics to set the powers of the drivetrain motors
-                new PIDFController.PIDCoefficients(PARAMS.xP, PARAMS.xI, PARAMS.xD), // the axial PID coefficients
+                PARAMS.xP, PARAMS.xI, PARAMS.xD, // the axial PID coefficients
                 new PIDFController.PIDCoefficients(PARAMS.yP, PARAMS.yI, PARAMS.yD), // the lateral PID coefficients
                 new PIDFController.PIDCoefficients(PARAMS.hP, PARAMS.hI, PARAMS.hD),
                 telemetry// the heading PID coefficients
