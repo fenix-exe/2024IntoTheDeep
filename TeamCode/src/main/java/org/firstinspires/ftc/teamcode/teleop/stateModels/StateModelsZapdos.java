@@ -9,6 +9,13 @@ import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControl
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainWithPedroPathing;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipPath;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.ClipToHumanPlayer;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.MoveXDirection;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths.MoveYDirection;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
@@ -30,7 +37,9 @@ public class StateModelsZapdos {
     public static GrabBlockFromInsideStates grabBlockFromInsidePresetState;
     public static SpecimenPickupStates pickupSpecimenState;
     static SpecimenDepositStates depositSpecimenState;
+    public static AutoClipSteps autoClipState;
     static HangStates hangState;
+    static IDriveTrain driveTrain;
     static Arm arm;
     static Wrist wrist;
     static Claw claw;
@@ -44,8 +53,12 @@ public class StateModelsZapdos {
     public static BlockPickupType blockPickupType;
     public static boolean intakePosition;
     public static boolean endSpecimenDeposit;
+    static MoveXDirection path;
+    static MoveYDirection yPath;
+    static ClipPath clipping;
 
-    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls, ColorSensor color){
+    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls, ColorSensor color, IDriveTrain driveTrain){
+        StateModelsZapdos.driveTrain = driveTrain;
         StateModelsZapdos.arm = arm;
         StateModelsZapdos.wrist = wrist;
         StateModelsZapdos.driverControls = driverControls;
@@ -69,9 +82,11 @@ public class StateModelsZapdos {
         specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
         specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
         hangState = HangStates.START;
+        autoClipState = AutoClipSteps.START;
         blockPickupType = BlockPickupType.NONE;
         intakePosition = false;
         endSpecimenDeposit = false;
+        timer = new ElapsedTime();
     }
 
     public static void presetPositionDriveStateModel(double pitch, double elbowAngle, double slideLength){
@@ -1066,6 +1081,178 @@ public class StateModelsZapdos {
                     arm.holdArm();
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     depositSpecimenState = SpecimenDepositStates.START;
+                }
+                break;
+        }
+    }
+    public static void autoClip(double elbowPickupAngle, double slidePickupLength, double pitchPickupAngle, double rollPickupAngle, double pitchAngle, double elbowDepositAngle, double slideDepositLength, double pitchDepositAngle, double rollDepositAngle, double pitchSafeAngle, double rollSafeAngle,double xDistance, double yDistance){
+        switch(autoClipState){
+            case START:
+                if (driverControls.pickupAndDepositSpecimens()){
+                    drivePresetState = DriveStates.START;
+                    intakePresetState = IntakeStates.START;
+                    submersibleLeaveStates = LeaveSubmersibleStates.START;
+                    grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
+                    grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
+                    exitDepositPresetState = ExitDepositStates.START;
+                    depositPresetState = DepositStates.START;
+                    depositBackPresetState = DepositStates.START;
+                    pickupSpecimenState= SpecimenPickupStates.START;
+                    enterIntakePositionStates = EnterIntakePositionStates.START;
+                    hangState = HangStates.START;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
+                    depositSpecimenState = SpecimenDepositStates.START;
+                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
+                    autoClipState = AutoClipSteps.RETRACTING_SLIDES;
+                    intakePosition = false;
+                    endSpecimenDeposit = false;
+                    wrist.presetPosition(pitchPickupAngle, rollPickupAngle);
+                    arm.moveSlideToLength(0);
+                }
+                break;
+            case RETRACTING_SLIDES:
+                if (Math.abs(arm.getSlideExtension()-arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    arm.moveElbowToAngle(elbowPickupAngle);
+                    autoClipState = AutoClipSteps.MOVING_ELBOW;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case MOVING_ELBOW:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+                    arm.moveSlideToLength(slidePickupLength);
+                    autoClipState = AutoClipSteps.EXTENDING_SLIDES;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case EXTENDING_SLIDES:
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    arm.holdSlide();
+                    timer.reset();
+                    claw.closeClaw();
+                    autoClipState = AutoClipSteps.CLOSE_CLAW;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case CLOSE_CLAW:
+                if (timer.milliseconds() > 300){
+                    timer.reset();
+                    wrist.presetPositionPitch(pitchAngle);
+                    autoClipState = AutoClipSteps.RAISE_PITCH;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case RAISE_PITCH:
+                if (timer.milliseconds() > 400){
+                    clipping = ClipPath.getInstance();
+                    driveTrain.Follow(clipping.getPathChain(driveTrain.getCurrentPose()));
+                    arm.moveElbowToAngle(elbowDepositAngle);
+                    arm.moveSlideToLength(slideDepositLength);
+                    wrist.presetPosition(pitchDepositAngle, rollDepositAngle);
+                    autoClipState = AutoClipSteps.GO_TO_CLIP;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    //driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case GO_TO_CLIP:
+                if ((!driveTrain.isFollowingPath() && Math.abs(driveTrain.getCurrentPose().getHeading() - 0) < 3)
+                        && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches())< RobotConstants.SLIDE_TOLERANCE)
+                        && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)){
+                    path = MoveXDirection.getInstance();
+                    path.setDistance(xDistance, driveTrain.getCurrentPose());
+                    driveTrain.stopFollowing();
+                    driveTrain.Follow(path.getPathChain(driveTrain.getCurrentPose()));
+                    autoClipState = AutoClipSteps.OPEN_CLAW;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case CLIP:
+                if (!driveTrain.isFollowingPath()){
+                    yPath = MoveYDirection.getInstance();
+                    yPath.setDistance(yDistance, driveTrain.getCurrentPose());
+                    driveTrain.stopFollowing();
+                    driveTrain.Follow(yPath.getPathChain(driveTrain.getCurrentPose()));
+                    autoClipState = AutoClipSteps.STRAFE_OVER;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case STRAFE_OVER:
+                if (!driveTrain.isFollowingPath()){
+                    driveTrain.stopFollowing();
+                    timer.reset();
+                    claw.openClaw();
+                    autoClipState = AutoClipSteps.OPEN_CLAW;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case OPEN_CLAW:
+                if (timer.milliseconds() > 300){
+                    ClipPath.getInstance().increaseAmountOfClips();
+                    arm.moveSlideToLength(0);
+                    autoClipState = AutoClipSteps.SLIDES_TO_PICKUP;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case SLIDES_TO_PICKUP:
+                if(Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    wrist.presetPosition(pitchSafeAngle, rollSafeAngle);
+                    arm.moveElbowToAngle(elbowPickupAngle);
+                    ClipToHumanPlayer backPath = ClipToHumanPlayer.getInstance();
+                    driveTrain.Follow(backPath.getPathChain(driveTrain.getCurrentPose()));
+                    autoClipState = AutoClipSteps.BACK_TO_PICKUP;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
+                }
+                break;
+            case BACK_TO_PICKUP:
+                if ((!driveTrain.isFollowingPath())
+                        && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches())< RobotConstants.SLIDE_TOLERANCE)
+                        && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)){
+                    wrist.presetPosition(pitchPickupAngle, rollPickupAngle);
+                    autoClipState = AutoClipSteps.RETRACTING_SLIDES;
+                }
+                if (!driverControls.pickupAndDepositSpecimens()){
+                    arm.holdArm();
+                    driveTrain.stopFollowing();
+                    autoClipState = AutoClipSteps.START;
                 }
                 break;
         }

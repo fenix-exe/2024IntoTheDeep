@@ -22,6 +22,7 @@
             <goBILDAPinpoint name="pinpoint" port="1" bus="2" />
             <RevColorSensorV3 name="color sensor" port="1" bus="0" />
             <RevTouchSensor name="homing switch" port="1" />
+
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

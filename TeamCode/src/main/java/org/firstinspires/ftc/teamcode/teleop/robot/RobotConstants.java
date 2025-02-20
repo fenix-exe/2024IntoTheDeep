@@ -16,6 +16,6 @@ public class RobotConstants {
     public static double INTERMEDIATE_POSITION = 0.55;
     public static double EXTRA_SLOW = 0.3;
     public static double SLOW = 0.6;
-    public static double NORMAL_SPEED = 1;
+    public static double NORMAL_SPEED = 0.3;
 
 }

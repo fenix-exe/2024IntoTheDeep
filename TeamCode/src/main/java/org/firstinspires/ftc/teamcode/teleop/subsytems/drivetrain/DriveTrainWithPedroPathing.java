@@ -9,6 +9,8 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
@@ -16,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.util.LoggerUtil;
@@ -29,6 +32,7 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
     private DcMotorEx FR;
     private DcMotorEx BL;
     private DcMotorEx BR;
+    double maxPower=1;
 
 
     public DriveTrainWithPedroPathing(HardwareMap hardwareMap, Pose startPose){
@@ -47,17 +51,19 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
             follower.startTeleopDrive();
             manualDrive = true;
         }
-        follower.setTeleOpMovementVectors(forwardDrive, -strafeDrive, -heading, driveType == DriveType.ROBOT_CENTRIC);
+        follower.setTeleOpMovementVectors(forwardDrive * maxPower, -strafeDrive * maxPower, -heading * maxPower, driveType == DriveType.ROBOT_CENTRIC);
     }
 
     @Override
     public void setMaxPower(double maxPower) {
         FollowerConstants.maxPower = maxPower;
+        this.maxPower = maxPower;
     }
 
     @Override
     public void Follow(PathChain path) {
         manualDrive = false;
+        setMaxPower(RobotConstants.NORMAL_SPEED);
         follower.followPath(path, true);
     }
 
@@ -111,7 +117,7 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
     public boolean isFollowingPath() {
         return follower.isBusy();
     }
-    public boolean atBucket(){
+    public boolean atPosition(PathChain pathChain){
         return follower.getPose().roughlyEquals(new Pose(12.6796, 129.6978));
     }
 }

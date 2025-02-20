@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathBuilder;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -19,6 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -47,6 +49,7 @@ import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
 
 @Config
 @TeleOp
@@ -79,7 +82,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     boolean linearActuatorSensorLastLoop = false;
     boolean touchSensorPressedLastLoop = false;
     boolean usingPedroPathing = true;
-    PathBuilder builder = new PathBuilder();
+    long timeClipPathStart;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -95,12 +98,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
         PathParser.readPathChains();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
+        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color, driveTrain);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
+        telemetry.addData("Clip", ClipPath.getInstance().debugString());
 
-
+        telemetry.update();
         waitForStart();
         wrist.presetPosition(0, 0);
         matchTimer.reset();
@@ -160,16 +164,17 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                     }
                 }
             } else if (driverControls.humanPlayerToClip()) {
-                if (!driveTrain.isFollowingPath()) {
+                if (!driveTrain.isFollowingPath() && timeClipPathStart < (System.currentTimeMillis() - 0)) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        ClipToHumanPlayer path = ClipToHumanPlayer.getInstance();
+                        ClipPath path = ClipPath.getInstance();
                         if(!path.closeToDestination(currentPose)) {
                             driveTrain.Follow(path.getPathChain(currentPose));
+                            timeClipPathStart = System.currentTimeMillis();
                         }
                     }
                 }
-            } else {
+            } else if (!driverControls.pickupAndDepositSpecimens()){
                 driveTrain.stopFollowing();
                 driveTrain.Move(driveType, driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.heading());
             }
@@ -267,8 +272,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,92,26, 6);
             StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,80,0,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,4.75, 31, 3,9, 30, -90);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-90,28,0);
+            //StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,4.75, 31, 3,9, 30, -90);
+            //StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-90,28,0);
+            StateModelsZapdos.autoClip(0,4.75,0,-90,15,31,9,30,-90,90,0,5,2);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.depositSampleIntoObservationZone(3,0,16,-105,-3);
             StateModelsZapdos.hang(5,0,9.5,5.75,83,26,103,45,3,15);
@@ -315,6 +321,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             logStateModels();
             logButtonPressed();
 
+            //telemetry.addData("Clip Path", ClipPath.getInstance().debugString());
+            telemetry.addData("AutoClip State", StateModelsZapdos.autoClipState);
+            telemetry.addData("Following Path", driveTrain.isFollowingPath());
+            telemetry.addData("Distance Sensor Reading", color.getDistance(DistanceUnit.MM));
+            telemetry.addData("Follower Max Power", FollowerConstants.maxPower);
             multiTelemetry.update();
             driveTrain.Update();
 
@@ -351,8 +362,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     public void initializePedroPathing(){
         GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(8, 87, 0));
-        ClipPath.amountOfClips = 0;
+        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(8, 87, pinpoint.getHeading()));
     }
     public void initRevIMU(){
         IMU revIMU = hardwareMap.get(IMU.class, "imu");

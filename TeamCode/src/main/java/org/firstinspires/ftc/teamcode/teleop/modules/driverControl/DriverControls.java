@@ -96,9 +96,22 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.right_bumper;
     }
     public boolean removeSpeedRules(){return false;}
-    public boolean presetPosDriveTrain(){return gamepad2current.touchpad;}
+    public boolean presetPosDriveTrain(){
+        if (gameStrategyMode == scoringType.SAMPLE){
+            return gamepad2current.touchpad;
+        } else {
+            return false;
+        }
+    }
     public boolean submersibleToHumanPlayer(){return gamepad2current.back;}
     public boolean humanPlayerToClip(){return gamepad2current.start && !gamepad2current.b;}
+    public boolean autoClip(){
+        if (gameStrategyMode == scoringType.SPECIMEN){
+            return gamepad2current.touchpad;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public boolean slidesFullyUp() {
@@ -261,7 +274,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean pickupAndDepositSpecimens(){
-        return gamepad2current.y && !gamepad2previous.y;
+        return gamepad2current.y;
     }
     public boolean switchStrategy(){
         return gamepad1current.back && !gamepad1previous.back;

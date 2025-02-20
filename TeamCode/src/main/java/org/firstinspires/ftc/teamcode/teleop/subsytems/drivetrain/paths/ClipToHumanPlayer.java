@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
@@ -22,6 +23,7 @@ public class ClipToHumanPlayer extends BasePath{
     }
     @Override
     public PathChain getPathChain(Pose currentPose) {
+        PathBuilder builder = new PathBuilder();
         ArrayList<Point> pointList = new ArrayList<Point>();
         pointList.add(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN));
         for(int i = 0; i < controlPoints.size(); i++){

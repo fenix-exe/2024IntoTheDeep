@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.pedroPathing.c
 @TeleOp(name = "Example Robot-Centric Teleop", group = "Examples")
 public class ExampleRobotCentricTeleop extends OpMode {
     private Follower follower;
-    private final Pose startPose = new Pose(0,0,0);
+    private final Pose startPose = new Pose(8,87,0);
     private Pose currentPose;
     Gamepad gamepad1current;
     Gamepad gamepad1previous;
@@ -82,11 +82,11 @@ public class ExampleRobotCentricTeleop extends OpMode {
                             // Line 1
                             new BezierCurve(
                                     new Point(follower.getPose().getX(), follower.getPose().getY(), Point.CARTESIAN),
-                                    new Point(48.000, 24.000, Point.CARTESIAN),
-                                    new Point(0.000, 48.000, Point.CARTESIAN)
+                                    new Point(follower.getPose().getX(), 70.000, Point.CARTESIAN),
+                                    new Point(30.000, 70.000, Point.CARTESIAN)
                             )
                     )
-                    .setTangentHeadingInterpolation()
+                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), 0)
                     .build();
             follower.breakFollowing();
             follower.followPath(paths, true);

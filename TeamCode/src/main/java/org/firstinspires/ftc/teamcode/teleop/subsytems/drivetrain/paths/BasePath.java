@@ -22,14 +22,13 @@ public abstract class BasePath {
     public String interpolationType;
     public double interpolationParam1;
     public double interpolationParam2;
-    public PathBuilder builder = new PathBuilder();
     protected BasePath(){
     }
     public abstract PathChain getPathChain(Pose currentPose);
     public boolean closeToDestination(Pose currentPose){
-        //point inside circle centered at endPoint and radius 5
+        //point inside circle centered at endPoint and radius 10
         Point endPoint = convertToPoint(endPointAsString,currentPose);
-        return (Math.pow((currentPose.getX() - endPoint.getX()),2) + Math.pow((currentPose.getY() - endPoint.getY()),2)) < 25;
+        return (Math.pow((currentPose.getX() - endPoint.getX()),2) + Math.pow((currentPose.getY() - endPoint.getY()),2)) < 100;
     }
     public void parse(BasePath path, String[] csvValues){
         switch(csvValues[1]){
@@ -65,5 +64,13 @@ public abstract class BasePath {
             yCoord = Double.parseDouble(pointString.Y);
         }
         return new Point(xCoord, yCoord, Point.CARTESIAN);
+    }
+    public String debugString(){
+        StringBuilder strBuilder = new StringBuilder();
+        for(int i=0; i< controlPoints.size(); i++) {
+            strBuilder.append("("+controlPoints.get(i).X+","+controlPoints.get(i).Y+") ");
+        }
+        strBuilder.append("("+endPointAsString.X+","+endPointAsString.Y+")");
+        return strBuilder.toString();
     }
 }
