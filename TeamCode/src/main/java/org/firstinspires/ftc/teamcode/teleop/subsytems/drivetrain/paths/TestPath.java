@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths;
 
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
@@ -29,10 +30,10 @@ public class TestPath extends BasePath{
         }
         pointList.add(convertToPoint(endPointAsString, currentPose));
         PathChain paths = builder.addPath(
-                        new BezierCurve(pointList)
+                        //new BezierCurve(pointList)
+                        new BezierLine(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN), convertToPoint(endPointAsString,currentPose))
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed(true)
+                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1))
                 .build();
         return paths;
     }

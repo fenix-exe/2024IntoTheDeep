@@ -37,6 +37,10 @@ public class PathParser {
                     ClipToHumanPlayer dummyPath=ClipToHumanPlayer.getInstance();
                     dummyPath.parse(dummyPath,values);
                 }
+                if (values[0].equals("TestPath")){
+                    TestPath dummyPath=TestPath.getInstance();
+                    dummyPath.parse(dummyPath,values);
+                }
             }
         } catch (Exception e) {
             LoggerUtil.logException("PresetReading",e);

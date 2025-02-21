@@ -71,6 +71,7 @@ public abstract class BasePath {
             strBuilder.append("("+controlPoints.get(i).X+","+controlPoints.get(i).Y+") ");
         }
         strBuilder.append("("+endPointAsString.X+","+endPointAsString.Y+")");
+        strBuilder.append("["+interpolationParam1+","+interpolationParam2+"]");
         return strBuilder.toString();
     }
 }

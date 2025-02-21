@@ -17,6 +17,6 @@ SubmersibleToHumanPlayer,ControlPoint,currentX,24
 SubmersibleToHumanPlayer,EndPoint,44,24
 SubmersibleToHumanPlayer,InterpolationType,Linear
 SubmersibleToHumanPlayer,InterpolationParam1,180
-TestPath,ControlPoint,48,24
-TestPath,EndPoint,0,48
+TestPath,EndPoint,20,50
 TestPath,InterpolationType,Tangential
+TestPath,InterpolationParam1,0.01
