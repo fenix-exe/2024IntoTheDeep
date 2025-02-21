@@ -10,6 +10,9 @@ import java.io.FileReader;
 public class PathParser {
     public static String PRESETFILE = "/sdcard/Download/teleop/PathConfiguration.csv";
     public static void readPathChains(String filename){
+
+        clearAllPaths();  // we will read everything from the .csv
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
@@ -48,5 +51,13 @@ public class PathParser {
     }
     public static void readPathChains(){
         readPathChains(PRESETFILE);
+    }
+
+    private static void clearAllPaths() {
+        ClipPath.getInstance().clear();
+        ClipToHumanPlayer.getInstance().clear();
+        SubmersibleToBucket.getInstance().clear();
+        SubmersibleToHumanPlayer.getInstance().clear();
+        TestPath.getInstance().clear();
     }
 }

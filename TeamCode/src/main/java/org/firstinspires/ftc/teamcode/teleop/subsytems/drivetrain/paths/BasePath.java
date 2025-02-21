@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.paths;
 
+import androidx.annotation.NonNull;
+
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
@@ -65,7 +67,13 @@ public abstract class BasePath {
         }
         return new Point(xCoord, yCoord, Point.CARTESIAN);
     }
-    public String debugString(){
+
+    public void clear() {
+        controlPoints.clear();
+    }
+
+    @NonNull
+    public String toString(){
         StringBuilder strBuilder = new StringBuilder();
         for(int i=0; i< controlPoints.size(); i++) {
             strBuilder.append("("+controlPoints.get(i).X+","+controlPoints.get(i).Y+") ");

@@ -29,12 +29,27 @@ public class TestPath extends BasePath{
             pointList.add(convertToPoint(controlPoints.get(i), currentPose));
         }
         pointList.add(convertToPoint(endPointAsString, currentPose));
-        PathChain paths = builder.addPath(
-                        //new BezierCurve(pointList)
+        /*PathChain paths = builder.addPath(
+                        !controlPoints.isEmpty() ?
+                        new BezierCurve(pointList) :
                         new BezierLine(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN), convertToPoint(endPointAsString,currentPose))
                 )
                 .setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1))
-                .build();
-        return paths;
+                .build();*/
+
+        PathBuilder pathsBuilt = builder.addPath(
+                !controlPoints.isEmpty() ? new BezierCurve(pointList) :
+                        new BezierLine(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN), convertToPoint(endPointAsString,currentPose))
+        );
+
+        if (interpolationType == null || interpolationType.equals("Constant")){
+            pathsBuilt.setConstantHeadingInterpolation(Math.toRadians(interpolationParam1));
+        } else if(interpolationType.equals("Linear")) {
+            pathsBuilt.setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1));
+        } else {
+            pathsBuilt.setTangentHeadingInterpolation();
+        }
+
+        return pathsBuilt.build();
     }
 }
