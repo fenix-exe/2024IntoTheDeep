@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathBuilder;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -87,6 +88,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //bulk reads
+        for (LynxModule module: hardwareMap.getAll(LynxModule.class)){
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
         initializeGamePads();
         initRevIMU();
         if (usingPedroPathing) {
@@ -103,7 +108,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
-        telemetry.addData("Test", TestPath.getInstance().toString());
+        telemetry.addData("Clip", ClipPath.getInstance().toString());
         telemetry.addData("Drive PID", FollowerConstants.drivePIDFCoefficients.toString());
 
         telemetry.update();
@@ -169,7 +174,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 if (!driveTrain.isFollowingPath() && timeClipPathStart < (System.currentTimeMillis() - 2000)) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        TestPath path = TestPath.getInstance();
+                        ClipPath path = ClipPath.getInstance();
                         if(!path.closeToDestination(currentPose)) {
                             driveTrain.Follow(path.getPathChain(currentPose));
                             timeClipPathStart = System.currentTimeMillis();
@@ -264,7 +269,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches());
             }*/
             //matchTimer.seconds() > 100 ||
-/*
+
             //state models for preset positions
             StateModelsZapdos.presetPositionDriveStateModel(0,92,8);
             StateModelsZapdos.presetPositionIntakeStateModel(-90,-3,-90,-3,0,12);
@@ -276,11 +281,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
             //StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,4.75, 31, 3,9, 30, -90);
             //StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-90,28,0);
-            StateModelsZapdos.autoClip(0,4.75,0,-90,15,31,9,30,-90,90,0,5,2);
+            StateModelsZapdos.autoClip(0,4.75,0,-90,30,31,9,30,-90,90,0,5,2);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.depositSampleIntoObservationZone(3,0,16,-105,-3);
             StateModelsZapdos.hang(5,0,9.5,5.75,83,26,103,45,3,15);
- */
+
             //telemetry
             /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
@@ -364,7 +369,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     public void initializePedroPathing(){
         //GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(0, 0, 0.000001));
+        driveTrain = new DriveTrainWithPedroPathing(hardwareMap, new Pose(8, 87, 0));
     }
     public void initRevIMU(){
         IMU revIMU = hardwareMap.get(IMU.class, "imu");

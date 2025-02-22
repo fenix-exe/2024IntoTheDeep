@@ -8,6 +8,7 @@
             <goBILDA5202SeriesMotor name="pivot" port="3" />
             <RevTouchSensor name="linear actuator switch" port="3" />
             <RevTouchSensor name="limit switch" port="1"  />
+            <RevColorSensorV3 name="color sensor" port="1" bus="0" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="BL" port="0" />
@@ -20,7 +21,6 @@
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
             <goBILDAPinpoint name="pinpoint" port="1" bus="2" />
-            <RevColorSensorV3 name="color sensor" port="1" bus="0" />
             <RevTouchSensor name="homing switch" port="1" />
 
         </LynxModule>

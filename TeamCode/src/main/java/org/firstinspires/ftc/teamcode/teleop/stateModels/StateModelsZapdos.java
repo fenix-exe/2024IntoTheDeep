@@ -1165,7 +1165,7 @@ public class StateModelsZapdos {
                     arm.moveElbowToAngle(elbowDepositAngle);
                     arm.moveSlideToLength(slideDepositLength);
                     wrist.presetPosition(pitchDepositAngle, rollDepositAngle);
-                    autoClipState = AutoClipSteps.GO_TO_CLIP;
+                    autoClipState = AutoClipSteps.STRAFE_OVER;
                 }
                 if (!driverControls.pickupAndDepositSpecimens()){
                     arm.holdArm();

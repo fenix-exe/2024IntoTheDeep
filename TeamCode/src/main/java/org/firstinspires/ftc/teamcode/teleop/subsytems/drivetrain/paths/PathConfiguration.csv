@@ -6,13 +6,13 @@ SubmersibleToBucket,InterpolationType,Tangential
 SubmersibleToBucket,InterpolationParam1,0
 SubmersibleToBucket,InterpolationParam2,0
 SubmersibleToBucket,IsPathReversed,TRUE
-ClipPath,EndPoint,30,65
+ClipPath,EndPoint,24,72
 ClipPath,InterpolationType,Linear
-ClipPath,InterpolationParam1,0
+ClipPath,InterpolationParam1,0.0001
 ClipPath,InterpolationParam2,0
-ClipToHumanPlayer,EndPoint,21.6415,31.569
+ClipToHumanPlayer,EndPoint,24.5,28.5
 ClipToHumanPlayer,InterpolationType,Linear
-ClipToHumanPlayer,InterpolationParam1,180,
+ClipToHumanPlayer,InterpolationParam1,180.0001,
 SubmersibleToHumanPlayer,ControlPoint,currentX,24
 SubmersibleToHumanPlayer,EndPoint,44,24
 SubmersibleToHumanPlayer,InterpolationType,Linear

@@ -25,16 +25,19 @@ public class ClipToHumanPlayer extends BasePath{
     public PathChain getPathChain(Pose currentPose) {
         PathBuilder builder = new PathBuilder();
         ArrayList<Point> pointList = new ArrayList<Point>();
-        pointList.add(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN));
+        Point startPoint = new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN);
+        pointList.add(startPoint);
         for(int i = 0; i < controlPoints.size(); i++){
             pointList.add(convertToPoint(controlPoints.get(i), currentPose));
         }
         pointList.add(convertToPoint(endPointAsString, currentPose));
-        PathChain paths = builder.addPath(
-                        new BezierCurve(pointList)
+        PathBuilder paths = builder.addPath(
+                        !controlPoints.isEmpty() ? new BezierCurve(pointList) :
+                                new BezierLine(startPoint, convertToPoint(endPointAsString,currentPose))
                 )
-                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1))
-                .build();
-        return paths;
+                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1));
+                //.setZeroPowerAccelerationMultiplier(0.3)
+        paths.addPath(new BezierLine(convertToPoint(endPointAsString, currentPose), new Point(21.5, 28.5, Point.CARTESIAN))).setConstantHeadingInterpolation(Math.PI);
+        return paths.build();
     }
 }

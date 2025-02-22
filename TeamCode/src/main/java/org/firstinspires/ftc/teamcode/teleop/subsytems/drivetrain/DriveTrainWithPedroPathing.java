@@ -42,7 +42,6 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
         BR = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
         FR = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
         follower = new Follower(hardwareMap);
-        resetIMU();
         follower.setStartingPose(startPose);
         follower.startTeleopDrive();
     }
@@ -57,6 +56,7 @@ public class DriveTrainWithPedroPathing implements IDriveTrain{
 
     @Override
     public void setMaxPower(double maxPower) {
+        follower.setMaxPower(maxPower);
         FollowerConstants.maxPower = maxPower;
         this.maxPower = maxPower;
     }

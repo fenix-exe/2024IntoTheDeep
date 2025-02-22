@@ -43,14 +43,14 @@ public class FConstants {
         //FollowerConstants.drivePIDFSwitch = 10;
         //FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(.0001,0,0,0,0); // Not being used, @see useSecondaryDrivePID
 
-        FollowerConstants.zeroPowerAccelerationMultiplier = 0.5;
+        FollowerConstants.zeroPowerAccelerationMultiplier = 6;
         FollowerConstants.centripetalScaling = 0.0005;
 
         FollowerConstants.pathEndTimeoutConstraint = 200;
         FollowerConstants.pathEndTValueConstraint = 0.995;
         FollowerConstants.pathEndVelocityConstraint = 0.1;
         FollowerConstants.pathEndTranslationalConstraint = 1;
-        FollowerConstants.pathEndHeadingConstraint = 0.05;
+        FollowerConstants.pathEndHeadingConstraint = 0.007;
 
         FollowerConstants.useBrakeModeInTeleOp = true;
     }

@@ -41,19 +41,30 @@ public class ClipPath extends BasePath{
     public PathChain getPathChain(Pose currentPose) {
         PathBuilder builder = new PathBuilder();
         ArrayList<Point> pointList = new ArrayList<Point>();
-        pointList.add(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN));
+        Point startPoint = new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN);
+        pointList.add(startPoint);
+        //pointList.add(new Point(24,31,Point.CARTESIAN));
         for(int i = 0; i < controlPoints.size(); i++){
             pointList.add(convertToPoint(controlPoints.get(i), currentPose));
         }
         pointList.add(convertToPoint(endPointAsString, currentPose));
 
-        PathChain paths = builder.addPath(
-                        //new BezierCurve(pointList)
-                new BezierLine(new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN), convertToPoint(endPointAsString,currentPose))
-                )
-                .setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1))
-                .build();
-        return paths;
+        PathBuilder pathsBuilt = builder.addPath(
+                !controlPoints.isEmpty() ? new BezierCurve(pointList) :
+                        new BezierLine(startPoint, convertToPoint(endPointAsString,currentPose))
+        );
+
+        if (interpolationType == null || interpolationType.equals("Constant")){
+            pathsBuilt.setConstantHeadingInterpolation(Math.toRadians(interpolationParam1));
+        } else if(interpolationType.equals("Linear")) {
+            pathsBuilt.setLinearHeadingInterpolation(currentPose.getHeading(), Math.toRadians(interpolationParam1));
+        } else {
+            pathsBuilt.setTangentHeadingInterpolation();
+        }
+        pathsBuilt.addPath(new BezierLine(convertToPoint(endPointAsString,currentPose), new Point(36.5,72,Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(Math.toRadians(interpolationParam1))
+                .setZeroPowerAccelerationMultiplier(2);
+        return pathsBuilt.build();
     }
     public void increaseAmountOfClips(){
         amountOfClips += 1;
