@@ -86,7 +86,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeArmAndHome();
         initializeEndEffector();
         initializeLinearActuator();
-        PresetConfigUtil.loadPresetsFromConfig();
+        int presetsRead = PresetConfigUtil.loadPresetsFromConfig();
         StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
@@ -95,6 +95,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         matchTimer = new ElapsedTime();
         freqCounter = new FrequencyCounter();
 
+        telemetry.addData("Presets Read", presetsRead);
+        telemetry.update();
 
         waitForStart();
         wrist.presetPosition(0,0);
