@@ -41,19 +41,14 @@ public class PresetConfigUtil {
                 StateModelParameters.DepositStateParameters.roll = Double.parseDouble(configValues[2]);
                 StateModelParameters.DepositStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
                 StateModelParameters.DepositStateParameters.slideLength = Double.parseDouble(configValues[4]);
-                break;
-            case "DEPOSIT_BACK_STATE_MODEL_PARAMS":
-                StateModelParameters.DepositBackStateParameters.pitch = Double.parseDouble(configValues[1]);
-                StateModelParameters.DepositBackStateParameters.roll = Double.parseDouble(configValues[2]);
-                StateModelParameters.DepositBackStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
-                StateModelParameters.DepositBackStateParameters.slideLength = Double.parseDouble(configValues[4]);
-                StateModelParameters.DepositBackStateParameters.slideRetractionLength = Double.parseDouble(configValues[5]);
+                StateModelParameters.DepositStateParameters.slideRetractionLength = Double.parseDouble(configValues[5]);
                 break;
             case "DEPOSIT_SAMPLE_INTO_BUCKET_STATE_MODEL_PARAMS":
                 StateModelParameters.DepositSampleIntoBucketStateParameters.pitch = Double.parseDouble(configValues[1]);
                 StateModelParameters.DepositSampleIntoBucketStateParameters.roll = Double.parseDouble(configValues[2]);
                 StateModelParameters.DepositSampleIntoBucketStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
-                StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength = Double.parseDouble(configValues[4]);
+                StateModelParameters.DepositSampleIntoBucketStateParameters.intermediateElbowAngle = Double.parseDouble(configValues[4]);
+                StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength = Double.parseDouble(configValues[5]);
                 break;
             case "GRAB_FROM_OUTSIDE_STATE_MODEL_PARAMS":
                 StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch = Double.parseDouble(configValues[1]);
@@ -64,46 +59,45 @@ public class PresetConfigUtil {
                 StateModelParameters.GrabBlockFromOutsideStateParameters.elbowAngle = Double.parseDouble(configValues[6]);
                 StateModelParameters.GrabBlockFromOutsideStateParameters.slideLength = Double.parseDouble(configValues[7]);
                 break;
-            case "GRAB_FROM_INSIDE_STATE_MODEL_PARAMS":
-                StateModelParameters.GrabBlockFromInsideStateParameters.downPitch = Double.parseDouble(configValues[1]);
-                StateModelParameters.GrabBlockFromInsideStateParameters.upPitch= Double.parseDouble(configValues[2]);
-                StateModelParameters.GrabBlockFromInsideStateParameters.upRoll = Double.parseDouble(configValues[3]);
-                StateModelParameters.GrabBlockFromInsideStateParameters.elbowDownAngle = Double.parseDouble(configValues[4]);
-                StateModelParameters.GrabBlockFromInsideStateParameters.elbowUpAngle = Double.parseDouble(configValues[5]);
-                StateModelParameters.GrabBlockFromInsideStateParameters.elbowAngle = Double.parseDouble(configValues[6]);
-                StateModelParameters.GrabBlockFromInsideStateParameters.slideLength = Double.parseDouble(configValues[7]);
-                break;
             case "PICKUP_SPECIMENS_STATE_MODEL_PARAMS":
                 StateModelParameters.PickupSpecimensStateParameters.pitch = Double.parseDouble(configValues[1]);
                 StateModelParameters.PickupSpecimensStateParameters.roll= Double.parseDouble(configValues[2]);
                 StateModelParameters.PickupSpecimensStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
                 StateModelParameters.PickupSpecimensStateParameters.slideLength = Double.parseDouble(configValues[4]);
                 StateModelParameters.PickupSpecimensStateParameters.elbowUpAngle = Double.parseDouble(configValues[5]);
-                StateModelParameters.PickupSpecimensStateParameters.endSlideLength = Double.parseDouble(configValues[6]);
-                StateModelParameters.PickupSpecimensStateParameters.pitchEnd = Double.parseDouble(configValues[7]);
-                StateModelParameters.PickupSpecimensStateParameters.rollEnd = Double.parseDouble(configValues[8]);
+                StateModelParameters.PickupSpecimensStateParameters.pickupSlideLength = Double.parseDouble(configValues[6]);
+                StateModelParameters.PickupSpecimensStateParameters.endSlideLength = Double.parseDouble(configValues[7]);
+                StateModelParameters.PickupSpecimensStateParameters.pitchEnd = Double.parseDouble(configValues[8]);
+                StateModelParameters.PickupSpecimensStateParameters.rollEnd = Double.parseDouble(configValues[9]);
                 break;
             case "DEPOSIT_SPECIMENS_STATE_MODEL_PARAMS":
                 StateModelParameters.DepositSpecimensStateParameters.pitch = Double.parseDouble(configValues[1]);
                 StateModelParameters.DepositSpecimensStateParameters.roll= Double.parseDouble(configValues[2]);
                 StateModelParameters.DepositSpecimensStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
-                StateModelParameters.DepositSpecimensStateParameters.elbowDownAngle = Double.parseDouble(configValues[4]);
-                StateModelParameters.DepositSpecimensStateParameters.slideStartLength = Double.parseDouble(configValues[5]);
-                StateModelParameters.DepositSpecimensStateParameters.slideDepositLength = Double.parseDouble(configValues[6]);
+                StateModelParameters.DepositSpecimensStateParameters.slideLength = Double.parseDouble(configValues[4]);
                 break;
             case "DROP_BLOCK_AND_MOVE_WRIST_DOWN_STATE_MODEL_PARAMS":
                 StateModelParameters.DropBlockAndMoveWristDown.pitch = Double.parseDouble(configValues[1]);
+                StateModelParameters.DropBlockAndMoveWristDown.elbowAngle = Double.parseDouble(configValues[2]);
                 break;
             case "HANG_STATE_MODEL_PARAMS":
                 StateModelParameters.Hang.pitch = Double.parseDouble(configValues[1]);
                 StateModelParameters.Hang.roll = Double.parseDouble(configValues[2]);
-                StateModelParameters.Hang.linearActuatorRetraction = Double.parseDouble(configValues[3]);
-                StateModelParameters.Hang.initialElbowAngle = Double.parseDouble(configValues[4]);
-                StateModelParameters.Hang.slideExtension = Double.parseDouble(configValues[5]);
-                StateModelParameters.Hang.hangElbowAngle = Double.parseDouble(configValues[6]);
-                StateModelParameters.Hang.slideRetraction = Double.parseDouble(configValues[7]);
-                StateModelParameters.Hang.endElbowAngle = Double.parseDouble(configValues[8]);
+                StateModelParameters.Hang.linearActuatorExtension = Double.parseDouble(configValues[3]);
+                StateModelParameters.Hang.linearActuatorRetraction = Double.parseDouble(configValues[4]);
+                StateModelParameters.Hang.initialElbowAngle = Double.parseDouble(configValues[5]);
+                StateModelParameters.Hang.slideExtension = Double.parseDouble(configValues[6]);
+                StateModelParameters.Hang.hangElbowAngle = Double.parseDouble(configValues[7]);
+                StateModelParameters.Hang.slideIntermediatePosition = Double.parseDouble(configValues[8]);
+                StateModelParameters.Hang.slideRetraction = Double.parseDouble(configValues[9]);
+                StateModelParameters.Hang.endElbowAngle = Double.parseDouble(configValues[10]);
                 break;
+            case "DEPOSIT_SAMPLE_INTO_OBSERVATION_ZONE_STATE_MODEL_PARAMS":
+                StateModelParameters.DepositSampleIntoObservationZone.retractionLength = Double.parseDouble(configValues[1]);
+                StateModelParameters.DepositSampleIntoObservationZone.pitchDown = Double.parseDouble(configValues[2]);
+                StateModelParameters.DepositSampleIntoObservationZone.extensionLength = Double.parseDouble(configValues[3]);
+                StateModelParameters.DepositSampleIntoObservationZone.downPitch = Double.parseDouble(configValues[4]);
+                StateModelParameters.DepositSampleIntoObservationZone.downRoll = Double.parseDouble(configValues[5]);
             default:
                 LoggerUtil.error("updatePresets", "Read Unknown Preset," + preset_name );
                 break;
