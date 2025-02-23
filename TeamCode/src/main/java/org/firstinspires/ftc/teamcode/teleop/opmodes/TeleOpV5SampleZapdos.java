@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -43,6 +44,7 @@ import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Config
 @TeleOp
@@ -77,6 +79,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //bulk reads
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+        //initialization
         initializeGamePads();
         initializeDriveTrain();
         initializeArmAndHome();
