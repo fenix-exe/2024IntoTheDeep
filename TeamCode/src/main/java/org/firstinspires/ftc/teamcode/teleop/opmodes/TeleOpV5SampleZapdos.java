@@ -71,7 +71,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     ElapsedTime debounceTimer;
     FrequencyCounter freqCounter;
     double speedMultiplier;
-    public static boolean enableLogging=true;
+    public static boolean enableLogging=false;
     @Override
     public void runOpMode() throws InterruptedException {
         //enable manual bulk reads
@@ -217,14 +217,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //state models for preset positions
             StateModelsZapdos.presetPositionDriveStateModel(0,92,8);
             StateModelsZapdos.presetPositionIntakeStateModel(-90,-3,-90,-3,0,12);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,92,26, 6);
+            StateModelsZapdos.presetPositionDepositStateModel(100,0,92,26, 8);
             StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,80,0,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(0,-90,0,4.75, 31, 3,9, 30, -90);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(0,-90,28,0);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 1.9);
             StateModelsZapdos.depositSampleIntoObservationZone(3,0,16,-105,-3);
-            StateModelsZapdos.hang(5,0,9.5,5.75,83,26,103,45,3,15);
+            StateModelsZapdos.hang(5,0,9.5,5.75,83,26,103,12.5,3,15);
  
             //telemetry
             /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -261,6 +261,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
             telemetry.addData("Freq Counter", freqCounter.getAveFrequency());
+            telemetry.addData("Slide Pos", arm.getSlideExtension());
             multiTelemetry.update();
 
             //logging

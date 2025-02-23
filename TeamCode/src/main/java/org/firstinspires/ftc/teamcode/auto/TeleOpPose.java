@@ -221,7 +221,7 @@ public class TeleOpPose extends LinearOpMode {
             StateModelsZapdos.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(-45,0,75,28, 8);
+            StateModelsZapdos.presetPositionDepositStateModel(-45,0,75,28, 8);
             StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,83,58,8);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-90, 0,0,4,10, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);

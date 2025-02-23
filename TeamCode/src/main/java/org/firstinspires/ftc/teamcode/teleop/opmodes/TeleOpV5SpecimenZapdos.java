@@ -194,14 +194,14 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
             //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
-            StateModelsZapdos.presetPositionDepositFrontStateModel(80,-30,93,28, 8);
+            StateModelsZapdos.presetPositionDepositStateModel(80,-30,93,28, 8);
             StateModelsZapdos.depositSampleIntoBucketStateModel(0,0,83,58,8);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-50, 0,-60, ElbowIntakeAngleFunction.getElbowAngle(arm.getSlideExtension()),2, 58,0);
             StateModelsZapdos.presetPositionGrabBlockFromInsideStateModel(-90,0,30,2,10,58,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(-15,28,0,2.2, 80, 7,7, 90, 25);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(-15,28,0,14);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 6);
-            StateModelsZapdos.hang(0,0,9.5,6,83,26,96,45,0,15);
+            StateModelsZapdos.hang(0,0,9.5,6,83,26,96,12.5,0,15);
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());

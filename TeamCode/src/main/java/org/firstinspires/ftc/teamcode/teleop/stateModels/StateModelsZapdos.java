@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
-import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
@@ -108,7 +107,7 @@ public class StateModelsZapdos {
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250){
-                    arm.moveSlideToLength(0);
+                    arm.moveSlideToLength(slideLength);
                     drivePresetState = DriveStates.RETRACTING_SLIDE;
                 }
                 if (driverControls.escapePresets()){
@@ -287,7 +286,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void presetPositionDepositStateModel(double pitch, double roll, double elbowAngle, double slideLength){
+    public static void presetPositionDepositUnusedStateModel(double pitch, double roll, double elbowAngle, double slideLength){
         switch (depositPresetState){
             case START:
                 if (driverControls.depositReadyFrontTopBucket() && depositCycle == DepositCycles.GO_TO_DEPOSIT){
@@ -350,7 +349,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void presetPositionDepositFrontStateModel(double pitch, double roll, double elbowAngle, double slideLength, double slideRetractionLength){
+    public static void presetPositionDepositStateModel(double pitch, double roll, double elbowAngle, double slideLength, double slideRetractionLength){
         switch (depositBackPresetState){
             case START:
                 if (driverControls.depositBack() && depositCycle == DepositCycles.GO_TO_DEPOSIT){
@@ -1070,7 +1069,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void hang(double pitch, double roll, double linearActuatorExtension, double linearActuatorRetraction, double initialElbowAngle, double slideExtension, double hangElbowAngle, double elbowSlideCrossover, double slideRetration, double endElbowAngle){
+    public static void hang(double pitch, double roll, double linearActuatorExtension, double linearActuatorRetraction, double initialElbowAngle, double slideExtension, double hangElbowAngle, double slideIntermediatePosition, double slideRetration, double endElbowAngle){
         switch(hangState){
             case START:
                 if (driverControls.hang()){
@@ -1145,7 +1144,7 @@ public class StateModelsZapdos {
             case ELBOW_TO_HANG_POSITION:
                 if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
                         && driverControls.hang()){
-                    arm.moveSlideToLength(12.5);
+                    arm.moveSlideToLength(slideIntermediatePosition);
                     hangState = HangStates.SLIDES_RETRACT;
                 }
                 if (driverControls.escapePresets()){
