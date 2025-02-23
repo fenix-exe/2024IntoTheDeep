@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.util.testCode.homing;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActu
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
 @TeleOp
+@Disabled
 public class HomeTeleOpUp extends LinearOpMode {
     Elbow elbow;
     Slide slide;

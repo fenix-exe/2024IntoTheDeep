@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 @Config
 @TeleOp(name = "POSE FINDER")
+@Disabled
 public class poseFinder extends LinearOpMode {
 
 

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @TeleOp
+@Disabled
 public class EndEffectorTest extends LinearOpMode {
     Servo pitchServo;
     Servo rollServo;

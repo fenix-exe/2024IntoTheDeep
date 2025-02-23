@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 @TeleOp
-//@Disabled
+@Disabled
 public class LinearActuatorTest extends LinearOpMode {
     DcMotorEx linearActuatorMotor;
     LinearActuator linearActuator;
