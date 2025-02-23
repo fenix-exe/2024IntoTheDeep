@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -19,18 +18,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.ResetSlideEncoderStateModel;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
@@ -74,15 +71,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     ElapsedTime debounceTimer;
     FrequencyCounter freqCounter;
     double speedMultiplier;
-    boolean linearActuatorSensorLastLoop = false;
-    boolean touchSensorPressedLastLoop = false;
-
+    public static boolean enableLogging=true;
     @Override
     public void runOpMode() throws InterruptedException {
-        //bulk reads
+        //enable manual bulk reads
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
         //initialization
         initializeGamePads();
@@ -92,9 +87,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
         StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
+        ResetSlideEncoderStateModel.initialize(arm);
+        //drivers prefer field centric so that is our default mode
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
+        freqCounter = new FrequencyCounter();
 
 
         waitForStart();
@@ -102,11 +100,20 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         matchTimer.reset();
 
         while (opModeIsActive()){
+            //clear cache for bulk reads
+            //IMPORTANT!!!!!!!!!!!!!!!! bc we are using manual bulk read mode
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
 
+            //tracking loop cycle times, allowing us to know how many times our main while loop executes every second
+            freqCounter.count();
+
+            //updates for imu and button presses
             driverControls.update();
             imu.update();
 
-            //driving code
+            //switching drive modes
             if (driverControls.driveTypeSwitch()){
                 if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
                     DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
@@ -116,22 +123,19 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             }
 
+            //imu reset
             if (driverControls.resetIMU()){
                 driveTrain.resetIMU();
             }
 
             //speed adjustments
             if (driverControls.microDriveAdjustments()){
-                speedMultiplier = RobotConstants.EXTRA_SLOW;
-            } /*else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
-                speedMultiplier = RobotConstants.NORMAL_SPEED;
-            } else if (arm.getElbowAngleInDegrees() > RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE) {
-                speedMultiplier = RobotConstants.EXTRA_SLOW;
-            }*/ else {
+                speedMultiplier = RobotConstants.SLOW_SPEED;
+            } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
-
+            //manual move of the drivetrain
             switch (DriveTrain.driveType) {
                 case ROBOT_CENTRIC:
                     driveTrain.RobotCentric_Drive(speedMultiplier);
@@ -144,33 +148,29 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //manual control for arm
             if (Math.abs(driverControls.slideMovement()) > 0){
                 arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
-                multiTelemetry.addLine("MANUAL CONTROL MOVE");
-                multiTelemetry.addData("Slide Movement", driverControls.slideMovement());
             } else if (driverControls.slideStopped()){
+                //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
             }
             if (Math.abs(driverControls.pivotJoystick()) > 0){
                 arm.moveElbow(driverControls.pivotJoystick());
             } else if (driverControls.pivotManualStopped()){
+                //prevents elbow from moving after the drivers let go of the joystick
                 arm.holdElbow();
             }
 
             //manual control for wrist
             if (driverControls.diffDown()){
                 wrist.manualControlPitch(-15);
-                multiTelemetry.addLine("Wrist Down");
             }
             if (driverControls.diffUp()){
                 wrist.manualControlPitch(15);
-                multiTelemetry.addLine("Wrist Up");
             }
             if (driverControls.diffLeft()){
                 wrist.manualControlRoll(-45);
-                multiTelemetry.addLine("Wrist Left");
             }
             if (driverControls.diffRight()){
                 wrist.manualControlRoll(45);
-                multiTelemetry.addLine("Wrist Right");
             }
 
             //manual control for claw
@@ -181,49 +181,42 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 claw.closeClaw();
             }
 
+            //resetting encoders on gamepad press
             if (driverControls.resetEncoders()){
                 arm.resetEncoders();
             }
 
-            if (arm.isSlideTouchSensorPressed() && debounceTimer.milliseconds() >2000){
-                arm.resetSlideEncoders();
-                debounceTimer.reset();
-            }
+            //run touch sensor fsm for resetting slides
+            ResetSlideEncoderStateModel.execute();
 
-            //checking if linear actuator should automatically go up
+            //linear actuator code for driver control outside of state models
             if (driverControls.linearActuatorUp()){
                 if (driverControls.microDriveAdjustments()){
-                    telemetry.addLine("LINEAR ACTUATOR UP");
+                    //for manual movements
                     double pos = linearActuator.getLinearActuatorPositionInches() + 0.25;
                     linearActuator.goToTargetPositionInches(pos);
-                    telemetry.addData("pos", pos);
                 } else {
+                    //preset positions
                     linearActuator.goToTargetPositionInches(9.5);
                 }
             }
             if (driverControls.linearActuatorDown()){
                 if (driverControls.microDriveAdjustments()){
+                    //for manual movements
                     if (!linearActuator.getLimitSwitchState()){
-                        linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                        //prevents the linear actuator from driving into the ground
+                        linearActuator.goToTargetPositionInches(Math.min(linearActuator.getLinearActuatorPositionInches() - 0.25,0.25));
                     }
                 } else {
+                    //preset position
                     linearActuator.goToTargetPositionInches(5.75);
                 }
 
             }
-            if (linearActuator.getLimitSwitchState() && linearActuatorSensorLastLoop && !(linearActuatorMotor.getTargetPosition() > linearActuator.inchesToTicks(0.3))){
-                linearActuator.goToTargetPositionInches(0.25);
-            }/*else {
-                linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches());
-            }*/
-            //matchTimer.seconds() > 100 ||
 
             //state models for preset positions
             StateModelsZapdos.presetPositionDriveStateModel(0,92,8);
             StateModelsZapdos.presetPositionIntakeStateModel(-90,-3,-90,-3,0,12);
-            //StateModels.leaveSubmersibleStateModel(0,-90,2);
-            //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
-            //StateModelsZapdos.presetPositionDepositFrontStateModel(-100,-30,83,28, 8);
             StateModelsZapdos.presetPositionDepositFrontStateModel(100,0,92,26, 6);
             StateModelsZapdos.depositSampleIntoBucketStateModel(-105,-3,80,0,12);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(-105,0,0,0.8,0.8,58,0);
@@ -267,23 +260,22 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Red", colorSensor.red());
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
+            telemetry.addData("Freq Counter", freqCounter.getAveFrequency());
             multiTelemetry.update();
 
             //logging
-            logDriveTrain();
-            logArm();
-            logEndEffector();
-            logStateModels();
-            logButtonPressed();
-
-            touchSensorPressedLastLoop = arm.isSlideTouchSensorPressed();
-            linearActuatorSensorLastLoop = linearActuator.getLimitSwitchState();
+            if (enableLogging){
+                logDriveTrain();
+                logArm();
+                logEndEffector();
+                logStateModels();
+                logButtonPressed();
+            }
         }
     }
 
     private void initializeGamePads() {
         driverControls = new DriverControls(gamepad1, gamepad2, 1);
-        driverControls.setGameStrategyMode(DriverControls.scoringType.SAMPLE);
     }
 
     private void initializeDriveTrain(){
@@ -306,7 +298,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         revIMU.initialize(parameters);
-        //imu.resetYaw();
+
         GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         /*pinpoint.resetPosAndIMU();
         // wait for pinpoint to finish calibrating
@@ -318,9 +310,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         pinpoint.setPosition(new Pose2d(0,0,0));*/
         imu = new IMUforPinpoint(pinpoint);
 
-        localization = new Localization(pinpoint, revIMU);
+        localization = new Localization(pinpoint, imu);
 
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu);
     }
     private void initializeArmAndHome(){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");

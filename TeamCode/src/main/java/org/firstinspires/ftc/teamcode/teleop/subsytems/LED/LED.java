@@ -2,12 +2,26 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.LED;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
-public class LED {
+public class LED implements ILED{
     RevBlinkinLedDriver LEDForRobot;
     public LED (RevBlinkinLedDriver LED){
         this.LEDForRobot = LED;
     }
-    public void setColorEndgame(){
-        LEDForRobot.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+
+
+    @Override
+    public void setColor(LEDColor color) {
+        RevBlinkinLedDriver.BlinkinPattern pattern;
+        switch (color){
+            case RED:
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                break;
+            case BLUE:
+                pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+                break;
+            default:
+                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+        }
+        LEDForRobot.setPattern(pattern);
     }
 }

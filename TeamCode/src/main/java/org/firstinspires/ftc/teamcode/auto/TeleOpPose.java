@@ -31,7 +31,6 @@ import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsFawkes;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
@@ -144,7 +143,7 @@ public class TeleOpPose extends LinearOpMode {
 
             //speed adjustments
             if (driverControls.microDriveAdjustments()){
-                speedMultiplier = RobotConstants.EXTRA_SLOW;
+                speedMultiplier = RobotConstants.SLOW_SPEED;
             } /*else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             } else if (arm.getElbowAngleInDegrees() > RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE) {
@@ -301,7 +300,7 @@ public class TeleOpPose extends LinearOpMode {
             //imu = new IMUforPinpoint(pinpointIMU);
         }
 
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu);
     }
     private void initializeArmAndHome(){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");

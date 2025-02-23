@@ -4,13 +4,14 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 
 import java.util.HashMap;
 
 public class Localization {
     private GoBildaPinpointDriverRR pinpoint;
-    private IMU imu;
-    public Localization(GoBildaPinpointDriverRR pinpoint, IMU imu){
+    private IIMU imu;
+    public Localization(GoBildaPinpointDriverRR pinpoint, IIMU imu){
         this.pinpoint = pinpoint;
         this.imu = imu;
     }
@@ -21,7 +22,7 @@ public class Localization {
         return pinpoint.getPosY();
     }
     public double getH(){
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        return imu.getYaw();
     }
     public HashMap getDebugInfo(){
         HashMap debugList = new HashMap();

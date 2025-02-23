@@ -55,7 +55,7 @@ public class DriveTrainTest extends LinearOpMode {
 
             //speed adjustments
             if (driverControls.microDriveAdjustments()) {
-                speedMultiplier = RobotConstants.EXTRA_SLOW;
+                speedMultiplier = RobotConstants.SLOW_SPEED;
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
@@ -94,6 +94,6 @@ public class DriveTrainTest extends LinearOpMode {
         //imu.resetYaw();
         IIMU iimu = new IMUforREV(imu);
 
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, iimu, telemetry);
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, iimu);
     }
 }

@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 
@@ -19,18 +17,15 @@ public class DriveTrain {
     DcMotorEx BR;
     IIMU imu_IMU;
     public double speedMultiplier = 1;
-
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
 
-    Telemetry telemetry;
-    public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, Telemetry telemetry){
+    public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu){
         this.gamepad1=gamepad1;
         this.FL=FL;
         this.FR=FR;
         this.BL=BL;
         this.BR=BR;
         this.imu_IMU = imu;
-        this.telemetry = telemetry;
     }
 
     public void RobotCentric_Drive() {
@@ -84,7 +79,6 @@ public class DriveTrain {
         } else {
             rx = 0;
         }
-        telemetry.addData("BotH", botHeading);
 
         rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));
         rotY = x * Math.sin(-botHeading / 180 * Math.PI) + y * Math.cos(-botHeading / 180 * Math.PI);
@@ -108,7 +102,6 @@ public class DriveTrain {
         y = -gamepad1.left_stick_y;
         x = gamepad1.left_stick_x * 1;
         rx = gamepad1.right_stick_x * 1;
-        telemetry.addData("BotH", botHeading);
 
         rotX = 1.1 * (x * Math.cos(-botHeading) - y * Math.sin(-botHeading));
         rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);

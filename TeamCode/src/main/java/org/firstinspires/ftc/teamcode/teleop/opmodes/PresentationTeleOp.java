@@ -204,7 +204,7 @@ public class PresentationTeleOp extends LinearOpMode {
             //imu = new IMUforPinpoint(pinpointIMU);
         }
 
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu);
     }
     private void initializeArmAndHome(){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");

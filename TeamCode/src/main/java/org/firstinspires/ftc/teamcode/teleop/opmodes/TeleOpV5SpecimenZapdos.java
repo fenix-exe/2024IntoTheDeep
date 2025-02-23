@@ -107,7 +107,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
 
             //speed adjustments
             if (driverControls.microDriveAdjustments()){
-                speedMultiplier = RobotConstants.EXTRA_SLOW;
+                speedMultiplier = RobotConstants.SLOW_SPEED;
             } /*else if (arm.getElbowAngleInDegrees() < RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_BOTTOM_ANGLE) {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             } else if (arm.getElbowAngleInDegrees() > RobotConstants.ELBOW_SLOW_DOWN_DRIVETRAIN_TOP_ANGLE) {
@@ -264,9 +264,9 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
         imu = new IMUforREV(revIMU);
         GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class, "pinpoint");
 
-        localization = new Localization(pinpoint, revIMU);
+        localization = new Localization(pinpoint, imu);
 
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu, telemetry);
+        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu);
     }
     private void initializeArmAndHome(){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
