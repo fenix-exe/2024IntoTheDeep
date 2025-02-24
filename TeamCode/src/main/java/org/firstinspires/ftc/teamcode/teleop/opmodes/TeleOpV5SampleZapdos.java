@@ -208,7 +208,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                     //for manual movements
                     if (!linearActuator.getLimitSwitchState()){
                         //prevents the linear actuator from driving into the ground
-                        linearActuator.goToTargetPositionInches(Math.min(linearActuator.getLinearActuatorPositionInches() - 0.25,0.25));
+                        linearActuator.goToTargetPositionInches(Math.max(linearActuator.getLinearActuatorPositionInches() - 0.25,0.25));
                     }
                 } else {
                     //preset position
