@@ -90,8 +90,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //bulk reads
         for (LynxModule module: hardwareMap.getAll(LynxModule.class)){
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+        freqCounter = new FrequencyCounter();
         initializeGamePads();
         initRevIMU();
         if (usingPedroPathing) {
@@ -108,7 +109,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
-        telemetry.addData("Clip", ClipPath.getInstance().toString());
+        telemetry.addData("Test", TestPath.getInstance().toString());
         telemetry.addData("Drive PID", FollowerConstants.drivePIDFCoefficients.toString());
 
         telemetry.update();
@@ -117,8 +118,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         matchTimer.reset();
 
         while (opModeIsActive()) {
+            for (LynxModule hub : hardwareMap.getAll(LynxModule.class)) {
+                hub.clearBulkCache();
+            }
 
             driverControls.update();
+            freqCounter.count();
 
             //driving code
             if (driverControls.driveTypeSwitch()) {
@@ -174,7 +179,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 if (!driveTrain.isFollowingPath() && timeClipPathStart < (System.currentTimeMillis() - 2000)) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        ClipPath path = ClipPath.getInstance();
+                        TestPath path = TestPath.getInstance();
                         if(!path.closeToDestination(currentPose)) {
                             driveTrain.Follow(path.getPathChain(currentPose));
                             timeClipPathStart = System.currentTimeMillis();
@@ -237,18 +242,18 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.resetEncoders();
             }
 
-            if (arm.isSlideTouchSensorPressed() && debounceTimer.milliseconds() >2000){
+            /*if (arm.isSlideTouchSensorPressed() && debounceTimer.milliseconds() >2000){
                 arm.resetSlideEncoders();
                 debounceTimer.reset();
-            }
+            }*/
 
             //checking if linear actuator should automatically go up
             if (driverControls.linearActuatorUp()){
                 if (driverControls.microDriveAdjustments()){
-                    telemetry.addLine("LINEAR ACTUATOR UP");
+                    //telemetry.addLine("LINEAR ACTUATOR UP");
                     double pos = linearActuator.getLinearActuatorPositionInches() + 0.25;
                     linearActuator.goToTargetPositionInches(pos);
-                    telemetry.addData("pos", pos);
+                    //telemetry.addData("pos", pos);
                 } else {
                     linearActuator.goToTargetPositionInches(9.5);
                 }
@@ -256,19 +261,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             if (driverControls.linearActuatorDown()){
                 if (driverControls.microDriveAdjustments()){
                     if (!linearActuator.getLimitSwitchState()){
-                        linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches() - 0.25);
+                        linearActuator.goToTargetPositionInches(Math.max(linearActuator.getLinearActuatorPositionInches() - 0.25,0.25));
                     }
                 } else {
                     linearActuator.goToTargetPositionInches(5.75);
                 }
 
             }
-            if (linearActuator.getLimitSwitchState() && linearActuatorSensorLastLoop && !(linearActuatorMotor.getTargetPosition() > linearActuator.inchesToTicks(0.3))){
-                linearActuator.goToTargetPositionInches(0.25);
-            }/*else {
-                linearActuator.goToTargetPositionInches(linearActuator.getLinearActuatorPositionInches());
-            }*/
-            //matchTimer.seconds() > 100 ||
+
 
             //state models for preset positions
             StateModelsZapdos.presetPositionDriveStateModel(0,92,8);
@@ -322,24 +322,25 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Green", colorSensor.green());*/
 
             //logging
-            logDriveTrain();
+            /*logDriveTrain();
             logArm();
             logEndEffector();
             logStateModels();
-            logButtonPressed();
+            logButtonPressed();*/
 
             //telemetry.addData("Clip Path", ClipPath.getInstance().debugString());
-            telemetry.addData("AutoClip State", StateModelsZapdos.autoClipState);
-            telemetry.addData("Following Path", driveTrain.isFollowingPath());
-            telemetry.addData("Distance Sensor Reading", color.getDistance(DistanceUnit.MM));
-            telemetry.addData("Follower Max Power", FollowerConstants.maxPower);
+            //telemetry.addData("AutoClip State", StateModelsZapdos.autoClipState);
+            //telemetry.addData("Following Path", driveTrain.isFollowingPath());
+            //telemetry.addData("Distance Sensor Reading", color.getDistance(DistanceUnit.MM));
+            //telemetry.addData("Follower Max Power", FollowerConstants.maxPower);
+            telemetry.addData("Average Frequency", freqCounter.getAveFrequency());
             multiTelemetry.update();
             driveTrain.Update();
 
 
 
-            touchSensorPressedLastLoop = arm.isSlideTouchSensorPressed();
-            linearActuatorSensorLastLoop = linearActuator.getLimitSwitchState();
+            //touchSensorPressedLastLoop = arm.isSlideTouchSensorPressed();
+            //linearActuatorSensorLastLoop = linearActuator.getLimitSwitchState();
         }
     }
 
