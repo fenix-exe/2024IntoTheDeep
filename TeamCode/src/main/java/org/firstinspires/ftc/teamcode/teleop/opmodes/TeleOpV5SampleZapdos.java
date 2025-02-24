@@ -196,7 +196,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             if (driverControls.linearActuatorUp()){
                 if (driverControls.microDriveAdjustments()){
                     //for manual movements
-                    double pos = linearActuator.getLinearActuatorPositionInches() + 0.25;
+                    double pos = linearActuator.getLinearActuatorPositionInches() + 1;
                     linearActuator.goToTargetPositionInches(pos);
                 } else {
                     //preset positions
