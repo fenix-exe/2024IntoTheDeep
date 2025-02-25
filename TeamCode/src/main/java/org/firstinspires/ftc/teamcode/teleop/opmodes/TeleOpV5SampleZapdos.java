@@ -109,7 +109,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
-        telemetry.addData("Test", TestPath.getInstance().toString());
+        telemetry.addData("Clip", ClipPath.getInstance().toString());
         telemetry.addData("Drive PID", FollowerConstants.drivePIDFCoefficients.toString());
 
         telemetry.update();
@@ -179,7 +179,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 if (!driveTrain.isFollowingPath() && timeClipPathStart < (System.currentTimeMillis() - 2000)) {
                     Pose currentPose = driveTrain.getCurrentPose();
                     if (currentPose != null) {
-                        TestPath path = TestPath.getInstance();
+                        ClipPath path = ClipPath.getInstance();
                         if(!path.closeToDestination(currentPose)) {
                             driveTrain.Follow(path.getPathChain(currentPose));
                             timeClipPathStart = System.currentTimeMillis();
