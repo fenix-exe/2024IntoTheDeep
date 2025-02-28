@@ -677,7 +677,7 @@ public class StateModelsZapdos {
     public static void dropBlockAndMoveWristDown (double downPitch, double elbowAngle){
         switch (enterIntakePositionStates){
             case START:
-                if (driverControls.enterIntakePosition() && intakePosition){
+                if (driverControls.enterIntakePosition() && intakePosition && pickupSpecimenState != SpecimenPickupStates.WAITING_FOR_USER_INPUT_AGAIN){
                     timer = new ElapsedTime();
                     timer.reset();
                     claw.openClaw();
