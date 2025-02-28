@@ -906,10 +906,24 @@ public class StateModelsZapdos {
                 break;
             case WAITING_FOR_USER_INPUT:
                 double distance = color.getDistance(DistanceUnit.MM);
-                if (driverControls.pickupAndDepositSpecimens() || (distance < 20)){
-                    if (color.getDistance(DistanceUnit.MM) < 20){
-                        arm.moveSlideToLength(pickupSlideLength);
-                    }
+                if (distance < 20){
+                    arm.moveSlide(-1,false);
+                    pickupSpecimenState = SpecimenPickupStates.MOVING_SLIDE_BACK;
+                }
+                if (driverControls.pickupAndDepositSpecimens()){
+                    timer.reset();
+                    claw.closeClaw();
+                    pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+                    pickupSpecimenState = SpecimenPickupStates.START;
+                }
+                break;
+            case MOVING_SLIDE_BACK:
+                if (color.getDistance(DistanceUnit.MM)> 45 || arm.getSlideExtension() < RobotConstants.LOW_SLIDE_TOLERANCE){
+                    arm.moveSlide(0,false);
                     timer.reset();
                     claw.closeClaw();
                     pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;

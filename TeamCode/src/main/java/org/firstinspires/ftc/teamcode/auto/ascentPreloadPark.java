@@ -94,7 +94,7 @@ public class ascentPreloadPark extends LinearOpMode {
             throw new RuntimeException(e);
         }
 
-        writeAuto writer = new writeAuto("ascentClipCycleParkTime");
+        writeAuto writer = new writeAuto("ascenPreloadParkTime");
 
         //set up rr
 

@@ -110,11 +110,11 @@ public class HomeTeleOpDown extends LinearOpMode {
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        pivot.setTargetPosition(-287);
+        pivot.setTargetPosition(-277);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivot.setPower(1);
 
-        while(Math.abs(pivot.getCurrentPosition() - pivot.getTargetPosition()) > 12){
+        while((Math.abs(pivot.getCurrentPosition() - pivot.getTargetPosition()) > 12)){
 
         }
 
@@ -125,6 +125,8 @@ public class HomeTeleOpDown extends LinearOpMode {
 
         //homing the linear actuator
         while (!linearActuator.getLimitSwitchState() && !isStopRequested()){
+            telemetry.addLine("ELBOW IS HOMED");
+            telemetry.update();
             linearActuator.setLinearActuatorPower(-0.5);
         }
         linearActuator.setLinearActuatorPower(0);

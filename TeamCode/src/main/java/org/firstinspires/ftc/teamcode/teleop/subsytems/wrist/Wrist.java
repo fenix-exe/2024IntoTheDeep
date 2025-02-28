@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Wrist {
     Servo pitch;
     Servo roll;
+    private final double PITCH_OFFSET = 10;
 
     public Wrist(Servo pitch, Servo roll){
         this.pitch = pitch;
@@ -32,7 +33,7 @@ public class Wrist {
         roll.setPosition(targetPosition);
     }
     public void presetPositionPitch (double presetPosition){
-        pitch.setPosition(presetPosition/180 + 0.5);
+        pitch.setPosition((presetPosition-PITCH_OFFSET)/180 + 0.5);
     }
     public void presetPositionRoll (double presetPosition){
         roll.setPosition(presetPosition/300 + 0.5);
@@ -46,7 +47,7 @@ public class Wrist {
         presetPositionRoll(roll);
     }
     public double getRollAngle(){
-        return 300 * roll.getPosition() - 150;
+        return 300 * roll.getPosition() - 150 + PITCH_OFFSET;
     }
     public double getPitchAngle(){
         return 180 * pitch.getPosition() - 90;

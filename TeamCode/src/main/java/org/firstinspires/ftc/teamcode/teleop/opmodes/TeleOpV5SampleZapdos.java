@@ -264,6 +264,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
             telemetry.addData("Freq Counter", freqCounter.getAveFrequency());
+            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.update();
 
             //logging
