@@ -515,7 +515,6 @@ public class StateModelsZapdos {
                     hangState = HangStates.START;
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                     grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.ELBOW_DOWN;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     blockPickupType = BlockPickupType.OUTSIDE;
                     endSpecimenDeposit = false;
@@ -696,7 +695,6 @@ public class StateModelsZapdos {
                     hangState = HangStates.START;
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                     enterIntakePositionStates = EnterIntakePositionStates.INTERMEDIATE_CLAW;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     endSpecimenDeposit = false;
                 }
@@ -741,7 +739,7 @@ public class StateModelsZapdos {
                     grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
                     hangState = HangStates.START;
                     enterIntakePositionStates = EnterIntakePositionStates.START;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.START;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     endSpecimenDeposit = false;
                     arm.moveSlideToLength(retractionLength);
@@ -841,7 +839,7 @@ public class StateModelsZapdos {
                     }*/
                     claw.openClaw();
                     pickupSpecimenState = SpecimenPickupStates.OPENING_CLAW;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.START;
                     intakePosition = false;
                     endSpecimenDeposit = false;
                 }
@@ -1009,7 +1007,7 @@ public class StateModelsZapdos {
                     hangState = HangStates.START;
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                     depositSpecimenState = SpecimenDepositStates.OPEN_CLAW;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.START;
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     intakePosition = false;
                     endSpecimenDeposit = false;
@@ -1090,7 +1088,7 @@ public class StateModelsZapdos {
                     depositSpecimenState = SpecimenDepositStates.START;
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                     hangState = HangStates.LINEAR_ACTUATOR_UP;
-                    depositCycle = DepositCycles.GO_TO_SAFE_DRIVE;
+                    depositCycle = DepositCycles.START;
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
                     intakePosition = false;
