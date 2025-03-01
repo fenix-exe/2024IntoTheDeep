@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -29,6 +30,8 @@ import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.ILED;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.LED;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
@@ -62,6 +65,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     Wrist wrist;
     Claw claw;
     ColorSensor color;
+    LED led;
     LinearActuator linearActuator;
     Localization localization;
     IIMU imu;
@@ -86,8 +90,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeArmAndHome();
         initializeEndEffector();
         initializeLinearActuator();
+        initializeLED();
         int presetsRead = PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color, driveTrain);
+        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color, driveTrain, led);
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
@@ -166,7 +171,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.holdElbow();
             }
 
-            if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7 && arm.getElbowAngleInDegrees() < 10){
+            if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7 && arm.getElbowAngleInDegrees() < 10 && !driverControls.continuousDiffUp()){
                 telemetry.addLine("PITCH DOWN");
                 wrist.presetPositionPitch(-90);
             }
@@ -176,6 +181,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
             if (driverControls.diffUp() && arm.getSlideExtension() < ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES - 5){
                 wrist.manualControlPitch(15);
+            }
+            if (driverControls.continuousDiffDown()){
+                wrist.manualControlPitch(1);
+            }
+            if (driverControls.continuousDiffDown()){
+                wrist.manualControlPitch(-1);
             }
             if (driverControls.diffLeft()){
                 wrist.manualControlRoll(-45);
@@ -197,6 +208,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.resetEncoders();
             }
 
+            //homing
+            /*if (driverControls.homeArm()){
+                home();
+            }*/
+
             //run touch sensor fsm for resetting slides
             ResetSlideEncoderStateModel.execute();
 
@@ -206,7 +222,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                     //for manual movements
                     double pos = linearActuator.getLinearActuatorPositionInches() + 1;
                     linearActuator.goToTargetPositionInches(pos);
-                } else {
                     //preset positions
                     linearActuator.goToTargetPositionInches(9.5);
                 }
@@ -216,7 +231,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                     //for manual movements
                     if (!linearActuator.getLimitSwitchState()){
                         //prevents the linear actuator from driving into the ground
-                        linearActuator.goToTargetPositionInches(Math.max(linearActuator.getLinearActuatorPositionInches() - 0.25,0.25));
+                        linearActuator.goToTargetPositionInches(Math.max(linearActuator.getLinearActuatorPositionInches() - 0.25,0.5));
                     }
                 } else {
                     //preset position
@@ -224,6 +239,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 }
 
             }
+
+            //led blinking
+            led();
 
             //state models for preset positions
             StateModelsZapdos.presetPositionDriveStateModel(StateModelParameters.DriveStateParameters.pitch,StateModelParameters.DriveStateParameters.elbowAngle,StateModelParameters.DriveStateParameters.slideLength);
@@ -236,7 +254,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.dropBlockAndMoveWristDown(StateModelParameters.DropBlockAndMoveWristDown.pitch, StateModelParameters.DropBlockAndMoveWristDown.elbowAngle);
             StateModelsZapdos.depositSampleIntoObservationZone(StateModelParameters.DepositSampleIntoObservationZone.retractionLength,StateModelParameters.DepositSampleIntoObservationZone.pitchDown,StateModelParameters.DepositSampleIntoObservationZone.extensionLength,StateModelParameters.DepositSampleIntoObservationZone.downPitch,StateModelParameters.DepositSampleIntoObservationZone.downRoll);
             StateModelsZapdos.hang(StateModelParameters.Hang.pitch,StateModelParameters.Hang.roll,StateModelParameters.Hang.linearActuatorExtension,StateModelParameters.Hang.linearActuatorRetraction,StateModelParameters.Hang.initialElbowAngle,StateModelParameters.Hang.slideExtension,StateModelParameters.Hang.hangElbowAngle,StateModelParameters.Hang.slideIntermediatePosition,StateModelParameters.Hang.slideRetraction,StateModelParameters.Hang.endElbowAngle);
- 
+
             //telemetry
             /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
@@ -390,6 +408,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
         linearActuator.goToTargetPositionInches(0);
     }
+    private void initializeLED(){
+        RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        led = new LED(LED);
+    }
 
     private void logDriveTrain(){
         HashMap driveTrainInfo = driveTrain.getDebugInfo();
@@ -436,5 +458,69 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
+    }
+    private void home(){
+            //homing the slide
+            while (!arm.isSlideTouchSensorPressed() && !isStopRequested()){
+                arm.setSlidePower(-0.2);
+                telemetry.addData("slide switch state", arm.isSlideTouchSensorPressed());
+                telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+                telemetry.update();
+            }
+            arm.setSlidePower(0);
+
+            rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //Homing the elbow
+            while (!arm.detectingMagneticLimitSwitch() && !isStopRequested()){
+                arm.setElbowPower(-0.2);
+            }
+            while (arm.detectingMagneticLimitSwitch() && !isStopRequested()){
+                arm.setElbowPower(-0.4);
+            }
+            while (!arm.detectingMagneticLimitSwitch() && !isStopRequested()){
+                arm.setElbowPower(0.4);
+            }
+            arm.setElbowPower(0);
+
+            pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            pivot.setTargetPosition(-266);
+            pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            pivot.setPower(1);
+
+            while((Math.abs(pivot.getCurrentPosition() - pivot.getTargetPosition()) > 12)){
+
+            }
+
+            pivot.setPower(0);
+
+            pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //homing the linear actuator
+            while (!linearActuator.getLimitSwitchState() && !isStopRequested()){
+                telemetry.addLine("ELBOW IS HOMED");
+                telemetry.update();
+                linearActuator.setLinearActuatorPower(-0.5);
+            }
+            linearActuator.setLinearActuatorPower(0);
+
+            linearActuator.resetEncoders();
+    }
+    private void led(){
+        if (matchTimer.seconds() > 55 && matchTimer.seconds() < 65){
+            led.setColor(ILED.LEDColor.WHITE);
+        } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 110){
+            led.setColor(ILED.LEDColor.RED);
+        } else if (StateModelsZapdos.outsideAStateModel()){
+            led.setColor(ILED.LEDColor.YELLOW);
+        } else if (led.isOn()){
+            led.turnOff();
+        }
     }
 }

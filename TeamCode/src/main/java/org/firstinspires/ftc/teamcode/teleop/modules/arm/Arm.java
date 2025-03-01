@@ -120,6 +120,12 @@ public class Arm {
 
         elbow.setTargetAngle(deg);
     }
+    public void setSlidePower(double power){
+        slide.setSlidePower(power);
+    }
+    public boolean detectingMagneticLimitSwitch(){
+        return elbow.isLimitSwitchPressed();
+    }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){
         return Math.abs(elbow.getElbowAngle() - position.elbowAngle) < ArmConstants.ELBOWPRESETTOLERANCE &&  // angle is within 3 degrees of target

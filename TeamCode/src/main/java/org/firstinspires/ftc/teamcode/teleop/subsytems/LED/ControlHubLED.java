@@ -18,13 +18,19 @@ public class ControlHubLED implements ILED{
         steps.add(new Blinker.Step(convertToLynxColor(color), 500, TimeUnit.MILLISECONDS));
         led.setPattern(steps);
     }
+
+    @Override
+    public void turnOff() {
+
+    }
+
     private int convertToLynxColor(LEDColor color){
         switch (color){
-            case BLUE:
+            case WHITE:
                 return 10;
             case RED:
                 return 20;
-            case GREEN:
+            case YELLOW:
                 return 30;
             default:
                 return 0;

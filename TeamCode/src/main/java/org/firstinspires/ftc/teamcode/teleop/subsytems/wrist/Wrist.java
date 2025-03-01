@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Wrist {
     Servo pitch;
     Servo roll;
-    private final double PITCH_OFFSET = 10;
+    private static double PITCH_OFFSET = -1;
 
     public Wrist(Servo pitch, Servo roll){
         this.pitch = pitch;

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.LED;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
@@ -38,6 +39,7 @@ public class StateModelsZapdos {
     static LinearActuator linearActuator;
     static DriverControls driverControls;
     static DriveTrain driveTrain;
+    static LED led;
     static ElapsedTime timer;
     public static DepositCycles depositCycle;
     public static SpecimenCycles specimenCycle;
@@ -77,7 +79,7 @@ public class StateModelsZapdos {
         endSpecimenDeposit = false;
         closingClaw = false;
     }
-    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls, ColorSensor color, DriveTrain driveTrain){
+    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls, ColorSensor color, DriveTrain driveTrain, LED led){
         StateModelsZapdos.arm = arm;
         StateModelsZapdos.wrist = wrist;
         StateModelsZapdos.driverControls = driverControls;
@@ -85,6 +87,7 @@ public class StateModelsZapdos {
         StateModelsZapdos.linearActuator = linearActuator;
         StateModelsZapdos.color = color;
         StateModelsZapdos.driveTrain = driveTrain;
+        StateModelsZapdos.led = led;
 
         drivePresetState = DriveStates.START;
         intakePresetState = IntakeStates.START;
@@ -1257,6 +1260,16 @@ public class StateModelsZapdos {
                 break;
         }
 
+    }
+    public static boolean outsideAStateModel(){
+        return (drivePresetState == DriveStates.START) && (depositCycle == DepositCycles.START)
+                && (intakePresetState == IntakeStates.START) && (submersibleLeaveStates == LeaveSubmersibleStates.START)
+                && (depositPresetState == DepositStates.START) && (exitDepositPresetState == ExitDepositStates.START)
+                && (grabBlockFromInsidePresetState == GrabBlockFromInsideStates.START) && (grabBlockFromOutsidePresetState == GrabBlockFromOutsideStates.START)
+                && (pickupSpecimenState == SpecimenPickupStates.START) && (depositSpecimenState == SpecimenDepositStates.START) && (depositBackPresetState == DepositStates.START)
+                && (depositSampleIntoObservationZone == DepositSampleIntoObservationZone.START) && (enterIntakePositionStates == EnterIntakePositionStates.START)
+                && (specimenCycle == SpecimenCycles.GO_TO_SPECIMEN_INTAKE) && (specimenSampleIntake == IntakingSamplesForSpecimen.GO_TO_INTAKE)
+                && (hangState == HangStates.START);
     }
     public static String getDebugString(){
         return drivePresetState + ", " + intakePresetState + ", " + submersibleLeaveStates + ", "

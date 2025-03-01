@@ -73,7 +73,7 @@ public class DriverControls implements DriveControlMap {
         return false;
     }
     public boolean homeArm(){
-        return gamepad1current.a && gamepad1current.b;
+        return gamepad2current.touchpad;
     }
     public boolean microDriveAdjustments(){
         return gamepad1current.right_bumper;
@@ -208,7 +208,7 @@ public class DriverControls implements DriveControlMap {
         return false;
     }
     public boolean enterIntakePosition(){
-        return (gamepad2current.left_trigger > 0.1) && !(gamepad2previous.left_trigger > 0.1);
+        return ((gamepad2current.left_trigger > 0.1) && !(gamepad2previous.left_trigger > 0.1)) || ((gamepad1current.y) && !gamepad1previous.y);
     }
 
     @Override
@@ -278,9 +278,15 @@ public class DriverControls implements DriveControlMap {
     }
     public boolean wristDown(){return gamepad2current.back;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
-    public boolean removeArmRules(){return gamepad2current.left_bumper;}
+    public boolean removeArmRules(){return false;}
     public boolean diffUp(){return (gamepad2current.dpad_up && !gamepad2previous.dpad_up);}
     public boolean diffDown(){return gamepad2current.dpad_down && !gamepad2previous.dpad_down;}
+    public boolean continuousDiffUp(){
+        return gamepad2current.dpad_up && gamepad2current.left_stick_button;
+    }
+    public boolean continuousDiffDown(){
+        return gamepad2current.dpad_down && gamepad2current.left_stick_button;
+    }
     public boolean diffLeft(){return (gamepad2current.dpad_left && !gamepad2previous.dpad_left) || (gamepad1current.a && !gamepad1previous.a);}
     public boolean diffRight(){return (gamepad2current.dpad_right && !gamepad2previous.dpad_right) || (gamepad1current.b && !gamepad1previous.b);}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}

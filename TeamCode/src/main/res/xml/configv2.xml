@@ -16,7 +16,7 @@
             <goBILDA5202SeriesMotor name="rightSlide" port="3" />
             <goBILDA5202SeriesMotor name="leftSlide" port="1" />
             <Servo name="pitch" port="0" />
-            <RevBlinkinLedDriver name="blinkin" port="2" />
+            <RevBlinkinLedDriver name="blinkin" port="4" />
             <Servo name="claw" port="3" />
             <Servo name="roll" port="5"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />

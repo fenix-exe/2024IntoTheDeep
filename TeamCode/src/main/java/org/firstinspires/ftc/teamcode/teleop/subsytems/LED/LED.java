@@ -4,8 +4,10 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public class LED implements ILED{
     RevBlinkinLedDriver LEDForRobot;
+    boolean isOn;
     public LED (RevBlinkinLedDriver LED){
         this.LEDForRobot = LED;
+        isOn = false;
     }
 
 
@@ -14,14 +16,23 @@ public class LED implements ILED{
         RevBlinkinLedDriver.BlinkinPattern pattern;
         switch (color){
             case RED:
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                pattern = RevBlinkinLedDriver.BlinkinPattern.CP1_HEARTBEAT_FAST;
                 break;
-            case BLUE:
-                pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+            case WHITE:
+                pattern = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_WHITE;
                 break;
             default:
-                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                pattern = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE;
         }
         LEDForRobot.setPattern(pattern);
+        isOn = true;
+    }
+
+    @Override
+    public void turnOff() {
+        LEDForRobot.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+    }
+    public boolean isOn(){
+        return isOn;
     }
 }
