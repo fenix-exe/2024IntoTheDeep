@@ -984,6 +984,7 @@ public class StateModelsZapdos {
             case WAITING_FOR_USER_INPUT:
                 double distance = color.getDistance(DistanceUnit.MM);
                 if (distance < 15){
+                    closingClaw = false;
                     driveTrain.stopDriveTrain();
                     driveTrain.lockDriveTrain(true);
                     arm.moveSlide(-1,false);
@@ -1009,6 +1010,10 @@ public class StateModelsZapdos {
                     closingClaw = true;
                 }
                 if (distanceToSample > 45 || arm.getSlideExtension() < RobotConstants.LOW_SLIDE_TOLERANCE){
+                    if (!closingClaw){
+                        timer.reset();
+                        claw.closeClaw();
+                    }
                     closingClaw = false;
                     arm.moveSlide(0,false);
                     pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;
