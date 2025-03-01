@@ -142,8 +142,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             } else if (driveTrain.getLockDriveTrain()) {
                 speedMultiplier = 0;
             } else {
-                    speedMultiplier = RobotConstants.NORMAL_SPEED;
-                }
+                speedMultiplier = RobotConstants.NORMAL_SPEED;
+            }
 
             //manual move of the drivetrain
             switch (DriveTrain.driveType) {
@@ -294,6 +294,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             telemetry.addData("Slide Target Position", arm.getSlideTargetPositionInInches());
             telemetry.addData("Slide Maximum Extension", arm.getMaximumSlideExtensionAllowedInInches());
             telemetry.addData("Slide Length", arm.getSlideExtension());
+            telemetry.addData("Locked Drive Train", driveTrain.getLockDriveTrain());
+            telemetry.addData("Outside Pickup State Model", StateModelsZapdos.grabBlockFromOutsidePresetState);
             multiTelemetry.update();
 
             //logging
@@ -513,12 +515,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             linearActuator.resetEncoders();
     }
     private void led(){
-        if (matchTimer.seconds() > 55 && matchTimer.seconds() < 65){
-            led.setColor(ILED.LEDColor.WHITE);
-        } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 110){
-            led.setColor(ILED.LEDColor.RED);
-        } else if (StateModelsZapdos.outsideAStateModel()){
+        if (StateModelsZapdos.outsideAStateModel()) {
             led.setColor(ILED.LEDColor.YELLOW);
+        } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
+            led.setColor(ILED.LEDColor.WHITE);
+        } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 120){
+            led.setColor(ILED.LEDColor.RED);
         } else if (led.isOn()){
             led.turnOff();
         }
