@@ -18,6 +18,7 @@ public class DriveTrain {
     IIMU imu_IMU;
     public double speedMultiplier = 1;
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
+    private boolean lockDriveTrain;
 
     public DriveTrain(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu){
         this.gamepad1=gamepad1;
@@ -26,6 +27,7 @@ public class DriveTrain {
         this.BL=BL;
         this.BR=BR;
         this.imu_IMU = imu;
+        lockDriveTrain = false;
     }
 
     public void RobotCentric_Drive() {
@@ -110,6 +112,12 @@ public class DriveTrain {
         BL.setPower(((rotY - rotX + rx) / fielddenom) * speedMultiplier);
         FR.setPower(((rotY - rotX - rx) / fielddenom) * speedMultiplier);
         BR.setPower(((rotY + rotX - rx) / fielddenom) * speedMultiplier);
+    }
+    public void lockDriveTrain(boolean lock){
+        lockDriveTrain = lock;
+    }
+    public boolean getLockDriveTrain(){
+        return lockDriveTrain;
     }
     public void stopDriveTrain(){
         FL.setPower(0);

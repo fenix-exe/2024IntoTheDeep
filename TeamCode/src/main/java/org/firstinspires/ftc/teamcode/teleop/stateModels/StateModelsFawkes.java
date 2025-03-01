@@ -716,14 +716,14 @@ public class StateModelsFawkes {
             case RETRACTING_SLIDES:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
                     arm.moveElbowToAngle(elbowAngle);
-                    pickupSpecimenState = SpecimenPickupStates.MOVING_ELBOW;
+                    pickupSpecimenState = SpecimenPickupStates.MOVING_ELBOW_AND_SLIDE;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
-            case MOVING_ELBOW:
+            case MOVING_ELBOW_AND_SLIDE:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
                     pickupSpecimenState = SpecimenPickupStates.EXTENDING_SLIDES;

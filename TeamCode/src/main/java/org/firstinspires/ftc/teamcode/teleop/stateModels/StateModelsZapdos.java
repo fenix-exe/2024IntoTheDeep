@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControl
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
@@ -36,6 +37,7 @@ public class StateModelsZapdos {
     static ColorSensor color;
     static LinearActuator linearActuator;
     static DriverControls driverControls;
+    static DriveTrain driveTrain;
     static ElapsedTime timer;
     public static DepositCycles depositCycle;
     public static SpecimenCycles specimenCycle;
@@ -51,6 +53,36 @@ public class StateModelsZapdos {
         StateModelsZapdos.claw = claw;
         StateModelsZapdos.linearActuator = linearActuator;
         StateModelsZapdos.color = color;
+        StateModelsZapdos.driveTrain = null;
+
+        drivePresetState = DriveStates.START;
+        intakePresetState = IntakeStates.START;
+        submersibleLeaveStates = LeaveSubmersibleStates.START;
+        depositPresetState = DepositStates.START;
+        exitDepositPresetState = ExitDepositStates.START;
+        grabBlockFromInsidePresetState = GrabBlockFromInsideStates.START;
+        grabBlockFromOutsidePresetState = GrabBlockFromOutsideStates.START;
+        pickupSpecimenState= SpecimenPickupStates.START;
+        depositSpecimenState = SpecimenDepositStates.START;
+        depositBackPresetState = DepositStates.START;
+        depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
+        enterIntakePositionStates = EnterIntakePositionStates.START;
+        depositCycle = DepositCycles.START;
+        specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
+        specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
+        hangState = HangStates.START;
+        blockPickupType = BlockPickupType.NONE;
+        intakePosition = false;
+        endSpecimenDeposit = false;
+    }
+    public static void initialize(Arm arm, Wrist wrist, Claw claw, LinearActuator linearActuator, DriverControls driverControls, ColorSensor color, DriveTrain driveTrain){
+        StateModelsZapdos.arm = arm;
+        StateModelsZapdos.wrist = wrist;
+        StateModelsZapdos.driverControls = driverControls;
+        StateModelsZapdos.claw = claw;
+        StateModelsZapdos.linearActuator = linearActuator;
+        StateModelsZapdos.color = color;
+        StateModelsZapdos.driveTrain = driveTrain;
 
         drivePresetState = DriveStates.START;
         intakePresetState = IntakeStates.START;
@@ -875,18 +907,8 @@ public class StateModelsZapdos {
             case RETRACTING_SLIDES:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
                     arm.moveElbowToAngle(elbowAngle);
-                    pickupSpecimenState = SpecimenPickupStates.MOVING_ELBOW;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
-                    pickupSpecimenState = SpecimenPickupStates.START;
-                }
-                break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
-                    pickupSpecimenState = SpecimenPickupStates.EXTENDING_SLIDES;
+                    pickupSpecimenState = SpecimenPickupStates.MOVING_ELBOW_AND_SLIDE;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
@@ -894,8 +916,8 @@ public class StateModelsZapdos {
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 break;
-            case EXTENDING_SLIDES:
-                if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
+            case MOVING_ELBOW_AND_SLIDE:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
                     pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT;
                 }
                 if (driverControls.escapePresets()){
@@ -906,7 +928,9 @@ public class StateModelsZapdos {
                 break;
             case WAITING_FOR_USER_INPUT:
                 double distance = color.getDistance(DistanceUnit.MM);
-                if (distance < 20){
+                if (distance < 15){
+                    driveTrain.stopDriveTrain();
+                    driveTrain.lockDriveTrain(true);
                     arm.moveSlide(-1,false);
                     pickupSpecimenState = SpecimenPickupStates.MOVING_SLIDE_BACK;
                 }
@@ -916,6 +940,7 @@ public class StateModelsZapdos {
                     pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;
                 }
                 if (driverControls.escapePresets()){
+                    driveTrain.lockDriveTrain(false);
                     arm.holdArm();
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
@@ -929,6 +954,7 @@ public class StateModelsZapdos {
                     pickupSpecimenState = SpecimenPickupStates.CLOSE_CLAW;
                 }
                 if (driverControls.escapePresets()){
+                    driveTrain.lockDriveTrain(false);
                     arm.holdArm();
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
@@ -936,15 +962,18 @@ public class StateModelsZapdos {
                 break;
             case CLOSE_CLAW:
                 if (timer.milliseconds() > 200){
+                    timer.reset();
                     arm.moveElbowToAngle(elbowUpAngle);
                     pickupSpecimenState = SpecimenPickupStates.ELBOW_SLIGHTLY_UP;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    driveTrain.lockDriveTrain(false);
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
                 if (driverControls.enterIntakePosition()){
+                    driveTrain.lockDriveTrain(false);
                     arm.holdArm();
                     claw.openClaw();
                 }
@@ -953,8 +982,12 @@ public class StateModelsZapdos {
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
                     pickupSpecimenState = SpecimenPickupStates.WAITING_FOR_USER_INPUT_AGAIN;
                 }
+                if (timer.milliseconds() > 100){
+                    driveTrain.lockDriveTrain(false);
+                }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
+                    driveTrain.lockDriveTrain(false);
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
                 }
@@ -964,13 +997,19 @@ public class StateModelsZapdos {
                     arm.moveSlideToLength(endSlideLength);
                     pickupSpecimenState = SpecimenPickupStates.MOVING_SLIDES;
                 }
+                if (timer.milliseconds() > 100){
+                    driveTrain.lockDriveTrain(false);
+                }
                 if (driverControls.enterIntakePosition()){
+                    driveTrain.lockDriveTrain(false);
                     arm.holdArm();
                     claw.openClaw();
                     arm.moveElbowToAngle(elbowAngle);
-                    pickupSpecimenState = SpecimenPickupStates.MOVING_ELBOW;
+                    arm.moveSlideToLength(slideLength);
+                    pickupSpecimenState = SpecimenPickupStates.MOVING_ELBOW_AND_SLIDE;
                 }
                 if (driverControls.escapePresets()){
+                    driveTrain.lockDriveTrain(false);
                     arm.holdArm();
                     specimenCycle = SpecimenCycles.GO_TO_SPECIMEN_INTAKE;
                     pickupSpecimenState = SpecimenPickupStates.START;
@@ -1001,7 +1040,7 @@ public class StateModelsZapdos {
                 break;
         }
     }
-    public static void presetPositionDepositSpecimensStateModel(double endPitch, double endRoll,double elbowDownAngle, double slideRetraction){
+    public static void presetPositionDepositSpecimensStateModel(double endPitch, double endRoll,double elbowDownAngle, double slideRetraction, double slideLength){
         switch (depositSpecimenState){
             case START:
                 if (driverControls.pickupAndDepositSpecimens() && specimenCycle == SpecimenCycles.GO_TO_SPECIMEN_DEPOSIT){

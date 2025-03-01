@@ -87,7 +87,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeEndEffector();
         initializeLinearActuator();
         int presetsRead = PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color);
+        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color, driveTrain);
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
@@ -134,9 +134,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //speed adjustments
             if (driverControls.microDriveAdjustments()){
                 speedMultiplier = RobotConstants.SLOW_SPEED;
+            } else if (driveTrain.getLockDriveTrain()) {
+                speedMultiplier = 0;
             } else {
-                speedMultiplier = RobotConstants.NORMAL_SPEED;
-            }
+                    speedMultiplier = RobotConstants.NORMAL_SPEED;
+                }
 
             //manual move of the drivetrain
             switch (DriveTrain.driveType) {
@@ -224,7 +226,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             StateModelsZapdos.depositSampleIntoBucketStateModel(StateModelParameters.DepositSampleIntoBucketStateParameters.pitch,StateModelParameters.DepositSampleIntoBucketStateParameters.roll,StateModelParameters.DepositSampleIntoBucketStateParameters.elbowAngle,StateModelParameters.DepositSampleIntoBucketStateParameters.intermediateElbowAngle,StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength);
             StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upRoll,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.slideLength);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(StateModelParameters.PickupSpecimensStateParameters.pitch,StateModelParameters.PickupSpecimensStateParameters.roll,StateModelParameters.PickupSpecimensStateParameters.elbowAngle,StateModelParameters.PickupSpecimensStateParameters.slideLength, StateModelParameters.PickupSpecimensStateParameters.elbowUpAngle, StateModelParameters.PickupSpecimensStateParameters.pickupSlideLength,StateModelParameters.PickupSpecimensStateParameters.endSlideLength, StateModelParameters.PickupSpecimensStateParameters.pitchEnd, StateModelParameters.PickupSpecimensStateParameters.rollEnd);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(StateModelParameters.DepositSpecimensStateParameters.pitch,StateModelParameters.DepositSpecimensStateParameters.roll,StateModelParameters.DepositSpecimensStateParameters.elbowAngle,StateModelParameters.DepositSpecimensStateParameters.slideLength);
+            StateModelsZapdos.presetPositionDepositSpecimensStateModel(StateModelParameters.DepositSpecimensStateParameters.pitch,StateModelParameters.DepositSpecimensStateParameters.roll,StateModelParameters.DepositSpecimensStateParameters.elbowAngle,StateModelParameters.DepositSpecimensStateParameters.slideLength, StateModelParameters.PickupSpecimensStateParameters.slideLength);
             StateModelsZapdos.dropBlockAndMoveWristDown(StateModelParameters.DropBlockAndMoveWristDown.pitch, StateModelParameters.DropBlockAndMoveWristDown.elbowAngle);
             StateModelsZapdos.depositSampleIntoObservationZone(StateModelParameters.DepositSampleIntoObservationZone.retractionLength,StateModelParameters.DepositSampleIntoObservationZone.pitchDown,StateModelParameters.DepositSampleIntoObservationZone.extensionLength,StateModelParameters.DepositSampleIntoObservationZone.downPitch,StateModelParameters.DepositSampleIntoObservationZone.downRoll);
             StateModelsZapdos.hang(StateModelParameters.Hang.pitch,StateModelParameters.Hang.roll,StateModelParameters.Hang.linearActuatorExtension,StateModelParameters.Hang.linearActuatorRetraction,StateModelParameters.Hang.initialElbowAngle,StateModelParameters.Hang.slideExtension,StateModelParameters.Hang.hangElbowAngle,StateModelParameters.Hang.slideIntermediatePosition,StateModelParameters.Hang.slideRetraction,StateModelParameters.Hang.endElbowAngle);
