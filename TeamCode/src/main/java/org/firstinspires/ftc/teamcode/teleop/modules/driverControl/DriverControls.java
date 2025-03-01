@@ -190,7 +190,7 @@ public class DriverControls implements DriveControlMap {
         return false;
     }
     public boolean specimenSampleIntake(){
-        return gamepad2current.b && !gamepad2previous.b && !gamepad2current.start;
+        return gamepad2current.b && !gamepad2current.start;
     }
     public boolean openClaw(){
         return (gamepad2current.left_bumper) && !(gamepad2previous.left_bumper);

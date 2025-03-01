@@ -407,8 +407,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         RevTouchSensor actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
 
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
-
-        linearActuator.goToTargetPositionInches(0);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");

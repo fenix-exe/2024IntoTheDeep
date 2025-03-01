@@ -225,7 +225,7 @@ public class StateModelsZapdos {
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250){
-                    arm.moveSlideToLength(0);
+                    arm.moveSlideToLength(slideLength);
                     intakePresetState = IntakeStates.RETRACTING_SLIDE;
                 }
                 if (driverControls.escapePresets()){
@@ -816,7 +816,7 @@ public class StateModelsZapdos {
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
-                    pickupSpecimenState = SpecimenPickupStates.START;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                 }
                 break;
             case RETRACT_SLIDES:
@@ -828,7 +828,7 @@ public class StateModelsZapdos {
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
-                    pickupSpecimenState = SpecimenPickupStates.START;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                 }
                 break;
             case WAIT_FOR_USER_INPUT:
@@ -839,11 +839,14 @@ public class StateModelsZapdos {
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
-                    pickupSpecimenState = SpecimenPickupStates.START;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                 }
                 break;
             case EXTEND_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.WAITING_FOR_USER_TO_LET_GO_OF_BUTTON;
+                }
+                if (!driverControls.specimenSampleIntake()){
                     timer.reset();
                     claw.openClaw();
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.DEPOSIT_SAMPLE_INTO_OBSERVATION_ZONE;
@@ -851,7 +854,19 @@ public class StateModelsZapdos {
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
-                    pickupSpecimenState = SpecimenPickupStates.START;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
+                }
+                break;
+            case WAITING_FOR_USER_TO_LET_GO_OF_BUTTON:
+                if (!driverControls.specimenSampleIntake()){
+                    timer.reset();
+                    claw.openClaw();
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.DEPOSIT_SAMPLE_INTO_OBSERVATION_ZONE;
+                }
+                if (driverControls.escapePresets()){
+                    arm.holdArm();
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                 }
                 break;
             case DEPOSIT_SAMPLE_INTO_OBSERVATION_ZONE:
@@ -863,18 +878,19 @@ public class StateModelsZapdos {
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
-                    pickupSpecimenState = SpecimenPickupStates.START;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                 }
                 break;
             case RETRACT_SLIDES_AFTER_DEPOSIT:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
-                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
+                    specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_DROP_AND_BRING_IN;
+                    intakePosition = true;
                     depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     specimenSampleIntake = IntakingSamplesForSpecimen.GO_TO_INTAKE;
-                    pickupSpecimenState = SpecimenPickupStates.START;
+                    depositSampleIntoObservationZone = DepositSampleIntoObservationZone.START;
                 }
                 break;
         }
