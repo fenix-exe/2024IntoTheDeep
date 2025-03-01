@@ -152,7 +152,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //manual control for arm
             if (Math.abs(driverControls.slideMovement()) > 0){
-                arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
+                double power = arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
+                telemetry.addLine("MOVING SLIDE MANUALLY");
+                telemetry.addData("Power Sending to Slides", power);
             } else if (driverControls.slideStopped()){
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
@@ -164,11 +166,15 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.holdElbow();
             }
 
+            if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7 && arm.getElbowAngleInDegrees() < 10){
+                telemetry.addLine("PITCH DOWN");
+                wrist.presetPositionPitch(-90);
+            }
             //manual control for wrist
             if (driverControls.diffDown()){
                 wrist.manualControlPitch(-15);
             }
-            if (driverControls.diffUp()){
+            if (driverControls.diffUp() && arm.getSlideExtension() < ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES - 5){
                 wrist.manualControlPitch(15);
             }
             if (driverControls.diffLeft()){
@@ -267,6 +273,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Green", colorSensor.green());*/
             telemetry.addData("Freq Counter", freqCounter.getAveFrequency());
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            telemetry.addData("Slide Target Position", arm.getSlideTargetPositionInInches());
+            telemetry.addData("Slide Maximum Extension", arm.getMaximumSlideExtensionAllowedInInches());
+            telemetry.addData("Slide Length", arm.getSlideExtension());
             multiTelemetry.update();
 
             //logging
@@ -339,7 +348,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES = 14;
 
         //pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

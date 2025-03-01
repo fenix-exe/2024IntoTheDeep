@@ -17,7 +17,7 @@ public class Arm {
         ArmSpeedController.slide = slide;
     }
 
-    public void moveSlide(double slideMovement, boolean remove_arm_rules) {
+    public double moveSlide(double slideMovement, boolean remove_arm_rules) {
         //max_extension already includes tolerance
         double max_extension = getMaximumSlideExtensionAllowedInInches();
         double power;
@@ -35,6 +35,7 @@ public class Arm {
             power = slideMovement;
         }
         slide.joystickControl(power);
+        return power;
     }
     public void setRightSlidePowerToLeftSlidePower(){
         slide.setLeftSlideMotorPowerToRightSlideMotorPower();
@@ -54,12 +55,12 @@ public class Arm {
             elbow.elbowJoystick(power);
     }
 
-    private double getMaximumSlideExtensionAllowedInInches(){
+    public double getMaximumSlideExtensionAllowedInInches(){
         double theta = elbow.getElbowAngle();
         double MaxSlideExtensionInches = RobotConstants.PHYSICAL_MAX_EXTENSION_IN_INCHES;
         if (!(Math.abs(90-theta) < 1)) { //tolerance of 1 degree around 90 degrees, I cannot compare double directly to int
             MaxSlideExtensionInches = Math.min(RobotConstants.PHYSICAL_MAX_EXTENSION_IN_INCHES,
-                    ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES/(Math.cos(Math.toRadians(theta))));
+                    Math.abs(ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES/(Math.cos(Math.toRadians(theta)))));
         }
         //add 1 inch safety margin
         MaxSlideExtensionInches -= RobotConstants.SLIDE_TOLERANCE;
