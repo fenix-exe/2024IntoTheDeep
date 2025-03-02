@@ -93,14 +93,13 @@ public class Slide {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setSlideExtensionLength(targetPos);
-            if (targetPos-0.5 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos+0.5) {
-                setSlideExtensionLength(targetPos);
-                return false;
+            if (homingSwitch.isPressed()){
+                leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                leftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-            else {
-                setSlideExtensionLength(targetPos);
-                return true;
-            }
+            return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
         }
     }
     public Action slideControl(double targetPos){
