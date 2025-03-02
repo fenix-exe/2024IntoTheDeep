@@ -395,6 +395,11 @@ public class StateModelsZapdos {
                 if (driverControls.depositBack() && depositCycle == DepositCycles.GO_TO_DEPOSIT){
                     timer = new ElapsedTime();
                     timer.reset();
+                    if (blockPickupType == BlockPickupType.INSIDE){
+                        wrist.presetPositionRoll(roll-90);
+                    } else {
+                        wrist.presetPositionRoll(roll);
+                    }
                     wrist.presetPositionPitch(0);
                     arm.moveSlideToLength(slideRetractionLength);
                     drivePresetState = DriveStates.START;
@@ -439,9 +444,9 @@ public class StateModelsZapdos {
                         && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)){
                     timer.reset();
                     if (blockPickupType == BlockPickupType.INSIDE){
-                        wrist.presetPosition(pitch, roll-90);
+                        wrist.presetPositionPitch(pitch);
                     } else {
-                        wrist.presetPosition(pitch, roll);
+                        wrist.presetPositionPitch(pitch);
                     }
                     depositBackPresetState = DepositStates.MOVING_WRIST;
                 }

@@ -104,7 +104,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        wrist.presetPosition(0,0);
         matchTimer.reset();
 
         while (opModeIsActive()){
