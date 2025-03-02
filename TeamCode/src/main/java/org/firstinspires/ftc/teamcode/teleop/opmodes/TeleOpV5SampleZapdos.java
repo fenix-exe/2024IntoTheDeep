@@ -156,9 +156,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //manual control for arm
             if (Math.abs(driverControls.slideMovement()) > 0){
-                double power = arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
-                telemetry.addLine("MOVING SLIDE MANUALLY");
-                telemetry.addData("Power Sending to Slides", power);
+                arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
             } else if (driverControls.slideStopped()){
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
@@ -171,14 +169,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
 
             if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7 && arm.getElbowAngleInDegrees() < 10 && !driverControls.continuousDiffUp()){
-                telemetry.addLine("PITCH DOWN");
                 wrist.presetPositionPitch(-90);
             }
             //manual control for wrist
             if (driverControls.diffDown()){
                 wrist.manualControlPitch(-15);
             }
-            if (driverControls.diffUp() && arm.getSlideExtension() < ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES - 5){
+            if (driverControls.diffUp() && (arm.getSlideExtension() < ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES - 5 || arm.getElbowAngleInDegrees() >= 10)){
                 wrist.manualControlPitch(15);
             }
             if (driverControls.continuousDiffDown()){
@@ -288,13 +285,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Red", colorSensor.red());
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
-            telemetry.addData("Freq Counter", freqCounter.getAveFrequency());
-            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
-            telemetry.addData("Slide Target Position", arm.getSlideTargetPositionInInches());
-            telemetry.addData("Slide Maximum Extension", arm.getMaximumSlideExtensionAllowedInInches());
-            telemetry.addData("Slide Length", arm.getSlideExtension());
-            telemetry.addData("Locked Drive Train", driveTrain.getLockDriveTrain());
-            telemetry.addData("Outside Pickup State Model", StateModelsZapdos.grabBlockFromOutsidePresetState);
             multiTelemetry.update();
 
             //logging

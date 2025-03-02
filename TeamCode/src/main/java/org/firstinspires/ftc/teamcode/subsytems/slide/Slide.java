@@ -95,9 +95,8 @@ public class Slide {
             setSlideExtensionLength(targetPos);
             if (homingSwitch.isPressed()){
                 leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                leftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                setSlideExtensionLength(targetPos);
             }
             return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
         }
