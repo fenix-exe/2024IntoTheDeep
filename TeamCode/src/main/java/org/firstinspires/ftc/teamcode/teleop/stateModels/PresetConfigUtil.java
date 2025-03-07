@@ -56,8 +56,6 @@ public class PresetConfigUtil {
                 StateModelParameters.GrabBlockFromOutsideStateParameters.upRoll = Double.parseDouble(configValues[3]);
                 StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle = Double.parseDouble(configValues[4]);
                 StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle = Double.parseDouble(configValues[5]);
-                StateModelParameters.GrabBlockFromOutsideStateParameters.elbowAngle = Double.parseDouble(configValues[6]);
-                StateModelParameters.GrabBlockFromOutsideStateParameters.slideLength = Double.parseDouble(configValues[7]);
                 break;
             case "PICKUP_SPECIMENS_STATE_MODEL_PARAMS":
                 StateModelParameters.PickupSpecimensStateParameters.pitch = Double.parseDouble(configValues[1]);

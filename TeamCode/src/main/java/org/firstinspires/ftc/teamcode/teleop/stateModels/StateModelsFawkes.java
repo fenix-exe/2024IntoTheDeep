@@ -173,14 +173,14 @@ public class StateModelsFawkes {
             case MOVING_ELBOW:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(slideLength);
-                    intakePresetState = IntakeStates.MOVING_SLIDE;
+                    intakePresetState = IntakeStates.MOVING_ELBOW_AND_SLIDE;
                 }
                 if (driverControls.escapePresets()){
                     arm.holdArm();
                     intakePresetState = IntakeStates.START;
                 }
                 break;
-            case MOVING_SLIDE:
+            case MOVING_ELBOW_AND_SLIDE:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
                     timer.reset();
                     wrist.presetPosition(downPitch, downRoll);

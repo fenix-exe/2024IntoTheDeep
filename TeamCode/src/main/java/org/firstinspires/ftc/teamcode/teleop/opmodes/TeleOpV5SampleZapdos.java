@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.ResetSlideEncoderStateModel;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.FSMManager;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.RobotState;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
@@ -92,6 +94,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeLinearActuator();
         initializeLED();
         int presetsRead = PresetConfigUtil.loadPresetsFromConfig();
+        initializeStateModels();
         StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color, driveTrain, led);
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
@@ -239,17 +242,24 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //led blinking
             led();
 
+            if (driverControls.escapePresets()){
+                arm.holdArm();;
+                driveTrain.lockDriveTrain(false);
+                FSMManager.stopTransitions();
+                FSMManager.setRobotStateToStart();
+            }
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(StateModelParameters.DriveStateParameters.pitch,StateModelParameters.DriveStateParameters.elbowAngle,StateModelParameters.DriveStateParameters.slideLength);
+            FSMManager.execute();
+            /*StateModelsZapdos.presetPositionDriveStateModel(StateModelParameters.DriveStateParameters.pitch,StateModelParameters.DriveStateParameters.elbowAngle,StateModelParameters.DriveStateParameters.slideLength);
             StateModelsZapdos.presetPositionIntakeStateModel(StateModelParameters.IntakeStateParameters.pitch,StateModelParameters.IntakeStateParameters.roll,StateModelParameters.IntakeStateParameters.downPitch,StateModelParameters.IntakeStateParameters.downRoll,StateModelParameters.IntakeStateParameters.elbowAngle,StateModelParameters.IntakeStateParameters.slideLength);
             StateModelsZapdos.presetPositionDepositStateModel(StateModelParameters.DepositStateParameters.pitch,StateModelParameters.DepositStateParameters.roll,StateModelParameters.DepositStateParameters.elbowAngle,StateModelParameters.DepositStateParameters.slideLength, StateModelParameters.DepositStateParameters.slideRetractionLength);
             StateModelsZapdos.depositSampleIntoBucketStateModel(StateModelParameters.DepositSampleIntoBucketStateParameters.pitch,StateModelParameters.DepositSampleIntoBucketStateParameters.roll,StateModelParameters.DepositSampleIntoBucketStateParameters.elbowAngle,StateModelParameters.DepositSampleIntoBucketStateParameters.intermediateElbowAngle,StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upRoll,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.slideLength);
+            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upRoll,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle,0,0);
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(StateModelParameters.PickupSpecimensStateParameters.pitch,StateModelParameters.PickupSpecimensStateParameters.roll,StateModelParameters.PickupSpecimensStateParameters.elbowAngle,StateModelParameters.PickupSpecimensStateParameters.slideLength, StateModelParameters.PickupSpecimensStateParameters.elbowUpAngle, StateModelParameters.PickupSpecimensStateParameters.pickupSlideLength,StateModelParameters.PickupSpecimensStateParameters.endSlideLength, StateModelParameters.PickupSpecimensStateParameters.pitchEnd, StateModelParameters.PickupSpecimensStateParameters.rollEnd);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(StateModelParameters.DepositSpecimensStateParameters.pitch,StateModelParameters.DepositSpecimensStateParameters.roll,StateModelParameters.DepositSpecimensStateParameters.elbowAngle,StateModelParameters.DepositSpecimensStateParameters.slideLength, StateModelParameters.PickupSpecimensStateParameters.slideLength);
             StateModelsZapdos.dropBlockAndMoveWristDown(StateModelParameters.DropBlockAndMoveWristDown.pitch, StateModelParameters.DropBlockAndMoveWristDown.elbowAngle);
             StateModelsZapdos.depositSampleIntoObservationZone(StateModelParameters.DepositSampleIntoObservationZone.retractionLength,StateModelParameters.DepositSampleIntoObservationZone.pitchDown,StateModelParameters.DepositSampleIntoObservationZone.extensionLength,StateModelParameters.DepositSampleIntoObservationZone.downPitch,StateModelParameters.DepositSampleIntoObservationZone.downRoll);
-            StateModelsZapdos.hang(StateModelParameters.Hang.pitch,StateModelParameters.Hang.roll,StateModelParameters.Hang.linearActuatorExtension,StateModelParameters.Hang.linearActuatorRetraction,StateModelParameters.Hang.initialElbowAngle,StateModelParameters.Hang.slideExtension,StateModelParameters.Hang.hangElbowAngle,StateModelParameters.Hang.slideIntermediatePosition,StateModelParameters.Hang.slideRetraction,StateModelParameters.Hang.endElbowAngle);
+            StateModelsZapdos.hang(StateModelParameters.Hang.pitch,StateModelParameters.Hang.roll,StateModelParameters.Hang.linearActuatorExtension,StateModelParameters.Hang.linearActuatorRetraction,StateModelParameters.Hang.initialElbowAngle,StateModelParameters.Hang.slideExtension,StateModelParameters.Hang.hangElbowAngle,StateModelParameters.Hang.slideIntermediatePosition,StateModelParameters.Hang.slideRetraction,StateModelParameters.Hang.endElbowAngle);*/
 
             //telemetry
             /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -397,6 +407,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
+    private void initializeStateModels(){
+        FSMManager.initialize(wrist, claw, arm, driveTrain, driverControls);
+    }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         led = new LED(LED);
@@ -502,12 +515,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             linearActuator.resetEncoders();
     }
     private void led(){
-        if (StateModelsZapdos.outsideAStateModel()) {
+        if (FSMManager.isAtStart()) {
             led.setColor(ILED.LEDColor.YELLOW);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);
         } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 120){
             led.setColor(ILED.LEDColor.RED);
+        } else if (driveTrain.getLockDriveTrain()){
+          led.setColor(ILED.LEDColor.GREEN);
         } else if (led.isOn()){
             led.turnOff();
         }
