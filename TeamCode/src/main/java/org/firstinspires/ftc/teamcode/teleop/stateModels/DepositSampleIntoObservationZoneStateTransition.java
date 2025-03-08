@@ -19,13 +19,11 @@ public class DepositSampleIntoObservationZoneStateTransition implements IStateTr
     Wrist wrist;
     Claw claw;
     Arm arm;
-    DriveTrain driveTrain;
     DriverControls driverControls;
-    public DepositSampleIntoObservationZoneStateTransition(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls){
+    public DepositSampleIntoObservationZoneStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
         this.claw = claw;
         this.arm = arm;
-        this.driveTrain = driveTrain;
         this.driverControls = driverControls;
         depositSampleIntoObservationZoneState = TransitionSteps.START;
     }

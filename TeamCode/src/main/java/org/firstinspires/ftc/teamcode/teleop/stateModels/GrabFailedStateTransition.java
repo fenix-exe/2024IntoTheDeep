@@ -19,13 +19,11 @@ public class GrabFailedStateTransition implements IStateTransition{
     Wrist wrist;
     Claw claw;
     Arm arm;
-    DriveTrain driveTrain;
     DriverControls driverControls;
-    public GrabFailedStateTransition(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls){
+    public GrabFailedStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
         this.claw = claw;
         this.arm = arm;
-        this.driveTrain = driveTrain;
         this.driverControls = driverControls;
         grabFailedState = TransitionSteps.START;
     }

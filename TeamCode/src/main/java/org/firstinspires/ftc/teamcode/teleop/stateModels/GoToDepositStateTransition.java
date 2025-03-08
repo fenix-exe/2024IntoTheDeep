@@ -21,13 +21,11 @@ public class GoToDepositStateTransition implements IStateTransition{
     Wrist wrist;
     Claw claw;
     Arm arm;
-    DriveTrain driveTrain;
     DriverControls driverControls;
-    public GoToDepositStateTransition(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls){
+    public GoToDepositStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
         this.claw = claw;
         this.arm = arm;
-        this.driveTrain = driveTrain;
         this.driverControls = driverControls;
         goToDepositState = TransitionSteps.START;
     }

@@ -20,7 +20,7 @@ public class GrabSampleStateTransition implements IStateTransition {
         SLIDES_RETRACTING,
         ELBOW_MOVING_UP
     }
-    TransitionSteps grabSampleState;
+    private TransitionSteps grabSampleState;
     ElapsedTime timer;
     Wrist wrist;
     Claw claw;
@@ -38,6 +38,7 @@ public class GrabSampleStateTransition implements IStateTransition {
     @Override
     public void reset() {
         grabSampleState = TransitionSteps.START;
+        driveTrain.lockDriveTrain(false);
     }
 
     @Override

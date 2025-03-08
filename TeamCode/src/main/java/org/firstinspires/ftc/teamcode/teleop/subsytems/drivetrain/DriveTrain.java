@@ -16,7 +16,6 @@ public class DriveTrain {
     DcMotorEx BL;
     DcMotorEx BR;
     IIMU imu_IMU;
-    public double speedMultiplier = 1;
     public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
     private boolean lockDriveTrain;
 
@@ -29,22 +28,8 @@ public class DriveTrain {
         this.imu_IMU = imu;
         lockDriveTrain = false;
     }
-
-    public void RobotCentric_Drive() {
-        float drive;
-        double strafe;
-        float yaw;
-
-        drive = gamepad1.left_stick_y * -1;
-        strafe = gamepad1.left_stick_x * 1.1;
-        yaw = gamepad1.right_stick_x;
-        double denominator = Math.max(1, Math.abs(drive+strafe+yaw));
-        FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplier);
-        BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplier);
-        FR.setPower((((drive - strafe) - yaw) / denominator) * speedMultiplier);
-        BR.setPower((((drive + strafe) - yaw) / denominator) * speedMultiplier);
-    }
-    public void RobotCentric_Drive(double speedMultiplier) {
+    public void RobotCentric_Drive(double requestedSpeedMultiplier) {
+        double allowedSpeedMultiplier = lockDriveTrain? 0:requestedSpeedMultiplier;
         float drive;
         double strafe;
         float yaw;
@@ -57,40 +42,13 @@ public class DriveTrain {
             yaw = 0;
         }
         double denominator = Math.max(1, Math.abs(drive+strafe+yaw));
-        FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplier);
-        BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplier);
-        FR.setPower((((drive - strafe) - yaw) / denominator) * speedMultiplier);
-        BR.setPower((((drive + strafe) - yaw) / denominator) * speedMultiplier);
+        FL.setPower(((drive + strafe + yaw) / denominator) * allowedSpeedMultiplier);
+        BL.setPower((((drive - strafe) + yaw) / denominator) * allowedSpeedMultiplier);
+        FR.setPower((((drive - strafe) - yaw) / denominator) * allowedSpeedMultiplier);
+        BR.setPower((((drive + strafe) - yaw) / denominator) * allowedSpeedMultiplier);
     }
-    public void FieldCentricDrive() {
-        double botHeading;
-        double y;
-        double x;
-        double rx;
-        double rotY;
-        double rotX;
-        double fielddenom;
-
-
-
-        botHeading = imu_IMU.getYaw();
-        y = -gamepad1.left_stick_y;
-        x = gamepad1.left_stick_x * 1;
-        if (gamepad1.right_stick_x < -0.5 || gamepad1.right_stick_x > 0.5){
-            rx = gamepad1.right_stick_x * 1;
-        } else {
-            rx = 0;
-        }
-
-        rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));
-        rotY = x * Math.sin(-botHeading / 180 * Math.PI) + y * Math.cos(-botHeading / 180 * Math.PI);
-        fielddenom = Math.max(1, Math.abs(rotX+rotY));
-        FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplier);
-        BL.setPower((((rotY - rotX) + rx) / fielddenom) * speedMultiplier);
-        FR.setPower((((rotY - rotX) - rx) / fielddenom) * speedMultiplier);
-        BR.setPower((((rotY + rotX) - rx) / fielddenom) * speedMultiplier);
-    }
-    public void FieldCentricDrive(double speedMultiplier) {
+    public void FieldCentricDrive(double requestedSpeedMultiplier) {
+        double allowedSpeedMultiplier = lockDriveTrain? 0:requestedSpeedMultiplier;
         double botHeading;
         double y;
         double x;
@@ -108,10 +66,10 @@ public class DriveTrain {
         rotX = 1.1 * (x * Math.cos(-botHeading) - y * Math.sin(-botHeading));
         rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
         fielddenom = Math.max(1, Math.abs(rotX) + Math.abs(rotY) + Math.abs(rx));
-        FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplier);
-        BL.setPower(((rotY - rotX + rx) / fielddenom) * speedMultiplier);
-        FR.setPower(((rotY - rotX - rx) / fielddenom) * speedMultiplier);
-        BR.setPower(((rotY + rotX - rx) / fielddenom) * speedMultiplier);
+        FL.setPower(((rotY + rotX + rx) / fielddenom) * allowedSpeedMultiplier);
+        BL.setPower(((rotY - rotX + rx) / fielddenom) * allowedSpeedMultiplier);
+        FR.setPower(((rotY - rotX - rx) / fielddenom) * allowedSpeedMultiplier);
+        BR.setPower(((rotY + rotX - rx) / fielddenom) * allowedSpeedMultiplier);
     }
     public void lockDriveTrain(boolean lock){
         lockDriveTrain = lock;

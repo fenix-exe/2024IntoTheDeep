@@ -18,19 +18,17 @@ public class GoToIntakeStateTransition implements IStateTransition {
         MOVING_ELBOW_AND_SLIDE
     }
 
-    TransitionSteps intakeTransitionStep;
+    private TransitionSteps intakeTransitionStep;
     ElapsedTime timer;
     Wrist wrist;
     Claw claw;
     Arm arm;
-    DriveTrain driveTrain;
     DriverControls driverControls;
-    public GoToIntakeStateTransition(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls){
+    public GoToIntakeStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
         intakeTransitionStep = TransitionSteps.START;
         this.wrist = wrist;
         this.claw = claw;
         this.arm = arm;
-        this.driveTrain = driveTrain;
         this.driverControls = driverControls;
     }
 

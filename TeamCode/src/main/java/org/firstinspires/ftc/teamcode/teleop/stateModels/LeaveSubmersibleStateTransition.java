@@ -19,13 +19,11 @@ public class LeaveSubmersibleStateTransition implements IStateTransition{
     Wrist wrist;
     Claw claw;
     Arm arm;
-    DriveTrain driveTrain;
     DriverControls driverControls;
-    public LeaveSubmersibleStateTransition(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls){
+    public LeaveSubmersibleStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
         this.claw = claw;
         this.arm = arm;
-        this.driveTrain = driveTrain;
         this.driverControls = driverControls;
         leaveSubmersibleState = TransitionSteps.START;
     }

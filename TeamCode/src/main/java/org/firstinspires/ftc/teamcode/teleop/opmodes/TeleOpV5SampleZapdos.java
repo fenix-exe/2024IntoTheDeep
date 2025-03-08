@@ -20,15 +20,12 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
-import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.ResetSlideEncoderStateModel;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.FSMManager;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.RobotState;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
@@ -95,7 +92,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeLED();
         int presetsRead = PresetConfigUtil.loadPresetsFromConfig();
         initializeStateModels();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, color, driveTrain, led);
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
@@ -130,7 +126,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 } else{
                     DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
                 }
-
             }
 
             //imu reset
@@ -141,8 +136,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //speed adjustments
             if (driverControls.microDriveAdjustments()){
                 speedMultiplier = RobotConstants.SLOW_SPEED;
-            } else if (driveTrain.getLockDriveTrain()) {
-                speedMultiplier = 0;
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
@@ -157,13 +150,15 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                     break;
             }
 
-            //manual control for arm
+            //manual control for slide
             if (Math.abs(driverControls.slideMovement()) > 0){
                 arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
             } else if (driverControls.slideStopped()){
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
             }
+
+            //manual control for elbow
             if (Math.abs(driverControls.pivotJoystick()) > 0){
                 arm.moveElbow(driverControls.pivotJoystick());
             } else if (driverControls.pivotManualStopped()){
@@ -171,22 +166,25 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 arm.holdElbow();
             }
 
-            if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7 && arm.getElbowAngleInDegrees() < 10 && !driverControls.continuousDiffUp()){
+            //Manual control for wrist up
+            //precedence is the following - continous diff > 42in > manual diff
+            if (driverControls.continuousDiffUp()){
+                wrist.manualControlPitch(1);
+            } else if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7
+                    && arm.getElbowAngleInDegrees() < 10){
+                // When slide is extended, making sure pitch is down or we can break the 42in limit
                 wrist.presetPositionPitch(-90);
-            }
-            //manual control for wrist
-            if (driverControls.diffDown()){
-                wrist.manualControlPitch(-15);
-            }
-            if (driverControls.diffUp() && (arm.getSlideExtension() < ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES - 5 || arm.getElbowAngleInDegrees() >= 10)){
+            } else if (driverControls.diffUp()){
                 wrist.manualControlPitch(15);
             }
-            if (driverControls.continuousDiffDown()){
-                wrist.manualControlPitch(1);
-            }
+
+            //manual control for wrist down
             if (driverControls.continuousDiffDown()){
                 wrist.manualControlPitch(-1);
+            } else if (driverControls.diffDown()){
+                wrist.manualControlPitch(-15);
             }
+
             if (driverControls.diffLeft()){
                 wrist.manualControlRoll(-45);
             }
@@ -240,7 +238,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
 
             //led blinking
-            led();
+            updateLED();
 
             if (driverControls.escapePresets()){
                 arm.holdArm();;
@@ -250,16 +248,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
             //state models for preset positions
             FSMManager.execute();
-            /*StateModelsZapdos.presetPositionDriveStateModel(StateModelParameters.DriveStateParameters.pitch,StateModelParameters.DriveStateParameters.elbowAngle,StateModelParameters.DriveStateParameters.slideLength);
-            StateModelsZapdos.presetPositionIntakeStateModel(StateModelParameters.IntakeStateParameters.pitch,StateModelParameters.IntakeStateParameters.roll,StateModelParameters.IntakeStateParameters.downPitch,StateModelParameters.IntakeStateParameters.downRoll,StateModelParameters.IntakeStateParameters.elbowAngle,StateModelParameters.IntakeStateParameters.slideLength);
-            StateModelsZapdos.presetPositionDepositStateModel(StateModelParameters.DepositStateParameters.pitch,StateModelParameters.DepositStateParameters.roll,StateModelParameters.DepositStateParameters.elbowAngle,StateModelParameters.DepositStateParameters.slideLength, StateModelParameters.DepositStateParameters.slideRetractionLength);
-            StateModelsZapdos.depositSampleIntoBucketStateModel(StateModelParameters.DepositSampleIntoBucketStateParameters.pitch,StateModelParameters.DepositSampleIntoBucketStateParameters.roll,StateModelParameters.DepositSampleIntoBucketStateParameters.elbowAngle,StateModelParameters.DepositSampleIntoBucketStateParameters.intermediateElbowAngle,StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength);
-            StateModelsZapdos.presetPositionGrabBlockFromOutsideStateModel(StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upPitch,StateModelParameters.GrabBlockFromOutsideStateParameters.upRoll,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle,StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle,0,0);
-            StateModelsZapdos.presetPositionPickupSpecimensStateModel(StateModelParameters.PickupSpecimensStateParameters.pitch,StateModelParameters.PickupSpecimensStateParameters.roll,StateModelParameters.PickupSpecimensStateParameters.elbowAngle,StateModelParameters.PickupSpecimensStateParameters.slideLength, StateModelParameters.PickupSpecimensStateParameters.elbowUpAngle, StateModelParameters.PickupSpecimensStateParameters.pickupSlideLength,StateModelParameters.PickupSpecimensStateParameters.endSlideLength, StateModelParameters.PickupSpecimensStateParameters.pitchEnd, StateModelParameters.PickupSpecimensStateParameters.rollEnd);
-            StateModelsZapdos.presetPositionDepositSpecimensStateModel(StateModelParameters.DepositSpecimensStateParameters.pitch,StateModelParameters.DepositSpecimensStateParameters.roll,StateModelParameters.DepositSpecimensStateParameters.elbowAngle,StateModelParameters.DepositSpecimensStateParameters.slideLength, StateModelParameters.PickupSpecimensStateParameters.slideLength);
-            StateModelsZapdos.dropBlockAndMoveWristDown(StateModelParameters.DropBlockAndMoveWristDown.pitch, StateModelParameters.DropBlockAndMoveWristDown.elbowAngle);
-            StateModelsZapdos.depositSampleIntoObservationZone(StateModelParameters.DepositSampleIntoObservationZone.retractionLength,StateModelParameters.DepositSampleIntoObservationZone.pitchDown,StateModelParameters.DepositSampleIntoObservationZone.extensionLength,StateModelParameters.DepositSampleIntoObservationZone.downPitch,StateModelParameters.DepositSampleIntoObservationZone.downRoll);
-            StateModelsZapdos.hang(StateModelParameters.Hang.pitch,StateModelParameters.Hang.roll,StateModelParameters.Hang.linearActuatorExtension,StateModelParameters.Hang.linearActuatorRetraction,StateModelParameters.Hang.initialElbowAngle,StateModelParameters.Hang.slideExtension,StateModelParameters.Hang.hangElbowAngle,StateModelParameters.Hang.slideIntermediatePosition,StateModelParameters.Hang.slideRetraction,StateModelParameters.Hang.endElbowAngle);*/
 
             //telemetry
             /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -408,7 +396,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, claw, arm, driveTrain, driverControls);
+        FSMManager.initialize(wrist, claw, arm, driveTrain, driverControls,color);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
@@ -514,7 +502,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             linearActuator.resetEncoders();
     }
-    private void led(){
+    private void updateLED(){
         if (FSMManager.isAtStart()) {
             led.setColor(ILED.LEDColor.YELLOW);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
