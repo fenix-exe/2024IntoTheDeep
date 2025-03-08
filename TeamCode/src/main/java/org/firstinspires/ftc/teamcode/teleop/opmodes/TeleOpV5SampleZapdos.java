@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
@@ -283,6 +284,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Red", colorSensor.red());
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
+            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            telemetry.addData("Slide Length", arm.getSlideExtension());
+            telemetry.addData("Robot State", FSMManager.robotState);
+            telemetry.addData("Color Sensor Distance", color.getDistance(DistanceUnit.MM));
             multiTelemetry.update();
 
             //logging
@@ -503,14 +508,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             linearActuator.resetEncoders();
     }
     private void updateLED(){
-        if (FSMManager.isAtStart()) {
+        if (driveTrain.getLockDriveTrain()){
+            led.setColor(ILED.LEDColor.GREEN);
+        } else if (FSMManager.isAtStart()) {
             led.setColor(ILED.LEDColor.YELLOW);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);
         } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 120){
             led.setColor(ILED.LEDColor.RED);
-        } else if (driveTrain.getLockDriveTrain()){
-          led.setColor(ILED.LEDColor.GREEN);
         } else if (led.isOn()){
             led.turnOff();
         }

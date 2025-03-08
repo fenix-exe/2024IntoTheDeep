@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import java.util.ArrayList;
 
 public class FSMManager {
-    static RobotState robotState;
+    public static RobotState robotState;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
     public static void initialize(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
         robotState = RobotState.START;

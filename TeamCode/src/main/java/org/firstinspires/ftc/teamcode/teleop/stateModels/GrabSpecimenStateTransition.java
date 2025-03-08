@@ -49,18 +49,21 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     public void execute() {
         switch(intakeTransitionStep){
             case START:
+                timer = new ElapsedTime();
                 double distance = color.getDistance(DistanceUnit.MM);
-                if (distance < 15){
-                    closingClaw = false;
-                    driveTrain.stopDriveTrain();
-                    driveTrain.lockDriveTrain(true);
-                    arm.moveSlide(-1,false);
-                    intakeTransitionStep = TransitionSteps.MOVING_SLIDE_BACK;
-                }
-                if (driverControls.pickupAndDepositSpecimens()){
-                    timer.reset();
-                    claw.closeClaw();
-                    intakeTransitionStep = TransitionSteps.CLOSING_CLAW;
+                if(FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN){
+                    if (distance < 15){
+                        closingClaw = false;
+                        driveTrain.stopDriveTrain();
+                        driveTrain.lockDriveTrain(true);
+                        arm.moveSlide(-1,false);
+                        intakeTransitionStep = TransitionSteps.MOVING_SLIDE_BACK;
+                    }
+                    if (driverControls.pickupAndDepositSpecimens()){
+                        timer.reset();
+                        claw.closeClaw();
+                        intakeTransitionStep = TransitionSteps.CLOSING_CLAW;
+                    }
                 }
                 break;
             case MOVING_SLIDE_BACK:

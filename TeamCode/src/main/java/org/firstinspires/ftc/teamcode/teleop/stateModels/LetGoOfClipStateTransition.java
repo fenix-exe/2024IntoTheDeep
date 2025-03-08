@@ -50,7 +50,7 @@ public class LetGoOfClipStateTransition implements IStateTransition{
             case OPENING_CLAW:
                 if (timer.milliseconds() > 250){
                     timer.reset();
-                    arm.moveSlideToLength(StateModelParameters.DepositStateParameters.slideRetractionLength);
+                    arm.moveSlideToLength(StateModelParameters.DepositSpecimensStateParameters.slideLength);
                     clipState = TransitionSteps.RETRACTING_SLIDES;
                 }
                 break;
