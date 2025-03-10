@@ -288,6 +288,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
             telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
+            telemetry.addData("IMU", imu.getYaw());
             multiTelemetry.update();
 
             //logging
