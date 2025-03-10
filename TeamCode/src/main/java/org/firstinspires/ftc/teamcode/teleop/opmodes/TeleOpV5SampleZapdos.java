@@ -81,10 +81,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //enable manual bulk reads
-        /*List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        }*/
+        }
         //initialization
         initializeGamePads();
         initializeDriveTrain();
@@ -110,9 +110,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         while (opModeIsActive()){
             //clear cache for bulk reads
             //IMPORTANT!!!!!!!!!!!!!!!! bc we are using manual bulk read mode
-            /*for (LynxModule hub : allHubs) {
+            for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
-            }*/
+            }
 
             //tracking loop cycle times, allowing us to know how many times our main while loop executes every second
             freqCounter.count();

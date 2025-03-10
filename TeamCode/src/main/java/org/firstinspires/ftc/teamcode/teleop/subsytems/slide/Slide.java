@@ -17,6 +17,7 @@ public class Slide {
     //300 mm is the length of a misumi 330 slide, and 1 in = 25.4 mm
     double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
+    public double SLIDE_VEL = 3250;
     double SLIDETOELBOW = 2.5;
     public Slide(DcMotorEx leftSlideMotor,DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
         this.leftSlideMotor = leftSlideMotor;
@@ -32,8 +33,8 @@ public class Slide {
         leftSlideMotor.setTargetPosition(ticks);
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlideMotor.setPower(1);
-        leftSlideMotor.setPower(1);
+        rightSlideMotor.setVelocity(SLIDE_VEL);
+        leftSlideMotor.setVelocity(SLIDE_VEL);
     }
 
     public void joystickControl(double slideMovement){
@@ -45,8 +46,8 @@ public class Slide {
         leftSlideMotor.setTargetPosition(leftSlideMotor.getCurrentPosition());
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlideMotor.setPower(1);
-        leftSlideMotor.setPower(1);
+        rightSlideMotor.setVelocity(SLIDE_VEL);
+        leftSlideMotor.setVelocity(SLIDE_VEL);
     }
     public int inchesToTicksPivotPoint(double inches){
         //encoderRes * (inches - slideLength - slideToElbow)/pulleyCirc
@@ -71,7 +72,7 @@ public class Slide {
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void setSlidePower(double power){
-        rightSlideMotor.setPower(power);
+        rightSlideMotor.setVelocity(power);
     }
     public boolean isHomingSwitchPressed(){
         return homingSwitch.isPressed();

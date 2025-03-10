@@ -50,11 +50,12 @@ public class LetGoOfClipStateTransition implements IStateTransition{
             case OPENING_CLAW:
                 if (timer.milliseconds() > 250){
                     timer.reset();
-                    arm.moveSlideToLength(StateModelParameters.DepositSpecimensStateParameters.slideLength);
-                    clipState = TransitionSteps.RETRACTING_SLIDES;
+                    FSMManager.robotState = RobotState.READY_TO_GO_TO_GRAB_SPECIMEN;
+                    //arm.moveSlideToLength(StateModelParameters.DepositSpecimensStateParameters.slideLength);
+                    clipState = TransitionSteps.START;
                 }
                 break;
-            case RETRACTING_SLIDES:
+            /*case RETRACTING_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
                     wrist.presetPosition(StateModelParameters.DepositSpecimensStateParameters.pitch, StateModelParameters.DepositSpecimensStateParameters.roll);
                     clipState = TransitionSteps.MOVING_WRIST;
@@ -71,7 +72,7 @@ public class LetGoOfClipStateTransition implements IStateTransition{
                     FSMManager.robotState = RobotState.READY_TO_GO_TO_GRAB_SPECIMEN;
                     clipState = TransitionSteps.START;
                 }
-                break;
+                break;*/
         }
     }
 

@@ -37,9 +37,6 @@ public class Arm {
         slide.joystickControl(power);
         return power;
     }
-    public void setRightSlidePowerToLeftSlidePower(){
-        slide.setLeftSlideMotorPowerToRightSlideMotorPower();
-    }
 
     public void moveElbow(double elbowMovement){
             double power;

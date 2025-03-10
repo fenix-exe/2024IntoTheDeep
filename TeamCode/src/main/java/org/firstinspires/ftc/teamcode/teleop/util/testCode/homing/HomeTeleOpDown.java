@@ -81,14 +81,12 @@ public class HomeTeleOpDown extends LinearOpMode {
     private void homeDown(){
         //homing the slide
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
-            slide.setSlidePower(-0.2);
-            slide.setLeftSlideMotorPowerToRightSlideMotorPower();
+            slide.setSlidePower(-200);
             telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
             telemetry.addData("Elbow Angle", elbow.getElbowAngle());
             telemetry.update();
         }
         slide.setSlidePower(0);
-        slide.setLeftSlideMotorPowerToRightSlideMotorPower();
 
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
