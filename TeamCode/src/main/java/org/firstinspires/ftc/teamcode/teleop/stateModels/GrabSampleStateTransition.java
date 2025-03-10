@@ -13,6 +13,7 @@ public class GrabSampleStateTransition implements IStateTransition {
     private enum TransitionSteps {
         START,
         ELBOW_DOWN,
+        WAIT_ONE_SECOND,
         INTAKE_CLOSING,
         ELBOW_UP,
         SLIDES_BACK_TO_5_INCHES_FROM_MAX_EXTENSION,
@@ -52,6 +53,7 @@ public class GrabSampleStateTransition implements IStateTransition {
                     timer.reset();
                     claw.openClaw();
                     arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
+                    wrist.presetPositionPitch(StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch + arm.getElbowAngleInDegrees());
                     grabSampleState = TransitionSteps.ELBOW_DOWN;
                     driveTrain.stopDriveTrain();
                     driveTrain.lockDriveTrain(true);
@@ -59,6 +61,12 @@ public class GrabSampleStateTransition implements IStateTransition {
                 break;
             case ELBOW_DOWN:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE) {
+                    timer.reset();
+                    grabSampleState = TransitionSteps.WAIT_ONE_SECOND;
+                }
+                break;
+            case WAIT_ONE_SECOND:
+                if (timer.milliseconds() > StateModelParameters.GrabBlockFromOutsideStateParameters.waitTime){
                     timer.reset();
                     claw.closeClaw();
                     grabSampleState = TransitionSteps.INTAKE_CLOSING;

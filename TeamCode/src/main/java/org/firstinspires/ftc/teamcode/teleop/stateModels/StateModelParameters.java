@@ -35,6 +35,7 @@ public class StateModelParameters {
         public static double upRoll = 0;
         public static double elbowIntakeDownAngle = 0.8;
         public static double elbowIntakeUpAngle = 0.8;
+        public static double waitTime = 500;
     }
     public static class PickupSpecimensStateParameters{
         public static double pitch = 0;

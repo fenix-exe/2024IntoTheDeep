@@ -50,12 +50,13 @@ public class PresetConfigUtil {
                 StateModelParameters.DepositSampleIntoBucketStateParameters.intermediateElbowAngle = Double.parseDouble(configValues[4]);
                 StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength = Double.parseDouble(configValues[5]);
                 break;
-            case "GRAB_FROM_OUTSIDE_STATE_MODEL_PARAMS":
+            case "GRAB_BLOCK_FROM_OUTSIDE_STATE_MODEL_PARAMS":
                 StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch = Double.parseDouble(configValues[1]);
                 StateModelParameters.GrabBlockFromOutsideStateParameters.upPitch= Double.parseDouble(configValues[2]);
                 StateModelParameters.GrabBlockFromOutsideStateParameters.upRoll = Double.parseDouble(configValues[3]);
                 StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle = Double.parseDouble(configValues[4]);
                 StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle = Double.parseDouble(configValues[5]);
+                StateModelParameters.GrabBlockFromOutsideStateParameters.waitTime = Double.parseDouble(configValues[6]);
                 break;
             case "PICKUP_SPECIMENS_STATE_MODEL_PARAMS":
                 StateModelParameters.PickupSpecimensStateParameters.pitch = Double.parseDouble(configValues[1]);

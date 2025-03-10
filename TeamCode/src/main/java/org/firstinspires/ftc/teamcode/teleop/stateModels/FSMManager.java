@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControl
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 public class FSMManager {
     public static RobotState robotState;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
-    public static void initialize(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
+    public static void initialize(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator){
         robotState = RobotState.START;
         stateTransitions.add(new GoToIntakeStateTransition(wrist, claw, arm, driverControls));
         stateTransitions.add(new GrabSampleStateTransition(wrist, claw, arm, driveTrain, driverControls));
@@ -27,6 +28,7 @@ public class FSMManager {
         stateTransitions.add(new GrabFailedForSpecimensStateTransition(wrist, claw, arm, driverControls));
         stateTransitions.add(new GoToClipSpecimenStateTransition(wrist, claw, arm, driverControls));
         stateTransitions.add(new LetGoOfClipStateTransition(wrist, claw, arm, driverControls));
+        stateTransitions.add(new HangStateTransition(wrist, claw, arm, driverControls,linearActuator));
     }
     public static void execute(){
         for(int i = 0; i < stateTransitions.size(); i++){
