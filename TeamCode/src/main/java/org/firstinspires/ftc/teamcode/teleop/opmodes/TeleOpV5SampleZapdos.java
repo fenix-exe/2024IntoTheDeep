@@ -19,7 +19,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
@@ -28,7 +27,6 @@ import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.ResetSlideEncoderStateModel;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.FSMManager;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.ILED;
@@ -288,6 +286,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
             telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
+            telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
+            telemetry.addData("Right Slide", rightSlide.getCurrentPosition());
+            telemetry.addData("Left Slide Target", leftSlide.getTargetPosition());
+            telemetry.addData("Right Slide Target", rightSlide.getTargetPosition());
             telemetry.addData("IMU", imu.getYaw());
             multiTelemetry.update();
 
@@ -449,7 +451,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         LoggerUtil.debug("endEffector", debugString);
     }
     private void logStateModels(){
-        LoggerUtil.debug("stateModels", StateModelsZapdos.getDebugString());
+        //LoggerUtil.debug("stateModels", StateModelsZapdos.getDebugString());
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));

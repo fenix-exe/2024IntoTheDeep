@@ -22,7 +22,6 @@ import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControl
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsFawkes;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
@@ -68,7 +67,7 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
         initializeArmAndHome();
         initializeEndEffector();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsFawkes.initialize(arm, wrist, claw, driverControls);
+        //StateModelsFawkes.initialize(arm, wrist, claw, driverControls);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -168,7 +167,7 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModelsFawkes.presetPositionDriveStateModel(0,73,8);
+            /*StateModelsFawkes.presetPositionDriveStateModel(0,73,8);
             StateModelsFawkes.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
@@ -178,7 +177,7 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
             StateModelsFawkes.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModelsFawkes.presetPositionPickupSpecimensStateModel(15,130,16.5,2.2, 77, 3, 90, 90);
             StateModelsFawkes.presetPositionDepositSpecimensStateModel(90,90,15,130,77,16.5,3,16);
-            StateModelsFawkes.dropBlockAndMoveWristDown(-90);
+            StateModelsFawkes.dropBlockAndMoveWristDown(-90);*/
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -188,13 +187,13 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
             multiTelemetry.addData("Wrist Pitch", pitch.getPosition());
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
             multiTelemetry.addData("imu", Math.toDegrees(imu.getYaw()));
-            multiTelemetry.addData("Dropping Block State Model", StateModelsFawkes.enterIntakePositionStates);
+            /*multiTelemetry.addData("Dropping Block State Model", StateModelsFawkes.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsFawkes.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModelsFawkes.intakePresetState);
             multiTelemetry.addData("Y Cycle", StateModelsFawkes.depositCycle);
             multiTelemetry.addData("At intake position?", StateModelsFawkes.intakePosition);
             multiTelemetry.addData("Specimen Pickup State", StateModelsFawkes.pickupSpecimenState);
-            multiTelemetry.addData("Block Pickup Type", StateModelsFawkes.blockPickupType);
+            multiTelemetry.addData("Block Pickup Type", StateModelsFawkes.blockPickupType);*/
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.addData("speed multipler", speedMultiplier);
@@ -328,7 +327,7 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
         LoggerUtil.debug("endEffector", debugString);
     }
     private void logStateModels(){
-        LoggerUtil.debug("stateModels", StateModelsFawkes.getDebugString());
+        //LoggerUtil.debug("stateModels", StateModelsFawkes.getDebugString());
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));

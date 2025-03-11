@@ -20,12 +20,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.ArmConstants;
-import org.firstinspires.ftc.teamcode.teleop.modules.arm.ElbowIntakeAngleFunction;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsZapdos;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
@@ -77,7 +75,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
         initializeEndEffector();
         initializeLinearActuator();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, null);
+        //StateModelsZapdos.initialize(arm, wrist, claw, linearActuator, driverControls, null);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
@@ -189,7 +187,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModelsZapdos.presetPositionDriveStateModel(0,93,0);
+            /*StateModelsZapdos.presetPositionDriveStateModel(0,93,0);
             StateModelsZapdos.presetPositionIntakeStateModel(-45,-60,-105,-3,6,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             //StateModels.presetPositionDepositStateModel(-30,0,75,33.5);
@@ -201,7 +199,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             StateModelsZapdos.presetPositionPickupSpecimensStateModel(-15,28,0,2.2, 80, 7,7, 90, 25);
             StateModelsZapdos.presetPositionDepositSpecimensStateModel(-15,28,0,14,0);
             StateModelsZapdos.dropBlockAndMoveWristDown(-105, 6);
-            StateModelsZapdos.hang(0,0,9.5,6,83,26,96,12.5,0,15);
+            StateModelsZapdos.hang(0,0,9.5,6,83,26,96,12.5,0,15);*/
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -212,13 +210,13 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
             multiTelemetry.addData("Wrist Roll", wrist.getRollAngle());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
-            multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
+            /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
             multiTelemetry.addData("Y Cycle", StateModelsZapdos.depositCycle);
             multiTelemetry.addData("At intake position?", StateModelsZapdos.intakePosition);
             multiTelemetry.addData("Specimen Pickup State", StateModelsZapdos.pickupSpecimenState);
-            multiTelemetry.addData("Block Pickup Type", StateModelsZapdos.blockPickupType);
+            multiTelemetry.addData("Block Pickup Type", StateModelsZapdos.blockPickupType);*/
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.addData("Speed Multipler", speedMultiplier);
@@ -362,7 +360,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
         LoggerUtil.debug("endEffector", debugString);
     }
     private void logStateModels(){
-        LoggerUtil.debug("stateModels", StateModelsZapdos.getDebugString());
+        //LoggerUtil.debug("stateModels", StateModelsZapdos.getDebugString());
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
