@@ -348,7 +348,7 @@ public class DebugTeleOp extends LinearOpMode {
         debounceTimer = new ElapsedTime();
         debounceTimer.reset();
 
-        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
         leftSlide.setTargetPositionTolerance(0);
