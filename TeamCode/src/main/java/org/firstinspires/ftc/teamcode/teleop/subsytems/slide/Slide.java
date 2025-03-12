@@ -12,11 +12,12 @@ public class Slide {
     //pulleyCirc is the circumference of the pulley
     double PULLEYCIRC= 4.724757;
     //encoderRes is how many encoder ticks happen after 1 rotation of the motor
-    double ENCODERRES = 384.5; // old value is 384.5;
+    double ENCODERRES = 145.1; // old value is 384.5;
     //slideLength is the length of 1 stage of the slides
     //300 mm is the length of a misumi 330 slide, and 1 in = 25.4 mm
     double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
+    public double SLIDE_VEL = 3000;
     double SLIDETOELBOW = 2.5;
     public Slide(DcMotorEx leftSlideMotor,DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
         this.leftSlideMotor = leftSlideMotor;
@@ -32,8 +33,8 @@ public class Slide {
         leftSlideMotor.setTargetPosition(ticks);
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlideMotor.setPower(1);
-        leftSlideMotor.setPower(1);
+        rightSlideMotor.setVelocity(SLIDE_VEL);
+        leftSlideMotor.setVelocity(SLIDE_VEL);
     }
 
     public void joystickControl(double slideMovement){
@@ -45,8 +46,8 @@ public class Slide {
         leftSlideMotor.setTargetPosition(leftSlideMotor.getCurrentPosition());
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlideMotor.setPower(1);
-        leftSlideMotor.setPower(1);
+        rightSlideMotor.setVelocity(SLIDE_VEL);
+        leftSlideMotor.setVelocity(SLIDE_VEL);
     }
     public int inchesToTicksPivotPoint(double inches){
         //encoderRes * (inches - slideLength - slideToElbow)/pulleyCirc
@@ -71,7 +72,7 @@ public class Slide {
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void setSlidePower(double power){
-        rightSlideMotor.setPower(power);
+        rightSlideMotor.setVelocity(power);
     }
     public boolean isHomingSwitchPressed(){
         return homingSwitch.isPressed();

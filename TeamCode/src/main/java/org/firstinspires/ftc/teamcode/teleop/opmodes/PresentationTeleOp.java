@@ -20,10 +20,8 @@ import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelsFawkes;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforREV;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
@@ -67,7 +65,7 @@ public class PresentationTeleOp extends LinearOpMode {
         initializeArmAndHome();
         initializeEndEffector();
         PresetConfigUtil.loadPresetsFromConfig();
-        StateModelsFawkes.initialize(arm, wrist, claw, driverControls);
+        //StateModelsFawkes.initialize(arm, wrist, claw, driverControls);
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -133,7 +131,7 @@ public class PresentationTeleOp extends LinearOpMode {
 
 
             //state models for preset positions
-            StateModelsFawkes.presetPositionDriveStateModel(0,73,8);
+            /*StateModelsFawkes.presetPositionDriveStateModel(0,73,8);
             StateModelsFawkes.presetPositionIntakeStateModel(0,-90,-90,0,12,12);
             //StateModels.leaveSubmersibleStateModel(0,-90,2);
             StateModelsFawkes.presetPositionDepositStateModel(-30,0,73,30.5);
@@ -143,7 +141,7 @@ public class PresentationTeleOp extends LinearOpMode {
             StateModelsFawkes.presetPositionGrabBlockFromInsideStateModel(-90,0,-90,2,10,58,0);
             StateModelsFawkes.presetPositionPickupSpecimensStateModel(-10,90,25,0, 77, 3, 90, 90);
             StateModelsFawkes.presetPositionDepositSpecimensStateModel(90,90,-10,90,77,58,3,16);
-            StateModelsFawkes.dropBlockAndMoveWristDown(-90);
+            StateModelsFawkes.dropBlockAndMoveWristDown(-90);*/
 
             //telemetry
             multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
@@ -153,13 +151,13 @@ public class PresentationTeleOp extends LinearOpMode {
             multiTelemetry.addData("Wrist Pitch", pitch.getPosition());
             multiTelemetry.addData("Wrist Roll", roll.getPosition());
             multiTelemetry.addData("imu", Math.toDegrees(imu.getYaw()));
-            multiTelemetry.addData("Dropping Block State Model", StateModelsFawkes.enterIntakePositionStates);
+            /*multiTelemetry.addData("Dropping Block State Model", StateModelsFawkes.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsFawkes.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModelsFawkes.intakePresetState);
             multiTelemetry.addData("Y Cycle", StateModelsFawkes.depositCycle);
             multiTelemetry.addData("At intake position?", StateModelsFawkes.intakePosition);
             multiTelemetry.addData("Specimen Pickup State", StateModelsFawkes.pickupSpecimenState);
-            multiTelemetry.addData("Block Pickup Type", StateModelsFawkes.blockPickupType);
+            multiTelemetry.addData("Block Pickup Type", StateModelsFawkes.blockPickupType);*/
             multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
             multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
             multiTelemetry.update();
@@ -293,7 +291,7 @@ public class PresentationTeleOp extends LinearOpMode {
         LoggerUtil.debug("endEffector", debugString);
     }
     private void logStateModels(){
-        LoggerUtil.debug("stateModels", StateModelsFawkes.getDebugString());
+        //LoggerUtil.debug("stateModels", StateModelsFawkes.getDebugString());
     }
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));

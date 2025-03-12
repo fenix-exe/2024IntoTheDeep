@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.modules.arm;
+package org.firstinspires.ftc.teamcode.modules.arm;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
@@ -17,16 +17,16 @@ public class Arm {
         ArmSpeedController.slide = slide;
     }
 
-    public double moveSlide(double slideMovement, boolean remove_arm_rules) {
+    public void moveSlide(double slideMovement, boolean remove_arm_rules) {
         //max_extension already includes tolerance
         double max_extension = getMaximumSlideExtensionAllowedInInches();
         double power;
-        if (!remove_arm_rules){
+        if (!remove_arm_rules) {
             if (slide.getSlideExtensionInInches() > max_extension
-                    && slideMovement > 0){ //top limit
+                    && slideMovement > 0) { //top limit
                 power = 0;
             } else if (slide.getSlideExtensionInInches() < RobotConstants.SLIDE_TOLERANCE
-                    && slideMovement < 0){ //bottom limit
+                    && slideMovement < 0) { //bottom limit
                 power = 0;
             } else {
                 power = slideMovement;
@@ -35,8 +35,8 @@ public class Arm {
             power = slideMovement;
         }
         slide.joystickControl(power);
-        return power;
     }
+
 
     public void moveElbow(double elbowMovement){
             double power;
@@ -52,12 +52,12 @@ public class Arm {
             elbow.elbowJoystick(power);
     }
 
-    public double getMaximumSlideExtensionAllowedInInches(){
+    private double getMaximumSlideExtensionAllowedInInches(){
         double theta = elbow.getElbowAngle();
         double MaxSlideExtensionInches = RobotConstants.PHYSICAL_MAX_EXTENSION_IN_INCHES;
         if (!(Math.abs(90-theta) < 1)) { //tolerance of 1 degree around 90 degrees, I cannot compare double directly to int
             MaxSlideExtensionInches = Math.min(RobotConstants.PHYSICAL_MAX_EXTENSION_IN_INCHES,
-                    Math.abs(ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES/(Math.cos(Math.toRadians(theta)))));
+                    ArmConstants.MAXSLIDEEXTENSIONLENGTHINCHES/(Math.cos(Math.toRadians(theta))));
         }
         //add 1 inch safety margin
         MaxSlideExtensionInches -= RobotConstants.SLIDE_TOLERANCE;
@@ -69,13 +69,6 @@ public class Arm {
         slide.resetEncoder();
         elbow.setTargetAngle(0);
         slide.setSlideExtensionLength(0);
-    }
-    public void resetSlideEncoders(){
-        slide.resetEncoder();
-        slide.setSlideExtensionLength(0);
-    }
-    public boolean isSlideTouchSensorPressed(){
-        return slide.isHomingSwitchPressed();
     }
     public void setElbowPower(double power){
         elbow.setElbowPower(power);
@@ -116,12 +109,6 @@ public class Arm {
     public void moveElbowToAngle(double deg){
 
         elbow.setTargetAngle(deg);
-    }
-    public void setSlidePower(double power){
-        slide.setSlidePower(power);
-    }
-    public boolean detectingMagneticLimitSwitch(){
-        return elbow.isLimitSwitchPressed();
     }
 
     public boolean isArmAtPresetPosition(ArmPresetPosition position){

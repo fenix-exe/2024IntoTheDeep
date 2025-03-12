@@ -24,6 +24,9 @@ public class LinearActuator {
     public double getLinearActuatorPositionInches(){
         return ticksToInches(linearActuatorMotor.getCurrentPosition());
     }
+    public double getLinearActuatorTargetPositionInches(){
+        return ticksToInches(linearActuatorMotor.getTargetPosition());
+    }
     public void goToTargetPositionInches(double position){
         int positionInTicks = inchesToTicks(position);
         linearActuatorMotor.setTargetPosition(positionInTicks);
