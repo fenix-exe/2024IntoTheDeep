@@ -107,17 +107,16 @@ public class MecanumDrive {
         public double accuracy = 1;
         public double velocity = 0.5;
 
-        public double xMax = 1;
-        public double xP = 0.03;
+        public double xP = 0.06;
         public double xI = 0;
         public double xD = 0.01;
-        public double yMax = 1;
-        public double yP = 0.03;
-        public double yI = 0;
-        public double yD = 0;
-        public double hP = 1;
+        public double yP = 0.07;
+        public double yI = 0.02;
+        public double yD = 0.0002;
+        public double hP = 0.2;
         public double hI = 0;
         public double hD = 0;
+        public double speed = 5/10;
 
     }
 
@@ -576,10 +575,9 @@ public class MecanumDrive {
             this.yController = new com.arcrobotics.ftclib.controller.PIDFController(Yp, Yi, Yd, 0);
             this.headingController = new com.arcrobotics.ftclib.controller.PIDFController(Hp, Hi, Hd, 0);
 
-            this.xController.setSetPoint(target.position.x);
+            /*this.xController.setSetPoint(target.position.x);
             this.yController.setSetPoint(target.position.y);
-
-            this.headingController.calculate(target.heading.toDouble());
+            this.headingController.setSetPoint(target.heading.toDouble());*/
             this.telemetry = telemetry;
         }
 
@@ -587,27 +585,51 @@ public class MecanumDrive {
         public boolean run(TelemetryPacket p) {
             PoseVelocity2d vel = this.vel.get();
             Pose2d pose = this.pose.get();
-            if (distanceTo(getPosition(pose), getPosition(target)) < 1 && abs(getHeading(pose)-getHeading(target)) < Math.toRadians(10)) {
+            if ((distanceTo(getPosition(pose), getPosition(target)) < 1) && (abs(getHeading(pose)-getHeading(target)) < Math.toRadians(5))) {
                 powerUpdater.accept(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
+                telemetry.addData("xtarget", target.position.x);
+                telemetry.addData("ytarget", target.position.y);
+                telemetry.addData("distanceToX", target.position.x-getPosition(pose).x);
+                telemetry.addData("distanceToY", target.position.y-getPosition(pose).y);
+                telemetry.addData("distanceToAngle", target.heading.toDouble()-getHeading(pose));
+                telemetry.addData("distanceToTotal", distanceTo(getPosition(pose), getPosition(target)));
+                telemetry.addData("x pid", xController.getP());
+                telemetry.addData("y pid", yController.getP());
+                telemetry.addData("angle pid", headingController.getP());
+                telemetry.update();
                 return false;
             }
 
             Vector2d inputVector = new Vector2d(
-                    xController.calculate(getPosition(pose).x),
-                    yController.calculate(getPosition(pose).y)
+                    xController.calculate(getPosition(pose).x, target.position.x),
+                    yController.calculate(getPosition(pose).y, target.position.y)
             );
 
+            inputVector.times(PARAMS.speed);
 
-            inputVector = inputVector.times(Math.cos(getHeading(pose)));
+
 
             PoseVelocity2d inputVels = new PoseVelocity2d(
                     inputVector,
-                    headingController.calculate(getHeading(pose))
+                    headingController.calculate(getHeading(pose), target.heading.toDouble())
             );
 
 
 
             powerUpdater.accept(inputVels);
+            telemetry.addData("xtarget", target.position.x);
+            telemetry.addData("ytarget", target.position.y);
+            telemetry.addData("distanceToX", target.position.x-getPosition(pose).x);
+            telemetry.addData("distanceToY", target.position.y-getPosition(pose).y);
+            telemetry.addData("distanceToAngle", Math.toDegrees(target.heading.toDouble()-getHeading(pose)));
+            telemetry.addData("distanceToTotal", distanceTo(getPosition(pose), getPosition(target)));
+            telemetry.addData("x correction", inputVels.linearVel.x);
+            telemetry.addData("x pid", xController.getP());
+            telemetry.addData("y correction", inputVels.linearVel.y);
+            telemetry.addData("y pid", yController.getP());
+            telemetry.addData("angle correction", inputVels.angVel);
+            telemetry.addData("angle pid", headingController.getP());
+            telemetry.update();
             return true;
         }
     }

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Line;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -25,22 +26,22 @@ import static page.j5155.expressway.core.geometry.GeometryHelpers.distanceTo;
 @TeleOp
 public class AutoTele extends LinearOpMode {
     PinpointDrive drive;
-    Pose2d target = new Pose2d(10, 0, Math.toRadians(-90));
-    Pose2d home = new Pose2d(0,0,Math.toRadians(-90));
+
     @Override
     public void runOpMode() throws InterruptedException {
-        drive = new PinpointDrive(hardwareMap, new Pose2d(0,0,0));
-        Action targetMove = drive.pidToPointAction(target, telemetry);
-        Action homeMove = drive.pidToPointAction(home, telemetry);
+        drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
         TelemetryPacket p = new TelemetryPacket();
         ActionRunner runner = new ActionRunner();
-        float lateral;
-        double strafe;
-        float yaw;
+
+
         DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FL");
         DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FR");
         DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BL");
         DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BR");
+
+        MecanumDrive.PIDDrive targetmove = drive.pidToPointAction(new Pose2d(40, 0, Math.toRadians(0)), telemetry);
+        MecanumDrive.PIDDrive homemove = drive.pidToPointAction(new Pose2d(0, 0, Math.toRadians(0)), telemetry);
+
 
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -50,52 +51,24 @@ public class AutoTele extends LinearOpMode {
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        /*TrajectoryActionBuilder traj1 = drive.actionBuilder(new Pose2d(48, -48, Math.toRadians(180)))
+                .stopAndAdd(drive.pidToPointAction(new Pose2d(-48, -48, Math.toRadians(180)), telemetry))
+                .stopAndAdd(drive.pidToPointAction(new Pose2d(-48, 48, Math.toRadians(180)), telemetry))
+                .stopAndAdd(drive.pidToPointAction(new Pose2d(48, 48, Math.toRadians(180)), telemetry))
+                .stopAndAdd(drive.pidToPointAction(new Pose2d(48, -48, Math.toRadians(180)), telemetry));*/
+
+
+
+
+        //Action action1 = traj1.build();
+
         waitForStart();
         while (opModeIsActive()) {
-            drive.updatePoseEstimate();
-            //Actions.runBlocking(targetMove);
-            if (gamepad1.a) {
-                if (runner.getRunningActions().isEmpty()) {
-                    runner.runAsync(homeMove());
-                }
-                runner.updateAsync();
-                telemetry.addData("pin x",drive.pose.position.x);
-                telemetry.addData("pin y",drive.pose.position.y);
-                telemetry.addData("pin h",Math.toDegrees(drive.pose.heading.toDouble()));
-                telemetry.addData("runner", runner.getRunningActions().toString());
-                telemetry.update();
-            } else {
-                runner.getRunningActions().clear();
-                lateral = gamepad1.left_stick_y * -1;
-                strafe = gamepad1.left_stick_x * 1.1;
-                yaw = gamepad1.right_stick_x;
-                double denominator = Math.max(1, Math.abs(lateral+strafe+yaw));
-                FL.setPower(((lateral + strafe + yaw) / denominator));
-                BL.setPower((((lateral - strafe) + yaw) / denominator));
-                FR.setPower((((lateral - strafe) - yaw) / denominator));
-                BR.setPower((((lateral + strafe) - yaw) / denominator));
-                telemetry.addData("pin x",drive.pose.position.x);
-                telemetry.addData("pin y",drive.pose.position.y);
-                telemetry.addData("pin h",Math.toDegrees(drive.pose.heading.toDouble()));
-                telemetry.addData("runner", runner.getRunningActions().toString());
-                telemetry.update();
-            }
-            telemetry.addData("pin x",drive.pose.position.x);
-            telemetry.addData("pin y",drive.pose.position.y);
-            telemetry.addData("pin h",Math.toDegrees(drive.pose.heading.toDouble()));
-            telemetry.addData("runner", runner.getRunningActions().toString());
-            telemetry.update();
-
+            Actions.runBlocking(new SequentialAction(targetmove));
+            sleep(5000);
+            Actions.runBlocking(new SequentialAction(homemove));
+            sleep(5000);
         }
-    }
-    public Action homeMove() {
-        return drive.pidToPointAction(home, telemetry);
-    }
-    public Action targetMove() {
-        return drive.pidToPointAction(target, telemetry);
-    }
-    public Action clipper() {
-        return new SequentialAction(drive.pidToPointAction(home, telemetry), drive.pidToPointAction(target, telemetry));
     }
 }
 
