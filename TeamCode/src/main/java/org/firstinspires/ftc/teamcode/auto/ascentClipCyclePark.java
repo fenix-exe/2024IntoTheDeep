@@ -126,10 +126,9 @@ public class ascentClipCyclePark extends LinearOpMode {
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
         slide = new Slide(leftSlide,rightSlide, homingSwitch);
 
