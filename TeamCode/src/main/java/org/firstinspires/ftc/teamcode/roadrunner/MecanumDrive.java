@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
@@ -50,6 +51,10 @@ import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import static java.lang.Math.abs;
 
 @Config
 public class MecanumDrive {
@@ -66,13 +71,13 @@ public class MecanumDrive {
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
         public double lateralInPerTick = 1; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
         public double trackWidthTicks = 11.478871416511444;
-                //12;
+        //12;
 
         // feedforward parameters (in tick units)
         public double kS = 0.05;
-                //0.9290648042282834;
+        //0.9290648042282834;
         public double kV = 0.16;
-                        //0.18;
+        //0.18;
         public double kA = 0.04;
 
         // path profile parameters (in inches)
@@ -96,6 +101,18 @@ public class MecanumDrive {
         public double time_increase = 0;
         public double accuracy = 1;
         public double velocity = 0.5;
+
+        public double xP = 0.065;
+        public double xI = 0.01;
+        public double xD = 0.01;
+        public double yP = 0.06;
+        public double yI = 0.006;
+        public double yD = 0.006;
+        public double hP = 0.7;
+        public double hI = 0.07;
+        public double hD = 0.07;
+        public double speed = 10/10;
+
     }
 
     public static Params PARAMS = new Params();
@@ -251,11 +268,31 @@ public class MecanumDrive {
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
+    public Pose2d getPoseEstimate() {
+        updatePoseEstimate();
+        return pose;
+    }
+    private Vector2d getPosition(Pose2d pose) {
+        return pose.position;
+    }
+
+    private double distanceTo(Vector2d v1, Vector2d v2) {
+        return Math.sqrt(Math.pow(v1.x - v2.x, 2) + Math.pow(v1.y - v2.y, 2));
+    }
+
+    private Vector2d getLinearVel(PoseVelocity2d vel) {
+        return vel.linearVel;
+    }
+
+    private double getHeading(Pose2d pose) {
+        return pose.heading.toDouble();
+    }
+
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
 
-        double maxPowerMag = 1;
+        double maxPowerMag = PARAMS.speed;
         for (DualNum<Time> power : wheelVels.all()) {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
@@ -498,4 +535,88 @@ public class MecanumDrive {
                 defaultVelConstraint, defaultAccelConstraint
         );
     }
+
+
+
+
+
+    public class PIDDrive implements Action {
+
+        private final Supplier<Pose2d> pose;
+        private final Supplier<PoseVelocity2d> vel;
+        private final Pose2d target;
+        private final Consumer<PoseVelocity2d> powerUpdater;
+        private final com.arcrobotics.ftclib.controller.PIDFController xController;
+        private final com.arcrobotics.ftclib.controller.PIDFController yController;
+        private final com.arcrobotics.ftclib.controller.PIDFController headingController;
+
+        public PIDDrive(
+                Supplier<Pose2d> pose,
+                Supplier<PoseVelocity2d> vel,
+                Pose2d target,
+                Consumer<PoseVelocity2d> powerUpdater,
+                double Xp, double Xi, double Xd,
+                double Yp, double Yi, double Yd,
+                double Hp, double Hi, double Hd
+        ) {
+            this.pose = pose;
+            this.vel = vel;
+            this.target = target;
+            this.powerUpdater = powerUpdater;
+
+            this.xController = new com.arcrobotics.ftclib.controller.PIDFController(Xp,Xi,Xd,0);
+            this.yController = new com.arcrobotics.ftclib.controller.PIDFController(Yp, Yi, Yd, 0);
+            this.headingController = new com.arcrobotics.ftclib.controller.PIDFController(Hp, Hi, Hd, 0);
+
+            /*this.xController.setSetPoint(target.position.x);
+            this.yController.setSetPoint(target.position.y);
+            this.headingController.setSetPoint(target.heading.toDouble());*/
+        }
+
+        @Override
+        public boolean run(TelemetryPacket p) {
+            PoseVelocity2d vel = this.vel.get();
+            Pose2d pose = this.pose.get();
+            if ((distanceTo(getPosition(pose), getPosition(target)) < 1) && (abs(getHeading(pose)-getHeading(target)) < Math.toRadians(5))) {
+                powerUpdater.accept(new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
+
+                return false;
+            }
+
+            double xraw = xController.calculate(getPosition(pose).x, target.position.x);
+            double yraw = yController.calculate(getPosition(pose).y, target.position.y);
+
+            double xvec = xraw * Math.cos(-getHeading(pose)) - yraw * Math.sin(-getHeading(pose));
+            double yvec = xraw * Math.sin(-getHeading(pose)) + yraw * Math.cos(-getHeading(pose));
+
+
+            Vector2d inputVector = new Vector2d(xvec
+                    ,
+                    yvec
+            );
+
+
+            PoseVelocity2d inputVels = new PoseVelocity2d(
+                    inputVector,
+                    headingController.calculate(getHeading(pose), target.heading.toDouble())
+            );
+
+
+
+            powerUpdater.accept(inputVels);
+            return true;
+        }
+    }
+
+
+    public PIDDrive pidToPointAction(Pose2d target) {
+        return new PIDDrive(
+                (this::getPoseEstimate), (this::updatePoseEstimate), target, // the target pose
+                (this::setDrivePowers), // setDrivePowers uses inverse kinematics to set the powers of the drivetrain motors
+                PARAMS.xP, PARAMS.xI, PARAMS.xD, // the axial PID coefficients
+                PARAMS.yP, PARAMS.yI, PARAMS.yD, // the lateral PID coefficients
+                PARAMS.hP, PARAMS.hI, PARAMS.hD// the heading PID coefficients
+        );
+    }
+
 }
