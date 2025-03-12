@@ -107,16 +107,27 @@ public class MecanumDrive {
         public double accuracy = 1;
         public double velocity = 0.5;
 
-        public double xP = 0.06;
+        /*public double xP = 0.06;
         public double xI = 0;
         public double xD = 0.01;
-        public double yP = 0.07;
+        public double yP = 0.08;
         public double yI = 0.02;
-        public double yD = 0.0002;
+        public double yD = 0.01;
         public double hP = 0.2;
         public double hI = 0;
         public double hD = 0;
-        public double speed = 5/10;
+        public double speed = 5/10;*/
+
+        public double xP = 0.065;
+        public double xI = 0.01;
+        public double xD = 0.01;
+        public double yP = 0.06;
+        public double yI = 0.006;
+        public double yD = 0.006;
+        public double hP = 0.7;
+        public double hI = 0.07;
+        public double hD = 0.07;
+        public double speed = 10/10;
 
     }
 
@@ -297,7 +308,7 @@ public class MecanumDrive {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
 
-        double maxPowerMag = 1;
+        double maxPowerMag = PARAMS.speed;
         for (DualNum<Time> power : wheelVels.all()) {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
@@ -600,13 +611,17 @@ public class MecanumDrive {
                 return false;
             }
 
-            Vector2d inputVector = new Vector2d(
-                    xController.calculate(getPosition(pose).x, target.position.x),
-                    yController.calculate(getPosition(pose).y, target.position.y)
+            double xraw = xController.calculate(getPosition(pose).x, target.position.x);
+            double yraw = yController.calculate(getPosition(pose).y, target.position.y);
+
+            double xvec = xraw * Math.cos(-getHeading(pose)) - yraw * Math.sin(-getHeading(pose));
+            double yvec = xraw * Math.sin(-getHeading(pose)) + yraw * Math.cos(-getHeading(pose));
+
+
+            Vector2d inputVector = new Vector2d(xvec
+                    ,
+                    yvec
             );
-
-            inputVector.times(PARAMS.speed);
-
 
 
             PoseVelocity2d inputVels = new PoseVelocity2d(

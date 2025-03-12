@@ -39,7 +39,7 @@ public class AutoTele extends LinearOpMode {
         DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BL");
         DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BR");
 
-        MecanumDrive.PIDDrive targetmove = drive.pidToPointAction(new Pose2d(40, 0, Math.toRadians(0)), telemetry);
+        MecanumDrive.PIDDrive targetmove = drive.pidToPointAction(new Pose2d(0, 40, Math.toRadians(90)), telemetry);
         MecanumDrive.PIDDrive homemove = drive.pidToPointAction(new Pose2d(0, 0, Math.toRadians(0)), telemetry);
 
 
@@ -65,9 +65,9 @@ public class AutoTele extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             Actions.runBlocking(new SequentialAction(targetmove));
-            sleep(5000);
+            sleep(1000);
             Actions.runBlocking(new SequentialAction(homemove));
-            sleep(5000);
+            sleep(1000);
         }
     }
 }
