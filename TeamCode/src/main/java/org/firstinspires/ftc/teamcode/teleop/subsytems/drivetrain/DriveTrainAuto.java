@@ -14,10 +14,8 @@ import java.util.HashMap;
 
 import page.j5155.expressway.ftc.actions.ActionRunner;
 
-public class DriveTrainAuto{
+public class DriveTrainAuto implements IDriveTrain{
 
-    public enum DriveType {ROBOT_CENTRIC,FIELD_CENTRIC}
-    Gamepad gamepad1;
     DcMotorEx FL;
     DcMotorEx FR;
     DcMotorEx BL;
@@ -27,9 +25,9 @@ public class DriveTrainAuto{
     public ActionRunner runner;
     public PinpointDrive drive;
 
-    public static DriveType driveType = DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
-    public rrDrive(Gamepad gamepad1, DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, ActionRunner runner, Telemetry telemetry, PinpointDrive drive){
-        this.gamepad1=gamepad1;
+    public IDriveTrain.DriveType driveType = IDriveTrain.DriveType.FIELD_CENTRIC;  // Robot-Centric = 0, Field-Centric = 1
+    private boolean lockDriveTrain;
+    public DriveTrainAuto(DcMotorEx FL, DcMotorEx FR, DcMotorEx BL, DcMotorEx BR, IIMU imu, ActionRunner runner, PinpointDrive drive){
         this.FL=FL;
         this.FR=FR;
         this.BL=BL;
@@ -37,14 +35,22 @@ public class DriveTrainAuto{
         this.imu_IMU = imu;
         this.runner = runner;
         this.drive = drive;
+        lockDriveTrain = false;
     }
 
 
-    public void Move(IDriveTrain.DriveType driveType, double forwardDrive, double strafeDrive, double heading) {
-        if(driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
-            RobotCentric_Drive(speedMultiplier);
-        } else {
-            FieldCentricDrive(speedMultiplier);
+    public void Move(double forwardDrive, double strafeDrive, double headingDrive) {
+        if(forwardDrive != 0 || strafeDrive != 0 || headingDrive != 0){
+            if (isFollowingPath()){
+                stopFollowing();
+            }
+            if(driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
+                RobotCentric_Drive(forwardDrive, strafeDrive, headingDrive, speedMultiplier);
+            } else {
+                FieldCentricDrive(forwardDrive, strafeDrive, headingDrive, speedMultiplier);
+            }
+        } else if (!isFollowingPath()){
+            stopDriveTrain();
         }
     }
 
@@ -59,8 +65,9 @@ public class DriveTrainAuto{
 
     }
     public void Follow(Pose2d pose) {
-
-        runner.runAsync(drive.pidToPointAction(pose));
+        if (!lockDriveTrain){
+            runner.runAsync(drive.pidToPointAction(pose));
+        }
     }
 
     public void stopFollowing() {
@@ -76,70 +83,35 @@ public class DriveTrainAuto{
         return !runner.getRunningActions().isEmpty();
     }
 
-
-
-
-    public void RobotCentric_Drive() {
-        float drive;
-        double strafe;
-        float yaw;
-
-        drive = gamepad1.left_stick_y * -1;
-        strafe = gamepad1.left_stick_x * 1.1;
-        yaw = gamepad1.right_stick_x;
-        double denominator = Math.max(1, Math.abs(drive+strafe+yaw));
-        FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplier);
-        BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplier);
-        FR.setPower((((drive - strafe) - yaw) / denominator) * speedMultiplier);
-        BR.setPower((((drive + strafe) - yaw) / denominator) * speedMultiplier);
-    }
-    public void RobotCentric_Drive(double speedMultiplier) {
-        float drive;
-        double strafe;
-        float yaw;
-
-        drive = gamepad1.left_stick_y * -1;
-        strafe = gamepad1.left_stick_x * 1.1;
-        if (gamepad1.right_stick_x < -0.5  || gamepad1.right_stick_x > 0.5){
-            yaw = gamepad1.right_stick_x;
-        } else {
-            yaw = 0;
+    @Override
+    public void lockDriveTrain(boolean lock) {
+        lockDriveTrain = lock;
+        if (lock){
+            stopFollowing();
         }
+    }
+    @Override
+    public boolean getLockDriveTrain() {
+        return lockDriveTrain;
+    }
+    public void RobotCentric_Drive(double forwardDrive, double strafeDrive, double turnDrive,double requestedSpeedMultiplier) {
+        double allowedSpeedMultiplier = requestedSpeedMultiplier;
+        double drive;
+        double strafe;
+        double yaw;
+
+        drive = forwardDrive;
+        strafe = strafeDrive;
+        yaw = turnDrive;
+
         double denominator = Math.max(1, Math.abs(drive+strafe+yaw));
-        FL.setPower(((drive + strafe + yaw) / denominator) * speedMultiplier);
-        BL.setPower((((drive - strafe) + yaw) / denominator) * speedMultiplier);
-        FR.setPower((((drive - strafe) - yaw) / denominator) * speedMultiplier);
-        BR.setPower((((drive + strafe) - yaw) / denominator) * speedMultiplier);
+        FL.setPower(((drive + strafe + yaw) / denominator) * allowedSpeedMultiplier);
+        BL.setPower((((drive - strafe) + yaw) / denominator) * allowedSpeedMultiplier);
+        FR.setPower((((drive - strafe) - yaw) / denominator) * allowedSpeedMultiplier);
+        BR.setPower((((drive + strafe) - yaw) / denominator) * allowedSpeedMultiplier);
     }
-    public void FieldCentricDrive() {
-        double botHeading;
-        double y;
-        double x;
-        double rx;
-        double rotY;
-        double rotX;
-        double fielddenom;
-
-
-
-        botHeading = imu_IMU.getYaw();
-        y = -gamepad1.left_stick_y;
-        x = gamepad1.left_stick_x * 1;
-        if (gamepad1.right_stick_x < -0.5 || gamepad1.right_stick_x > 0.5){
-            rx = gamepad1.right_stick_x * 1;
-        } else {
-            rx = 0;
-        }
-
-        rotX = 1.1 * (x * Math.cos(-botHeading / 180 * Math.PI) - y * Math.sin(-botHeading / 180 * Math.PI));
-        rotY = x * Math.sin(-botHeading / 180 * Math.PI) + y * Math.cos(-botHeading / 180 * Math.PI);
-        fielddenom = Math.max(1, Math.abs(rotX+rotY));
-        FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplier);
-        BL.setPower((((rotY - rotX) + rx) / fielddenom) * speedMultiplier);
-        FR.setPower((((rotY - rotX) - rx) / fielddenom) * speedMultiplier);
-        BR.setPower((((rotY + rotX) - rx) / fielddenom) * speedMultiplier);
-    }
-    public void FieldCentricDrive(double speedMultiplier) {
+    public void FieldCentricDrive(double forwardDrive, double strafeDrive, double turnDrive, double requestedSpeedMultiplier) {
+        double allowedSpeedMultiplier = requestedSpeedMultiplier;
         double botHeading;
         double y;
         double x;
@@ -150,17 +122,17 @@ public class DriveTrainAuto{
 
         botHeading = imu_IMU.getYaw();
 
-        y = -gamepad1.left_stick_y;
-        x = gamepad1.left_stick_x * 1;
-        rx = gamepad1.right_stick_x * 1;
+        y = forwardDrive;
+        x = strafeDrive;
+        rx = turnDrive;
 
         rotX = 1.1 * (x * Math.cos(-botHeading) - y * Math.sin(-botHeading));
         rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
         fielddenom = Math.max(1, Math.abs(rotX) + Math.abs(rotY) + Math.abs(rx));
-        FL.setPower(((rotY + rotX + rx) / fielddenom) * speedMultiplier);
-        BL.setPower(((rotY - rotX + rx) / fielddenom) * speedMultiplier);
-        FR.setPower(((rotY - rotX - rx) / fielddenom) * speedMultiplier);
-        BR.setPower(((rotY + rotX - rx) / fielddenom) * speedMultiplier);
+        FL.setPower(((rotY + rotX + rx) / fielddenom) * allowedSpeedMultiplier);
+        BL.setPower(((rotY - rotX + rx) / fielddenom) * allowedSpeedMultiplier);
+        FR.setPower(((rotY - rotX - rx) / fielddenom) * allowedSpeedMultiplier);
+        BR.setPower(((rotY + rotX - rx) / fielddenom) * allowedSpeedMultiplier);
     }
     public void stopDriveTrain(){
         FL.setPower(0);
@@ -168,6 +140,12 @@ public class DriveTrainAuto{
         BL.setPower(0);
         BR.setPower(0);
     }
+
+    @Override
+    public void setDriveType(IDriveTrain.DriveType driveType) {
+        this.driveType = driveType;
+    }
+
     public void resetIMU(){
         imu_IMU.resetYaw();
     }

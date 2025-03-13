@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControl
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 public class GrabSampleStateTransition implements IStateTransition {
@@ -26,9 +27,9 @@ public class GrabSampleStateTransition implements IStateTransition {
     Wrist wrist;
     Claw claw;
     Arm arm;
-    DriveTrain driveTrain;
+    IDriveTrain driveTrain;
     DriverControls driverControls;
-    public GrabSampleStateTransition(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls){
+    public GrabSampleStateTransition(Wrist wrist, Claw claw, Arm arm, IDriveTrain driveTrain, DriverControls driverControls){
         this.wrist = wrist;
         this.claw = claw;
         this.arm = arm;
