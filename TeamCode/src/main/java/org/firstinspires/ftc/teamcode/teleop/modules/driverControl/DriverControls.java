@@ -96,8 +96,8 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.right_bumper;
     }
     public boolean removeSpeedRules(){return false;}
-    public boolean followAPath(){return gamepad2current.touchpad;}
-
+    public boolean goToOrigin(){return gamepad2current.touchpad;}
+    public boolean goToPositionWithDriveTrain(){return gamepad2current.back;}
     @Override
     public boolean slidesFullyUp() {
         return false;

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 
 import page.j5155.expressway.ftc.actions.ActionRunner;
@@ -67,6 +68,11 @@ public class DriveTrainAuto implements IDriveTrain{
     public void Follow(Pose2d pose) {
         if (!lockDriveTrain){
             runner.runAsync(drive.pidToPointAction(pose));
+        }
+    }
+    public void Follow(PathChain path){
+        if (!lockDriveTrain){
+            runner.runAsync(drive.pidToPointAction(path.getPathToFollow()));
         }
     }
 

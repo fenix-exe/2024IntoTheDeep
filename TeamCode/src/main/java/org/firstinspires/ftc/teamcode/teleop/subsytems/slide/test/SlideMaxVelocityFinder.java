@@ -15,7 +15,7 @@ public class SlideMaxVelocityFinder extends LinearOpMode {
     DcMotorEx leftSlide;
     DcMotorEx rightSlide;
     RevTouchSensor touchSensor;
-    public static double slideVel = 3000;
+    public static double slideVel = 0.97;
     @Override
     public void runOpMode() throws InterruptedException {
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -30,7 +30,7 @@ public class SlideMaxVelocityFinder extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()){
-            slide.SLIDE_VEL = slideVel;
+            slide.SLIDE_POWER = slideVel;
             slide.joystickControl(-gamepad1.left_stick_y);
             telemetry.addData("Left Encoder", leftSlide.getCurrentPosition());
             telemetry.addData("Right Encoder", rightSlide.getCurrentPosition());

@@ -20,8 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -148,9 +147,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
-            if (driverControls.followAPath()){
+            if (driverControls.goToOrigin()){
                 driveTrain.stopFollowing();
-                driveTrain.Follow(new Pose2d(0,24,0));
+                driveTrain.Follow(new Pose2d(0,0,0));
+            }
+            if (driverControls.goToPositionWithDriveTrain()){
+                driveTrain.stopFollowing();
+                driveTrain.Follow(new Pose2d(40,0,0));
             }
             //manual move of the drivetrain
             driveTrain.Move(driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.turnDrive());
@@ -161,6 +164,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             } else if (driverControls.slideStopped()){
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
+                //arm.moveSlideToLength(arm.getSlideExtension());
             }
 
             //manual control for elbow
@@ -207,7 +211,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //resetting encoders on gamepad press
             if (driverControls.resetEncoders()){
-                arm.resetEncoders();
+                //arm.resetEncoders();
             }
 
             //homing
@@ -290,15 +294,18 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Red", colorSensor.red());
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
-            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            //telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
-            telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
+            /*telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
             telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
             telemetry.addData("Right Slide", rightSlide.getCurrentPosition());
             telemetry.addData("Left Slide Target", leftSlide.getTargetPosition());
             telemetry.addData("Right Slide Target", rightSlide.getTargetPosition());
-            telemetry.addData("IMU", imu.getYaw());
-            multiTelemetry.update();
+            telemetry.addData("Left Slide Current", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("Right Slide Current", rightSlide.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("IMU in degrees", Math.toDegrees(imu.getYaw()));
+            telemetry.addData("Pose", (localization.getX()/25.4) + "," + (localization.getY()/25.4));*/
+            telemetry.update();
 
 
             //logging
@@ -367,9 +374,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        leftSlide.setTargetPositionTolerance(0);
-        rightSlide.setTargetPositionTolerance(0);
-        pivot.setTargetPositionTolerance(0);
+        leftSlide.setTargetPositionTolerance(10);
+        rightSlide.setTargetPositionTolerance(10);
+        //pivot.setTargetPositionTolerance(0);
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

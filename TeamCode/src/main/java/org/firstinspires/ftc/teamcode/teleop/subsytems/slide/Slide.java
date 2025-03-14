@@ -17,7 +17,7 @@ public class Slide {
     //300 mm is the length of a misumi 330 slide, and 1 in = 25.4 mm
     double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
-    public double SLIDE_VEL = 3000;
+    public double SLIDE_POWER = 0.97;
     double SLIDETOELBOW = 2.5;
     public Slide(DcMotorEx leftSlideMotor,DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
         this.leftSlideMotor = leftSlideMotor;
@@ -33,8 +33,8 @@ public class Slide {
         leftSlideMotor.setTargetPosition(ticks);
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlideMotor.setVelocity(SLIDE_VEL);
-        leftSlideMotor.setVelocity(SLIDE_VEL);
+        rightSlideMotor.setPower(SLIDE_POWER);
+        leftSlideMotor.setPower(SLIDE_POWER);
     }
 
     public void joystickControl(double slideMovement){
@@ -43,11 +43,11 @@ public class Slide {
     }
     public void holdPosition(){
         rightSlideMotor.setTargetPosition(rightSlideMotor.getCurrentPosition());
-        leftSlideMotor.setTargetPosition(leftSlideMotor.getCurrentPosition());
+        leftSlideMotor.setTargetPosition(leftSlideMotor.getCurrentPosition()); // using the right slide current position to make sure that left and right are in sync
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlideMotor.setVelocity(SLIDE_VEL);
-        leftSlideMotor.setVelocity(SLIDE_VEL);
+        rightSlideMotor.setPower(0.5);
+        leftSlideMotor.setPower(0.5);
     }
     public int inchesToTicksPivotPoint(double inches){
         //encoderRes * (inches - slideLength - slideToElbow)/pulleyCirc
@@ -65,14 +65,13 @@ public class Slide {
     }
     public void resetEncoder(){
         rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightSlideMotor.setPower(0);
-        rightSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftSlideMotor.setPower(0);
+        rightSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void setSlidePower(double power){
-        rightSlideMotor.setVelocity(power);
+        rightSlideMotor.setPower(power);
+        leftSlideMotor.setPower(power);
     }
     public boolean isHomingSwitchPressed(){
         return homingSwitch.isPressed();

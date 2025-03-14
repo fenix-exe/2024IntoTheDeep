@@ -162,7 +162,7 @@ public class TeleOpV5SpecimenFawkes extends LinearOpMode {
             }
 
             if (driverControls.resetEncoders()){
-                arm.resetEncoders();
+                //arm.resetEncoders();
             }
 
 
