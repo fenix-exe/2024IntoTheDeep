@@ -21,6 +21,10 @@ public class Elbow {
     int elbowPosition;
     public int topPosition;
     PIDControl controller;
+    double encoderRes = 145.1;
+    double gearRatio = 28;
+    double degreesInTicks = (encoderRes*gearRatio)/360; //calculation: ((tick per revolution) * (gear ratio)) / 360
+
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, PIDControl controller, int topPosition){
         this.elbowMotor = elbow;
         this.controller = controller;
@@ -59,10 +63,10 @@ public class Elbow {
         //goToTargetPosition(elbowMotor.getCurrentPosition());
     }
     public double ticksToDegrees(int ticks){
-        return ticks/29.906;
+        return ticks/degreesInTicks;
     }
     public int degreesToTicks(double degrees){
-        return (int) floor(degrees * 29.906);
+        return (int) floor(degrees * degreesInTicks);
     }
     public double getElbowAngle(){
         return ticksToDegrees(elbowMotor.getCurrentPosition());
