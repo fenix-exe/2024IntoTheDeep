@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 public class GrabSpecimenStateTransition implements IStateTransition{
@@ -24,11 +25,11 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     Wrist wrist;
     Claw claw;
     Arm arm;
-    DriveTrain driveTrain;
+    IDriveTrain driveTrain;
     DriverControls driverControls;
     ColorSensor color;
     boolean closingClaw;
-    public GrabSpecimenStateTransition(Wrist wrist, Claw claw, Arm arm, DriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
+    public GrabSpecimenStateTransition(Wrist wrist, Claw claw, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
         this.wrist = wrist;
         this.claw = claw;
         this.arm = arm;

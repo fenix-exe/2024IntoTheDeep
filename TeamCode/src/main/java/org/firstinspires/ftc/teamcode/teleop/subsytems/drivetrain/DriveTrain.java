@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 
 import java.util.HashMap;
-public class DriveTrain {
+public class DriveTrain implements IDriveTrain{
     public enum DriveType {ROBOT_CENTRIC,FIELD_CENTRIC}
     Gamepad gamepad1;
     DcMotorEx FL;
@@ -83,6 +84,32 @@ public class DriveTrain {
         BL.setPower(0);
         BR.setPower(0);
     }
+
+    @Override
+    public void setDriveType(IDriveTrain.DriveType driveType) {
+
+    }
+
+    @Override
+    public void Follow(Pose2d pose) {
+
+    }
+
+    @Override
+    public void Move(double forwardDrive, double strafeDrive, double heading) {
+
+    }
+
+    @Override
+    public void setMaxPower(double maxPower) {
+
+    }
+
+    @Override
+    public void Update() {
+
+    }
+
     public void resetIMU(){
         imu_IMU.resetYaw();
     }
@@ -105,5 +132,20 @@ public class DriveTrain {
         debugInfo.put("BR Current", String.valueOf(BR.getCurrent(CurrentUnit.MILLIAMPS)));
         debugInfo.put("Drive Type", String.valueOf(driveType));
         return debugInfo;
+    }
+
+    @Override
+    public Pose2d getCurrentPose() {
+        return null;
+    }
+
+    @Override
+    public void stopFollowing() {
+
+    }
+
+    @Override
+    public boolean isFollowingPath() {
+        return false;
     }
 }

@@ -208,7 +208,7 @@ public class TeleOpPose extends LinearOpMode {
             }
 
             if (driverControls.resetEncoders()){
-                arm.resetEncoders();
+                //arm.resetEncoders();
             }
 
             //checking if linear actuator should automatically go up

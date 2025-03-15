@@ -126,7 +126,7 @@ public class PresentationTeleOp extends LinearOpMode {
             }
 
             if (driverControls.resetEncoders()){
-                arm.resetEncoders();
+                //arm.resetEncoders();
             }
 
 

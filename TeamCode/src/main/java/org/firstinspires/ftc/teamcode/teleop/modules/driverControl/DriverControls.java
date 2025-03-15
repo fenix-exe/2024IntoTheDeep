@@ -44,7 +44,24 @@ public class DriverControls implements DriveControlMap {
     public double gamepadStickValue(double stickValue){
         return Math.pow(stickValue, y);
     }
-
+    public double forwardDrive(){
+        if (Math.abs(gamepad1current.left_stick_y) > 0.3){
+            return -gamepad1current.left_stick_y;
+        }
+        return 0;
+    }
+    public double strafeDrive(){
+        if (Math.abs(gamepad1current.left_stick_x) > 0.3){
+            return gamepad1current.left_stick_x;
+        }
+        return 0;
+    }
+    public double turnDrive(){
+        if (Math.abs(gamepad1current.right_stick_x) > 0.3){
+            return gamepad1current.right_stick_x;
+        }
+        return 0;
+    }
     @Override
     public boolean slowMode() {
         return false;
@@ -79,7 +96,8 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.right_bumper;
     }
     public boolean removeSpeedRules(){return false;}
-
+    public boolean goToOrigin(){return gamepad2current.touchpad;}
+    public boolean goToPositionWithDriveTrain(){return gamepad2current.back;}
     @Override
     public boolean slidesFullyUp() {
         return false;

@@ -172,7 +172,7 @@ public class TeleOpV5SpecimenZapdos extends LinearOpMode {
             }
 
             if (driverControls.resetEncoders()){
-                arm.resetEncoders();
+                //arm.resetEncoders();
             }
 
             if (arm.isSlideTouchSensorPressed()){

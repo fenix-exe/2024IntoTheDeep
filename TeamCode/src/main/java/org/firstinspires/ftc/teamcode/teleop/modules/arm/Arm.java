@@ -64,15 +64,14 @@ public class Arm {
         return MaxSlideExtensionInches;
     }
 
-    public void resetEncoders(){
+    /*public void resetEncoders(){
         elbow.resetEncoder();
         slide.resetEncoder();
         elbow.setTargetAngle(0);
         slide.setSlideExtensionLength(0);
-    }
+    }*/
     public void resetSlideEncoders(){
         slide.resetEncoder();
-        slide.setSlideExtensionLength(0);
     }
     public boolean isSlideTouchSensorPressed(){
         return slide.isHomingSwitchPressed();

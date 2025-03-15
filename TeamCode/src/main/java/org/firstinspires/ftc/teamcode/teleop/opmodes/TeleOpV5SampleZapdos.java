@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -19,6 +20,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
@@ -34,6 +37,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.LED;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainAuto;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.localization.Localization;
@@ -46,11 +51,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import page.j5155.expressway.ftc.actions.ActionRunner;
+
 @Config
 @TeleOp
 public class TeleOpV5SampleZapdos extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
-    DriveTrain driveTrain;
+    IDriveTrain driveTrain;
     Arm arm;
     DriverControls driverControls;
     DcMotorEx leftSlide;
@@ -122,9 +129,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //switching drive modes
             if (driverControls.driveTypeSwitch()){
                 if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
-                    DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
+                    driveTrain.setDriveType(IDriveTrain.DriveType.FIELD_CENTRIC);
                 } else{
-                    DriveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
+                    driveTrain.setDriveType(IDriveTrain.DriveType.FIELD_CENTRIC);
                 }
             }
 
@@ -140,15 +147,16 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
-            //manual move of the drivetrain
-            switch (DriveTrain.driveType) {
-                case ROBOT_CENTRIC:
-                    driveTrain.RobotCentric_Drive(speedMultiplier);
-                    break;
-                case FIELD_CENTRIC:
-                    driveTrain.FieldCentricDrive(speedMultiplier);
-                    break;
+            if (driverControls.goToOrigin()){
+                driveTrain.stopFollowing();
+                driveTrain.Follow(new Pose2d(0,0,0));
             }
+            if (driverControls.goToPositionWithDriveTrain()){
+                driveTrain.stopFollowing();
+                driveTrain.Follow(new Pose2d(40,0,0));
+            }
+            //manual move of the drivetrain
+            driveTrain.Move(driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.turnDrive());
 
             //manual control for slide
             if (Math.abs(driverControls.slideMovement()) > 0){
@@ -156,6 +164,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             } else if (driverControls.slideStopped()){
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
+                //arm.moveSlideToLength(arm.getSlideExtension());
             }
 
             //manual control for elbow
@@ -202,7 +211,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //resetting encoders on gamepad press
             if (driverControls.resetEncoders()){
-                arm.resetEncoders();
+                //arm.resetEncoders();
             }
 
             //homing
@@ -241,7 +250,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             updateLED();
 
             if (driverControls.escapePresets()){
-                arm.holdArm();;
+                arm.holdArm();
                 driveTrain.lockDriveTrain(false);
                 FSMManager.stopTransitions();
                 FSMManager.setRobotStateToStart();
@@ -249,6 +258,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //state models for preset positions
             FSMManager.execute();
 
+            //update drivetrain
+            driveTrain.Update();
             //telemetry
             /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
@@ -283,15 +294,19 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Red", colorSensor.red());
             multiTelemetry.addData("Blue", colorSensor.blue());
             multiTelemetry.addData("Green", colorSensor.green());*/
-            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            //telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
-            telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
+            /*telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
             telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
             telemetry.addData("Right Slide", rightSlide.getCurrentPosition());
             telemetry.addData("Left Slide Target", leftSlide.getTargetPosition());
             telemetry.addData("Right Slide Target", rightSlide.getTargetPosition());
-            telemetry.addData("IMU", imu.getYaw());
-            multiTelemetry.update();
+            telemetry.addData("Left Slide Current", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("Right Slide Current", rightSlide.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("IMU in degrees", Math.toDegrees(imu.getYaw()));
+            telemetry.addData("Pose", (localization.getX()/25.4) + "," + (localization.getY()/25.4));*/
+            telemetry.update();
+
 
             //logging
             if (enableLogging){
@@ -330,6 +345,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         revIMU.initialize(parameters);
 
         GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        pinpoint.setPosition(new Pose2d(0,0,0));
         /*pinpoint.resetPosAndIMU();
         // wait for pinpoint to finish calibrating
         try {
@@ -341,8 +357,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         imu = new IMUforPinpoint(pinpoint);
 
         localization = new Localization(pinpoint, imu);
-
-        driveTrain = new DriveTrain(gamepad1, FL, FR, BL, BR, imu);
+        ActionRunner runner = new ActionRunner();
+        PinpointDrive drive = new PinpointDrive(hardwareMap,pinpoint.getPositionRR());
+        driveTrain = new DriveTrainAuto(FL, FR, BL, BR, imu, runner, drive);
     }
     private void initializeArmAndHome(){
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -357,9 +374,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        leftSlide.setTargetPositionTolerance(0);
-        rightSlide.setTargetPositionTolerance(0);
-        pivot.setTargetPositionTolerance(0);
+        leftSlide.setTargetPositionTolerance(10);
+        rightSlide.setTargetPositionTolerance(10);
+        //pivot.setTargetPositionTolerance(0);
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
