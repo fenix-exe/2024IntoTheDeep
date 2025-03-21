@@ -180,10 +180,10 @@ public class ascentPreloadPark extends LinearOpMode {
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        elbowMotor.setTargetPosition(-266);
+        elbowMotor.setTargetPosition(-100);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elbowMotor.setPower(0.2);
-        while (elbowMotor.getCurrentPosition() > -265) {
+        while (elbowMotor.getCurrentPosition() > -99) {
 
         }
         elbowMotor.setPower(0);
@@ -310,6 +310,7 @@ public class ascentPreloadPark extends LinearOpMode {
         elbow.goTo(elbow.degreesToTicks(ELBOW_START), 1);
         autoClaw.setPitch(PITCH_START);
         autoClaw.setRoll(ROLL_START);
+        autoClaw.setClaw(0.21);
 
 
         if (elbow.degreesToTicks(ELBOW_START)-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < elbow.degreesToTicks(ELBOW_START)+30) {

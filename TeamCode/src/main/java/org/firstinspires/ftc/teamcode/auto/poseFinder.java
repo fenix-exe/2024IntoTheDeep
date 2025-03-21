@@ -22,14 +22,13 @@ import java.util.Arrays;
 
 @Config
 @TeleOp(name = "POSE FINDER")
-@Disabled
 public class poseFinder extends LinearOpMode {
 
 
 
-    public static double x = -4;
-    public static double y = 69;
-    public static double heading = -90;
+    public static double x = 39.7;
+    public static double y = 65;
+    public static double heading = -180;
     TelemetryPacket p;
 
 

@@ -45,10 +45,10 @@ public class ascentClipCyclePark extends LinearOpMode {
 
     //initialize auto extractor
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
-    int ELBOW_START = 7;
+    int ELBOW_START = 0;
     int SLIDE_START = 0;
     double PITCH_START = 1;
-    double ROLL_START = 0.15;
+    double ROLL_START = 0.21;
     double CLAW_START = 0.86;
 
 
@@ -154,7 +154,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         }
 
         //HOMING
-        pitch.setPosition(1);
+        pitch.setPosition(0.66);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
@@ -182,10 +182,10 @@ public class ascentClipCyclePark extends LinearOpMode {
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        elbowMotor.setTargetPosition(-266);
+        elbowMotor.setTargetPosition(-100);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elbowMotor.setPower(0.2);
-        while (elbowMotor.getCurrentPosition() > -265) {
+        while (elbowMotor.getCurrentPosition() > -99) {
 
         }
         elbowMotor.setPower(0);
@@ -319,6 +319,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         elbow.goTo(elbow.degreesToTicks(ELBOW_START), 1);
         autoClaw.setPitch(PITCH_START);
         autoClaw.setRoll(ROLL_START);
+        autoClaw.setClaw(0.21);
 
 
         if (elbow.degreesToTicks(ELBOW_START)-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < elbow.degreesToTicks(ELBOW_START)+30) {

@@ -23,7 +23,7 @@ public class Slide {
     //300 mm is the length of a misumi 330 slide, and 1 in = 25.4 mm
     double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
-    public double SLIDE_VEL = 3000;
+    public double SLIDE_VEL = 3500;
     double SLIDETOELBOW = 2.5;
 
     public Slide(DcMotorEx leftSlideMotor,DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
