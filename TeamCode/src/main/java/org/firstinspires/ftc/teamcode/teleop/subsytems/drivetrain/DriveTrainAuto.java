@@ -72,7 +72,7 @@ public class DriveTrainAuto implements IDriveTrain{
     }
     public void Follow(PathChain path){
         if (!lockDriveTrain){
-            runner.runAsync(drive.pidToPointAction(path.getPathToFollow()));
+            runner.runAsync(drive.pidToPointAction(new Pose2d(0,0,0)));
         }
     }
 

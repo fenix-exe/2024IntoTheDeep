@@ -147,14 +147,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
-            if (driverControls.goToOrigin()){
+            /*if (driverControls.goToOrigin()){
                 driveTrain.stopFollowing();
                 driveTrain.Follow(new Pose2d(0,0,0));
             }
             if (driverControls.goToPositionWithDriveTrain()){
                 driveTrain.stopFollowing();
                 driveTrain.Follow(new Pose2d(40,0,0));
-            }
+            }*/
             //manual move of the drivetrain
             driveTrain.Move(driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.turnDrive());
 
@@ -261,7 +261,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //update drivetrain
             driveTrain.Update();
             //telemetry
-            /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
@@ -277,7 +277,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
             multiTelemetry.addData("Roll Servo Pos", roll.getPosition());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
-            multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
+            /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
             multiTelemetry.addData("Y Cycle", StateModelsZapdos.depositCycle);

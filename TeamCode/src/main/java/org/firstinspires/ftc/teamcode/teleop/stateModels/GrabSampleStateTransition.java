@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
@@ -53,7 +52,13 @@ public class GrabSampleStateTransition implements IStateTransition {
                     timer = new ElapsedTime();
                     timer.reset();
                     claw.openClaw();
-                    arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
+                    if (arm.getSlideExtension() < 13 && arm.getSlideExtension() > 5){
+                        arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngleMediumSlides);
+                    }  else  if (arm.getSlideExtension() >= 13){
+                        arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngleFarSlides);
+                    } else {
+                        arm.moveElbow(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngleCloseSlides);
+                    }
                     wrist.presetPositionPitch(StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch + arm.getElbowAngleInDegrees());
                     grabSampleState = TransitionSteps.ELBOW_DOWN;
                     driveTrain.stopDriveTrain();

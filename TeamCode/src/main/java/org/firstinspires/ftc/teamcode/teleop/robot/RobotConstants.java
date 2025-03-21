@@ -4,7 +4,7 @@ public class RobotConstants {
     public static double SLIDE_TOLERANCE = 1;
     public static double LOW_SLIDE_TOLERANCE = 0.5;
     public static double ELBOW_TOLERANCE = 3;
-    public static double LOW_ELBOW_TOLERANCE = 1.5;
+    public static double LOW_ELBOW_TOLERANCE = 1;
     public static double LINEAR_ACTUATOR_TOLERANCE = 0.5;
     public static double PHYSICAL_MAX_EXTENSION_IN_INCHES = 30.7;
     public static double OPEN_POSITION = 0.2534;
