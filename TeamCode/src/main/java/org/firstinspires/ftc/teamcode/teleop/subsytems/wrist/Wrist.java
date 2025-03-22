@@ -2,55 +2,38 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.wrist;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Wrist {
-    Servo pitch;
-    Servo roll;
+import org.firstinspires.ftc.teamcode.commonCode.CommonWrist;
+
+public class Wrist extends CommonWrist {
+    Servo pitchServo;
+    Servo rollServo;
     private static double PITCH_OFFSET = 3;
 
     public Wrist(Servo pitch, Servo roll){
-        this.pitch = pitch;
-        this.roll = roll;
+        super(pitch, roll);
+        pitchServo = pitch;
+        rollServo = roll;
     }
     public void manualControlPitch(double stepSizeInDegrees){
-        double targetPosition = stepSizeInDegrees/180 + pitch.getPosition();
+        double targetPosition = stepSizeInDegrees/180 + pitchServo.getPosition();
         if (targetPosition > 1){
             targetPosition = 1;
         }
         if (targetPosition < 0){
             targetPosition = 0;
         }
-        pitch.setPosition(targetPosition);
+        pitchServo.setPosition(targetPosition);
     }
     public void manualControlRoll(double stepSizeInDegrees){
         //step size is divided because it is in angles, not servo position
-        double targetPosition = stepSizeInDegrees/300 + roll.getPosition();
+        double targetPosition = stepSizeInDegrees/300 + rollServo.getPosition();
         if (targetPosition > 1){
             targetPosition = 1;
         }
         if (targetPosition < 0){
             targetPosition = 0;
         }
-        roll.setPosition(targetPosition);
-    }
-    public void presetPositionPitch (double presetPosition){
-        pitch.setPosition((presetPosition-PITCH_OFFSET)/180 + 0.5);
-    }
-    public void presetPositionRoll (double presetPosition){
-        roll.setPosition(presetPosition/300 + 0.5);
-    }
-    public void presetPosition(double pitch, double roll){
-        //divide by 300 to convert angles to servo positions for pitch
-        //0.5 is the middle position of the servo, maximum of +150 to -150 degrees
-        //divide by 180 to convert angles to servo positions for roll
-        //0.5 is the middle position of the servo, maximum of -90 to 90 degrees
-        presetPositionPitch(pitch);
-        presetPositionRoll(roll);
-    }
-    public double getRollAngle(){
-        return 300 * roll.getPosition() - 150 + PITCH_OFFSET;
-    }
-    public double getPitchAngle(){
-        return 180 * pitch.getPosition() - 90;
+        rollServo.setPosition(targetPosition);
     }
 
 }
