@@ -7,16 +7,16 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import static java.lang.Math.floor;
 
+import org.firstinspires.ftc.teamcode.commonCode.CommonElbow;
 
-public class Elbow {
+
+public class Elbow extends CommonElbow {
     public DcMotorEx elbowMotor;
     public RevTouchSensor limitSwitch;
     int elbowPosition;
     public int topPosition;
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPositionInDegrees){
-        this.elbowMotor = elbow;
-        this.topPosition = degreesToTicks(topPositionInDegrees);
-        this.limitSwitch = limitSwitch;
+        super(elbow,limitSwitch,topPositionInDegrees);
     }
     private void goToTargetPosition(int targetPosition){
         elbowMotor.setTargetPosition(targetPosition);

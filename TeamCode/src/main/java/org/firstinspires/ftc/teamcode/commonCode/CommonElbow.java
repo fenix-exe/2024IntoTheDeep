@@ -45,6 +45,7 @@ public abstract class CommonElbow {
     public double getElbowAngle(){
         return ticksToDegrees(elbowMotor.getCurrentPosition());
     }
+    public double getElbowTargetAngle(){return ticksToDegrees(elbowMotor.getTargetPosition());}
 
     public int getElbowTicks(){
         return elbowMotor.getCurrentPosition();
