@@ -14,7 +14,6 @@ public class Arm {
     public Arm(Slide slide, Elbow elbow){
         this.slide = slide;
         this.elbow = elbow;
-        ArmSpeedController.slide = slide;
     }
 
     public double moveSlide(double slideMovement, boolean remove_arm_rules) {
@@ -63,13 +62,6 @@ public class Arm {
         MaxSlideExtensionInches -= RobotConstants.SLIDE_TOLERANCE;
         return MaxSlideExtensionInches;
     }
-
-    /*public void resetEncoders(){
-        elbow.resetEncoder();
-        slide.resetEncoder();
-        elbow.setTargetAngle(0);
-        slide.setSlideExtensionLength(0);
-    }*/
     public void resetSlideEncoders(){
         slide.resetEncoder();
     }
@@ -98,16 +90,6 @@ public class Arm {
         return slide.ticksToInches(slide.leftSlideMotor.getTargetPosition());
     }
 
-    public void moveToPresetPosition(ArmPresetPosition position, boolean manual_override_arm_rules){
-        //if elbow is not at preset position, move elbow to preset position
-        if ((Math.abs(elbow.getElbowAngle() - position.elbowAngle) > ArmConstants.ELBOWPRESETTOLERANCE) || manual_override_arm_rules){ //checsk to see if the elbow is not within a tolerance of the target
-            elbow.setTargetAngleAndSpeed(position.elbowAngle, ArmSpeedController.getElbowPowerLimit());
-        } else {
-            // if elbow is at preset position, move slide to preset position
-            elbow.setTargetAngleAndSpeed(position.elbowAngle, ArmSpeedController.getElbowPowerLimit());
-            slide.setSlideExtensionLength(position.slideLength);
-        }
-    }
     public void moveSlideToLength(double inches){
 
         slide.setSlideExtensionLength(inches);
@@ -121,11 +103,6 @@ public class Arm {
     }
     public boolean detectingMagneticLimitSwitch(){
         return elbow.isLimitSwitchPressed();
-    }
-
-    public boolean isArmAtPresetPosition(ArmPresetPosition position){
-        return Math.abs(elbow.getElbowAngle() - position.elbowAngle) < ArmConstants.ELBOWPRESETTOLERANCE &&  // angle is within 3 degrees of target
-                Math.abs(slide.getSlideExtensionInInches() - position.slideLength) < ArmConstants.SLIDEPRESETTOLERANCE; // slide is within 1 inch of target
     }
     public double getSlideExtension(){
 
