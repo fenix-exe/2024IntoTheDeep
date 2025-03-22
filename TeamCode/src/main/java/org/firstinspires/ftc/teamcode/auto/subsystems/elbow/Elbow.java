@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.auto.subsystems.elbow;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.ElbowMessage;
 import org.firstinspires.ftc.teamcode.commonCode.CommonElbow;
 
 import androidx.annotation.NonNull;
@@ -24,9 +26,11 @@ public class Elbow extends CommonElbow {
     double encoderRes = 145.1;
     double gearRatio = 28;
     double degreesInTicks = (encoderRes*gearRatio)/360; //calculation: ((tick per revolution) * (gear ratio)) / 360
+    private final DownsampledWriter elbowWriter;
 
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition){
         super(elbow, limitSwitch, topPosition);
+        elbowWriter = new DownsampledWriter("ELBOW INFO", 50_000_000);
     }
 
 
@@ -42,6 +46,7 @@ public class Elbow extends CommonElbow {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setTargetAngleAndSpeed(target, speed);
+            elbowWriter.write(new ElbowMessage(getElbowAngle(), target));
             if (target-0.5 < getElbowAngle() && getElbowAngle() < target+0.5) {
                 elbowMotor.setPower(0);
                 return false;
