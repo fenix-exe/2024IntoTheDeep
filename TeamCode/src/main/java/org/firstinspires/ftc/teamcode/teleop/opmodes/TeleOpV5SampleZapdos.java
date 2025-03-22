@@ -74,8 +74,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     LinearActuator linearActuator;
     Localization localization;
     IIMU imu;
-    RevTouchSensor limitSwitch;
-    RevTouchSensor homingSwitch;
+    RevTouchSensor elbowSwitch;
+    RevTouchSensor slideSwitch;
     RevColorSensorV3 colorSensor;
     ElapsedTime matchTimer;
     ElapsedTime debounceTimer;
@@ -364,8 +364,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
-        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
+        elbowSwitch = hardwareMap.get(RevTouchSensor.class, "elbow switch");
 
         debounceTimer = new ElapsedTime();
         debounceTimer.reset();
@@ -387,8 +387,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Slide slideControl = new Slide(leftSlide, rightSlide, homingSwitch);
-        Elbow elbow = new Elbow(pivot, limitSwitch, 100);
+        Slide slideControl = new Slide(leftSlide, rightSlide, slideSwitch);
+        Elbow elbow = new Elbow(pivot, elbowSwitch, 100);
         arm = new Arm(slideControl, elbow);
 
         leftSlide.setTargetPosition(0);
