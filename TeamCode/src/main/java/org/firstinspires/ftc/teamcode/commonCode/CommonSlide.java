@@ -6,21 +6,21 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-public abstract class Slide {
+public abstract class CommonSlide {
     public DcMotorEx leftSlideMotor;
     public DcMotorEx rightSlideMotor;
     public RevTouchSensor homingSwitch;
     //pulleyCirc is the circumference of the pulley
-    double PULLEYCIRC= 4.724757;
+    protected double PULLEYCIRC= 4.724757;
     //encoderRes is how many encoder ticks happen after 1 rotation of the motor
-    double ENCODERRES = 145.1; // old value is 384.5;
+    protected double ENCODERRES = 145.1; // old value is 384.5;
     //slideLength is the length of 1 stage of the slides
     //300 mm is the length of a misumi 330 slide, and 1 in = 25.4 mm
-    double SLIDELENGTH = 300/25.4;
+    protected double SLIDELENGTH = 300/25.4;
     //slideToElbow is the distance from the pivot point (center of axle) to the start of the slides
-    public double SLIDE_POWER = 0.97;
+    protected double SLIDE_POWER = 0.97;
     double SLIDETOELBOW = 2.5;
-    public Slide(DcMotorEx leftSlideMotor,DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
+    public CommonSlide(DcMotorEx leftSlideMotor, DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
         this.leftSlideMotor = leftSlideMotor;
         this.rightSlideMotor = rightSlideMotor;
         this.homingSwitch = homingSwitch;
@@ -29,7 +29,7 @@ public abstract class Slide {
         int targetPosition = inchesToTicks(lengthInInches);
         setSlideExtensionLengthInTicks(targetPosition);
     }
-    private void setSlideExtensionLengthInTicks(int ticks){
+    protected void setSlideExtensionLengthInTicks(int ticks){
         rightSlideMotor.setTargetPosition(ticks);
         leftSlideMotor.setTargetPosition(ticks);
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
