@@ -127,11 +127,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //switching drive modes
             if (driverControls.driveTypeSwitch()){
-                if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC){
-                    driveTrain.setDriveType(IDriveTrain.DriveType.FIELD_CENTRIC);
-                } else{
-                    driveTrain.setDriveType(IDriveTrain.DriveType.FIELD_CENTRIC);
-                }
+                driveTrain.setDriveType(IDriveTrain.DriveType.FIELD_CENTRIC);
             }
 
             //imu reset
@@ -146,14 +142,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
 
-            /*if (driverControls.goToOrigin()){
-                driveTrain.stopFollowing();
-                driveTrain.Follow(new Pose2d(0,0,0));
-            }
-            if (driverControls.goToPositionWithDriveTrain()){
-                driveTrain.stopFollowing();
-                driveTrain.Follow(new Pose2d(40,0,0));
-            }*/
             //manual move of the drivetrain
             driveTrain.Move(driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.turnDrive());
 
@@ -207,16 +195,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             if (driverControls.closeClaw()){
                 claw.closeClaw();
             }
-
-            //resetting encoders on gamepad press
-            if (driverControls.resetEncoders()){
-                //arm.resetEncoders();
-            }
-
-            //homing
-            /*if (driverControls.homeArm()){
-                home();
-            }*/
 
             //run touch sensor fsm for resetting slides
             ResetSlideEncoderStateModel.execute();
@@ -345,14 +323,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
         GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         pinpoint.setPosition(new Pose2d(0,0,0));
-        /*pinpoint.resetPosAndIMU();
-        // wait for pinpoint to finish calibrating
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        pinpoint.setPosition(new Pose2d(0,0,0));*/
         imu = new IMUforPinpoint(pinpoint);
 
         localization = new Localization(pinpoint, imu);
