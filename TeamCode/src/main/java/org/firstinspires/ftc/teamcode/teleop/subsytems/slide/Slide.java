@@ -38,7 +38,7 @@ public class Slide {
     }
 
     public void joystickControl(double slideMovement){
-        int targetPos = (int) (rightSlideMotor.getCurrentPosition() + 400*slideMovement);
+        int targetPos = (int) (rightSlideMotor.getCurrentPosition() + 200*slideMovement);
         setSlideExtensionLengthInTicks(targetPos);
     }
     public void holdPosition(){
@@ -46,8 +46,8 @@ public class Slide {
         leftSlideMotor.setTargetPosition(leftSlideMotor.getCurrentPosition()); // using the right slide current position to make sure that left and right are in sync
         rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlideMotor.setPower(0.5);
-        leftSlideMotor.setPower(0.5);
+        rightSlideMotor.setPower(0.8);
+        leftSlideMotor.setPower(0.8);
     }
     public int inchesToTicksPivotPoint(double inches){
         //encoderRes * (inches - slideLength - slideToElbow)/pulleyCirc

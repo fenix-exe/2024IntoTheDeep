@@ -57,12 +57,12 @@ public class GrabSampleStateTransition implements IStateTransition {
                     }  else  if (arm.getSlideExtension() >= 13){
                         arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngleFarSlides);
                     } else {
-                        arm.moveElbow(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngleCloseSlides);
+                        arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngleCloseSlides);
                     }
                     wrist.presetPositionPitch(StateModelParameters.GrabBlockFromOutsideStateParameters.downPitch + arm.getElbowAngleInDegrees());
                     grabSampleState = TransitionSteps.ELBOW_DOWN;
                     driveTrain.stopDriveTrain();
-                    driveTrain.lockDriveTrain(true);
+                    driveTrain.lockDriveTrain(false);
                 }
                 break;
             case ELBOW_DOWN:
@@ -80,27 +80,26 @@ public class GrabSampleStateTransition implements IStateTransition {
                 break;
             case INTAKE_CLOSING:
                 if (driverControls.letGoOfGrabSampleFromOutside()) {
+                    if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7) {  //allows us to not break the 42 inch extension limit
+                        arm.moveSlideToLength(arm.getMaximumSlideExtensionAllowedInInches() - 8); //1 inch more back to guarantee that we do not break the 42 inch extension limit
+                        grabSampleState = TransitionSteps.SLIDES_BACK_TO_5_INCHES_FROM_MAX_EXTENSION;
+                    } else {
+                        arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle);
+                        grabSampleState = TransitionSteps.ELBOW_UP;
+                    }
+                }
+                break;
+            case SLIDES_BACK_TO_5_INCHES_FROM_MAX_EXTENSION:
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
                     arm.moveElbowToAngle(StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeUpAngle);
                     grabSampleState = TransitionSteps.ELBOW_UP;
                 }
                 break;
             case ELBOW_UP:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE) {
-                    if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7) {  //allows us to not break the 42 inch extension limit
-                        arm.moveSlideToLength(arm.getMaximumSlideExtensionAllowedInInches() - 8); //1 inch more back to guarantee that we do not break the 42 inch extension limit
-                        grabSampleState = TransitionSteps.SLIDES_BACK_TO_5_INCHES_FROM_MAX_EXTENSION;
-                    } else {
                         timer.reset();
                         wrist.presetPositionPitch(StateModelParameters.GrabBlockFromOutsideStateParameters.upPitch);
                         grabSampleState = TransitionSteps.WRIST_MOVING_UP;
-                    }
-                }
-                break;
-            case SLIDES_BACK_TO_5_INCHES_FROM_MAX_EXTENSION:
-                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
-                    timer.reset();
-                    wrist.presetPositionPitch(StateModelParameters.GrabBlockFromOutsideStateParameters.upPitch);
-                    grabSampleState = TransitionSteps.WRIST_MOVING_UP;
                 }
                 break;
             case WRIST_MOVING_UP:
