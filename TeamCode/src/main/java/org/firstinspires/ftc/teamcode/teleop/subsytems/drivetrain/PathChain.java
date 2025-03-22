@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 
 import java.util.ArrayList;
 

@@ -20,8 +20,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.commonCode.Homing;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.autoClaw;
 import org.firstinspires.ftc.teamcode.auto.subsystems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.auto.subsystems.slide.Slide;
@@ -58,7 +59,7 @@ public class ascentPreloadPark extends LinearOpMode {
 
     Elbow elbow;
     DcMotorEx elbowMotor;
-    RevTouchSensor limitSwitch;
+    RevTouchSensor elbowSwitch;
 
     ElapsedTime timer;
 
@@ -67,13 +68,15 @@ public class ascentPreloadPark extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     Slide slide;
-    RevTouchSensor homingSwitch;
+    RevTouchSensor slideSwitch;
     public GoBildaPinpointDriverRR pinpoint;
 
 
     DcMotorEx linearActuatorMotor;
     RevTouchSensor actuatorSwitch;
     LinearActuator linearActuator;
+
+    Homing homingAgent;
 
 
     @Override
@@ -111,7 +114,7 @@ public class ascentPreloadPark extends LinearOpMode {
 
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
         elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        elbowSwitch = hardwareMap.get(RevTouchSensor.class, "elbow switch");
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -124,8 +127,8 @@ public class ascentPreloadPark extends LinearOpMode {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
-        slide = new Slide(leftSlide,rightSlide, homingSwitch);
+        slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
+        slide = new Slide(leftSlide,rightSlide, slideSwitch);
 
         pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         pinpoint.resetPosAndIMU();
@@ -136,7 +139,7 @@ public class ascentPreloadPark extends LinearOpMode {
             throw new RuntimeException(e);
         }
         pinpoint.setPosition(new Pose2d(0,0,0));
-        elbow = new Elbow(elbowMotor, limitSwitch, 2500);
+        elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
 
 
         while (!gamepad1.a && !isStopRequested()) {
@@ -147,8 +150,10 @@ public class ascentPreloadPark extends LinearOpMode {
             telemetry.update();
         }
 
+        homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
+
         //HOMING
-        pitch.setPosition(1);
+        /*pitch.setPosition(1);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
@@ -201,7 +206,7 @@ public class ascentPreloadPark extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
         while(!gamepad1.b && !isStopRequested()) {
 

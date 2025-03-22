@@ -22,8 +22,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.commonCode.Homing;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.autoClaw;
 import org.firstinspires.ftc.teamcode.auto.subsystems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.auto.subsystems.slide.Slide;
@@ -48,7 +49,6 @@ public class ascentClipCyclePark extends LinearOpMode {
     double ROLL_START = 0.21;
     double CLAW_START = 0.86;
 
-
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
     RobotWideFunctions robot = new RobotWideFunctions();
@@ -60,7 +60,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
     Elbow elbow;
     DcMotorEx elbowMotor;
-    RevTouchSensor limitSwitch;
+    RevTouchSensor elbowSwitch;
 
     ElapsedTime timer;
 
@@ -69,13 +69,14 @@ public class ascentClipCyclePark extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     Slide slide;
-    RevTouchSensor homingSwitch;
+    RevTouchSensor slideSwitch;
     public GoBildaPinpointDriverRR pinpoint;
 
 
     DcMotorEx linearActuatorMotor;
     RevTouchSensor actuatorSwitch;
     LinearActuator linearActuator;
+    Homing homingAgent;
 
 
     @Override
@@ -103,21 +104,15 @@ public class ascentClipCyclePark extends LinearOpMode {
         claw = hardwareMap.get(ServoImplEx.class, "claw");
         autoClaw = new autoClaw(pitch, roll, claw);
 
-
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
-
-
-
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
         elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        elbowSwitch = hardwareMap.get(RevTouchSensor.class, "elbow switch");
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -126,8 +121,8 @@ public class ascentClipCyclePark extends LinearOpMode {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
-        slide = new Slide(leftSlide,rightSlide, homingSwitch);
+        slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
+        slide = new Slide(leftSlide,rightSlide, slideSwitch);
 
         pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         pinpoint.resetPosAndIMU();
@@ -138,7 +133,7 @@ public class ascentClipCyclePark extends LinearOpMode {
             throw new RuntimeException(e);
         }
         pinpoint.setPosition(new Pose2d(0,0,0));
-        elbow = new Elbow(elbowMotor, limitSwitch, 2500);
+        elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
 
 
         while (!gamepad1.a && !isStopRequested()) {
@@ -149,8 +144,11 @@ public class ascentClipCyclePark extends LinearOpMode {
             telemetry.update();
         }
 
+        homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
+
         //HOMING
-        pitch.setPosition(0.66);
+        homingAgent.homeDown();
+        /* pitch.setPosition(0.66);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
@@ -203,7 +201,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
         while(!gamepad1.b && !isStopRequested()) {
 

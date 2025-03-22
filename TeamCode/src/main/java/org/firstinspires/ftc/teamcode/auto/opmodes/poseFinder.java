@@ -9,8 +9,8 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
-import org.firstinspires.ftc.teamcode.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.Drawing;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 
 import java.io.File;
 import java.util.Arrays;
