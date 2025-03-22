@@ -22,6 +22,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.subsystems.claw.Claw;
+import org.firstinspires.ftc.teamcode.auto.subsystems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.commonCode.Homing;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
@@ -57,6 +59,8 @@ public class ascentClipCyclePark extends LinearOpMode {
     ServoImplEx roll;
     ServoImplEx claw;
     autoClaw autoClaw;
+    Wrist wrist;
+    Claw clawCode;
 
     Elbow elbow;
     DcMotorEx elbowMotor;
@@ -103,6 +107,9 @@ public class ascentClipCyclePark extends LinearOpMode {
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
         autoClaw = new autoClaw(pitch, roll, claw);
+        wrist = new Wrist(pitch, roll);
+        clawCode = new Claw(claw);
+
 
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
@@ -286,6 +293,8 @@ public class ascentClipCyclePark extends LinearOpMode {
             }
             if (!PitchareSame || !RollareSame || !ClawareSame) {
                 traj1 = traj1.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))));
+                //traj1 = traj1.stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)), extractAuto.getRollFromList(vector.get(i))));
+                //traj1 = traj1.stopAndAdd(clawCode.clawControl(extractAuto.getClawFromList(vector.get(i))));
             }
 
             if (!waitZero) {
