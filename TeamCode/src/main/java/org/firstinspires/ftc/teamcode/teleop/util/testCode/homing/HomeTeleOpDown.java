@@ -8,8 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.commonCode.Homing;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
@@ -24,9 +23,10 @@ public class HomeTeleOpDown extends LinearOpMode {
     DcMotorEx rightSlide;
     DcMotorEx pivot;
     DcMotorEx linearActuatorMotor;
-    RevTouchSensor limitSwitch;
-    RevTouchSensor homingSwitch;
+    RevTouchSensor elbowSwitch;
+    RevTouchSensor slideSwitch;
     RevTouchSensor actuatorSwitch;
+    Homing homing;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -34,10 +34,7 @@ public class HomeTeleOpDown extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()){
-                homeDown();
-                slide.setSlideExtensionLength(0);
-                elbow.setTargetAngle(0);
-                linearActuator.goToTargetPositionInches(0);
+                homing.homeDown();
         }
 
 
@@ -49,8 +46,8 @@ public class HomeTeleOpDown extends LinearOpMode {
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         pivot = hardwareMap.get(DcMotorEx.class, "pivot");
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
-        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
-        homingSwitch = hardwareMap.get(RevTouchSensor.class, "homing switch");
+        elbowSwitch = hardwareMap.get(RevTouchSensor.class, "elbow switch");
+        slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
 
 
@@ -65,10 +62,11 @@ public class HomeTeleOpDown extends LinearOpMode {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        slide = new Slide(leftSlide,rightSlide, homingSwitch);
-        elbow = new Elbow(pivot, limitSwitch,90);
+        slide = new Slide(leftSlide,rightSlide, slideSwitch);
+        elbow = new Elbow(pivot, elbowSwitch,90);
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
+        homing = new Homing(leftSlide,rightSlide,pivot,linearActuatorMotor,this, telemetry, slideSwitch,actuatorSwitch,elbowSwitch);
         pitch = hardwareMap.get(Servo.class, "pitch");
 
         pitch.setPosition(0.5);
