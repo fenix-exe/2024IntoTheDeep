@@ -11,12 +11,14 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -38,22 +40,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - BUCKET 4!!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
+@Autonomous(name = "AUTO - BUCKET 4!!!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
 public class ascentPreloadPark extends LinearOpMode {
 
-    //initialize auto extractor
+    //declare vars
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
-    int ELBOW_START = 7;
+    int ELBOW_START = 0;
     int SLIDE_START = 0;
     double PITCH_START = 1;
-    double ROLL_START = 0.15;
+    double ROLL_START = 0.21;
     double CLAW_START = 0.86;
 
-
+    //initialize interpreter
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
     RobotWideFunctions robot = new RobotWideFunctions();
 
+    //declare end effector
     ServoImplEx pitch;
     ServoImplEx roll;
     ServoImplEx claw;
@@ -61,26 +64,27 @@ public class ascentPreloadPark extends LinearOpMode {
     Wrist wrist;
     Claw clawCode;
 
+    // declare elbow
     Elbow elbow;
     DcMotorEx elbowMotor;
     RevTouchSensor elbowSwitch;
 
-    ElapsedTime timer;
-
-    PIDController controllerPivotPIDF;
-
+    //set up slides
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     Slide slide;
     RevTouchSensor slideSwitch;
-    public GoBildaPinpointDriverRR pinpoint;
 
 
+
+    //set up linear actuator
     DcMotorEx linearActuatorMotor;
     RevTouchSensor actuatorSwitch;
     LinearActuator linearActuator;
 
+    //set up homing agent
     Homing homingAgent;
+    public GoBildaPinpointDriverRR pinpoint;
 
 
     @Override
@@ -98,11 +102,11 @@ public class ascentPreloadPark extends LinearOpMode {
             throw new RuntimeException(e);
         }
 
-        writeAuto writer = new writeAuto("ascenPreloadParkTime");
+        //set up writer
+        writeAuto writer = new writeAuto("ascentClipCycleParkTime");
 
-        //set up rr
 
-
+        //initialize hardware
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
@@ -115,16 +119,11 @@ public class ascentPreloadPark extends LinearOpMode {
         actuatorSwitch = hardwareMap.get(RevTouchSensor.class, "linear actuator switch");
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
-
-
-
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
         elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elbowSwitch = hardwareMap.get(RevTouchSensor.class, "elbow switch");
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -146,21 +145,23 @@ public class ascentPreloadPark extends LinearOpMode {
         }
         pinpoint.setPosition(new Pose2d(0,0,0));
         elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
-
         homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
+
+        //wait for user input to begin homing
         while (!gamepad1.a && !isStopRequested()) {
             pinpoint.update();
             telemetry.addData("pose x", pinpoint.getPositionRR().position.x);
             telemetry.addData("pose y", pinpoint.getPositionRR().position.y);
             telemetry.addData("pose head", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
+
             telemetry.update();
         }
 
 
         //HOMING
         homingAgent.homeDown();
-        /*pitch.setPosition(1);
+        /* pitch.setPosition(0.66);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
             slide.setSlidePower(-0.2);
@@ -215,19 +216,31 @@ public class ascentPreloadPark extends LinearOpMode {
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
+        //wait for user input to begin interpreter parsing and setup
         while(!gamepad1.b && !isStopRequested()) {
 
         }
 
+        /*initialize IMU
+         *IS THIS NECESSARY?
+         */
+        IMU revIMU = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+        revIMU.initialize(parameters);
+        revIMU.resetYaw();
+
+        //initalize pinpoint drive
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
-
         PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
-
         drive.pinpoint.setPosition(beginPose);
 
-
+        //initialize trajaction builder to parse data
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
+
+        //we use these booleans to make sure that we dont add redundant actions to the trajectory
         boolean XareSame = false;
         boolean YareSame = false;
         boolean AngleareSame = false;
@@ -238,6 +251,7 @@ public class ascentPreloadPark extends LinearOpMode {
         boolean ClawareSame = false;
         boolean waitZero = false;
         boolean correctionAreSame = false;
+
         //build trajectory based on file data
         for (int i = 1; i < vector.size(); i++) {
             XareSame = ((extractAuto.getXFromList(vector.get(i-1)) == extractAuto.getXFromList(vector.get(i))));
@@ -317,7 +331,8 @@ public class ascentPreloadPark extends LinearOpMode {
 
         Action action1 = traj1.build();
 
-        elbow.setTargetAngleAndSpeed(ELBOW_START, 1);
+        //initialize elbow, slide, and claw to starting positions
+        elbow.setTargetAngleAndSpeed(elbow.degreesToTicks(ELBOW_START), 1);
         autoClaw.setPitch(PITCH_START);
         autoClaw.setRoll(ROLL_START);
         autoClaw.setClaw(0.21);
@@ -349,9 +364,10 @@ public class ascentPreloadPark extends LinearOpMode {
         }
 
 
+        //run trajectory
         Actions.runBlocking(action1);
 
+        //write time it takes to file
         writer.timer(timer.time());
-        pitch.setPwmDisable();
     }
 }

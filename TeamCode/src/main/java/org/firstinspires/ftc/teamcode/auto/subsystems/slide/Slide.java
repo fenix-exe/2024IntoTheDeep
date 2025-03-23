@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.SlideMessage;
 import org.firstinspires.ftc.teamcode.commonCode.CommonSlide;
 
@@ -41,7 +42,7 @@ public class Slide extends CommonSlide {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setSlideExtensionLength(targetPos);
 
-            slideWriter.write(new SlideMessage(getSlideExtensionInInches(), targetPos));
+            slideWriter.write(new SlideMessage(getSlideExtensionInInches(), targetPos, leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 
             if (homingSwitch.isPressed()){
                 leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

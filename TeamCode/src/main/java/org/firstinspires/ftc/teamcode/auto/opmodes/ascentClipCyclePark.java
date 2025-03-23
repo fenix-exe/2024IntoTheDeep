@@ -43,7 +43,7 @@ import java.util.ArrayList;
 @Autonomous(name = "AUTO - Clip 5!!!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
 public class ascentClipCyclePark extends LinearOpMode {
 
-    //initialize auto extractor
+    //declare vars
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
     int ELBOW_START = 0;
     int SLIDE_START = 0;
@@ -51,10 +51,12 @@ public class ascentClipCyclePark extends LinearOpMode {
     double ROLL_START = 0.21;
     double CLAW_START = 0.86;
 
+    //initialize interpreter
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
     RobotWideFunctions robot = new RobotWideFunctions();
 
+    //declare end effector
     ServoImplEx pitch;
     ServoImplEx roll;
     ServoImplEx claw;
@@ -62,25 +64,27 @@ public class ascentClipCyclePark extends LinearOpMode {
     Wrist wrist;
     Claw clawCode;
 
+    // declare elbow
     Elbow elbow;
     DcMotorEx elbowMotor;
     RevTouchSensor elbowSwitch;
 
-    ElapsedTime timer;
-
-    PIDController controllerPivotPIDF;
-
+    //set up slides
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     Slide slide;
     RevTouchSensor slideSwitch;
-    public GoBildaPinpointDriverRR pinpoint;
 
 
+
+    //set up linear actuator
     DcMotorEx linearActuatorMotor;
     RevTouchSensor actuatorSwitch;
     LinearActuator linearActuator;
+
+    //set up homing agent
     Homing homingAgent;
+    public GoBildaPinpointDriverRR pinpoint;
 
 
     @Override
@@ -98,11 +102,11 @@ public class ascentClipCyclePark extends LinearOpMode {
             throw new RuntimeException(e);
         }
 
+        //set up writer
         writeAuto writer = new writeAuto("ascentClipCycleParkTime");
 
-        //set up rr
 
-
+        //initialize hardware
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
@@ -144,6 +148,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
 
+        //wait for user input to begin homing
         while (!gamepad1.a && !isStopRequested()) {
             pinpoint.update();
             telemetry.addData("pose x", pinpoint.getPositionRR().position.x);
@@ -211,10 +216,14 @@ public class ascentClipCyclePark extends LinearOpMode {
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
+        //wait for user input to begin interpreter parsing and setup
         while(!gamepad1.b && !isStopRequested()) {
 
         }
 
+        /*initialize IMU
+        *IS THIS NECESSARY?
+        */
         IMU revIMU = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -222,15 +231,16 @@ public class ascentClipCyclePark extends LinearOpMode {
         revIMU.initialize(parameters);
         revIMU.resetYaw();
 
+        //initalize pinpoint drive
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
-
         PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
-
         drive.pinpoint.setPosition(beginPose);
 
-
+        //initialize trajaction builder to parse data
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose);
 
+
+        //we use these booleans to make sure that we dont add redundant actions to the trajectory
         boolean XareSame = false;
         boolean YareSame = false;
         boolean AngleareSame = false;
@@ -241,6 +251,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         boolean ClawareSame = false;
         boolean waitZero = false;
         boolean correctionAreSame = false;
+
         //build trajectory based on file data
         for (int i = 1; i < vector.size(); i++) {
             XareSame = ((extractAuto.getXFromList(vector.get(i-1)) == extractAuto.getXFromList(vector.get(i))));
@@ -320,6 +331,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         Action action1 = traj1.build();
 
+        //initialize elbow, slide, and claw to starting positions
         elbow.setTargetAngleAndSpeed(elbow.degreesToTicks(ELBOW_START), 1);
         autoClaw.setPitch(PITCH_START);
         autoClaw.setRoll(ROLL_START);
@@ -352,8 +364,10 @@ public class ascentClipCyclePark extends LinearOpMode {
         }
 
 
+        //run trajectory
         Actions.runBlocking(action1);
 
+        //write time it takes to file
         writer.timer(timer.time());
     }
 }

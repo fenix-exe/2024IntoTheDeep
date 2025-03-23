@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.ElbowMessage;
 import org.firstinspires.ftc.teamcode.commonCode.CommonElbow;
 
@@ -47,7 +48,7 @@ public class Elbow extends CommonElbow {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setTargetAngleAndSpeed(target, speed);
-            elbowWriter.write(new ElbowMessage(getElbowAngle(), target));
+            elbowWriter.write(new ElbowMessage(getElbowAngle(), target, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
             if (target-0.5 < getElbowAngle() && getElbowAngle() < target+0.5) {
                 elbowMotor.setPower(0);
                 return false;
