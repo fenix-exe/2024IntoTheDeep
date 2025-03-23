@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 
 public class BarkerIntake {
-    private CRServo intake;
+    protected CRServo intake;
     public BarkerIntake(CRServo intake){
         this.intake = intake;
     }
@@ -17,8 +17,5 @@ public class BarkerIntake {
     }
     public void stop(){
         intake.setPower(0);
-    }
-    public void setPower(double power){
-        intake.setPower(power);
     }
 }
