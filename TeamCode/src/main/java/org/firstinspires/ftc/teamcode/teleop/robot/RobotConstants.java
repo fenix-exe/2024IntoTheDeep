@@ -13,6 +13,6 @@ public class RobotConstants {
     public static double SLOW_SPEED = 0.55;
     public static double NORMAL_SPEED = 1;
     public static double BARKER_INTAKE_SPEED=1;
-    public static double BARKER_OUTTAKE_SPEED=1;
+    public static double BARKER_OUTTAKE_SPEED=-1;
 
 }
