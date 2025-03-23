@@ -16,7 +16,7 @@ public abstract class CommonElbow {
         this.topPosition = degreesToTicks(topPositionInDegrees);
         this.limitSwitch = limitSwitch;
     }
-    private void goToTargetPosition(int targetPosition){
+    protected void goToTargetPosition(int targetPosition){
         elbowMotor.setTargetPosition(targetPosition);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elbowMotor.setPower(1);
