@@ -16,9 +16,9 @@ public class DriveToSubmersibleStateTransition implements IStateTransition {
         AT_SUBMERSIBLE
     }
     private TransitionSteps steps;
-    private Pose2d submersiblePose;
+    private final Pose2d submersiblePose;
 
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
 
     public DriveToSubmersibleStateTransition(Pose2d submersiblePose, IDriveTrain driveTrain, Telemetry telemetry){
         this.submersiblePose = submersiblePose;

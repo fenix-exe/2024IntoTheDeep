@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.common.CommonWrist;
 public class Wrist extends CommonWrist {
     Servo pitchServo;
     Servo rollServo;
-    private static double PITCH_OFFSET = 3;
+    private static final double PITCH_OFFSET = 3;
 
     public Wrist(Servo pitch, Servo roll){
         super(pitch, roll);

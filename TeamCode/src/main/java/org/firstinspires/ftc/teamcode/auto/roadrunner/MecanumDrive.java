@@ -110,7 +110,7 @@ public class MecanumDrive {
         public double hP = 0.7;
         public double hI = 0.07;
         public double hD = 0.07;
-        public double speed = 10/10;
+        public double speed = 1;
 
     }
 

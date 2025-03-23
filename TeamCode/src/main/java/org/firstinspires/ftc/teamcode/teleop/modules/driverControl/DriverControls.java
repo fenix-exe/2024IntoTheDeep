@@ -136,10 +136,7 @@ public class DriverControls implements DriveControlMap {
         return 0;
     }
     public boolean pivotManualStopped(){
-        if (Math.abs(gamepad2previous.left_stick_y) > 0.65 && ! (Math.abs(gamepad2current.left_stick_y) > 0.65)){
-            return true;
-        }
-        return false;
+        return Math.abs(gamepad2previous.left_stick_y) > 0.65 && !(Math.abs(gamepad2current.left_stick_y) > 0.65);
     }
 
     @Override
@@ -162,10 +159,7 @@ public class DriverControls implements DriveControlMap {
         if ((gamepad1previous.right_trigger > 0.3) && !(gamepad1current.right_trigger > 0.3)){
             return true;
         }
-        if ((gamepad1previous.left_trigger > 0.3) && !(gamepad1current.left_trigger > 0.3)) {
-            return true;
-        }
-        return false;
+        return (gamepad1previous.left_trigger > 0.3) && !(gamepad1current.left_trigger > 0.3);
     }
     public boolean linearActuatorUp(){
         return gamepad1current.dpad_right;

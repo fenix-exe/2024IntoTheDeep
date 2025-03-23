@@ -18,7 +18,7 @@ public class DriveToBucketStateTransition implements IStateTransition {
     }
     private PathTransitionStep step;
     //private Pose2d backupPose;
-    private Pose2d bucketPose;
+    private final Pose2d bucketPose;
     public DriveToBucketStateTransition( Pose2d bucketPose, IDriveTrain driveTrain, Telemetry telemetry){
         this.bucketPose = bucketPose;
         this.driveTrain = driveTrain;

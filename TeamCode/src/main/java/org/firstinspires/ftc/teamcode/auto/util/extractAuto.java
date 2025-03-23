@@ -14,7 +14,7 @@ public class extractAuto {
     //This arraylist is used to store the steps of the path
     ArrayList<PositionInSpace> autoPath = new ArrayList<>();
 
-    private boolean useSeconds = true;
+    private final boolean useSeconds = true;
 
     public class PositionInSpace {
         //These parameters are needed in the CSV File

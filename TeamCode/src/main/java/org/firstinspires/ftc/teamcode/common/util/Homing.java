@@ -10,15 +10,15 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActu
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 
 public class Homing {
-    private DcMotorEx leftSlideMotor;
-    private DcMotorEx rightSlideMotor;
-    private Slide slide;
-    private DcMotorEx elbowMotor;
-    private DcMotorEx linearActuatorMotor;
-    private LinearActuator linearActuator;
-    private Elbow elbow;
-    private LinearOpMode opMode;
-    private Telemetry telemetry;
+    private final DcMotorEx leftSlideMotor;
+    private final DcMotorEx rightSlideMotor;
+    private final Slide slide;
+    private final DcMotorEx elbowMotor;
+    private final DcMotorEx linearActuatorMotor;
+    private final LinearActuator linearActuator;
+    private final Elbow elbow;
+    private final LinearOpMode opMode;
+    private final Telemetry telemetry;
     public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;
         this.rightSlideMotor = rightSlide;

@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.elbow;
 import com.arcrobotics.ftclib.controller.PIDController;
 
 public class PIDControl {
-    private PIDController controller;
+    private final PIDController controller;
     private double f;
-    private double ticksToUnit;
+    private final double ticksToUnit;
     public PIDControl(PIDController controller, double f, double ticksToUnit){
         this.controller = controller;
         this.f = f;

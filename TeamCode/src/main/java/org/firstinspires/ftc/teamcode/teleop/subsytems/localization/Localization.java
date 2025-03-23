@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import java.util.HashMap;
 
 public class Localization {
-    private GoBildaPinpointDriverRR pinpoint;
-    private IIMU imu;
+    private final GoBildaPinpointDriverRR pinpoint;
+    private final IIMU imu;
     public Localization(GoBildaPinpointDriverRR pinpoint, IIMU imu){
         this.pinpoint = pinpoint;
         this.imu = imu;
