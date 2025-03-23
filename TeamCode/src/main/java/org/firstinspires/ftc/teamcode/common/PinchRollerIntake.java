@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 
-public class BarkerIntake {
+public class PinchRollerIntake {
     protected CRServo intake;
-    public BarkerIntake(CRServo intake){
+    public PinchRollerIntake(CRServo intake){
         this.intake = intake;
     }
     public void intake(){

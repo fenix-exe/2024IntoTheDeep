@@ -6,11 +6,11 @@ import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.ActiveIntakeMessage;
-import org.firstinspires.ftc.teamcode.common.BarkerIntake;
+import org.firstinspires.ftc.teamcode.common.PinchRollerIntake;
 
 import androidx.annotation.NonNull;
 
-public class autoBarkerIntake extends BarkerIntake {
+public class autoBarkerIntake extends PinchRollerIntake {
 
     private final DownsampledWriter barkerWriter;
 
