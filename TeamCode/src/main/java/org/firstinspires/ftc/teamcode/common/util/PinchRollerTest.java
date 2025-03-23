@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.common.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.common.PinchRollerIntake;
-
+@TeleOp
 public class PinchRollerTest extends LinearOpMode {
     CRServo servo;
     PinchRollerIntake intake;
