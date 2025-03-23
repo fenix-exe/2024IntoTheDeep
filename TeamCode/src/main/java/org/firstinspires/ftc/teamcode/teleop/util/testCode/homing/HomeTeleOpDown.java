@@ -33,11 +33,9 @@ public class HomeTeleOpDown extends LinearOpMode {
         initializeArmAndHome();
 
         waitForStart();
-        while (opModeIsActive()){
-                homing.homeDown();
+        if (opModeIsActive()){
+            homing.homeDown();
         }
-
-
     }
 
 

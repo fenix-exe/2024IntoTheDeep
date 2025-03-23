@@ -44,7 +44,7 @@ public class GoToClipSpecimenStateTransition implements IStateTransition{
                 break;
             case MOVING_SLIDES_AND_WRIST_TO_DEPOSIT:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE){
-                    FSMManager.robotState = RobotState.READY_TO_DEPOSIT_CLIP;
+                    FSMManager.robotState = RobotState.READY_TO_GO_TO_GRAB_SPECIMEN;
                     goToClipState = TransitionSteps.START;
                 }
                 break;
