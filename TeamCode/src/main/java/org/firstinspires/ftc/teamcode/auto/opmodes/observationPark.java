@@ -24,7 +24,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.Claw;
 import org.firstinspires.ftc.teamcode.auto.subsystems.wrist.Wrist;
-import org.firstinspires.ftc.teamcode.commonCode.Homing;
+import org.firstinspires.ftc.teamcode.common.util.Homing;
+
 import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.autoClaw;

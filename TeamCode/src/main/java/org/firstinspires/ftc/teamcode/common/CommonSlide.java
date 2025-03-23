@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commonCode;
+package org.firstinspires.ftc.teamcode.common;
 
 import static java.lang.Math.floor;
 

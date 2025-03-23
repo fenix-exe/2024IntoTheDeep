@@ -9,9 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.SlideMessage;
-import org.firstinspires.ftc.teamcode.commonCode.CommonSlide;
-
-import static java.lang.Math.floor;
+import org.firstinspires.ftc.teamcode.common.CommonSlide;
 
 
 import androidx.annotation.NonNull;

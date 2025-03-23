@@ -51,7 +51,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         switch(intakeTransitionStep){
             case START:
                 if(FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN){
-                    double distance = color.getDistance(DistanceUnit.MM);
+                    /*double distance = color.getDistance(DistanceUnit.MM);
                     if (distance < 15){
                         FSMManager.stopTransitions();
                         timer = new ElapsedTime();
@@ -59,7 +59,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                         driveTrain.stopDriveTrain();
                         driveTrain.lockDriveTrain(true);
                         intakeTransitionStep = TransitionSteps.CLOSING_CLAW;
-                    }
+                    }*/
                     if (driverControls.pickupAndDepositSpecimens()){
                         FSMManager.stopTransitions();
                         timer = new ElapsedTime();
