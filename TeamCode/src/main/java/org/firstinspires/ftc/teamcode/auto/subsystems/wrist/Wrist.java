@@ -6,7 +6,7 @@ import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.WristMessage;
-import org.firstinspires.ftc.teamcode.commonCode.CommonWrist;
+import org.firstinspires.ftc.teamcode.common.CommonWrist;
 
 import androidx.annotation.NonNull;
 

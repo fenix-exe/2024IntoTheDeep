@@ -6,7 +6,7 @@ import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.ClawMessage;
-import org.firstinspires.ftc.teamcode.commonCode.CommonClaw;
+import org.firstinspires.ftc.teamcode.common.CommonClaw;
 
 import androidx.annotation.NonNull;
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commonCode;
+package org.firstinspires.ftc.teamcode.common.util;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
