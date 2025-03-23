@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImpl;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.ActiveIntakeMessage;
 import org.firstinspires.ftc.teamcode.common.PinchRollerIntake;
@@ -14,7 +16,7 @@ public class autoBarkerIntake extends PinchRollerIntake {
 
     private final DownsampledWriter barkerWriter;
 
-    public autoBarkerIntake(CRServo intake) {
+    public autoBarkerIntake(CRServoImplEx intake) {
         super(intake);
         barkerWriter = new DownsampledWriter("BARKER INTAKE INFO", 50_000_000);
     }

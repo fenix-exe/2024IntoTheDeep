@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop.robot;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class RobotConstants {
     public static double SLIDE_TOLERANCE = 1;
     public static double LOW_SLIDE_TOLERANCE = 0.5;
@@ -14,5 +17,6 @@ public class RobotConstants {
     public static double NORMAL_SPEED = 1;
     public static double BARKER_INTAKE_SPEED=1;
     public static double BARKER_OUTTAKE_SPEED=-1;
+    public static double BARKER_STOP_SPEED = 0;
 
 }
