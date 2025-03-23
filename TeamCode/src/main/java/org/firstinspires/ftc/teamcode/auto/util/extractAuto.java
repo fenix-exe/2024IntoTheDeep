@@ -14,6 +14,8 @@ public class extractAuto {
     //This arraylist is used to store the steps of the path
     ArrayList<PositionInSpace> autoPath = new ArrayList<>();
 
+    private boolean useSeconds = true;
+
     public class PositionInSpace {
         //These parameters are needed in the CSV File
         public double x_value;
@@ -118,7 +120,8 @@ public class extractAuto {
     }
 
     public double getCorrectionFromList(PositionInSpace position) {
-        return position.correction-0.5;
+        if (useSeconds) {return position.correction;}
+        else {return (position.correction-0.5)/1000;}
     }
 
     public double getElbowPhiFromList(PositionInSpace position) {
@@ -142,7 +145,8 @@ public class extractAuto {
     }
 
     public double getWaitFromList(PositionInSpace position) {
-        return position.wait;
+        if (useSeconds) {return position.wait;}
+        else {return position.wait*1000;}
     }
 
     public double getElbowSpeedFromList(PositionInSpace position) {

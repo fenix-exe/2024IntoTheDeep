@@ -65,10 +65,10 @@ public class autoClaw {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            oldClawWriter.write(new OldAutoClawMessage(pitchPos, rollPos, clawPos));
             pitch.setPosition(pitchPos);
             roll.setPosition(rollPos);
             claw.setPosition(clawPos);
+            oldClawWriter.write(new OldAutoClawMessage(pitchPos, rollPos, clawPos));
             return false;
         }
     }

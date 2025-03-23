@@ -50,7 +50,9 @@ public class Elbow extends CommonElbow {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             setTargetAngleAndSpeed(target, speed);
+
             elbowWriter.write(new ElbowMessage(getElbowAngle(), target, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+
             if (target-0.5 < getElbowAngle() && getElbowAngle() < target+0.5) {
                 elbowMotor.setPower(0);
                 return false;

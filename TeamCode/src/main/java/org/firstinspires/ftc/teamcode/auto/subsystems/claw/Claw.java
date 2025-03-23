@@ -36,8 +36,10 @@ public class Claw extends CommonClaw {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            clawWriter.write(new ClawMessage(clawPos));
             setClawPosition(clawPos);
+
+            clawWriter.write(new ClawMessage(clawPos));
+
             return false;
         }
     }

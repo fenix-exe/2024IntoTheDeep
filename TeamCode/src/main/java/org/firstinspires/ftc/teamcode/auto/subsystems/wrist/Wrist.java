@@ -38,9 +38,9 @@ public class Wrist extends CommonWrist {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            wristWriter.write(new WristMessage(getPitchAngle(), rollPos));
             presetPositionPitch(pitchPos);
             presetPositionRoll(rollPos);
+            wristWriter.write(new WristMessage(getPitchAngle(), rollPos));
             return false;
         }
     }
