@@ -40,13 +40,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - Clip 5!!!!!", preselectTeleOp = "TeleOpV5SampleZapdos")
+@Autonomous(name = "AUTO - CLIP 5", preselectTeleOp = "TeleOpV5SampleZapdos")
 public class ascentClipCyclePark extends LinearOpMode {
 
     //declare vars
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
+    String LOG_NAME = "ascentClipCyclePark";
     int ELBOW_START = 0;
-    int SLIDE_START = 0;
     double PITCH_START = 1;
     double ROLL_START = 0.21;
     double CLAW_START = 0.86;
@@ -103,7 +103,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         }
 
         //set up writer
-        writeAuto writer = new writeAuto("ascentClipCycleParkTime");
+        writeAuto writer = new writeAuto(LOG_NAME);
 
 
         //initialize hardware

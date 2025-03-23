@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -21,34 +22,47 @@ public class poseFinder extends LinearOpMode {
 
 
 
+    //ftc dashboard values to set pinpoint
     public static double x = 39.7;
     public static double y = 65;
     public static double heading = -180;
-    TelemetryPacket p;
-
+    public GoBildaPinpointDriverRR pinpoint;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(x, y, Math.toRadians(heading)));
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        p = new TelemetryPacket();
-        Canvas c = p.fieldOverlay();
+
+        //set up ftc dashboard telemetry
+        MultipleTelemetry multi = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+
+        // reset pinpoint and calibrate
+        pinpoint.resetPosAndIMU();
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        pinpoint.setPosition(new Pose2d(x,y,Math.toRadians(heading)));
+
 
         waitForStart();
 
 
         while (opModeIsActive()) {
-            drive.updatePoseEstimate();
-            telemetry.addData("pose x", drive.pose.position.x);
-            telemetry.addData("pose y", drive.pose.position.y);
-            telemetry.addData("pose head", Math.toDegrees(drive.pose.heading.toDouble()));
-            telemetry.update();
-            c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, drive.pose);
+            //update pinpoint telemetry
+            pinpoint.update();
+
+            //display pinpoint position on dashboard and ds
+            multi.addData("pose x", pinpoint.getPositionRR().position.x);
+            multi.addData("pose y", pinpoint.getPositionRR().position.y);
+            multi.addData("pose heading", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
+            multi.update();
+
+            /*
             if (gamepad1.a) {
                 Arrays.stream(new File("/sdcard/Download/autoLogger").listFiles()).forEach(File::delete);
-            }
+            }*/
         }
 
     }
