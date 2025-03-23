@@ -205,6 +205,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
                     //for manual movements
                     double pos = linearActuator.getLinearActuatorPositionInches() + 1;
                     linearActuator.goToTargetPositionInches(pos);
+                } else {
                     //preset positions
                     linearActuator.goToTargetPositionInches(9.5);
                 }

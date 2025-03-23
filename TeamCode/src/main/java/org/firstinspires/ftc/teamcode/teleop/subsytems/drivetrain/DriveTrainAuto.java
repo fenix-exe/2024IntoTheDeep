@@ -41,11 +41,12 @@ public class DriveTrainAuto implements IDriveTrain{
             if (isFollowingPath()){
                 stopFollowing();
             }
-            if(driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
+            FieldCentricDrive(forwardDrive,strafeDrive,headingDrive,speedMultiplier);
+            /*if(driveType == IDriveTrain.DriveType.ROBOT_CENTRIC){
                 RobotCentric_Drive(forwardDrive, strafeDrive, headingDrive, speedMultiplier);
             } else {
                 FieldCentricDrive(forwardDrive, strafeDrive, headingDrive, speedMultiplier);
-            }
+            }*/
         } else if (!isFollowingPath()){
             stopDriveTrain();
         }
