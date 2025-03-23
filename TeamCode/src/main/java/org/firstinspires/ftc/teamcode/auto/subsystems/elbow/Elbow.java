@@ -41,6 +41,7 @@ public class Elbow extends CommonElbow {
     public class elbowControl implements Action {
         private final double target;
         private final double speed;
+        private boolean initialized = false;
 
         elbowControl(double targetPos, double speed) {
             this.target = targetPos;
@@ -49,7 +50,10 @@ public class Elbow extends CommonElbow {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            setTargetAngleAndSpeed(target, speed);
+            if (!initialized) {
+                setTargetAngleAndSpeed(target, speed);
+                initialized = true;
+            }
 
             elbowWriter.write(new ElbowMessage(getElbowAngle(), target, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 

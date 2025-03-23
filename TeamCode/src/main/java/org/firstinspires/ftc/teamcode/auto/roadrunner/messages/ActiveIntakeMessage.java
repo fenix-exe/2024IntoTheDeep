@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.roadrunner.messages;
 
-public class ActiveIntakeMessage {
+public final class ActiveIntakeMessage {
     public long timestamp;
     public double intakePower;
 

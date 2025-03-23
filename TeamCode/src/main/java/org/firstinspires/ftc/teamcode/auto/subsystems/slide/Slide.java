@@ -42,14 +42,17 @@ public class Slide extends CommonSlide {
      */
     public class slideControl implements Action {
         private final double targetPos;
+        private boolean initialized = false;
         slideControl(double targetPos){
             this.targetPos = targetPos;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            setSlideExtensionLength(targetPos);
-
+            if (!initialized) {
+                setSlideExtensionLength(targetPos);
+                initialized = true;
+            }
 
             if (homingSwitch.isPressed()){
                 leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

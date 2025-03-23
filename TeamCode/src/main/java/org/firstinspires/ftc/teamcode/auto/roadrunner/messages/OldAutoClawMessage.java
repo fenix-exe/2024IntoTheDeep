@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.roadrunner.messages;
 
-public class OldAutoClawMessage {
+public final class OldAutoClawMessage {
     public long timestamp;
     public double pitchPosition;
     public double rollPosition;
