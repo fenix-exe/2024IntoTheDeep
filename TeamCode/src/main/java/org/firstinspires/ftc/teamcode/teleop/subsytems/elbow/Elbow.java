@@ -16,6 +16,8 @@ public class Elbow extends CommonElbow {
     public int topPosition;
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPositionInDegrees){
         super(elbow,limitSwitch,topPositionInDegrees);
+        this.elbowMotor = elbow;
+        this.topPosition = topPositionInDegrees;
     }
     public void elbowJoystick(double joystickControl){
         int targetPos = (int) (elbowMotor.getCurrentPosition() + 100*joystickControl);

@@ -42,7 +42,7 @@ public class Homing {
     public void homeDown(){
         //homing the slide
         while (!slide.isHomingSwitchPressed() && !opMode.isStopRequested()){
-            slide.setSlidePower(-600);
+            slide.setSlidePower(-0.3);
             telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
             telemetry.addData("Elbow Angle", elbow.getElbowAngle());
             telemetry.update();

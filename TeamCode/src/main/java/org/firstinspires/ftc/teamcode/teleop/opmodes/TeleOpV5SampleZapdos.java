@@ -156,7 +156,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //manual control for elbow
             if (Math.abs(driverControls.pivotJoystick()) > 0){
-                arm.moveElbow(driverControls.pivotJoystick());
+                telemetry.addData("Elbow Movement",arm.moveElbow(driverControls.pivotJoystick()));
             } else if (driverControls.pivotManualStopped()){
                 //prevents elbow from moving after the drivers let go of the joystick
                 arm.holdElbow();

@@ -37,9 +37,9 @@ public class Arm {
         return power;
     }
 
-    public void moveElbow(double elbowMovement){
+    public double moveElbow(double elbowMovement){
             double power;
-            if (elbow.getElbowTicks() > elbow.topPosition - ArmConstants.ELBOWTICKSTOLERANCE
+            if (elbow.getElbowAngle() > elbow.topPosition - RobotConstants.ELBOW_TOLERANCE
                     && elbowMovement > 0){ //top limit
                 power = 0;
             } else if (elbow.getElbowAngle() < ArmConstants.ELBOWBOTTOMANGLE
@@ -49,6 +49,7 @@ public class Arm {
                 power = elbowMovement;
             }
             elbow.elbowJoystick(power);
+            return power;
     }
 
     public double getMaximumSlideExtensionAllowedInInches(){
