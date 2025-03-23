@@ -18,4 +18,7 @@ public class BarkerIntake {
     public void stop(){
         intake.setPower(0);
     }
+    public void setPower(double power){
+        intake.setPower(power);
+    }
 }
