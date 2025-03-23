@@ -24,6 +24,9 @@ public class Slide extends CommonSlide {
 
     public Slide(DcMotorEx leftSlideMotor, DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
         super(leftSlideMotor, rightSlideMotor, homingSwitch);
+        this.homingSwitch = homingSwitch;
+        this.leftSlideMotor = leftSlideMotor;
+        this.rightSlideMotor = rightSlideMotor;
         slideWriter = new DownsampledWriter("SLIDE INFO", 50_000_000);
     }
 

@@ -30,6 +30,7 @@ public class Elbow extends CommonElbow {
 
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition){
         super(elbow, limitSwitch, topPosition);
+        this.elbowMotor = elbow;
         elbowWriter = new DownsampledWriter("ELBOW INFO", 50_000_000);
     }
 
