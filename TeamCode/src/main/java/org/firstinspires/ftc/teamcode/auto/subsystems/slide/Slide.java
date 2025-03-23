@@ -15,6 +15,12 @@ import org.firstinspires.ftc.teamcode.common.CommonSlide;
 import androidx.annotation.NonNull;
 
 public class Slide extends CommonSlide {
+
+    /*
+    * This class allows for control of the slide using inches in autonomous
+     */
+
+
     public DcMotorEx leftSlideMotor;
     public DcMotorEx rightSlideMotor;
     public RevTouchSensor homingSwitch;
@@ -30,6 +36,10 @@ public class Slide extends CommonSlide {
     }
 
 
+    /* this action sets slide motor position using inches
+    * finishes when slide is within 0.5 inches of the position
+    * slides continue to stay at its position when the action finishes
+     */
     public class slideControl implements Action {
         private final double targetPos;
         slideControl(double targetPos){

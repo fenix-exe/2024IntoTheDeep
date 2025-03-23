@@ -316,6 +316,8 @@ public class observationPark extends LinearOpMode {
                 traj1 = traj1.waitSeconds(extractAuto.getWaitFromList(vector.get(i)));
             }
 
+            traj1 = traj1.stopAndAdd(robot.vectorLog(i, telemetry));
+
             telemetry.addData("Vector " + (i) + " X", extractAuto.getXFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Y", extractAuto.getYFromList(vector.get(i)));
             telemetry.addData("Vector " + (i) + " Heading", extractAuto.getAngleFromList(vector.get(i)));

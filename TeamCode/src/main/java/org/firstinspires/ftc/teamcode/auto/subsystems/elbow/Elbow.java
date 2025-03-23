@@ -18,13 +18,13 @@ import androidx.annotation.NonNull;
 
 
 public class Elbow extends CommonElbow {
+
+    /*
+    * This class allows for control of the elbow using degrees in autonomous
+    */
+
     public DcMotorEx elbowMotor;
     public RevTouchSensor limitSwitch;
-    int elbowPosition;
-    public int topPosition;
-    double encoderRes = 145.1;
-    double gearRatio = 28;
-    double degreesInTicks = (encoderRes*gearRatio)/360; //calculation: ((tick per revolution) * (gear ratio)) / 360
     private final DownsampledWriter elbowWriter;
 
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition){
@@ -34,6 +34,10 @@ public class Elbow extends CommonElbow {
     }
 
 
+    /* this action sets elbow motor position using degrees
+    * finishes when elbow is within 0.5 degrees of the position
+    * elbow stops moving when the action finishes
+     */
     public class elbowControl implements Action {
         private final double target;
         private final double speed;

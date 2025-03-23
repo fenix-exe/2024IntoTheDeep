@@ -9,6 +9,11 @@ import java.io.PrintWriter;
 import java.util.Date;
 
 public class writeAuto {
+
+    /*
+    * These methods are used to write various helpful items from auto to a file
+     */
+
     String name;
     String filename;
     String storeLoc = "/sdcard/Download/autoLogger/";
@@ -21,6 +26,7 @@ public class writeAuto {
     }
 
 
+    //this method  write a robot position to a file. unused
     public void writeToFile(double x, double y, double heading, double elbow, double slide, double pitch, double roll, double claw) {
 
         FileWriter fw;
@@ -39,6 +45,7 @@ public class writeAuto {
         pw.close();
     }
 
+    //this method writers how long an auto sequence took to a file
     public void timer(double time) {
         FileWriter fw;
 
@@ -56,6 +63,7 @@ public class writeAuto {
         pw.close();
     }
 
+    //this methods writes an arbitrary string to a file.
     public void string(double string) {
         FileWriter fw;
 

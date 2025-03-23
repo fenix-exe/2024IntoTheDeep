@@ -11,6 +11,10 @@ import org.firstinspires.ftc.teamcode.common.CommonClaw;
 import androidx.annotation.NonNull;
 
 public class Claw extends CommonClaw {
+
+    //This class is used to control only the intake(claw) in servo positions
+
+    //initialize objects
     public Servo clawServo;
     private final DownsampledWriter clawWriter;
 
@@ -19,6 +23,10 @@ public class Claw extends CommonClaw {
         clawWriter = new DownsampledWriter("CLAW INFO", 50_000_000);
     }
 
+    /* this action sets claw servo position using servo
+    * finishes when claw is set to position
+    * nothing happens when the action finishes
+     */
     public class clawControl implements Action {
         private final double clawPos;
 

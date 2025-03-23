@@ -10,7 +10,14 @@ import androidx.annotation.NonNull;
 
 public class RobotWideFunctions {
 
+    /*
+    * This class allows for robotwidefunctions
+     */
 
+
+    /*
+    * This action prints which step the robot is on on the driver station
+     */
     public class vectorLog implements Action {
         private final double vector;
         private final Telemetry telemetry;
@@ -34,6 +41,8 @@ public class RobotWideFunctions {
         return new vectorLog(vector, telemetry);
     }
 
+    //This action changes the correction value in the MecanumDrive class
+    // depending on how accurate we want the robot to be
     public class correctionChanger implements Action {
         private final double correction;
 

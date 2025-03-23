@@ -6,9 +6,16 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class extractAuto {
+
+    /*
+    This class is used to extract the auto path from a csv file.
+     */
+
+    //This arraylist is used to store the steps of the path
     ArrayList<PositionInSpace> autoPath = new ArrayList<>();
 
     public class PositionInSpace {
+        //These parameters are needed in the CSV File
         public double x_value;
         public double y_value;
         public double angle;
@@ -24,6 +31,7 @@ public class extractAuto {
         public double claw;
         public double wait;
 
+        //this is the constructor for each position in space(one step).
         PositionInSpace(double x_value, double y_value, double angle, String moveType,double tangent, double velocity ,double correction, double elbow_phi, double elbow_speed, double linear_slide, double pitch, double roll, double claw, double wait) {
             this.x_value = x_value;
             this.y_value = y_value;
@@ -43,13 +51,17 @@ public class extractAuto {
         }
     }
 
+    //this is the method that reads the file and parses it
     public ArrayList<PositionInSpace> SetUpListOfThings(Telemetry telemetry, String filename) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));
         String line;
+
+        //skip first line: header
         br.readLine();
         while ((line = br.readLine()) != null) {
             String[] values = line.split(",");
             try {
+                //parse the values from the csv file: using this order
                 double x_value = Double.parseDouble(values[0].trim());
                 double y_value = Double.parseDouble(values[1].trim());
                 double angle = Double.parseDouble(values[2].trim());
@@ -75,6 +87,11 @@ public class extractAuto {
         }
         return autoPath;
     }
+
+    /*
+    * These functions retrieve the specified value from the list values, given the row number in the Arraylist
+     */
+
 
     public double getXFromList(PositionInSpace position) {
         return position.x_value;

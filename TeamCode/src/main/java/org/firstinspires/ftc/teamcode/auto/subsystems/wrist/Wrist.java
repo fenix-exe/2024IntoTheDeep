@@ -11,6 +11,9 @@ import org.firstinspires.ftc.teamcode.common.CommonWrist;
 import androidx.annotation.NonNull;
 
 public class Wrist extends CommonWrist {
+
+    //This class is used to control only the wrist(pitch and roll) in degrees
+
     Servo pitch;
     Servo roll;
     private final DownsampledWriter wristWriter;
@@ -20,7 +23,10 @@ public class Wrist extends CommonWrist {
         wristWriter = new DownsampledWriter("WRIST INFO", 50_000_000);
     }
 
-
+    /* this action sets pitch and roll servos using degrees
+     * finishes when pitch and roll servos is set to position
+     * nothing happens when the action finishes
+     */
     public class wristControl implements Action {
         private final double pitchPos;
         private final double rollPos;
