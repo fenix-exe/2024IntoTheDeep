@@ -2,12 +2,9 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.elbow;
 
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import static java.lang.Math.floor;
-
-import org.firstinspires.ftc.teamcode.commonCode.CommonElbow;
+import org.firstinspires.ftc.teamcode.common.CommonElbow;
 
 
 public class Elbow extends CommonElbow {

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.wrist;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.commonCode.CommonWrist;
+import org.firstinspires.ftc.teamcode.common.CommonWrist;
 
 public class Wrist extends CommonWrist {
     Servo pitchServo;

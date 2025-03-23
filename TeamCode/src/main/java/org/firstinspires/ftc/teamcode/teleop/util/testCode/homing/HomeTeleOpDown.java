@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.commonCode.Homing;
+import org.firstinspires.ftc.teamcode.common.util.Homing;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
