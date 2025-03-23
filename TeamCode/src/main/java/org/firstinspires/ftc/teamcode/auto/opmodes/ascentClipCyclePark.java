@@ -141,6 +141,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         }
         pinpoint.setPosition(new Pose2d(0,0,0));
         elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
+        homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
 
         while (!gamepad1.a && !isStopRequested()) {
@@ -148,10 +149,10 @@ public class ascentClipCyclePark extends LinearOpMode {
             telemetry.addData("pose x", pinpoint.getPositionRR().position.x);
             telemetry.addData("pose y", pinpoint.getPositionRR().position.y);
             telemetry.addData("pose head", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
+
             telemetry.update();
         }
 
-        homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
         //HOMING
         homingAgent.homeDown();

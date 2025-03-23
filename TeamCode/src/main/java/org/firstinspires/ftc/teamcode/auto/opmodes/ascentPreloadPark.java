@@ -147,6 +147,7 @@ public class ascentPreloadPark extends LinearOpMode {
         pinpoint.setPosition(new Pose2d(0,0,0));
         elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
 
+        homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
         while (!gamepad1.a && !isStopRequested()) {
             pinpoint.update();
@@ -156,9 +157,9 @@ public class ascentPreloadPark extends LinearOpMode {
             telemetry.update();
         }
 
-        homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
         //HOMING
+        homingAgent.homeDown();
         /*pitch.setPosition(1);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){

@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.commonCode;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
@@ -21,18 +19,26 @@ public class Homing {
     private Elbow elbow;
     private LinearOpMode opMode;
     private Telemetry telemetry;
-    public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbow, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
+    public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;
         this.rightSlideMotor = rightSlide;
-        this.elbowMotor = elbow;
+        this.elbowMotor = elbowMotor;
         this.linearActuatorMotor = linearActuator;
         this.opMode = opMode;
         this.telemetry = telemetry;
-        this.slide = new Slide(leftSlideMotor, rightSlideMotor, slideHoming);
-        this.elbow = new Elbow(elbowMotor, elbowHoming, 100);
+        slide = new Slide(this.leftSlideMotor, this.rightSlideMotor, slideHoming);
+        elbow = new Elbow(this.elbowMotor, elbowHoming, 100);
         this.linearActuator = new LinearActuator(linearActuatorMotor,linearActuatorHoming);
-
     }
+
+    public String slideNullCheck() {
+        return rightSlideMotor.getDeviceName();
+    }
+
+    public String elbowNullCheck() {
+        return elbowMotor.getDeviceName();
+    }
+
     public void homeDown(){
         //homing the slide
         while (!slide.isHomingSwitchPressed() && !opMode.isStopRequested()){
