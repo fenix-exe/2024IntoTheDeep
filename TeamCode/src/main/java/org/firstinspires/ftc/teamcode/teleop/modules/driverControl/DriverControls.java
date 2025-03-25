@@ -205,10 +205,10 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.b && !gamepad2current.start;
     }
     public boolean openClaw(){
-        return (gamepad2current.left_bumper) && !(gamepad2previous.left_bumper);
+        return (gamepad2current.left_bumper && !gamepad2previous.left_bumper);
     }
     public boolean closeClaw(){
-        return (gamepad2current.right_bumper) && !(gamepad2previous.right_bumper);
+        return (gamepad2current.right_bumper && !gamepad2previous.right_bumper);
     }
     public boolean grabSampleFromOutside(){
         return ((gamepad2current.right_trigger > 0.1) && !(gamepad2previous.right_trigger > 0.1)) || ((gamepad1current.x) && !(gamepad1previous.x));

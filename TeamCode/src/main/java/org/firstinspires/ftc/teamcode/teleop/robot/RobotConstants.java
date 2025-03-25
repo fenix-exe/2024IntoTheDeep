@@ -14,9 +14,9 @@ public class RobotConstants {
     public static double CLOSED_POSITION = 0.6028;
     public static double INTERMEDIATE_POSITION = 0.4506;
     public static double SLOW_SPEED = 0.55;
-    public static double NORMAL_SPEED = 1;
-    public static double BARKER_INTAKE_SPEED=1;
-    public static double BARKER_OUTTAKE_SPEED=-1;
-    public static double BARKER_STOP_SPEED = 0;
+    public static double NORMAL_SPEED = 0.4;
+    public static double INTAKE_SPEED =1;
+    public static double OUTTAKE_SPEED =-1;
+    public static double STOP_SPEED = 0;
 
 }

@@ -12,6 +12,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,6 +23,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.common.PinchRollerIntake;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
@@ -39,6 +41,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainAuto;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.BigWheelIntake;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.localization.Localization;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
@@ -63,12 +67,14 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     DcMotorEx rightSlide;
     DcMotorEx pivot;
     DcMotorEx linearActuatorMotor;
-    Servo clawServo;
+    CRServoImplEx leftRoller;
+    CRServoImplEx rightRoller;
     Servo pitch;
     Servo roll;
     EndEffectorV2 endEffector;
     Wrist wrist;
     Claw claw;
+    IIntake intake;
     ColorSensor color;
     LED led;
     LinearActuator linearActuator;
@@ -82,6 +88,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     public static boolean enableLogging=false;
+    public enum IntakeDirection {FORWARD,BACKWARD,OFF}
+    IntakeDirection intakeStates;
     @Override
     public void runOpMode() throws InterruptedException {
         //enable manual bulk reads
@@ -101,6 +109,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
+        intakeStates = IntakeDirection.OFF;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
         freqCounter = new FrequencyCounter();
@@ -141,6 +150,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
             }
+            driveTrain.setMaxPower(speedMultiplier);
 
             //manual move of the drivetrain
             driveTrain.Move(driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.turnDrive());
@@ -166,11 +176,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //precedence is the following - continous diff > 42in > manual diff
             if (driverControls.continuousDiffUp()){
                 wrist.manualControlPitch(1);
-            } else if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7
+            } /*else if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7
                     && arm.getElbowAngleInDegrees() < 10){
                 // When slide is extended, making sure pitch is down or we can break the 42in limit
                 wrist.presetPositionPitch(-90);
-            } else if (driverControls.diffUp()){
+            }*/ else if (driverControls.diffUp()){
                 wrist.manualControlPitch(15);
             }
 
@@ -190,10 +200,21 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //manual control for claw
             if (driverControls.openClaw()){
-                claw.openClaw();
-            }
-            if (driverControls.closeClaw()){
-                claw.closeClaw();
+                if (!(intakeStates == IntakeDirection.BACKWARD)) {
+                    intakeStates = IntakeDirection.BACKWARD;
+                    intake.outtake();
+                } else{
+                    intakeStates = IntakeDirection.OFF;
+                    intake.stop();
+                }
+            } else if (driverControls.closeClaw()){
+                if (!(intakeStates == IntakeDirection.FORWARD)) {
+                    intakeStates = IntakeDirection.FORWARD;
+                    intake.intake();
+                } else{
+                    intakeStates = IntakeDirection.OFF;
+                    intake.stop();
+                }
             }
 
             //run touch sensor fsm for resetting slides
@@ -367,9 +388,11 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
     }
     private void initializeIntake(){
-        clawServo = hardwareMap.get(Servo.class, "claw");
+        leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
+        rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
+        rightRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color sensor");
-        claw = new Claw(clawServo);
+        intake = new BigWheelIntake(leftRoller,rightRoller);
         color = new ColorSensor(colorSensor);
 
     }
