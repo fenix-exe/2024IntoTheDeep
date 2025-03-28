@@ -56,9 +56,10 @@ public class Homing {
         slide.setSlidePower(0);
 
         slide.resetEncoder();
-
+        elbow.resetEncoder();
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
+            telemetry.addLine("ELBOW MOVING DOWN");
             elbow.setElbowPower(-0.2);
         }
         while (elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
