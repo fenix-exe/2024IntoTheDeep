@@ -24,13 +24,11 @@ public class HangStateTransition implements IStateTransition{
     TransitionSteps hangState;
     ElapsedTime timer;
     Wrist wrist;
-    Claw claw;
     Arm arm;
     LinearActuator linearActuator;
     DriverControls driverControls;
-    public HangStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls, LinearActuator linearActuator){
+    public HangStateTransition(Wrist wrist, Arm arm, DriverControls driverControls, LinearActuator linearActuator){
         this.wrist = wrist;
-        this.claw = claw;
         this.arm = arm;
         this.driverControls = driverControls;
         this.linearActuator = linearActuator;
@@ -49,7 +47,7 @@ public class HangStateTransition implements IStateTransition{
                     FSMManager.stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
-                    wrist.presetPosition(StateModelParameters.Hang.pitch, StateModelParameters.Hang.roll);
+                    wrist.presetPositionPitch(StateModelParameters.Hang.pitch);
                     linearActuator.goToTargetPositionInches(StateModelParameters.Hang.linearActuatorExtension);
                     hangState = TransitionSteps.LINEAR_ACTUATOR_UP;
                 }

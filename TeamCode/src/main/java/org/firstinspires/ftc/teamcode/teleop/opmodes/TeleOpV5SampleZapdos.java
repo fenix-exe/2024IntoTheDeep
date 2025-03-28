@@ -23,7 +23,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
-import org.firstinspires.ftc.teamcode.common.PinchRollerIntake;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
@@ -88,8 +87,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     public static boolean enableLogging=false;
-    public enum IntakeDirection {FORWARD,BACKWARD,OFF}
-    IntakeDirection intakeStates;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //enable manual bulk reads
@@ -109,7 +107,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
-        intakeStates = IntakeDirection.OFF;
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         matchTimer = new ElapsedTime();
         freqCounter = new FrequencyCounter();
@@ -175,44 +172,34 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //Manual control for wrist up
             //precedence is the following - continous diff > 42in > manual diff
             if (driverControls.continuousDiffUp()){
-                wrist.manualControlPitch(1);
+                wrist.manualControlPitch(-0.005);
             } /*else if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7
                     && arm.getElbowAngleInDegrees() < 10){
                 // When slide is extended, making sure pitch is down or we can break the 42in limit
                 wrist.presetPositionPitch(-90);
             }*/ else if (driverControls.diffUp()){
-                wrist.manualControlPitch(15);
+                wrist.manualControlPitch(0.1);
             }
 
             //manual control for wrist down
             if (driverControls.continuousDiffDown()){
-                wrist.manualControlPitch(-1);
+                wrist.manualControlPitch(-0.005);
             } else if (driverControls.diffDown()){
-                wrist.manualControlPitch(-15);
+                wrist.manualControlPitch(-0.1);
             }
 
-            if (driverControls.diffLeft()){
-                wrist.manualControlRoll(-45);
-            }
-            if (driverControls.diffRight()){
-                wrist.manualControlRoll(45);
-            }
 
             //manual control for claw
             if (driverControls.openClaw()){
-                if (!(intakeStates == IntakeDirection.BACKWARD)) {
-                    intakeStates = IntakeDirection.BACKWARD;
+                if (!(intake.getIntakeDirection() == IIntake.IntakeDirection.BACKWARD)) {
                     intake.outtake();
                 } else{
-                    intakeStates = IntakeDirection.OFF;
                     intake.stop();
                 }
             } else if (driverControls.closeClaw()){
-                if (!(intakeStates == IntakeDirection.FORWARD)) {
-                    intakeStates = IntakeDirection.FORWARD;
+                if (!(intake.getIntakeDirection() == IIntake.IntakeDirection.FORWARD)) {
                     intake.intake();
                 } else{
-                    intakeStates = IntakeDirection.OFF;
                     intake.stop();
                 }
             }
@@ -272,9 +259,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Slide Target Left", leftSlide.getTargetPosition());
             multiTelemetry.addData("Slide Target Right", rightSlide.getTargetPosition());
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
-            multiTelemetry.addData("Wrist Roll", wrist.getRollAngle());
             multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
-            multiTelemetry.addData("Roll Servo Pos", roll.getPosition());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
             /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
@@ -398,8 +383,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     }
     private void initializeDifferential(){
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
-        roll = hardwareMap.get(ServoImplEx.class, "roll");
-        wrist = new Wrist(pitch, roll);
+        wrist = new Wrist(pitch);
     }
     private void initializeEndEffector(){
         initializeDifferential();
@@ -413,7 +397,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, claw, arm, driveTrain, driverControls,color, linearActuator);
+        FSMManager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");

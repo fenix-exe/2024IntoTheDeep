@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControl
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 public class GrabSpecimenStateTransition implements IStateTransition{
@@ -23,15 +23,15 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     private TransitionSteps intakeTransitionStep;
     ElapsedTime timer;
     Wrist wrist;
-    Claw claw;
+    IIntake intake;
     Arm arm;
     IDriveTrain driveTrain;
     DriverControls driverControls;
     ColorSensor color;
     boolean closingClaw;
-    public GrabSpecimenStateTransition(Wrist wrist, Claw claw, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
+    public GrabSpecimenStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
         this.wrist = wrist;
-        this.claw = claw;
+        this.intake = intake;
         this.arm = arm;
         this.driveTrain = driveTrain;
         this.driverControls = driverControls;
@@ -64,7 +64,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                         FSMManager.stopTransitions();
                         timer = new ElapsedTime();
                         timer.reset();
-                        claw.closeClaw();
+                        intake.intake();
                         intakeTransitionStep = TransitionSteps.CLOSING_CLAW;
                     }
                 }
@@ -73,13 +73,13 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 double distanceToSample = color.getDistance(DistanceUnit.MM);
                 if (distanceToSample > 35 && !closingClaw){
                     timer.reset();
-                    claw.closeClaw();
+                    intake.intake();
                     closingClaw = true;
                 }
                 if (distanceToSample > 45 || arm.getSlideExtension() < RobotConstants.LOW_SLIDE_TOLERANCE){
                     if (!closingClaw){
                         timer.reset();
-                        claw.closeClaw();
+                        intake.intake();
                     }
                     closingClaw = false;
                     arm.moveSlide(0,false);
@@ -88,6 +88,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 break;
             case CLOSING_CLAW:
                 if (timer.milliseconds() > 200){
+                    intake.stop();
                     timer.reset();
                     arm.moveElbowToAngle(StateModelParameters.PickupSpecimensStateParameters.elbowUpAngle);
                     intakeTransitionStep = TransitionSteps.MOVING_ELBOW;
@@ -95,7 +96,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 if (driverControls.enterIntakePosition()){
                     driveTrain.lockDriveTrain(false);
                     arm.holdArm();
-                    claw.openClaw();
+                    intake.outtake();
                 }
                 break;
             case MOVING_ELBOW:

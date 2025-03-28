@@ -31,7 +31,7 @@ public class EndEffectorCalibration extends LinearOpMode {
         rollServo = hardwareMap.get(Servo.class, "roll");
         clawServo = hardwareMap.get(Servo.class, "claw");
         rollServo.setDirection(Servo.Direction.REVERSE);
-        wrist = new Wrist(pitchServo, rollServo);
+        wrist = new Wrist(pitchServo);
         claw = new Claw(clawServo);
         endEffector = new EndEffectorV2(wrist, claw);
 
@@ -41,7 +41,7 @@ public class EndEffectorCalibration extends LinearOpMode {
             pitchPosition = pitchServo.getPosition();
             rollPosition = rollServo.getPosition();
 
-            wrist.presetPosition(pitchPos, rollPos);
+            wrist.presetPositionPitch(pitchPos);
 
             if (closeClaw){
                 claw.closeClaw();
@@ -52,7 +52,6 @@ public class EndEffectorCalibration extends LinearOpMode {
             telemetry.addData("Pitch position", pitchPosition);
             telemetry.addData("Roll position", rollPosition);
             telemetry.addData("Pitch Angle", wrist.getPitchAngle());
-            telemetry.addData("Roll Angle", wrist.getRollAngle());
 
             telemetry.update();
         }

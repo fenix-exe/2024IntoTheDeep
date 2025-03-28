@@ -18,9 +18,11 @@ public class Wrist extends CommonWrist {
 
     private final DownsampledWriter wristWriter;
 
+
     public Wrist(Servo pitch){
         super(pitch);
         this.pitch = pitch;
+
         wristWriter = new DownsampledWriter("WRIST INFO", 50_000_000);
     }
 

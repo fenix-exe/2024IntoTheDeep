@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 public class StateModelParameters {
 
     public static class DriveStateParameters{
-        public static double pitch = 0;
+        public static double pitch = 0.5;
         public static double elbowAngle = 92;
         public static double slideLength = 8;
     }
@@ -16,6 +16,7 @@ public class StateModelParameters {
         public static double slideLength=12;
     }
     public static class DepositStateParameters{
+        public static double intermediatePitch = 0.5;
         public static double pitch = 100;
         public static double roll = 0;
         public static double elbowAngle = 92;
@@ -28,6 +29,14 @@ public class StateModelParameters {
         public static double elbowAngle = 80;
         public static double intermediateElbowAngle = 0;
         public static double slideLength = 12;
+    }
+    public static class EnterSubmersibleStateParameters{
+        public static double pitch = 0.16;
+        public static double waitTime = 100;
+    }
+    public static class LeaveSubmersibleStateParameters{
+        public static double pitch = 0.36;
+        public static double slideLength = 0;
     }
     public static class GrabBlockFromOutsideStateParameters{
         public static double downPitch = -105;
@@ -59,6 +68,7 @@ public class StateModelParameters {
     public static class DropBlockAndMoveWristDown{
         public static double pitch = -105;
         public static double elbowAngle = 0.8;
+        public static double slideLength;
     }
     public static class Hang{
         public static double pitch = 5;

@@ -19,12 +19,10 @@ public class GoToDepositStateTransition implements IStateTransition{
     private TransitionSteps goToDepositState;
     ElapsedTime timer;
     Wrist wrist;
-    Claw claw;
     Arm arm;
     DriverControls driverControls;
-    public GoToDepositStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
+    public GoToDepositStateTransition(Wrist wrist, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
-        this.claw = claw;
         this.arm = arm;
         this.driverControls = driverControls;
         goToDepositState = TransitionSteps.START;
@@ -38,11 +36,11 @@ public class GoToDepositStateTransition implements IStateTransition{
     public void execute() {
         switch (goToDepositState){
             case START:
-                if (driverControls.depositBack() && FSMManager.robotState == RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE){
+                if (driverControls.depositBack() && FSMManager.robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
                     FSMManager.stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
-                    wrist.presetPosition(0, StateModelParameters.DepositSpecimensStateParameters.roll); //goes to 0 pitch to not catch on the bucket
+                    wrist.presetPositionPitch(0.5); //goes to 0.5 pitch to not catch on the bucket
                     arm.moveElbowToAngle(StateModelParameters.DepositStateParameters.elbowAngle);
                     goToDepositState = TransitionSteps.MOVING_ELBOW_AND_WRIST;
                 }

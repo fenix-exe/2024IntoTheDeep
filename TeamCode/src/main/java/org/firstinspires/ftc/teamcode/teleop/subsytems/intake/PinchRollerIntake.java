@@ -20,7 +20,17 @@ public class PinchRollerIntake implements IIntake{
     }
 
     @Override
+    public void slowOuttake() {
+        rollers.setPower(RobotConstants.SLOW_OUTTAKE_SPEED);
+    }
+
+    @Override
     public void stop() {
         rollers.setPower(RobotConstants.STOP_SPEED);
+    }
+
+    @Override
+    public IntakeDirection getIntakeDirection() {
+        return null;
     }
 }
