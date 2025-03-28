@@ -15,6 +15,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,6 +23,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.subsystems.activeIntake.autoBigWheelIntake;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.Claw;
 import org.firstinspires.ftc.teamcode.auto.subsystems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.common.util.Homing;
@@ -47,8 +49,8 @@ public class ascentClipCyclePark extends LinearOpMode {
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
     String LOG_NAME = "ascentClipCyclePark";
     int ELBOW_START = 0;
-    double PITCH_START = 1;
-    double ROLL_START = 0.21;
+    double PITCH_START = 0.5;
+    //double ROLL_START = 0.21;
     double CLAW_START = 0.86;
 
     //initialize interpreter
@@ -58,8 +60,9 @@ public class ascentClipCyclePark extends LinearOpMode {
 
     //declare end effector
     ServoImplEx pitch;
-    ServoImplEx roll;
-    ServoImplEx claw;
+    //ServoImplEx roll;
+    CRServoImplEx leftRoller;
+    CRServoImplEx rightRoller;
     autoClaw autoClaw;
     Wrist wrist;
     Claw clawCode;
@@ -108,11 +111,12 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         //initialize hardware
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
-        roll = hardwareMap.get(ServoImplEx.class, "roll");
-        claw = hardwareMap.get(ServoImplEx.class, "claw");
-        autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitch, roll);
-        clawCode = new Claw(claw);
+        leftRoller = hardwareMap.get(CRServoImplEx.class, "roll");
+        rightRoller = hardwareMap.get(CRServoImplEx.class, "claw");
+        //autoClaw = new autoClaw(pitch, roll, claw);
+        wrist = new Wrist(pitch);
+        //clawCode = new Claw(claw);
+        autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
 
 
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
@@ -306,8 +310,9 @@ public class ascentClipCyclePark extends LinearOpMode {
                 }
             }
             if (!PitchareSame || !RollareSame || !ClawareSame) {
-                traj1 = traj1.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))));
-                //traj1 = traj1.stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)), extractAuto.getRollFromList(vector.get(i))));
+                //traj1 = traj1.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))));
+                traj1 = traj1.stopAndAdd(bigWheelIntake.bigWheelIntakePower(extractAuto.getClawFromList(vector.get(i))));
+                traj1 = traj1.stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i))));
                 //traj1 = traj1.stopAndAdd(clawCode.clawControl(extractAuto.getClawFromList(vector.get(i))));
             }
 
@@ -338,7 +343,6 @@ public class ascentClipCyclePark extends LinearOpMode {
         //initialize elbow, slide, and claw to starting positions
         elbow.setTargetAngleAndSpeed(elbow.degreesToTicks(ELBOW_START), 1);
         autoClaw.setPitch(PITCH_START);
-        autoClaw.setRoll(ROLL_START);
         autoClaw.setClaw(0.21);
 
 

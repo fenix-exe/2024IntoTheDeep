@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 
 public class BigWheelIntake implements IIntake{
-    CRServoImplEx leftRoller;
-    CRServoImplEx rightRoller;
+    protected CRServoImplEx leftRoller;
+    protected CRServoImplEx rightRoller;
     public BigWheelIntake(CRServoImplEx leftRoller, CRServoImplEx rightRoller){
         this.leftRoller=leftRoller;
         this.rightRoller=rightRoller;

@@ -78,8 +78,6 @@ public class observationPark extends LinearOpMode {
     Slide slide;
     RevTouchSensor slideSwitch;
 
-
-
     //set up linear actuator
     DcMotorEx linearActuatorMotor;
     RevTouchSensor actuatorSwitch;
@@ -114,7 +112,7 @@ public class observationPark extends LinearOpMode {
         roll = hardwareMap.get(ServoImplEx.class, "roll");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
         autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitch, roll);
+        wrist = new Wrist(pitch);
         clawCode = new Claw(claw);
 
 
