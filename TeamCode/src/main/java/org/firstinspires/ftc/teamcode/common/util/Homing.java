@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
@@ -40,6 +41,11 @@ public class Homing {
     }
 
     public void homeDown(){
+        elbow.setTargetAngle(30);
+        while ((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > RobotConstants.ELBOW_TOLERANCE)) {
+
+        }
+        elbow.setElbowPower(0);
         //homing the slide
         while (!slide.isHomingSwitchPressed() && !opMode.isStopRequested()){
             slide.setSlidePower(-0.3);
@@ -65,7 +71,7 @@ public class Homing {
 
         elbow.resetEncoder();
 
-        elbow.setTargetAngle(elbow.ticksToDegrees(-100));
+        elbow.setTargetAngle(elbow.ticksToDegrees(-105));
 
         while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > elbow.ticksToDegrees(12))){
 
