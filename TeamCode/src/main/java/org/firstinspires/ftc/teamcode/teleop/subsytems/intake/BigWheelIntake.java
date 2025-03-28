@@ -6,9 +6,12 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 
 public class BigWheelIntake implements IIntake{
-    CRServoImplEx leftRoller;
-    CRServoImplEx rightRoller;
+
     private IntakeDirection intakeStates;
+
+    protected CRServoImplEx leftRoller;
+    protected CRServoImplEx rightRoller;
+
     public BigWheelIntake(CRServoImplEx leftRoller, CRServoImplEx rightRoller){
         this.leftRoller=leftRoller;
         this.rightRoller=rightRoller;

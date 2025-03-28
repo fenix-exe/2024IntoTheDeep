@@ -15,11 +15,14 @@ public class Wrist extends CommonWrist {
     //This class is used to control only the wrist(pitch and roll) in degrees
 
     Servo pitch;
-    Servo roll;
+
     private final DownsampledWriter wristWriter;
 
-    public Wrist(Servo pitch, Servo roll){
+
+    public Wrist(Servo pitch){
         super(pitch);
+        this.pitch = pitch;
+
         wristWriter = new DownsampledWriter("WRIST INFO", 50_000_000);
     }
 
@@ -29,24 +32,21 @@ public class Wrist extends CommonWrist {
      */
     public class wristControl implements Action {
         private final double pitchPos;
-        private final double rollPos;
 
-        wristControl(double pitchPos, double rollPos){
+        wristControl(double pitchPos){
             this.pitchPos = pitchPos;
-            this.rollPos = rollPos;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            presetPositionPitch(pitchPos);
-            //presetPositionRoll(rollPos);
-            wristWriter.write(new WristMessage(getPitchAngle(), rollPos));
+            pitch.setPosition(pitchPos);
+            wristWriter.write(new WristMessage(getPitchAngle(), 0));
             return false;
         }
     }
 
-    public Action wristControl(double pitchPos, double rollPos){
-        return new wristControl(pitchPos, rollPos);
+    public Action wristControl(double pitchPos){
+        return new wristControl(pitchPos);
     }
 
 }

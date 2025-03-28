@@ -28,13 +28,14 @@ public class extractAuto {
         public double elbow_phi;
         public double elbow_speed;
         public double linear_slide;
+        public double slide_speed;
         public double pitch;
         public double roll;
         public double claw;
         public double wait;
 
         //this is the constructor for each position in space(one step).
-        PositionInSpace(double x_value, double y_value, double angle, String moveType,double tangent, double velocity ,double correction, double elbow_phi, double elbow_speed, double linear_slide, double pitch, double roll, double claw, double wait) {
+        PositionInSpace(double x_value, double y_value, double angle, String moveType,double tangent, double velocity ,double correction, double elbow_phi, double elbow_speed, double linear_slide, double slide_speed, double pitch, double roll, double claw, double wait) {
             this.x_value = x_value;
             this.y_value = y_value;
             this.angle = angle;
@@ -45,6 +46,7 @@ public class extractAuto {
             this.elbow_phi = elbow_phi;
             this.elbow_speed = elbow_speed;
             this.linear_slide = linear_slide;
+            this.slide_speed = slide_speed;
             this.pitch = pitch;
             this.roll = roll;
             this.claw = claw;
@@ -74,11 +76,12 @@ public class extractAuto {
                 double elbow_phi = Double.parseDouble(values[7].trim());
                 double elbow_speed = Double.parseDouble(values[8].trim());
                 double linear_slide = Double.parseDouble(values[9].trim());
-                double pitch = Double.parseDouble(values[10].trim());
-                double roll = Double.parseDouble(values[11].trim());
-                double claw = Double.parseDouble(values[12].trim());
-                double wait = Double.parseDouble(values[13].trim());
-                autoPath.add(new PositionInSpace(x_value, y_value, angle, moveType,tangent,velocity,correction, elbow_phi, elbow_speed,linear_slide, pitch, roll, claw, wait));
+                double slide_speed = Double.parseDouble(values[10].trim());
+                double pitch = Double.parseDouble(values[11].trim());
+                double roll = Double.parseDouble(values[12].trim());
+                double claw = Double.parseDouble(values[13].trim());
+                double wait = Double.parseDouble(values[14].trim());
+                autoPath.add(new PositionInSpace(x_value, y_value, angle, moveType,tangent,velocity,correction, elbow_phi, elbow_speed,linear_slide, slide_speed, pitch, roll, claw, wait));
             } catch (Exception e) {
                 telemetry.addData("Error", "Invalid number format in line: " + line);
                 telemetry.update();
@@ -130,6 +133,10 @@ public class extractAuto {
 
     public double getLinearSlideFromList(PositionInSpace position) {
         return position.linear_slide;
+    }
+
+    public double getSlideSpeedFromList(PositionInSpace position) {
+        return position.slide_speed;
     }
 
     public double getPitchFromList(PositionInSpace position) {

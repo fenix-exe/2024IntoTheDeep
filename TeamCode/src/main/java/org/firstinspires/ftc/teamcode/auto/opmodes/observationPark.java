@@ -15,6 +15,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,12 +23,10 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+import org.firstinspires.ftc.teamcode.auto.subsystems.activeIntake.autoBigWheelIntake;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.Claw;
 import org.firstinspires.ftc.teamcode.auto.subsystems.wrist.Wrist;
-
 import org.firstinspires.ftc.teamcode.common.util.Homing;
-
 import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.autoClaw;
@@ -43,16 +42,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "AUTO - Observation Park", preselectTeleOp = "TeleOpV5SampleZapdos")
+@Autonomous(name = "AUTO - OBSERVATION PARK", preselectTeleOp = "TeleOpV5SampleZapdos")
 public class observationPark extends LinearOpMode {
 
     //declare vars
     String FILE_NAME = "/sdcard/Download/autoPositions/observationPark.csv";
     String LOG_NAME = "observationPark";
     int ELBOW_START = 0;
-    double PITCH_START = 1;
-    double ROLL_START = 0.21;
-    double CLAW_START = 0.86;
+    double PITCH_START = 0.16;
+    //double ROLL_START = 0.21;
+    //double CLAW_START = 0.86;
 
     //initialize interpreter
     extractAuto extractAuto = new extractAuto();
@@ -61,8 +60,9 @@ public class observationPark extends LinearOpMode {
 
     //declare end effector
     ServoImplEx pitch;
-    ServoImplEx roll;
-    ServoImplEx claw;
+    //ServoImplEx roll;
+    CRServoImplEx leftRoller;
+    CRServoImplEx rightRoller;
     autoClaw autoClaw;
     Wrist wrist;
     Claw clawCode;
@@ -111,11 +111,13 @@ public class observationPark extends LinearOpMode {
 
         //initialize hardware
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
-        roll = hardwareMap.get(ServoImplEx.class, "roll");
-        claw = hardwareMap.get(ServoImplEx.class, "claw");
-        autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitch, roll);
-        clawCode = new Claw(claw);
+        leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
+        rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
+        rightRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        //autoClaw = new autoClaw(pitch, roll, claw);
+        wrist = new Wrist(pitch);
+        //clawCode = new Claw(claw);
+        autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
 
 
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
@@ -163,6 +165,7 @@ public class observationPark extends LinearOpMode {
 
 
         //HOMING
+        pitch.setPosition(0.5);
         homingAgent.homeDown();
         /* pitch.setPosition(0.66);
 
@@ -275,19 +278,21 @@ public class observationPark extends LinearOpMode {
                     traj1 = traj1.stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))));
                 }
                 if (!SlideareSame) {
-                    traj1 = traj1.stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                    traj1 = traj1.stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 }
             }
+
             else if (XareSame && YareSame && !AngleareSame) {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))))
                         .turnTo(extractAuto.getAngleFromList(vector.get(i)), new TurnConstraints(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01, extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01, extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01));
             }
+
             else if ((!XareSame || !YareSame) && AngleareSame) {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
                     traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
@@ -298,7 +303,7 @@ public class observationPark extends LinearOpMode {
             else {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
                     traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
@@ -307,8 +312,9 @@ public class observationPark extends LinearOpMode {
                 }
             }
             if (!PitchareSame || !RollareSame || !ClawareSame) {
-                traj1 = traj1.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))));
-                //traj1 = traj1.stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i)), extractAuto.getRollFromList(vector.get(i))));
+                //traj1 = traj1.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))));
+                traj1 = traj1.stopAndAdd(bigWheelIntake.bigWheelIntakePower(extractAuto.getClawFromList(vector.get(i))));
+                traj1 = traj1.stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i))));
                 //traj1 = traj1.stopAndAdd(clawCode.clawControl(extractAuto.getClawFromList(vector.get(i))));
             }
 
@@ -338,9 +344,8 @@ public class observationPark extends LinearOpMode {
 
         //initialize elbow, slide, and claw to starting positions
         elbow.setTargetAngleAndSpeed(elbow.degreesToTicks(ELBOW_START), 1);
-        autoClaw.setPitch(PITCH_START);
-        autoClaw.setRoll(ROLL_START);
-        autoClaw.setClaw(0.21);
+        //autoClaw.setPitch(PITCH_START);
+        //autoClaw.setClaw(0.21);
 
 
         if (elbow.degreesToTicks(ELBOW_START)-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < elbow.degreesToTicks(ELBOW_START)+30) {
@@ -356,7 +361,7 @@ public class observationPark extends LinearOpMode {
 
         elbowMotor.setPower(0);
 
-        autoClaw.setClaw(CLAW_START);
+        //autoClaw.setClaw(CLAW_START);
 
         ElapsedTime timer = new ElapsedTime();
 
