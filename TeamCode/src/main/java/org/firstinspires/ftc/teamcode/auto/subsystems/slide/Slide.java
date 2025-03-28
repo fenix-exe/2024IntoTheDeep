@@ -35,6 +35,16 @@ public class Slide extends CommonSlide {
         slideWriter = new DownsampledWriter("SLIDE INFO", 50_000_000);
     }
 
+    public void setSlideExtensionLengthAndSpeed(double lengthInInches, double speed){
+        int targetPosition = inchesToTicks(lengthInInches);
+        rightSlideMotor.setTargetPosition(targetPosition);
+        leftSlideMotor.setTargetPosition(targetPosition);
+        rightSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlideMotor.setPower(speed);
+        leftSlideMotor.setPower(speed);
+    }
+
 
     /* this action sets slide motor position using inches
     * finishes when slide is within 0.5 inches of the position
@@ -42,22 +52,24 @@ public class Slide extends CommonSlide {
      */
     public class slideControl implements Action {
         private final double targetPos;
+        private final double speed;
         private boolean initialized = false;
-        slideControl(double targetPos){
+        slideControl(double targetPos, double speed){
             this.targetPos = targetPos;
+            this.speed = speed;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (!initialized) {
-                setSlideExtensionLength(targetPos);
+                setSlideExtensionLengthAndSpeed(targetPos, speed);
                 initialized = true;
             }
 
             if (homingSwitch.isPressed()){
                 leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                setSlideExtensionLength(targetPos);
+                setSlideExtensionLengthAndSpeed(targetPos, speed);
             }
 
             slideWriter.write(new SlideMessage(getSlideExtensionInInches(), targetPos, leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
@@ -65,8 +77,8 @@ public class Slide extends CommonSlide {
             return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
         }
     }
-    public Action slideControl(double targetPos){
-        return new slideControl(targetPos);
+    public Action slideControl(double targetPos, double speed){
+        return new slideControl(targetPos, speed);
     }
 
 

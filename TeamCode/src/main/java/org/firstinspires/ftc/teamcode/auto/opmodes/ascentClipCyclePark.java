@@ -49,9 +49,9 @@ public class ascentClipCyclePark extends LinearOpMode {
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
     String LOG_NAME = "ascentClipCyclePark";
     int ELBOW_START = 0;
-    double PITCH_START = 0.5;
+    double PITCH_START = 0.16;
     //double ROLL_START = 0.21;
-    double CLAW_START = 0.86;
+    //double CLAW_START = 0.86;
 
     //initialize interpreter
     extractAuto extractAuto = new extractAuto();
@@ -111,8 +111,9 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         //initialize hardware
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
-        leftRoller = hardwareMap.get(CRServoImplEx.class, "roll");
-        rightRoller = hardwareMap.get(CRServoImplEx.class, "claw");
+        leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
+        rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
+        rightRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         //autoClaw = new autoClaw(pitch, roll, claw);
         wrist = new Wrist(pitch);
         //clawCode = new Claw(claw);
@@ -164,6 +165,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
 
         //HOMING
+        pitch.setPosition(0.5);
         homingAgent.homeDown();
         /* pitch.setPosition(0.66);
 
@@ -226,8 +228,8 @@ public class ascentClipCyclePark extends LinearOpMode {
         }
 
         /*initialize IMU
-        *IS THIS NECESSARY?
-        */
+         *IS THIS NECESSARY?
+         */
         IMU revIMU = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -276,21 +278,21 @@ public class ascentClipCyclePark extends LinearOpMode {
                     traj1 = traj1.stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))));
                 }
                 if (!SlideareSame) {
-                    traj1 = traj1.stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                    traj1 = traj1.stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 }
             }
 
             else if (XareSame && YareSame && !AngleareSame) {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))))
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))))
                         .turnTo(extractAuto.getAngleFromList(vector.get(i)), new TurnConstraints(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01, extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01, extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01));
             }
 
             else if ((!XareSame || !YareSame) && AngleareSame) {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
                     traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
@@ -301,7 +303,7 @@ public class ascentClipCyclePark extends LinearOpMode {
             else {
                 traj1 = traj1
                         .afterDisp(0,elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))))
-                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i))));
+                        .afterDisp(0,slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 if (extractAuto.getMoveTypeFromList(vector.get(i)).equals("spline")) {
                     traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
@@ -342,8 +344,8 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         //initialize elbow, slide, and claw to starting positions
         elbow.setTargetAngleAndSpeed(elbow.degreesToTicks(ELBOW_START), 1);
-        autoClaw.setPitch(PITCH_START);
-        autoClaw.setClaw(0.21);
+        //autoClaw.setPitch(PITCH_START);
+        //autoClaw.setClaw(0.21);
 
 
         if (elbow.degreesToTicks(ELBOW_START)-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < elbow.degreesToTicks(ELBOW_START)+30) {
@@ -359,7 +361,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         elbowMotor.setPower(0);
 
-        autoClaw.setClaw(CLAW_START);
+        //autoClaw.setClaw(CLAW_START);
 
         ElapsedTime timer = new ElapsedTime();
 
