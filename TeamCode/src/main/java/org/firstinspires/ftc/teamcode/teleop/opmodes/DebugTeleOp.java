@@ -383,7 +383,7 @@ public class DebugTeleOp extends LinearOpMode {
     private void initializeDifferential(){
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         roll = hardwareMap.get(ServoImplEx.class, "roll");
-        wrist = new Wrist(pitch, roll);
+        wrist = new Wrist(pitch);
     }
     private void initializeEndEffector(){
         initializeDifferential();
@@ -397,7 +397,7 @@ public class DebugTeleOp extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, claw, arm, driveTrain, driverControls,color, linearActuator);
+        FSMManager.initialize(wrist, null, arm, driveTrain, driverControls,color, linearActuator);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");

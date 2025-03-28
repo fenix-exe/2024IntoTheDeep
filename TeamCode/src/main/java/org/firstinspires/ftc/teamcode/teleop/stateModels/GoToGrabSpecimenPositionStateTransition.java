@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 public class GoToGrabSpecimenPositionStateTransition implements IStateTransition{
@@ -20,12 +19,12 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
     private TransitionSteps intakeTransitionStep;
     ElapsedTime timer;
     Wrist wrist;
-    Claw claw;
+    IIntake intake;
     Arm arm;
     DriverControls driverControls;
-    public GoToGrabSpecimenPositionStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
+    public GoToGrabSpecimenPositionStateTransition(Wrist wrist, IIntake intake, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
-        this.claw = claw;
+        this.intake = intake;
         this.arm = arm;
         this.driverControls = driverControls;
         intakeTransitionStep = TransitionSteps.START;
@@ -47,14 +46,14 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
                     timer = new ElapsedTime();
                     FSMManager.stopTransitions();
                     timer.reset();
-                    claw.openClaw();
+                    intake.outtake();
                     intakeTransitionStep = TransitionSteps.OPENING_CLAW;
                 }
                 break;
             case OPENING_CLAW:
                 if (timer.milliseconds() > 200) {
                     timer.reset();
-                    wrist.presetPosition(StateModelParameters.PickupSpecimensStateParameters.pitch, StateModelParameters.PickupSpecimensStateParameters.roll);
+                    wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_WRIST;
                 }
                 break;

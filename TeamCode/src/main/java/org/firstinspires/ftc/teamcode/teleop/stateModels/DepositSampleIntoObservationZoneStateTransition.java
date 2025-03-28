@@ -17,12 +17,10 @@ public class DepositSampleIntoObservationZoneStateTransition implements IStateTr
     private TransitionSteps depositSampleIntoObservationZoneState;
     ElapsedTime timer;
     Wrist wrist;
-    Claw claw;
     Arm arm;
     DriverControls driverControls;
-    public DepositSampleIntoObservationZoneStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
+    public DepositSampleIntoObservationZoneStateTransition(Wrist wrist, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
-        this.claw = claw;
         this.arm = arm;
         this.driverControls = driverControls;
         depositSampleIntoObservationZoneState = TransitionSteps.START;
@@ -40,7 +38,6 @@ public class DepositSampleIntoObservationZoneStateTransition implements IStateTr
                     FSMManager.stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
-                    wrist.presetPositionRoll(StateModelParameters.DepositSampleIntoObservationZone.downRoll);
                     arm.moveSlideToLength(StateModelParameters.DepositSampleIntoObservationZone.extensionLength);
                     depositSampleIntoObservationZoneState = TransitionSteps.EXTEND_SLIDES_AND_FIX_ROLL;
                 }

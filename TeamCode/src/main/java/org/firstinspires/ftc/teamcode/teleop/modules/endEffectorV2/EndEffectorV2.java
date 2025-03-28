@@ -16,12 +16,8 @@ public class EndEffectorV2 {
     public void manualPitch(double stepSize, double initialPosition){
         wrist.manualControlPitch(stepSize);
     }
-    public void manualRoll(double stepSize, double initialPosition){
-        wrist.manualControlRoll(stepSize);
-    }
-    public void goToPresetPosition (double pitch, double roll){
+    public void presetPitch(double pitch){
         wrist.presetPositionPitch(pitch);
-        wrist.presetPositionRoll(roll);
     }
     public void openClaw(){
         claw.openClaw();
@@ -32,7 +28,6 @@ public class EndEffectorV2 {
     public HashMap getDebugInfo(){
         HashMap debugMap = new HashMap();
         debugMap.put("Pitch Angle", String.valueOf(wrist.getPitchAngle()));
-        debugMap.put("Roll Angle", String.valueOf(wrist.getRollAngle()));
         debugMap.put("Claw Servo Position", String.valueOf(claw.getClawPosition()));
         return debugMap;
     }

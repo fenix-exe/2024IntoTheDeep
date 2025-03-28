@@ -37,11 +37,12 @@ public class PresetConfigUtil {
                 StateModelParameters.IntakeStateParameters.slideLength = Double.parseDouble(configValues[6]);
                 break;
             case "DEPOSIT_STATE_MODEL_PARAMS":
-                StateModelParameters.DepositStateParameters.pitch = Double.parseDouble(configValues[1]);
-                StateModelParameters.DepositStateParameters.roll = Double.parseDouble(configValues[2]);
-                StateModelParameters.DepositStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
-                StateModelParameters.DepositStateParameters.slideLength = Double.parseDouble(configValues[4]);
-                StateModelParameters.DepositStateParameters.slideRetractionLength = Double.parseDouble(configValues[5]);
+                StateModelParameters.DepositStateParameters.intermediatePitch = Double.parseDouble(configValues[1]);
+                StateModelParameters.DepositStateParameters.pitch = Double.parseDouble(configValues[2]);
+                StateModelParameters.DepositStateParameters.roll = Double.parseDouble(configValues[3]);
+                StateModelParameters.DepositStateParameters.elbowAngle = Double.parseDouble(configValues[4]);
+                StateModelParameters.DepositStateParameters.slideLength = Double.parseDouble(configValues[5]);
+                StateModelParameters.DepositStateParameters.slideRetractionLength = Double.parseDouble(configValues[6]);
                 break;
             case "DEPOSIT_SAMPLE_INTO_BUCKET_STATE_MODEL_PARAMS":
                 StateModelParameters.DepositSampleIntoBucketStateParameters.pitch = Double.parseDouble(configValues[1]);
@@ -80,6 +81,7 @@ public class PresetConfigUtil {
             case "DROP_BLOCK_AND_MOVE_WRIST_DOWN_STATE_MODEL_PARAMS":
                 StateModelParameters.DropBlockAndMoveWristDown.pitch = Double.parseDouble(configValues[1]);
                 StateModelParameters.DropBlockAndMoveWristDown.elbowAngle = Double.parseDouble(configValues[2]);
+                StateModelParameters.DropBlockAndMoveWristDown.slideLength = Double.parseDouble(configValues[3]);
                 break;
             case "HANG_STATE_MODEL_PARAMS":
                 StateModelParameters.Hang.pitch = Double.parseDouble(configValues[1]);
@@ -99,6 +101,14 @@ public class PresetConfigUtil {
                 StateModelParameters.DepositSampleIntoObservationZone.extensionLength = Double.parseDouble(configValues[3]);
                 StateModelParameters.DepositSampleIntoObservationZone.downPitch = Double.parseDouble(configValues[4]);
                 StateModelParameters.DepositSampleIntoObservationZone.downRoll = Double.parseDouble(configValues[5]);
+                break;
+            case "ENTER_SUBMERSIBLE_STATE_MODEL_PARAMS":
+                StateModelParameters.EnterSubmersibleStateParameters.pitch = Double.parseDouble(configValues[1]);
+                StateModelParameters.EnterSubmersibleStateParameters.waitTime = Double.parseDouble(configValues[2]);
+                break;
+            case "LEAVE_SUBMERSIBLE_STATE_MODEL_PARAMS":
+                StateModelParameters.LeaveSubmersibleStateParameters.pitch = Double.parseDouble(configValues[1]);
+                StateModelParameters.LeaveSubmersibleStateParameters.slideLength = Double.parseDouble(configValues[2]);
             default:
                 LoggerUtil.error("updatePresets", "Read Unknown Preset," + preset_name );
                 break;

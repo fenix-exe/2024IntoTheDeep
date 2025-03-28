@@ -40,10 +40,10 @@ public class EndEffectorSlideTest extends LinearOpMode {
         pitchServo = hardwareMap.get(Servo.class, "pitch");
         rollServo = hardwareMap.get(Servo.class, "roll");
         clawServo = hardwareMap.get(Servo.class, "claw");
-        wrist = new Wrist(pitchServo, rollServo);
+        wrist = new Wrist(pitchServo);
         claw = new Claw(clawServo);
         endEffector = new EndEffectorV2(wrist, claw);
-        endEffector.goToPresetPosition(0.5,0.5);
+        endEffector.presetPitch(0);
 
         slideMotor = hardwareMap.get(DcMotorEx.class, "slide");
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
@@ -81,14 +81,8 @@ public class EndEffectorSlideTest extends LinearOpMode {
             if (gamepad1.dpad_up) {
                 endEffector.manualPitch(0.001, pitchPosition);
             }
-            if (gamepad1.dpad_left) {
-                endEffector.manualRoll(-0.001, rollPosition);
-            }
-            if (gamepad1.dpad_right) {
-                endEffector.manualRoll(0.001, rollPosition);
-            }
             if (gamepad1.a) {
-                endEffector.goToPresetPosition(0,0);
+                endEffector.presetPitch(0);
             }
             if (gamepad1.left_bumper) {
                 endEffector.openClaw();

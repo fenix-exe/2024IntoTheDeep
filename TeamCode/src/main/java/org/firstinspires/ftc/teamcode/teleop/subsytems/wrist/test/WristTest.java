@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
-
+@TeleOp
 public class WristTest extends LinearOpMode {
     Servo pitchServo;
     Servo rollServo;
@@ -14,29 +15,24 @@ public class WristTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         pitchServo = hardwareMap.get(Servo.class, "pitch");
         rollServo = hardwareMap.get(Servo.class, "roll");
-        wrist = new Wrist(pitchServo, rollServo);
+        wrist = new Wrist(pitchServo);
         wrist.presetPositionPitch(0);
-        wrist.presetPositionRoll(0);
 
         waitForStart();
 
         while (opModeIsActive()){
             if (gamepad1.dpad_down) {
-                wrist.manualControlPitch(-1);
+                wrist.manualControlPitch(-0.02);
             }
             if (gamepad1.dpad_up) {
-                wrist.manualControlPitch(1);
-            }
-            if (gamepad1.dpad_left) {
-                wrist.manualControlRoll(-1);
-            }
-            if (gamepad1.dpad_right) {
-                wrist.manualControlRoll(1);
+                wrist.manualControlPitch(0.02);
             }
             if (gamepad1.a) {
-                wrist.presetPositionPitch(0);
-                wrist.presetPositionRoll(0);
+                wrist.presetPositionPitch(0.5);
             }
+            sleep(100);
+            telemetry.addData("Servo Pos", wrist.getPitchAngle());
+            telemetry.update();
         }
     }
 }

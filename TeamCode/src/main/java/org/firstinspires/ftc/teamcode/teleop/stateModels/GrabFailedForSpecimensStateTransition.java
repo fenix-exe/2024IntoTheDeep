@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 public class GrabFailedForSpecimensStateTransition implements IStateTransition{
@@ -16,12 +14,12 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
 
     private TransitionSteps dropSpecimenState;
     Wrist wrist;
-    Claw claw;
+    IIntake intake;
     Arm arm;
     DriverControls driverControls;
-    public GrabFailedForSpecimensStateTransition(Wrist wrist, Claw claw, Arm arm, DriverControls driverControls){
+    public GrabFailedForSpecimensStateTransition(Wrist wrist, IIntake intake, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
-        this.claw = claw;
+        this.intake = intake;
         this.arm = arm;
         this.driverControls = driverControls;
         dropSpecimenState = TransitionSteps.START;
@@ -38,8 +36,8 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
                 if (driverControls.enterIntakePosition() && FSMManager.robotState == RobotState.READY_TO_GO_TO_CLIP_POSITION) {
                     FSMManager.stopTransitions();
                     arm.holdArm();
-                    claw.openClaw();
-                    wrist.presetPosition(StateModelParameters.PickupSpecimensStateParameters.pitch, StateModelParameters.PickupSpecimensStateParameters.roll);
+                    intake.outtake();
+                    wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
                     arm.moveElbowToAngle(StateModelParameters.PickupSpecimensStateParameters.elbowAngle);
                     arm.moveSlideToLength(StateModelParameters.PickupSpecimensStateParameters.slideLength);
                     dropSpecimenState = TransitionSteps.BACK_TO_INTAKE_POSITION;

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 public enum RobotState {
     START,
+    READY_TO_ENTER_SUBMERSIBLE,
     READY_TO_INTAKE_SAMPLE,
     READY_TO_LEAVE_SUBMERSIBLE,
     INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE,
