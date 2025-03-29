@@ -113,7 +113,7 @@ public class observationPark extends LinearOpMode {
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
-        rightRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         //autoClaw = new autoClaw(pitch, roll, claw);
         wrist = new Wrist(pitch);
         //clawCode = new Claw(claw);
