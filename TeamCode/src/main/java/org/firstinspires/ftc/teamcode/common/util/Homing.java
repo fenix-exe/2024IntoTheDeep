@@ -41,11 +41,7 @@ public class Homing {
     }
 
     public void homeDown(){
-        elbow.setTargetAngle(30);
-        while ((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > RobotConstants.ELBOW_TOLERANCE)) {
 
-        }
-        elbow.setElbowPower(0);
         //homing the slide
         while (!slide.isHomingSwitchPressed() && !opMode.isStopRequested()){
             slide.setSlidePower(-0.3);
@@ -56,6 +52,12 @@ public class Homing {
         slide.setSlidePower(0);
 
         slide.resetEncoder();
+
+        elbow.setTargetAngle(30);
+        while ((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > RobotConstants.ELBOW_TOLERANCE)) {
+
+        }
+        elbow.setElbowPower(0);
         elbow.resetEncoder();
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){

@@ -61,10 +61,7 @@ public class Slide extends CommonSlide {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initialized) {
                 setSlideExtensionLengthAndSpeed(targetPos, speed);
-                initialized = true;
-            }
 
             if (homingSwitch.isPressed()){
                 leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

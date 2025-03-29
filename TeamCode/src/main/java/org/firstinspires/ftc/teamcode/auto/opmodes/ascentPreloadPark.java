@@ -137,6 +137,8 @@ public class ascentPreloadPark extends LinearOpMode {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setTargetPositionTolerance(10);
+        rightSlide.setTargetPositionTolerance(10);
         slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
         slide = new Slide(leftSlide,rightSlide, slideSwitch);
 
