@@ -36,8 +36,8 @@ public class HomeTeleOpDown extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initializeArmAndHome();
 
+        telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
         while (opModeInInit()){
-            telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
             if (gamepad1.dpad_up){
                 telemetryMessage = "ELBOW UP 30 DEGREES, THEN HOME DOWN";
                 mode = Mode.ELBOW_UP_THEN_HOME;
@@ -88,7 +88,7 @@ public class HomeTeleOpDown extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
         homing = new Homing(leftSlide,rightSlide,pivot,linearActuatorMotor,this, telemetry, slideSwitch,actuatorSwitch,elbowSwitch);
-        pitch = hardwareMap.get(Servo.class, "pitch");
+        pitch = hardwareMap.get(Servo.class, "pitchLeft");
 
         pitch.setPosition(0.5);
     }
