@@ -5,22 +5,26 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.common.CommonWrist;
 
 public class Wrist extends CommonWrist {
-    Servo pitchServo;
+    Servo pitchLeft;
     private static final double PITCH_OFFSET = 3;
 
     public Wrist(Servo pitch){
         super(pitch);
-        pitchServo = pitch;
+        pitchLeft = pitch;
+    }
+    public Wrist(Servo pitchLeft, Servo pitchRight){
+        super(pitchLeft, pitchRight);
+        this.pitchLeft = pitchLeft;
     }
     public void manualControlPitch(double stepSize){
-        double targetPosition = stepSize + pitchServo.getPosition();
-        if (targetPosition > 1){
-            targetPosition = 1;
+        double targetPosition = stepSize + pitchLeft.getPosition();
+        if (targetPosition > 1 - CommonWrist.SERVO_OFFSET){
+            targetPosition = 1 - CommonWrist.SERVO_OFFSET;
         }
-        if (targetPosition < 0){
-            targetPosition = 0;
+        if (targetPosition < CommonWrist.SERVO_OFFSET){
+            targetPosition = CommonWrist.SERVO_OFFSET;
         }
-        pitchServo.setPosition(targetPosition);
+        pitchLeft.setPosition(targetPosition);
     }
 
 }
