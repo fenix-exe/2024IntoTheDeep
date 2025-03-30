@@ -15,11 +15,11 @@
             <goBILDA5202SeriesMotor name="BR" port="2" />
             <goBILDA5202SeriesMotor name="rightSlide" port="3" />
             <goBILDA5202SeriesMotor name="leftSlide" port="1" />
-            <Servo name="pitch" port="0" />
+            <Servo name="pitchLeft" port="5" />
             <RevBlinkinLedDriver name="blinkin" port="4" />
             <ContinuousRotationServo name="rightRoller" port="3" />
-            <ContinuousRotationServo name="leftRoller" port="5"/>
-            <Servo name="roll" port="2"/>
+            <ContinuousRotationServo name="leftRoller" port="0"/>
+            <Servo name="pitchRight" port="2"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
             <RevTouchSensor name="slide switch" port="1" />
