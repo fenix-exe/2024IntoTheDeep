@@ -25,6 +25,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.auto.subsystems.activeIntake.autoBigWheelIntake;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.Claw;
 import org.firstinspires.ftc.teamcode.auto.subsystems.wrist.Wrist;
+import org.firstinspires.ftc.teamcode.common.CommonWrist;
 import org.firstinspires.ftc.teamcode.common.util.Homing;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
@@ -58,7 +59,8 @@ public class ascentClipCyclePark extends LinearOpMode {
     RobotWideFunctions robot = new RobotWideFunctions();
 
     //declare end effector
-    ServoImplEx pitch;
+    ServoImplEx pitchLeft;
+    ServoImplEx pitchRight;
     //ServoImplEx roll;
     CRServoImplEx leftRoller;
     CRServoImplEx rightRoller;
@@ -109,12 +111,14 @@ public class ascentClipCyclePark extends LinearOpMode {
 
 
         //initialize hardware
-        pitch = hardwareMap.get(ServoImplEx.class, "pitch");
+        pitchLeft = hardwareMap.get(ServoImplEx.class, "pitchLeft");
+        pitchRight = hardwareMap.get(ServoImplEx.class, "pitchRight");
+
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
         leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         //autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitch);
+        wrist = new Wrist(pitchLeft, pitchRight);
         //clawCode = new Claw(claw);
         autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
 
@@ -166,7 +170,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
 
         //HOMING
-        pitch.setPosition(0.5);
+        wrist.presetPositionPitch(0.5);
         sleep(250);
         homingAgent.moveElbowUpAndHomeDown();
         /* pitch.setPosition(0.66);

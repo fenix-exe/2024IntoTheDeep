@@ -58,7 +58,8 @@ public class observationPark extends LinearOpMode {
     RobotWideFunctions robot = new RobotWideFunctions();
 
     //declare end effector
-    ServoImplEx pitch;
+    ServoImplEx pitchLeft;
+    ServoImplEx pitchRight;
     //ServoImplEx roll;
     CRServoImplEx leftRoller;
     CRServoImplEx rightRoller;
@@ -109,12 +110,14 @@ public class observationPark extends LinearOpMode {
 
 
         //initialize hardware
-        pitch = hardwareMap.get(ServoImplEx.class, "pitch");
+        pitchLeft = hardwareMap.get(ServoImplEx.class, "pitchLeft");
+        pitchRight = hardwareMap.get(ServoImplEx.class, "pitchRight");
+
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
         leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         //autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitch);
+        wrist = new Wrist(pitchLeft, pitchRight);
         //clawCode = new Claw(claw);
         autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
 
@@ -136,6 +139,8 @@ public class observationPark extends LinearOpMode {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setTargetPositionTolerance(10);
+        rightSlide.setTargetPositionTolerance(10);
         slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
         slide = new Slide(leftSlide,rightSlide, slideSwitch);
 
@@ -164,7 +169,8 @@ public class observationPark extends LinearOpMode {
 
 
         //HOMING
-        pitch.setPosition(0.5);
+        wrist.presetPositionPitch(0.5);
+        sleep(250);
         homingAgent.moveElbowUpAndHomeDown();
         /* pitch.setPosition(0.66);
 

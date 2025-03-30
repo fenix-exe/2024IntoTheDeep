@@ -58,7 +58,8 @@ public class ascentPreloadPark extends LinearOpMode {
     RobotWideFunctions robot = new RobotWideFunctions();
 
     //declare end effector
-    ServoImplEx pitch;
+    ServoImplEx pitchLeft;
+    ServoImplEx pitchRight;
     //ServoImplEx roll;
     CRServoImplEx leftRoller;
     CRServoImplEx rightRoller;
@@ -109,12 +110,14 @@ public class ascentPreloadPark extends LinearOpMode {
 
 
         //initialize hardware
-        pitch = hardwareMap.get(ServoImplEx.class, "pitch");
+        pitchLeft = hardwareMap.get(ServoImplEx.class, "pitchLeft");
+        pitchRight = hardwareMap.get(ServoImplEx.class, "pitchRight");
+
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
         leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         //autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitch);
+        wrist = new Wrist(pitchLeft, pitchRight);
         //clawCode = new Claw(claw);
         autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
 
@@ -166,7 +169,8 @@ public class ascentPreloadPark extends LinearOpMode {
 
 
         //HOMING
-        pitch.setPosition(0.5);
+        wrist.presetPositionPitch(0.5);
+        sleep(250);
         homingAgent.moveElbowUpAndHomeDown();
         /* pitch.setPosition(0.66);
 
