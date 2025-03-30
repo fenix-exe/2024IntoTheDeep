@@ -40,6 +40,65 @@ public class Homing {
         return elbowMotor.getDeviceName();
     }
 
+    public void moveElbowUpAndHomeDown(){
+
+        //homing the slide
+        while (!slide.isHomingSwitchPressed() && !opMode.isStopRequested()){
+            slide.setSlidePower(-0.3);
+            telemetry.addData("slide switch state", slide.isHomingSwitchPressed());
+            telemetry.addData("Elbow Angle", elbow.getElbowAngle());
+            telemetry.update();
+        }
+        slide.setSlidePower(0);
+
+        slide.resetEncoder();
+
+        elbow.resetEncoder();
+        elbow.setTargetAngle(30);
+        while ((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > RobotConstants.ELBOW_TOLERANCE)) {
+
+        }
+        elbow.setElbowPower(0);
+        elbow.resetEncoder();
+        //Homing the elbow
+        while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
+            telemetry.addLine("ELBOW MOVING DOWN");
+            elbow.setElbowPower(-0.2);
+        }
+        while (elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
+            elbow.setElbowPower(-0.4);
+        }
+        while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
+            elbow.setElbowPower(0.4);
+        }
+        elbow.setElbowPower(0);
+
+        elbow.resetEncoder();
+
+        elbow.setTargetAngle(elbow.ticksToDegrees(-105));
+
+        while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > elbow.ticksToDegrees(12))){
+
+        }
+
+        elbow.setElbowPower(0);
+
+        elbow.resetEncoder();
+
+        //homing the linear actuator
+        while (!linearActuator.getLimitSwitchState() && !opMode.isStopRequested()){
+            telemetry.addLine("ELBOW IS HOMED");
+            telemetry.update();
+            linearActuator.setLinearActuatorPower(-0.5);
+        }
+        linearActuator.setLinearActuatorPower(0);
+
+        linearActuator.resetEncoders();
+
+
+
+    }
+
     public void homeDown(){
 
         //homing the slide
@@ -53,11 +112,7 @@ public class Homing {
 
         slide.resetEncoder();
 
-        elbow.setTargetAngle(30);
-        while ((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > RobotConstants.ELBOW_TOLERANCE)) {
 
-        }
-        elbow.setElbowPower(0);
         elbow.resetEncoder();
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){

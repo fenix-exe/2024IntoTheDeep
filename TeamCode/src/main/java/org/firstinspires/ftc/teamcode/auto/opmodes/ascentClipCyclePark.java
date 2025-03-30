@@ -10,7 +10,6 @@ import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -169,7 +168,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         //HOMING
         pitch.setPosition(0.5);
         sleep(250);
-        homingAgent.homeDown();
+        homingAgent.moveElbowUpAndHomeDown();
         /* pitch.setPosition(0.66);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
