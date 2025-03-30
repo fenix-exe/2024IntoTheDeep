@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.SlideMessage;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.StatusMessage;
 import org.firstinspires.ftc.teamcode.common.CommonSlide;
 
 
@@ -25,6 +26,8 @@ public class Slide extends CommonSlide {
     public DcMotorEx rightSlideMotor;
     public RevTouchSensor homingSwitch;
     private final DownsampledWriter slideWriter;
+    private final DownsampledWriter slideStatusWriter;
+
 
 
     public Slide(DcMotorEx leftSlideMotor, DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch){
@@ -33,6 +36,7 @@ public class Slide extends CommonSlide {
         this.leftSlideMotor = leftSlideMotor;
         this.rightSlideMotor = rightSlideMotor;
         slideWriter = new DownsampledWriter("SLIDE INFO", 50_000_000);
+        slideStatusWriter = new DownsampledWriter("SLIDE STATUS", 50_000_000);
     }
 
     public void setSlideExtensionLengthAndSpeed(double lengthInInches, double speed){
@@ -61,15 +65,13 @@ public class Slide extends CommonSlide {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initialized) {
-                setSlideExtensionLengthAndSpeed(targetPos, speed);
-                initialized = true;
-            }
+            setSlideExtensionLengthAndSpeed(targetPos, speed);
 
             if (homingSwitch.isPressed()){
                 leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 setSlideExtensionLengthAndSpeed(targetPos, speed);
+                slideStatusWriter.write(new StatusMessage("SLIDES RESET"));
             }
 
             slideWriter.write(new SlideMessage(getSlideExtensionInInches(), targetPos, leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));

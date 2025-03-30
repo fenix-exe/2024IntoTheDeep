@@ -112,6 +112,7 @@ public class Homing {
 
         slide.resetEncoder();
 
+
         elbow.resetEncoder();
         //Homing the elbow
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){

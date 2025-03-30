@@ -112,7 +112,7 @@ public class ascentPreloadPark extends LinearOpMode {
         pitch = hardwareMap.get(ServoImplEx.class, "pitch");
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
-        rightRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         //autoClaw = new autoClaw(pitch, roll, claw);
         wrist = new Wrist(pitch);
         //clawCode = new Claw(claw);
@@ -136,6 +136,8 @@ public class ascentPreloadPark extends LinearOpMode {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setTargetPositionTolerance(10);
+        rightSlide.setTargetPositionTolerance(10);
         slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
         slide = new Slide(leftSlide,rightSlide, slideSwitch);
 
