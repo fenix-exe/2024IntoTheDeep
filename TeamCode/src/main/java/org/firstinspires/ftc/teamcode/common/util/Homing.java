@@ -20,6 +20,8 @@ public class Homing {
     private final Elbow elbow;
     private final LinearOpMode opMode;
     private final Telemetry telemetry;
+    private final double LOW_ELBOW_POS = -14;
+    private final double ELBOW_TOLERANCE = 0.5;
     public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;
         this.rightSlideMotor = rightSlide;
@@ -75,9 +77,9 @@ public class Homing {
 
         elbow.resetEncoder();
 
-        elbow.setTargetAngle(elbow.ticksToDegrees(-105));
+        elbow.setTargetAngle(LOW_ELBOW_POS);
 
-        while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > elbow.ticksToDegrees(12))){
+        while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > ELBOW_TOLERANCE)){
 
         }
 
@@ -129,9 +131,9 @@ public class Homing {
 
         elbow.resetEncoder();
 
-        elbow.setTargetAngle(elbow.ticksToDegrees(-105));
+        elbow.setTargetAngle(LOW_ELBOW_POS);
 
-        while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > elbow.ticksToDegrees(12))){
+        while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > ELBOW_TOLERANCE)){
 
         }
 
