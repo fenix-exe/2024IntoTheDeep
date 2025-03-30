@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.common.util.Homing;
@@ -27,14 +28,36 @@ public class HomeTeleOpDown extends LinearOpMode {
     RevTouchSensor slideSwitch;
     RevTouchSensor actuatorSwitch;
     Homing homing;
+    String telemetryMessage;
+    public enum Mode{ELBOW_UP_THEN_HOME, ONLY_HOME}
+    Mode mode = Mode.ONLY_HOME;
 
     @Override
     public void runOpMode() throws InterruptedException {
         initializeArmAndHome();
 
+        while (opModeInInit()){
+            telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
+            if (gamepad1.dpad_up){
+                telemetryMessage = "ELBOW UP 30 DEGREES, THEN HOME DOWN";
+                mode = Mode.ELBOW_UP_THEN_HOME;
+            }
+            if (gamepad1.dpad_down){
+                telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
+                mode = Mode.ONLY_HOME;
+            }
+            telemetry.addLine(telemetryMessage);
+            telemetry.update();
+        }
+
         waitForStart();
+
         if (opModeIsActive()){
-            homing.homeDown();
+            if (mode == Mode.ONLY_HOME){
+                homing.homeDown();
+            } else {
+                homing.moveElbowUpAndHomeDown();
+            }
         }
     }
 
@@ -68,11 +91,6 @@ public class HomeTeleOpDown extends LinearOpMode {
         pitch = hardwareMap.get(Servo.class, "pitch");
 
         pitch.setPosition(0.5);
-        while (opModeInInit()){
-            telemetry.addData("homing switch", slide.isHomingSwitchPressed());
-            telemetry.update();
-        }
-
     }
     private void homeDown(){
         //homing the slide
