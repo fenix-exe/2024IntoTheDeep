@@ -16,7 +16,7 @@ public abstract class CommonWrist {
 
 
     public void presetPositionPitch (double presetPosition){
-        pitchLeft.setPosition(presetPosition-SERVO_OFFSET);
+        pitchLeft.setPosition(presetPosition);
     }
     public double getPitchAngle(){
         return pitchLeft.getPosition();
