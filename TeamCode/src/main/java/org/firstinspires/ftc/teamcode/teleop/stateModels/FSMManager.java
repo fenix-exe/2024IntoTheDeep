@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class FSMManager {
     public static RobotState robotState;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
+    static Arm arm;
     public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator){
         robotState = RobotState.START;
         stateTransitions.add(new GoToIntakeStateTransition(wrist, intake, arm, driverControls));
@@ -29,6 +30,7 @@ public class FSMManager {
         stateTransitions.add(new LetGoOfClipStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(new HangStateTransition(wrist, arm, driverControls,linearActuator));
         stateTransitions.add(new EnterSubmersibleStateTransition(wrist,intake,driverControls));
+        FSMManager.arm=arm;
     }
     public static void execute(){
         for(int i = 0; i < stateTransitions.size(); i++){
