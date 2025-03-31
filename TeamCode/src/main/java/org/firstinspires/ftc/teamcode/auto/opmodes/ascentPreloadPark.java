@@ -59,7 +59,7 @@ public class ascentPreloadPark extends LinearOpMode {
 
     //declare end effector
     ServoImplEx pitchLeft;
-    ServoImplEx pitchRight;
+    //ServoImplEx pitchRight;
     //ServoImplEx roll;
     CRServoImplEx leftRoller;
     CRServoImplEx rightRoller;
@@ -111,13 +111,13 @@ public class ascentPreloadPark extends LinearOpMode {
 
         //initialize hardware
         pitchLeft = hardwareMap.get(ServoImplEx.class, "pitchLeft");
-        pitchRight = hardwareMap.get(ServoImplEx.class, "pitchRight");
+        //pitchRight = hardwareMap.get(ServoImplEx.class, "pitchRight");
 
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
         leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         //autoClaw = new autoClaw(pitch, roll, claw);
-        wrist = new Wrist(pitchLeft, pitchRight);
+        wrist = new Wrist(pitchLeft);
         //clawCode = new Claw(claw);
         autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
 
