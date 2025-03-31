@@ -19,7 +19,6 @@
             <RevBlinkinLedDriver name="blinkin" port="4" />
             <ContinuousRotationServo name="rightRoller" port="3" />
             <Servo name="pitchLeft" port="5"/>
-            <Servo name="pitchRight" port="2"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
             <RevTouchSensor name="slide switch" port="1" />
