@@ -15,9 +15,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 public class GrabSpecimenStateTransition implements IStateTransition{
     private enum TransitionSteps {
         START,
-        MOVING_SLIDE_BACK,
-        CLOSING_CLAW,
-        MOVING_ELBOW
+        STOPPING_INTAKE,
+        MOVING_PITCH
     }
 
     private TransitionSteps intakeTransitionStep;
@@ -51,47 +50,30 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         switch(intakeTransitionStep){
             case START:
                 if(FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN){
-                    /*double distance = color.getDistance(DistanceUnit.MM);
-                    if (distance < 15){
-                        FSMManager.stopTransitions();
-                        timer = new ElapsedTime();
-                        claw.closeClaw();
-                        driveTrain.stopDriveTrain();
-                        driveTrain.lockDriveTrain(true);
-                        intakeTransitionStep = TransitionSteps.CLOSING_CLAW;
-                    }*/
+                    if(false){
+                        double distance = color.getDistance(DistanceUnit.MM);
+                        if (distance < 30){
+                            FSMManager.stopTransitions();
+                            timer = new ElapsedTime();
+                            intake.stop();
+                            driveTrain.stopDriveTrain();
+                            driveTrain.lockDriveTrain(true);
+                            intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
+                        }
+                    }
                     if (driverControls.pickupAndDepositSpecimens()){
                         FSMManager.stopTransitions();
                         timer = new ElapsedTime();
                         timer.reset();
-                        intake.intake();
-                        intakeTransitionStep = TransitionSteps.CLOSING_CLAW;
+                        intake.stop();
+                        intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
                     }
                 }
                 break;
-            case MOVING_SLIDE_BACK:
-                double distanceToSample = color.getDistance(DistanceUnit.MM);
-                if (distanceToSample > 35 && !closingClaw){
-                    timer.reset();
-                    intake.intake();
-                    closingClaw = true;
-                }
-                if (distanceToSample > 45 || arm.getSlideExtension() < RobotConstants.LOW_SLIDE_TOLERANCE){
-                    if (!closingClaw){
-                        timer.reset();
-                        intake.intake();
-                    }
-                    closingClaw = false;
-                    arm.moveSlide(0,false);
-                    intakeTransitionStep = TransitionSteps.CLOSING_CLAW;
-                }
-                break;
-            case CLOSING_CLAW:
+            case STOPPING_INTAKE:
                 if (timer.milliseconds() > 200){
-                    intake.stop();
-                    timer.reset();
-                    arm.moveElbowToAngle(StateModelParameters.PickupSpecimensStateParameters.elbowUpAngle);
-                    intakeTransitionStep = TransitionSteps.MOVING_ELBOW;
+                    wrist.presetPositionPitch(StateModelParameters.DepositSpecimenPositionStateParameters.pitch);
+                    intakeTransitionStep = TransitionSteps.MOVING_PITCH;
                 }
                 if (driverControls.enterIntakePosition()){
                     driveTrain.lockDriveTrain(false);
@@ -99,7 +81,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                     intake.outtake();
                 }
                 break;
-            case MOVING_ELBOW:
+            case MOVING_PITCH:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
                     driveTrain.lockDriveTrain(false);
                     FSMManager.robotState = RobotState.READY_TO_GO_TO_CLIP_POSITION;

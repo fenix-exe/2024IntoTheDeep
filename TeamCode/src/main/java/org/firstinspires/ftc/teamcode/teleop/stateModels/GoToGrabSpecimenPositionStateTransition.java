@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 public class GoToGrabSpecimenPositionStateTransition implements IStateTransition{
     private enum TransitionSteps {
         START,
-        OPENING_CLAW,
         MOVING_WRIST,
         MOVING_ELBOW_AND_SLIDE
     }
@@ -38,27 +37,22 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
     public void execute() {
         switch (intakeTransitionStep) {
             case START:
-                if (driverControls.pickupAndDepositSpecimens() &&
+                if ((driverControls.pickupAndDepositSpecimens() &&
                         (FSMManager.robotState == RobotState.START
                                 || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE
-                                || FSMManager.robotState == RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE
-                                || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN)) {
+                                || FSMManager.robotState == RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE))
+                        || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN) {
                     timer = new ElapsedTime();
                     FSMManager.stopTransitions();
                     timer.reset();
                     intake.outtake();
-                    intakeTransitionStep = TransitionSteps.OPENING_CLAW;
-                }
-                break;
-            case OPENING_CLAW:
-                if (timer.milliseconds() > 200) {
-                    timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_WRIST;
                 }
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250) {
+                    intake.intake();
                     arm.moveSlideToLength(StateModelParameters.PickupSpecimensStateParameters.slideLength);
                     arm.moveElbowToAngle(StateModelParameters.PickupSpecimensStateParameters.elbowAngle);
                     intakeTransitionStep = TransitionSteps.MOVING_ELBOW_AND_SLIDE;
