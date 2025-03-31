@@ -18,10 +18,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -69,6 +67,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     CRServoImplEx leftRoller;
     CRServoImplEx rightRoller;
     Servo pitch;
+    Servo pitchRight;
     Servo roll;
     EndEffectorV2 endEffector;
     Wrist wrist;
@@ -172,7 +171,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //Manual control for wrist up
             //precedence is the following - continous diff > 42in > manual diff
             if (driverControls.continuousDiffUp()){
-                wrist.manualControlPitch(-0.005);
+                wrist.manualControlPitch(0.005);
             } /*else if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7
                     && arm.getElbowAngleInDegrees() < 10){
                 // When slide is extended, making sure pitch is down or we can break the 42in limit
@@ -190,13 +189,13 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
 
             //manual control for claw
-            if (driverControls.openClaw()){
+            if (driverControls.outtake()){
                 if (!(intake.getIntakeDirection() == IIntake.IntakeDirection.BACKWARD)) {
                     intake.outtake();
                 } else{
                     intake.stop();
                 }
-            } else if (driverControls.closeClaw()){
+            } else if (driverControls.intake()){
                 if (!(intake.getIntakeDirection() == IIntake.IntakeDirection.FORWARD)) {
                     intake.intake();
                 } else{
@@ -246,8 +245,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             //update drivetrain
             driveTrain.Update();
+
             //telemetry
-            multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
@@ -259,8 +259,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Slide Target Left", leftSlide.getTargetPosition());
             multiTelemetry.addData("Slide Target Right", rightSlide.getTargetPosition());
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
-            multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
-            multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
+            multiTelemetry.addData("Pitch Servo Pos", pitchLeft.getPosition());
+            multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));*/
+            telemetry.addData("ROBOT STATE", FSMManager.robotState);
             /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
@@ -375,18 +376,18 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     private void initializeIntake(){
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
-        rightRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color sensor");
         intake = new BigWheelIntake(leftRoller,rightRoller);
         color = new ColorSensor(colorSensor);
 
     }
-    private void initializeDifferential(){
-        pitch = hardwareMap.get(ServoImplEx.class, "pitch");
+    private void initializePitch(){
+        pitch = hardwareMap.get(Servo.class, "pitchLeft");
         wrist = new Wrist(pitch);
     }
     private void initializeEndEffector(){
-        initializeDifferential();
+        initializePitch();
         initializeIntake();
         endEffector = new EndEffectorV2(wrist, claw);
     }

@@ -145,10 +145,10 @@ public class DriverControls implements DriveControlMap {
             return -gamepad2current.right_stick_y;
         }
         if (gamepad1current.right_trigger > 0.3){
-            return gamepad1current.right_trigger;
+            return gamepad1current.right_trigger * 0.5;
         }
         if (gamepad1current.left_trigger > 0.3){
-            return -gamepad1current.left_trigger;
+            return -gamepad1current.left_trigger * 0.5;
         }
         return 0;
     }
@@ -204,10 +204,10 @@ public class DriverControls implements DriveControlMap {
     public boolean specimenSampleIntake(){
         return gamepad2current.b && !gamepad2current.start;
     }
-    public boolean openClaw(){
+    public boolean outtake(){
         return (gamepad2current.left_bumper && !gamepad2previous.left_bumper);
     }
-    public boolean closeClaw(){
+    public boolean intake(){
         return (gamepad2current.right_bumper && !gamepad2previous.right_bumper);
     }
     public boolean grabSampleFromOutside(){
