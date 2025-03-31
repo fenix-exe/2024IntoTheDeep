@@ -73,10 +73,10 @@ public class PresetConfigUtil {
                 StateModelParameters.PickupSpecimensStateParameters.rollEnd = Double.parseDouble(configValues[9]);
                 break;
             case "DEPOSIT_SPECIMENS_STATE_MODEL_PARAMS":
-                StateModelParameters.DepositSpecimensStateParameters.pitch = Double.parseDouble(configValues[1]);
-                StateModelParameters.DepositSpecimensStateParameters.roll= Double.parseDouble(configValues[2]);
-                StateModelParameters.DepositSpecimensStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
-                StateModelParameters.DepositSpecimensStateParameters.slideLength = Double.parseDouble(configValues[4]);
+                StateModelParameters.DepositSpecimenPositionStateParameters.pitch = Double.parseDouble(configValues[1]);
+                StateModelParameters.DepositSpecimenPositionStateParameters.roll= Double.parseDouble(configValues[2]);
+                StateModelParameters.DepositSpecimenPositionStateParameters.elbowAngle = Double.parseDouble(configValues[3]);
+                StateModelParameters.DepositSpecimenPositionStateParameters.slideLength = Double.parseDouble(configValues[4]);
                 break;
             case "DROP_BLOCK_AND_MOVE_WRIST_DOWN_STATE_MODEL_PARAMS":
                 StateModelParameters.DropBlockAndMoveWristDown.pitch = Double.parseDouble(configValues[1]);

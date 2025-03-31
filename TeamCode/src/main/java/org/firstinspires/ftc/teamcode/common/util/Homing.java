@@ -20,7 +20,7 @@ public class Homing {
     private final Elbow elbow;
     private final LinearOpMode opMode;
     private final Telemetry telemetry;
-    private final double LOW_ELBOW_POS = -14;
+    private final double LOW_ELBOW_POS = -12.5;
     private final double ELBOW_TOLERANCE = 0.5;
     public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;

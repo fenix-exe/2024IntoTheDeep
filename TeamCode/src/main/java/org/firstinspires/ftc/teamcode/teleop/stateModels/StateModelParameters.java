@@ -59,7 +59,7 @@ public class StateModelParameters {
         public static double pitchEnd = 30;
         public static double rollEnd = -90;
     }
-    public static class DepositSpecimensStateParameters{
+    public static class DepositSpecimenPositionStateParameters {
         public static double pitch = 0;
         public static double roll = -90;
         public static double elbowAngle = 28;

@@ -6,20 +6,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.common.util.Homing;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 @TeleOp
 public class HomeTeleOpDown extends LinearOpMode {
     Elbow elbow;
     Slide slide;
     LinearActuator linearActuator;
-    Servo pitch;
+    Servo pitchLeft;
+    Servo pitchRight;
     DcMotorEx leftSlide;
     DcMotorEx rightSlide;
     DcMotorEx pivot;
@@ -88,9 +89,10 @@ public class HomeTeleOpDown extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
 
         homing = new Homing(leftSlide,rightSlide,pivot,linearActuatorMotor,this, telemetry, slideSwitch,actuatorSwitch,elbowSwitch);
-        pitch = hardwareMap.get(Servo.class, "pitchLeft");
-
-        pitch.setPosition(0.5);
+        pitchLeft = hardwareMap.get(Servo.class, "pitchLeft");
+        pitchRight = hardwareMap.get(Servo.class, "pitchRight");
+        Wrist wrist = new Wrist(pitchLeft);
+        wrist.presetPositionPitch(1);
     }
     private void homeDown(){
         //homing the slide

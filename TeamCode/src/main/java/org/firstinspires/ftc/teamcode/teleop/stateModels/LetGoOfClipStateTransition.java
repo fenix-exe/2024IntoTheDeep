@@ -47,7 +47,7 @@ public class LetGoOfClipStateTransition implements IStateTransition{
                 }
                 break;
             case OPENING_CLAW:
-                if (timer.milliseconds() > 250){
+                if (timer.milliseconds() > 300){
                     timer.reset();
                     FSMManager.robotState = RobotState.READY_TO_GO_TO_GRAB_SPECIMEN;
                     //arm.moveSlideToLength(StateModelParameters.DepositSpecimensStateParameters.slideLength);

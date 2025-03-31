@@ -14,6 +14,7 @@ public class GoToIntakeStateTransition implements IStateTransition {
         START,
         WAITING_FOR_CLAW_TO_OPEN_TO_SAFELY_DEPOSIT,
         MOVING_WRIST,
+        MOVING_SLIDE,
         MOVING_ELBOW_AND_SLIDE
     }
 
@@ -59,7 +60,7 @@ public class GoToIntakeStateTransition implements IStateTransition {
                 }
                 break;
             case WAITING_FOR_CLAW_TO_OPEN_TO_SAFELY_DEPOSIT:
-                if (timer.milliseconds() > 250){
+                if (timer.milliseconds() > 400){
                     intake.stop();
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
@@ -69,11 +70,15 @@ public class GoToIntakeStateTransition implements IStateTransition {
             case MOVING_WRIST:
                 if (timer.milliseconds() > 450) {
                     timer.reset();
-                    arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
                     arm.moveSlideToLength(StateModelParameters.IntakeStateParameters.slideLength);
-                    intakeTransitionStep = TransitionSteps.MOVING_ELBOW_AND_SLIDE;
+                    intakeTransitionStep = TransitionSteps.MOVING_SLIDE;
                 }
                 break;
+            case MOVING_SLIDE:
+                if (arm.getSlideExtension() < 12.5){
+                    arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
+                    intakeTransitionStep = TransitionSteps.MOVING_ELBOW_AND_SLIDE;
+                }
             case MOVING_ELBOW_AND_SLIDE:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE
                         && Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE) {

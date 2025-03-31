@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ColorSensor {
     RevColorSensorV3 colorSensor;
+
     public ColorSensor(RevColorSensorV3 colorSensor){
         this.colorSensor = colorSensor;
     }
