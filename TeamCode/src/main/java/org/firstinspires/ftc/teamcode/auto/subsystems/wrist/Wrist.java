@@ -26,13 +26,7 @@ public class Wrist extends CommonWrist {
 
         wristWriter = new DownsampledWriter("WRIST INFO", 50_000_000);
     }
-
-    public Wrist(Servo pitchLeft, Servo pitchRight){
-        super(pitchLeft, pitchRight);
-        this.pitchLeft = pitchLeft;
-        this.pitchRight = pitchRight;
-        wristWriter = new DownsampledWriter("WRIST INFO", 50_000_000);
-    }
+    
 
     /* this action sets pitch and roll servos using degrees
      * finishes when pitch and roll servos is set to position
@@ -47,7 +41,7 @@ public class Wrist extends CommonWrist {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            presetPositionPitch(pitchPos);
+            pitchLeft.setPosition(pitchPos);
             wristWriter.write(new WristMessage(getPitchAngle(), 0));
             return false;
         }
