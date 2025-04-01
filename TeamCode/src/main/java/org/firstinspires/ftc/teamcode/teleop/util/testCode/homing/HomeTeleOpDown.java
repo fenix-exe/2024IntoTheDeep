@@ -90,9 +90,8 @@ public class HomeTeleOpDown extends LinearOpMode {
 
         homing = new Homing(leftSlide,rightSlide,pivot,linearActuatorMotor,this, telemetry, slideSwitch,actuatorSwitch,elbowSwitch);
         pitchLeft = hardwareMap.get(Servo.class, "pitchLeft");
-        pitchRight = hardwareMap.get(Servo.class, "pitchRight");
         Wrist wrist = new Wrist(pitchLeft);
-        wrist.presetPositionPitch(1);
+        wrist.presetPositionPitch(0.5);
     }
     private void homeDown(){
         //homing the slide
