@@ -59,7 +59,8 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
                 }
                 break;
             case MOVING_ELBOW_AND_SLIDE:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
+                    arm.setElbowPower(0);
                     FSMManager.robotState = RobotState.READY_TO_GRAB_SPECIMEN;
                     intakeTransitionStep = TransitionSteps.START;
                 }

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
+import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
@@ -13,7 +14,6 @@ public class LetGoOfClipStateTransition implements IStateTransition{
         OPENING_CLAW,
         RETRACTING_SLIDES,
         MOVING_WRIST,
-        MOVING_ELBOW
     }
 
     private TransitionSteps clipState;
@@ -49,29 +49,23 @@ public class LetGoOfClipStateTransition implements IStateTransition{
             case OPENING_CLAW:
                 if (timer.milliseconds() > 300){
                     timer.reset();
-                    FSMManager.robotState = RobotState.READY_TO_GO_TO_GRAB_SPECIMEN;
-                    //arm.moveSlideToLength(StateModelParameters.DepositSpecimensStateParameters.slideLength);
-                    clipState = TransitionSteps.START;
+                    arm.moveSlideToLength(StateModelParameters.PickupSpecimensStateParameters.slideLength);
+                    clipState = TransitionSteps.RETRACTING_SLIDES;
                 }
                 break;
-            /*case RETRACTING_SLIDES:
+            case RETRACTING_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
-                    wrist.presetPosition(StateModelParameters.DepositSpecimensStateParameters.pitch, StateModelParameters.DepositSpecimensStateParameters.roll);
+                    wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
                     clipState = TransitionSteps.MOVING_WRIST;
                 }
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250){
-                    arm.moveElbowToAngle(StateModelParameters.DepositSpecimensStateParameters.elbowAngle);
-                    clipState = TransitionSteps.MOVING_ELBOW;
+                    intake.intake();
+                    clipState = TransitionSteps.START;
+                    FSMManager.robotState = RobotState.READY_TO_GRAB_SPECIMEN;
                 }
                 break;
-            case MOVING_ELBOW:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
-                    FSMManager.robotState = RobotState.READY_TO_GO_TO_GRAB_SPECIMEN;
-                    clipState = TransitionSteps.START;
-                }
-                break;*/
         }
     }
 
