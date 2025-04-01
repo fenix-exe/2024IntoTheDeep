@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.ResetSlideEncoderStateModel;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.FSMManager;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.RobotState;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IIMU;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.ILED;
@@ -154,6 +156,10 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //manual control for slide
             if (Math.abs(driverControls.slideMovement()) > 0){
                 arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
+                //pitch correction for state models
+                if (FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
+                    updatePitch();
+                }
             } else if (driverControls.slideStopped()){
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
@@ -247,7 +253,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             driveTrain.Update();
 
             //telemetry
-            /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
@@ -259,8 +265,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Slide Target Left", leftSlide.getTargetPosition());
             multiTelemetry.addData("Slide Target Right", rightSlide.getTargetPosition());
             multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
-            multiTelemetry.addData("Pitch Servo Pos", pitchLeft.getPosition());
-            multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));*/
+            multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
+            multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
             telemetry.addData("ROBOT STATE", FSMManager.robotState);
             /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
@@ -515,6 +521,17 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             led.setColor(ILED.LEDColor.RED);
         } else if (led.isOn()){
             led.turnOff();
+        }
+    }
+    private void updatePitch(){
+        if (arm.getSlideExtension() < 12){
+            wrist.presetPositionPitch(0.245);
+        } else if (arm.getSlideExtension() < 16){
+            wrist.presetPositionPitch(0.25);
+        } else if (arm.getSlideExtension() < 19.5){
+            wrist.presetPositionPitch(0.27);
+        } else {
+            wrist.presetPositionPitch(0.285);
         }
     }
 }
