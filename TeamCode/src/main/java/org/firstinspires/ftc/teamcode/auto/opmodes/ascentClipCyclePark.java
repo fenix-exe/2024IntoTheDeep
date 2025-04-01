@@ -156,6 +156,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         pinpoint.setPosition(new Pose2d(0,0,0));
         elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
         homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
+        boolean moveElUp;
 
 
         //wait for user input to begin homing
@@ -163,16 +164,22 @@ public class ascentClipCyclePark extends LinearOpMode {
             pinpoint.update();
             telemetry.addData("pose x", pinpoint.getPositionRR().position.x);
             telemetry.addData("pose y", pinpoint.getPositionRR().position.y);
-            telemetry.addData("pose head", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
+            telemetry.addLine("Hold Left Button to Move Elbow Up");
 
             telemetry.update();
         }
+
+        moveElUp = gamepad1.x;
 
 
         //HOMING
         wrist.presetPositionPitch(0.5);
         sleep(250);
-        homingAgent.moveElbowUpAndHomeDown();
+        if (moveElUp) {
+            homingAgent.moveElbowUpAndHomeDown();
+        } else {
+            homingAgent.homeDown();
+        }
         /* pitch.setPosition(0.66);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){

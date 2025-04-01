@@ -156,22 +156,28 @@ public class observationPark extends LinearOpMode {
         elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
         homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
+        boolean moveElUp;
 
         //wait for user input to begin homing
         while (!gamepad1.a && !isStopRequested()) {
             pinpoint.update();
             telemetry.addData("pose x", pinpoint.getPositionRR().position.x);
             telemetry.addData("pose y", pinpoint.getPositionRR().position.y);
-            telemetry.addData("pose head", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
+            telemetry.addLine("Hold Left Button to Move Elbow Up");
 
             telemetry.update();
         }
 
+        moveElUp = gamepad1.x;
 
         //HOMING
         wrist.presetPositionPitch(0.5);
         sleep(250);
-        homingAgent.moveElbowUpAndHomeDown();
+        if (moveElUp) {
+            homingAgent.moveElbowUpAndHomeDown();
+        } else {
+            homingAgent.homeDown();
+        }
         /* pitch.setPosition(0.66);
 
         while (!slide.isHomingSwitchPressed() && !isStopRequested()){
