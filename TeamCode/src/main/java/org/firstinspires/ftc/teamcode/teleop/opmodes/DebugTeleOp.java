@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
@@ -31,7 +31,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.ILED;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.LED;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
@@ -284,7 +283,7 @@ public class DebugTeleOp extends LinearOpMode {
             multiTelemetry.addData("Green", colorSensor.green());*/
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
-            telemetry.addData("Color Sensor Distance", color.getDistance(DistanceUnit.MM));
+            telemetry.addData("Color Sensor Distance", color.getDistance());
             multiTelemetry.update();
 
             //logging
@@ -397,7 +396,7 @@ public class DebugTeleOp extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, null, arm, driveTrain, driverControls,color, linearActuator);
+        FSMManager.initialize(wrist, null, arm, driveTrain, driverControls,color, linearActuator, null);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");

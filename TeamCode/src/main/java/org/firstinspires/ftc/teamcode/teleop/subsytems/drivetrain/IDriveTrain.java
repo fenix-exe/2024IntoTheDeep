@@ -14,7 +14,6 @@ public interface IDriveTrain {
     public Pose2d getCurrentPose();
     public void stopFollowing();
     public boolean isFollowingPath();
-    public void lockDriveTrain(boolean lock);
     public boolean getLockDriveTrain();
     public void stopDriveTrain();
     public void setDriveType(DriveType driveType);

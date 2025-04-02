@@ -22,6 +22,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
@@ -35,7 +37,6 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.IMU.IMUforPinpoint;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.ILED;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.LED.LED;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrainAuto;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
@@ -46,6 +47,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActu
 import org.firstinspires.ftc.teamcode.teleop.subsytems.localization.Localization;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.slide.Slide;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
+import org.firstinspires.ftc.teamcode.teleop.util.Alliance;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
@@ -88,6 +90,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     public static boolean enableLogging=false;
+    protected Alliance alliance = Alliance.BLUE;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -156,10 +159,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             //manual control for slide
             if (Math.abs(driverControls.slideMovement()) > 0){
                 arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
-                //pitch correction for state models
-                if (FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
-                    updatePitch();
-                }
             } else if (driverControls.slideStopped()){
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
@@ -242,7 +241,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
 
             if (driverControls.escapePresets()){
                 arm.holdArm();
-                driveTrain.lockDriveTrain(false);
                 FSMManager.stopTransitions();
                 FSMManager.setRobotStateToStart();
             }
@@ -268,6 +266,9 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
             multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
             telemetry.addData("ROBOT STATE", FSMManager.robotState);
+            telemetry.addData("Deposit To HP State Parameters extensionLength", StateModelParameters.DepositSampleIntoObservationZone.extensionLength);
+            telemetry.addData("Enter Submersible Pitch",StateModelParameters.EnterSubmersibleStateParameters.pitch);
+            telemetry.addData("Intake Pos Slide Length", StateModelParameters.IntakeStateParameters.slideLength);
             /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
             multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
             multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
@@ -404,7 +405,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator);
+        FSMManager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator, alliance);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
@@ -457,59 +458,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     private void logButtonPressed(){
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
     }
-    private void home(){
-            //homing the slide
-            while (!arm.isSlideTouchSensorPressed() && !isStopRequested()){
-                arm.setSlidePower(-0.2);
-                telemetry.addData("slide switch state", arm.isSlideTouchSensorPressed());
-                telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
-                telemetry.update();
-            }
-            arm.setSlidePower(0);
-
-            rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //Homing the elbow
-            while (!arm.detectingMagneticLimitSwitch() && !isStopRequested()){
-                arm.setElbowPower(-0.2);
-            }
-            while (arm.detectingMagneticLimitSwitch() && !isStopRequested()){
-                arm.setElbowPower(-0.4);
-            }
-            while (!arm.detectingMagneticLimitSwitch() && !isStopRequested()){
-                arm.setElbowPower(0.4);
-            }
-            arm.setElbowPower(0);
-
-            pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            pivot.setTargetPosition(-266);
-            pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            pivot.setPower(1);
-
-            while((Math.abs(pivot.getCurrentPosition() - pivot.getTargetPosition()) > 12)){
-
-            }
-
-            pivot.setPower(0);
-
-            pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //homing the linear actuator
-            while (!linearActuator.getLimitSwitchState() && !isStopRequested()){
-                telemetry.addLine("ELBOW IS HOMED");
-                telemetry.update();
-                linearActuator.setLinearActuatorPower(-0.5);
-            }
-            linearActuator.setLinearActuatorPower(0);
-
-            linearActuator.resetEncoders();
-    }
     private void updateLED(){
         if (driveTrain.getLockDriveTrain()){
             led.setColor(ILED.LEDColor.GREEN);
@@ -521,17 +469,6 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             led.setColor(ILED.LEDColor.RED);
         } else if (led.isOn()){
             led.turnOff();
-        }
-    }
-    private void updatePitch(){
-        if (arm.getSlideExtension() < 12){
-            wrist.presetPositionPitch(0.245);
-        } else if (arm.getSlideExtension() < 16){
-            wrist.presetPositionPitch(0.25);
-        } else if (arm.getSlideExtension() < 19.5){
-            wrist.presetPositionPitch(0.27);
-        } else {
-            wrist.presetPositionPitch(0.285);
         }
     }
 }

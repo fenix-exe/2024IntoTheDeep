@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 
 
+import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
+import org.firstinspires.ftc.teamcode.teleop.util.Alliance;
 
 import java.util.ArrayList;
 
@@ -16,10 +17,10 @@ public class FSMManager {
     public static RobotState robotState;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
     static Arm arm;
-    public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator){
+    public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator, Alliance alliance){
         robotState = RobotState.START;
         stateTransitions.add(new GoToIntakeStateTransition(wrist, intake, arm, driverControls));
-        stateTransitions.add(new MoveToLeaveSubmersibleStateTransition(wrist, intake, arm, driveTrain, driverControls));
+        stateTransitions.add(new MoveToLeaveSubmersibleStateTransition(wrist, intake, arm, driveTrain, driverControls, color, alliance));
         stateTransitions.add(new GrabFailedStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(new GoToDepositStateTransition(wrist, arm, driverControls));
         stateTransitions.add(new DepositSampleIntoObservationZoneStateTransition(wrist,arm,driverControls));

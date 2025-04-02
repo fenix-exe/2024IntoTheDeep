@@ -86,7 +86,6 @@ public class DriveTrainAuto implements IDriveTrain{
         return !runner.getRunningActions().isEmpty();
     }
 
-    @Override
     public void lockDriveTrain(boolean lock) {
         lockDriveTrain = lock;
         if (lock){
