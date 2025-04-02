@@ -35,7 +35,7 @@ public class EnterSubmersibleStateTransition implements IStateTransition{
     public void execute() {
         switch(steps){
             case START:
-                if (controls.depositBack() && FSMManager.robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE){
+                if ((controls.depositBack() || controls.specimenSampleIntake()) && FSMManager.robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE){
                     FSMManager.stopTransitions();
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.EnterSubmersibleStateParameters.pitch);
