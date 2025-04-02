@@ -13,9 +13,10 @@ public class GoToIntakeStateTransition implements IStateTransition {
     private enum TransitionSteps {
         START,
         WAITING_FOR_CLAW_TO_OPEN_TO_SAFELY_DEPOSIT,
+        RETRACTING_SLIDES,
         MOVING_WRIST,
-        MOVING_SLIDE,
-        MOVING_ELBOW_AND_SLIDE
+        MOVING_ELBOW,
+        MOVING_SLIDE
     }
 
     private TransitionSteps intakeTransitionStep;
@@ -63,6 +64,18 @@ public class GoToIntakeStateTransition implements IStateTransition {
                 if (timer.milliseconds() > 400){
                     intake.stop();
                     timer.reset();
+                    if (FSMManager.robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET){
+                        arm.moveSlideToLength(StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength);
+                        intakeTransitionStep = TransitionSteps.RETRACTING_SLIDES;
+                    } else {
+                        wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
+                        intakeTransitionStep = TransitionSteps.MOVING_WRIST;
+                    }
+                }
+                break;
+            case RETRACTING_SLIDES:
+                if(Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_WRIST;
                 }
@@ -70,18 +83,18 @@ public class GoToIntakeStateTransition implements IStateTransition {
             case MOVING_WRIST:
                 if (timer.milliseconds() > 450) {
                     timer.reset();
+                    arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
+                    intakeTransitionStep = TransitionSteps.MOVING_ELBOW;
+                }
+                break;
+            case MOVING_ELBOW:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     arm.moveSlideToLength(StateModelParameters.IntakeStateParameters.slideLength);
                     intakeTransitionStep = TransitionSteps.MOVING_SLIDE;
                 }
                 break;
             case MOVING_SLIDE:
-                if (arm.getSlideExtension() < 12.5){
-                    arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
-                    intakeTransitionStep = TransitionSteps.MOVING_ELBOW_AND_SLIDE;
-                }
-            case MOVING_ELBOW_AND_SLIDE:
-                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE
-                        && Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE) {
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
                     FSMManager.robotState = RobotState.READY_TO_ENTER_SUBMERSIBLE;
                     intakeTransitionStep = TransitionSteps.START;
                 }
