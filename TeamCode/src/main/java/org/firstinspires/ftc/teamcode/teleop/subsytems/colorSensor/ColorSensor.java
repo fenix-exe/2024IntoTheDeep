@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 
-public class Color {
+public class ColorSensor {
     private final RevColorSensorV3 colorSensor;
     double H;
     double S;
@@ -14,7 +13,7 @@ public class Color {
     double colorSensorDistance;
     boolean detectColor;
     double colorSensorDetectionDistance = 8;
-    public Color(RevColorSensorV3 colorSensor){
+    public ColorSensor(RevColorSensorV3 colorSensor){
         this.colorSensor =colorSensor;
     }
     public void updateHSVandDistance(){
