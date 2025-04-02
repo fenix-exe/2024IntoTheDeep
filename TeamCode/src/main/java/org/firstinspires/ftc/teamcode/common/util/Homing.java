@@ -20,8 +20,9 @@ public class Homing {
     private final Elbow elbow;
     private final LinearOpMode opMode;
     private final Telemetry telemetry;
-    private final double LOW_ELBOW_POS = -12.25;
+    private final double LOW_ELBOW_POS = -12;
     private final double ELBOW_TOLERANCE = 0.5;
+    private final double SLIDE_EXTENSION_LENGTH = 10;
     public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;
         this.rightSlideMotor = rightSlide;
@@ -67,6 +68,7 @@ public class Homing {
             telemetry.addLine("ELBOW MOVING DOWN");
             elbow.setElbowPower(-0.2);
         }
+        slide.setSlideExtensionLength(SLIDE_EXTENSION_LENGTH);
         while (elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             elbow.setElbowPower(-0.4);
         }
@@ -121,6 +123,7 @@ public class Homing {
             telemetry.addLine("ELBOW MOVING DOWN");
             elbow.setElbowPower(-0.2);
         }
+        slide.setSlideExtensionLength(SLIDE_EXTENSION_LENGTH);
         while (elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             elbow.setElbowPower(-0.4);
         }
