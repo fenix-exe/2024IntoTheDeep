@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.common.Color;
+import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.BigWheelIntake;
 @TeleOp
 public class ColorSensorTest extends LinearOpMode {
-    Color colorSensor;
+    ColorSensor colorSensor;
     RevColorSensorV3 hardwareColorSensor;
     CRServoImplEx leftRoller;
     CRServoImplEx rightRoller;
@@ -26,7 +26,7 @@ public class ColorSensorTest extends LinearOpMode {
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
         leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
-        colorSensor = new Color(hardwareColorSensor);
+        colorSensor = new ColorSensor(hardwareColorSensor);
         intake = new BigWheelIntake(leftRoller,rightRoller);
 
         while (opModeInInit()){
