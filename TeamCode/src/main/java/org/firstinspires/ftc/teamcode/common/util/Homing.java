@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common.util;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
@@ -22,7 +23,7 @@ public class Homing {
     private final Telemetry telemetry;
     private final double LOW_ELBOW_POS = -12;
     private final double ELBOW_TOLERANCE = 0.5;
-    private final double SLIDE_EXTENSION_LENGTH = 10;
+    private final double SLIDE_EXTENSION_LENGTH = 7;
     public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;
         this.rightSlideMotor = rightSlide;
@@ -57,7 +58,7 @@ public class Homing {
         slide.resetEncoder();
 
         elbow.resetEncoder();
-        elbow.setTargetAngle(30);
+        elbow.setTargetAngle(45);
         while ((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > RobotConstants.ELBOW_TOLERANCE)) {
 
         }
@@ -73,7 +74,9 @@ public class Homing {
             elbow.setElbowPower(-0.4);
         }
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
-            elbow.setElbowPower(0.4);
+            telemetry.addLine("ELBOW MOVING UP");
+            telemetry.update();
+            elbow.setElbowPower(0.1);
         }
         elbow.setElbowPower(0);
 
@@ -127,7 +130,7 @@ public class Homing {
         while (elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             elbow.setElbowPower(-0.4);
         }
-        while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
+        while ((!elbow.isLimitSwitchPressed()) && !opMode.isStopRequested()){
             elbow.setElbowPower(0.4);
         }
         elbow.setElbowPower(0);
