@@ -146,7 +146,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
             }
 
             //speed adjustments
-            if (driverControls.microDriveAdjustments()){
+            if (driverControls.microDriveAdjustments() || FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
                 speedMultiplier = RobotConstants.SLOW_SPEED;
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
