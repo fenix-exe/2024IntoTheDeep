@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
@@ -39,18 +40,22 @@ public class GoToIntakeStateTransition implements IStateTransition {
     }
     @Override
     public void execute() {
-        boolean atStart = FSMManager.robotState == RobotState.START;
-        // Is the Robot at a deposit position holding onto a sample?
-        boolean readyToDepositInBucket = FSMManager.robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET;
-        boolean readyToDepositToHumanPlayer = !driverControls.specimenSampleIntake() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER;
+
         switch (intakeTransitionStep) {
             case START:
+                boolean atStart = FSMManager.robotState == RobotState.START;
+                // Is the Robot at a deposit position holding onto a sample?
+                boolean fromBucket = FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE;
+                boolean readyToDepositToHumanPlayer = !driverControls.specimenSampleIntake() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER;
                 if (((driverControls.depositBack() || driverControls.specimenSampleIntake())
-                        &&(atStart || readyToDepositInBucket || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN)) || (readyToDepositToHumanPlayer)) {
+                        &&(atStart || fromBucket || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN)) || (readyToDepositToHumanPlayer)) {
                     FSMManager.stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
-                    if (readyToDepositInBucket || readyToDepositToHumanPlayer){
+                    if (fromBucket){
+                        arm.moveSlideToLength(StateModelParameters.IntakeStateParameters.slideLength);
+                        intakeTransitionStep = TransitionSteps.MOVING_SLIDE;
+                    } else if (readyToDepositToHumanPlayer){
                         intake.outtake();
                         intakeTransitionStep = TransitionSteps.WAITING_FOR_CLAW_TO_OPEN_TO_SAFELY_DEPOSIT;
                     } else {
@@ -64,13 +69,8 @@ public class GoToIntakeStateTransition implements IStateTransition {
                 if (timer.milliseconds() > 400){
                     intake.stop();
                     timer.reset();
-                    if (FSMManager.robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET){
-                        arm.moveSlideToLength(StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength);
-                        intakeTransitionStep = TransitionSteps.RETRACTING_SLIDES;
-                    } else {
-                        wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
-                        intakeTransitionStep = TransitionSteps.MOVING_WRIST;
-                    }
+                    wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
+                    intakeTransitionStep = TransitionSteps.MOVING_WRIST;
                 }
                 break;
             case RETRACTING_SLIDES:
