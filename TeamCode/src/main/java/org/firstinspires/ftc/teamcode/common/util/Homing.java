@@ -23,7 +23,7 @@ public class Homing {
     private final Telemetry telemetry;
     private final double LOW_ELBOW_POS = -12;
     private final double ELBOW_TOLERANCE = 0.5;
-    private final double SLIDE_EXTENSION_LENGTH = 7;
+    private final double SLIDE_EXTENSION_LENGTH = 10;
     public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;
         this.rightSlideMotor = rightSlide;
@@ -102,8 +102,11 @@ public class Homing {
 
         linearActuator.resetEncoders();
 
+        slide.setSlideExtensionLength(0);
+        while ((Math.abs(slide.getSlideExtensionInInches() - slide.getSlideTargetPositionInInches())) > RobotConstants.SLIDE_TOLERANCE)){
 
-
+        }
+        
     }
 
     public void homeDown(){
