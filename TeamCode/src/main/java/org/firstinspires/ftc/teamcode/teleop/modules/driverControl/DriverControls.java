@@ -299,8 +299,6 @@ public class DriverControls implements DriveControlMap {
     public boolean continuousDiffDown(){
         return gamepad2current.dpad_down && gamepad2current.left_stick_button;
     }
-    public boolean diffLeft(){return (gamepad2current.dpad_left && !gamepad2previous.dpad_left) || (gamepad1current.a && !gamepad1previous.a);}
-    public boolean diffRight(){return (gamepad2current.dpad_right && !gamepad2previous.dpad_right) || (gamepad1current.b && !gamepad1previous.b);}
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public boolean resetEncoders(){return false;}
     public boolean hang(){return gamepad2current.x;}
@@ -396,12 +394,6 @@ public class DriverControls implements DriveControlMap {
         }
         if (diffDown()){
             returnList.add(UserDirective.DIFF_DOWN);
-        }
-        if (diffRight()){
-            returnList.add(UserDirective.DIFF_RIGHT);
-        }
-        if (diffLeft()){
-            returnList.add(UserDirective.DIFF_LEFT);
         }
         if (homeArm()){
             returnList.add(UserDirective.HOME_ARM);
