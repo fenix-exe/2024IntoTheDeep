@@ -215,7 +215,7 @@ public class DriverControls implements DriveControlMap {
     }
     public boolean letGoOfGrabSampleFromOutside(){
         return ((gamepad2previous.right_trigger > 0.1) && !(gamepad2current.right_trigger > 0.1) || ((gamepad1previous.x) && !gamepad1current.x));
-    }\
+    }
     public boolean enterIntakePosition(){
         return ((gamepad2current.left_trigger > 0.1) && !(gamepad2previous.left_trigger > 0.1)) || ((gamepad1current.y) && !gamepad1previous.y);
     }
