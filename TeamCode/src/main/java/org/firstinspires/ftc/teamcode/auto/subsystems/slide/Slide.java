@@ -58,6 +58,8 @@ public class Slide extends CommonSlide {
         private final double targetPos;
         private final double speed;
         private boolean initialized = false;
+        private double time;
+
         slideControl(double targetPos, double speed){
             this.targetPos = targetPos;
             this.speed = speed;
@@ -65,13 +67,18 @@ public class Slide extends CommonSlide {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                time = System.currentTimeMillis();
+                initialized=true;
+            }
             setSlideExtensionLengthAndSpeed(targetPos, speed);
 
-            if (homingSwitch.isPressed()){
+            if (homingSwitch.isPressed() && System.currentTimeMillis()>=time+500){
                 leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 setSlideExtensionLengthAndSpeed(targetPos, speed);
                 slideStatusWriter.write(new StatusMessage("SLIDES RESET"));
+                time = System.currentTimeMillis();
             }
 
             slideWriter.write(new SlideMessage(getSlideExtensionInInches(), targetPos, leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
