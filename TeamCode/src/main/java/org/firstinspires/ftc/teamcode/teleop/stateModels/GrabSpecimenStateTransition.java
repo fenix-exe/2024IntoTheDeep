@@ -47,7 +47,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         switch(intakeTransitionStep){
             case START:
                 if(FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN){
-                    if(color.isConnected()){
+                    if(color != null){
                         color.updateHSVandDistance();
                         double distance = color.getDistance();
                         if (distance < 30){
@@ -68,7 +68,8 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 }
                 break;
             case STOPPING_INTAKE:
-                if (timer.milliseconds() > 200){
+                if (timer.milliseconds() > 50){
+                    timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.DepositSpecimenPositionStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_PITCH;
                 }
@@ -78,7 +79,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 }
                 break;
             case MOVING_PITCH:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE){
+                if (timer.milliseconds()>400){
                     FSMManager.robotState = RobotState.READY_TO_GO_TO_CLIP_POSITION;
                     intakeTransitionStep = TransitionSteps.START;
                 }

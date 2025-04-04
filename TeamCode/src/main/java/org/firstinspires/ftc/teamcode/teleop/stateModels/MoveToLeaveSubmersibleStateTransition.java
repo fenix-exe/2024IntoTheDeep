@@ -55,7 +55,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                         wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
                         grabSampleState = TransitionSteps.PITCH_UP;
                     }
-                    if (colorSensor.isConnected()){
+                    if (colorSensor != null){
                         colorSensor.updateHSVandDistance();
                         if (colorSensor.detectingYellow()){
                             FSMManager.stopTransitions();
