@@ -58,7 +58,7 @@ public class ColorSensor {
         return H > 75 && H < 95 && detectColor;
     }
     public boolean isConnected(){
-        return colorSensor.getDeviceID() != 0;
+        return colorSensor.getDeviceID() == -62;
     }
 
 }
