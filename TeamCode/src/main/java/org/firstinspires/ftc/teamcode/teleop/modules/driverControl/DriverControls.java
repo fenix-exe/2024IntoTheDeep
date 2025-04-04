@@ -299,6 +299,9 @@ public class DriverControls implements DriveControlMap {
     public boolean continuousDiffDown(){
         return gamepad2current.dpad_down && gamepad2current.left_stick_button;
     }
+    public boolean extendSlidesForSpecimenCycle(){
+        return gamepad1current.a;
+    }
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public boolean resetEncoders(){return false;}
     public boolean hang(){return gamepad2current.x;}
