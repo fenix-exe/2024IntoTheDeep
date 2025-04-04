@@ -16,15 +16,15 @@ import java.util.ArrayList;
 public class FSMManager {
     public static RobotState robotState;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
-    public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator, Alliance alliance){
+    public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator, Alliance alliance, boolean colorSensorConnected){
         robotState = RobotState.START;
         stateTransitions.add(new GoToIntakeStateTransition(wrist, intake, arm, driverControls));
-        stateTransitions.add(new MoveToLeaveSubmersibleStateTransition(wrist, intake, arm, driveTrain, driverControls, color, alliance));
+        stateTransitions.add(new MoveToLeaveSubmersibleStateTransition(wrist, intake, arm, driveTrain, driverControls, colorSensorConnected?color:null, alliance));
         stateTransitions.add(new GrabFailedStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(new GoToDepositStateTransition(wrist, arm, driverControls));
         stateTransitions.add(new DepositSampleIntoObservationZoneStateTransition(wrist,arm,driverControls));
         stateTransitions.add(new GoToGrabSpecimenPositionStateTransition(wrist, intake, arm, driverControls));
-        stateTransitions.add(new GrabSpecimenStateTransition(wrist,intake,arm,driveTrain,driverControls,color));
+        stateTransitions.add(new GrabSpecimenStateTransition(wrist,intake,arm,driveTrain,driverControls,colorSensorConnected?color:null));
         stateTransitions.add(new GrabFailedForSpecimensStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(new GoToClipSpecimenStateTransition(wrist, arm, driverControls));
         stateTransitions.add(new LetGoOfClipStateTransition(wrist, intake, arm, driverControls));

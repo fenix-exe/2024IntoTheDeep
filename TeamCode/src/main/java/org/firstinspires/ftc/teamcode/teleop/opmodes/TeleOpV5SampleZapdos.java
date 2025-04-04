@@ -91,6 +91,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     double speedMultiplier;
     public static boolean enableLogging=false;
     protected Alliance alliance = Alliance.BLUE;
+    boolean colorSensorDetected;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -107,6 +108,12 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         initializeLinearActuator();
         initializeLED();
         int presetsRead = PresetConfigUtil.loadPresetsFromConfig();
+        colorSensorDetected = color.isConnected();
+        if (!colorSensorDetected){
+            telemetry.addLine("COLOR SENSOR NOT DETECTED");
+        } else {
+            telemetry.addLine("COLOR SENSOR DETECTED");
+        }
         initializeStateModels();
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
@@ -116,6 +123,8 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         freqCounter = new FrequencyCounter();
 
         telemetry.addData("Presets Read", presetsRead);
+
+
         telemetry.update();
 
         waitForStart();
@@ -405,7 +414,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator, alliance);
+        FSMManager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator, alliance, colorSensorDetected);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");

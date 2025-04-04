@@ -74,6 +74,7 @@ public class DebugTeleOp extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     public static boolean enableLogging=false;
+    boolean colorSensorDetected;
     @Override
     public void runOpMode() throws InterruptedException {
         //enable manual bulk reads
@@ -89,6 +90,12 @@ public class DebugTeleOp extends LinearOpMode {
         initializeLinearActuator();
         initializeLED();
         int presetsRead = PresetConfigUtil.loadPresetsFromConfig();
+        colorSensorDetected = color.isConnected();
+        if (!colorSensorDetected){
+            telemetry.addLine("NOT DETECTING COLOR SENSOR");
+        } else {
+            telemetry.addLine("DETECTING COLOR SENSOR");
+        }
         initializeStateModels();
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
@@ -396,7 +403,7 @@ public class DebugTeleOp extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, null, arm, driveTrain, driverControls,color, linearActuator, null);
+        FSMManager.initialize(wrist, null, arm, driveTrain, driverControls,color, linearActuator, null, colorSensorDetected);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
