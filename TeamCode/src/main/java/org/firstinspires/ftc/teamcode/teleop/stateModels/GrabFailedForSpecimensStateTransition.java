@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
@@ -17,11 +19,13 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
     IIntake intake;
     Arm arm;
     DriverControls driverControls;
+    ElapsedTime timer;
     public GrabFailedForSpecimensStateTransition(Wrist wrist, IIntake intake, Arm arm, DriverControls driverControls){
         this.wrist = wrist;
         this.intake = intake;
         this.arm = arm;
         this.driverControls = driverControls;
+        timer = new ElapsedTime();
         dropSpecimenState = TransitionSteps.START;
     }
     @Override
@@ -35,6 +39,7 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
             case START:
                 if (driverControls.enterIntakePosition() && FSMManager.robotState == RobotState.READY_TO_GO_TO_CLIP_POSITION) {
                     FSMManager.stopTransitions();
+                    timer.reset();
                     arm.holdArm();
                     intake.outtake();
                     wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
@@ -45,7 +50,9 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
                 break;
             case BACK_TO_INTAKE_POSITION:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE
-                        && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                        && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE
+                        && timer.milliseconds() > 400){
+                    intake.intake();
                     FSMManager.robotState = RobotState.READY_TO_GRAB_SPECIMEN;
                     dropSpecimenState = TransitionSteps.START;
                 }

@@ -55,7 +55,7 @@ public class GrabFailedStateTransition implements IStateTransition{
                 if (Math.abs(arm.getSlideExtension()-arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
                     intake.stop();
                     timer.reset();
-                    wrist.presetPositionPitch(StateModelParameters.DropBlockAndMoveWristDown.pitch);
+                    wrist.presetPositionPitch(StateModelParameters.EnterSubmersibleStateParameters.pitch);
                     grabFailedState = TransitionSteps.MOVING_WRIST_DOWN;
                 }
                 break;

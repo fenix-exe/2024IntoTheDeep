@@ -40,7 +40,8 @@ public class LeaveDepositStateTransition implements IStateTransition{
     public void execute() {
         switch(steps){
             case START:
-                if (controls.depositBack() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET){
+                if ((controls.depositBack() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET)
+                        || (!controls.specimenSampleIntake() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER)){
                     FSMManager.stopTransitions();
                     timer.reset();
                     intake.outtake();
