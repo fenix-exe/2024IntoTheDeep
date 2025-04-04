@@ -57,6 +57,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                     }
                     if (colorSensor != null){
                         colorSensor.updateHSVandDistance();
+                        colorSensor.updateDetectColor();
                         if (colorSensor.detectingYellow()){
                             FSMManager.stopTransitions();
                             timer.reset();
