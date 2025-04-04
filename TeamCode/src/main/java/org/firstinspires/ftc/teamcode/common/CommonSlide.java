@@ -54,6 +54,9 @@ public abstract class CommonSlide {
     public double getSlideExtensionInInches(){
         return ticksToInches(rightSlideMotor.getCurrentPosition());
     }
+    public double getSlideTargetPositionInInches(){
+        return ticksToInches(rightSlideMotor.getTargetPosition());
+    }
     public void resetEncoder(){
         rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
