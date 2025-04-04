@@ -55,6 +55,7 @@ public class LetGoOfClipStateTransition implements IStateTransition{
                 break;
             case RETRACTING_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
                     clipState = TransitionSteps.MOVING_WRIST;
                 }
