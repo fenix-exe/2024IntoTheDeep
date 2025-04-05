@@ -52,7 +52,7 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE
                         && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE
                         && timer.milliseconds() > 400){
-                    intake.intake();
+                    intake.stop();
                     FSMManager.robotState = RobotState.READY_TO_GRAB_SPECIMEN;
                     dropSpecimenState = TransitionSteps.START;
                 }

@@ -50,7 +50,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                     if(color != null){
                         color.updateHSVandDistance();
                         double distance = color.getDistance();
-                        if (distance < 90 && !intakeOn){
+                        if (distance < 100 && !intakeOn){
                             intake.intake();
                             intakeOn = true;
                         }
