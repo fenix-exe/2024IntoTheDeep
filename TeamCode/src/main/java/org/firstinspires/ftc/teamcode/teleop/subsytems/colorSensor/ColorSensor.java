@@ -48,12 +48,28 @@ public class ColorSensor {
     public double getAlpha(){
         return colorSensor.alpha();
     }
+
+    /**
+     * This function returns if the detected color is blue or not, and returns false
+     * if it detects something that is too far away
+     * @return if something blue is at the color sensor
+     */
     public boolean detectingBlue(){
         return H > 220 && H < 230 && detectColor;
     }
+    /**
+     * This function returns if the detected color is red or not, and returns false
+     * if it detects something that is too far away
+     * @return if something red is at the color sensor
+     */
     public boolean detectingRed(){
         return H > 10 && H < 20 && detectColor;
     }
+    /**
+     * This function returns if the detected color is yellow or not, and returns false
+     * if it detects something that is too far away
+     * @return if something yellow is at the color sensor
+     */
     public boolean detectingYellow(){
         return H > 75 && H < 95 && detectColor;
     }
