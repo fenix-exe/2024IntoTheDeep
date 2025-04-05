@@ -48,6 +48,7 @@ public class ColorSensor {
     public double getAlpha(){
         return colorSensor.alpha();
     }
+    public double getH(){return H;}
 
     /**
      * This function returns if the detected color is blue or not, and returns false
@@ -55,7 +56,7 @@ public class ColorSensor {
      * @return if something blue is at the color sensor
      */
     public boolean detectingBlue(){
-        return H > 220 && H < 230 && detectColor;
+        return H > 200 && H < 230 && detectColor;
     }
     /**
      * This function returns if the detected color is red or not, and returns false
