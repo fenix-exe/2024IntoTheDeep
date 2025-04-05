@@ -44,7 +44,7 @@ public class LeaveDepositStateTransition implements IStateTransition{
                         || (!controls.specimenSampleIntake() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER)){
                     FSMManager.stopTransitions();
                     timer.reset();
-                    intake.outtake();
+                    intake.slowOuttake();
                     steps = TransitionSteps.OUTTAKING;
                 }
                 break;

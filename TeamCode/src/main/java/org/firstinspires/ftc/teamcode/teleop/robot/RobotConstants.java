@@ -16,8 +16,8 @@ public class RobotConstants {
     public static double NORMAL_SPEED = 0.4;
     public static double SLOW_SPEED = NORMAL_SPEED/2;
     public static double INTAKE_SPEED =0.5;
-    public static double OUTTAKE_SPEED =-0.25;
-    public static double SLOW_OUTTAKE_SPEED = -1;
+    public static double OUTTAKE_SPEED =-1;
+    public static double SLOW_OUTTAKE_SPEED = -0.25;
     public static double STOP_SPEED = 0;
 
 }
