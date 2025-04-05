@@ -53,7 +53,7 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 250) {
-                    intake.intake();
+                    intake.stop();
                     arm.moveSlideToLength(StateModelParameters.PickupSpecimensStateParameters.slideLength);
                     arm.moveElbowToAngle(StateModelParameters.PickupSpecimensStateParameters.elbowAngle);
                     intakeTransitionStep = TransitionSteps.MOVING_ELBOW_AND_SLIDE;

@@ -25,7 +25,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     IDriveTrain driveTrain;
     DriverControls driverControls;
     ColorSensor color;
-    boolean closingClaw;
+    boolean intakeOn;
     public GrabSpecimenStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
         this.wrist = wrist;
         this.intake = intake;
@@ -34,12 +34,12 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         this.driverControls = driverControls;
         intakeTransitionStep = TransitionSteps.START;
         this.color = color;
-        closingClaw = false;
+        intakeOn = false;
     }
     @Override
     public void reset() {
         intakeTransitionStep = TransitionSteps.START;
-        closingClaw = false;
+        intakeOn = false;
     }
 
     @Override
@@ -50,6 +50,10 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                     if(color != null){
                         color.updateHSVandDistance();
                         double distance = color.getDistance();
+                        if (distance < 90 && !intakeOn){
+                            intake.intake();
+                            intakeOn = true;
+                        }
                         if (distance < 30){
                             FSMManager.stopTransitions();
                             timer = new ElapsedTime();
@@ -69,6 +73,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 break;
             case STOPPING_INTAKE:
                 if (timer.milliseconds() > 0){
+                    intakeOn = false;
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.DepositSpecimenPositionStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_PITCH;
