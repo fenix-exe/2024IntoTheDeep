@@ -103,6 +103,7 @@ public class Homing {
         linearActuator.resetEncoders();
 
         slide.setSlideExtensionLength(0);
+
         while ((Math.abs(slide.getSlideExtensionInInches() - slide.getSlideTargetPositionInInches())) > RobotConstants.SLIDE_TOLERANCE){
 
         }
@@ -160,7 +161,11 @@ public class Homing {
 
         linearActuator.resetEncoders();
 
+        slide.setSlideExtensionLength(0);
 
+        while ((Math.abs(slide.getSlideExtensionInInches() - slide.getSlideTargetPositionInInches())) > RobotConstants.SLIDE_TOLERANCE){
+
+        }
 
     }
 }
