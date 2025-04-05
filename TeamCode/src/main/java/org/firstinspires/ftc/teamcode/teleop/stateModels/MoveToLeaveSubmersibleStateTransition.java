@@ -78,14 +78,13 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                     }
                 }
                 break;
-            case EJECTION:{
+            case EJECTION:
                 if (timer.milliseconds() > 400){
                     timer.reset();
-                    intake.stop();
+                    intake.intake();
                     grabSampleState = TransitionSteps.START;
                 }
                 break;
-            }
             case PITCH_UP:
                 if (timer.milliseconds() > 250) {
                     timer.reset();
