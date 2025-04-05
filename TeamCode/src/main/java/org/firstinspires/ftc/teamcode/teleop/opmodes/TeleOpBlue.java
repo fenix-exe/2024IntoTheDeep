@@ -59,7 +59,7 @@ import page.j5155.expressway.ftc.actions.ActionRunner;
 
 @Config
 @TeleOp
-public class TeleOpV5SampleZapdos extends LinearOpMode {
+public class TeleOpBlue extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     IDriveTrain driveTrain;
     Arm arm;
@@ -90,7 +90,7 @@ public class TeleOpV5SampleZapdos extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     public static boolean enableLogging=false;
-    protected Alliance alliance = Alliance.BLUE;
+    protected static Alliance alliance = Alliance.BLUE;
     boolean colorSensorDetected;
 
     @Override
