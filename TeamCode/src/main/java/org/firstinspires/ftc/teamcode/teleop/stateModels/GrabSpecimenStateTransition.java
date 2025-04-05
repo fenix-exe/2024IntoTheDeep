@@ -77,7 +77,6 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 break;
             case STOPPING_INTAKE:
                 if (timer.milliseconds() > 0){
-
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.DepositSpecimenPositionStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_PITCH;
