@@ -58,6 +58,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                             FSMManager.stopTransitions();
                             timer = new ElapsedTime();
                             intake.stop();
+                            intakeOn = false;
                             driveTrain.stopDriveTrain();
                             intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
                         }
@@ -69,13 +70,14 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                         timer = new ElapsedTime();
                         timer.reset();
                         intake.stop();
+                        intakeOn = false;
                         intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
                     }
                 }
                 break;
             case STOPPING_INTAKE:
                 if (timer.milliseconds() > 0){
-                    intakeOn = false;
+
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.DepositSpecimenPositionStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_PITCH;
