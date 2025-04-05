@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import java.io.File;
 import java.util.Arrays;
 
+import static org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive.PARAMS;
+
 @Config
 @TeleOp(name = "POSE FINDER")
 public class poseFinder extends LinearOpMode {
@@ -31,6 +33,8 @@ public class poseFinder extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,PARAMS.pinpointDeviceName);
+
 
         //set up ftc dashboard telemetry
         MultipleTelemetry multi = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

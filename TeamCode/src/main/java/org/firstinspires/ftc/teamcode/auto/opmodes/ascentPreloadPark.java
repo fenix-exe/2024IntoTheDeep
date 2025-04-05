@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.auto.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
@@ -39,6 +41,7 @@ import org.firstinspires.ftc.teamcode.auto.util.writeAuto;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 @Autonomous(name = "AUTO - BUCKET 4", preselectTeleOp = "TeleOpV5SampleZapdos")
@@ -48,7 +51,7 @@ public class ascentPreloadPark extends LinearOpMode {
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentPreloadPark.csv";
     String LOG_NAME = "ascentPreloadPark";
     int ELBOW_START = 0;
-    double PITCH_START = 0.16;
+    double PITCH_START = 0.7;
     //double ROLL_START = 0.21;
     //double CLAW_START = 0.86;
 
@@ -236,7 +239,8 @@ public class ascentPreloadPark extends LinearOpMode {
 
         //wait for user input to begin interpreter parsing and setup
         while(!gamepad1.b && !isStopRequested()) {
-
+            telemetry.addLine("Homing Complete!");
+            telemetry.update();
         }
 
         /*initialize IMU
@@ -309,7 +313,7 @@ public class ascentPreloadPark extends LinearOpMode {
                     traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
                 else {
-                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
+                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new MinVelConstraint(Arrays.asList(new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01), new AngularVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01))));
                 }
             }
             else {
@@ -320,7 +324,7 @@ public class ascentPreloadPark extends LinearOpMode {
                     traj1 = traj1.splineToLinearHeading(new Pose2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)), extractAuto.getAngleFromList(vector.get(i)) ), extractAuto.getTangentFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
                 }
                 else {
-                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01));
+                    traj1 = traj1.strafeToLinearHeading(new Vector2d(extractAuto.getXFromList(vector.get(i)),extractAuto.getYFromList(vector.get(i)) ), extractAuto.getAngleFromList(vector.get(i)), new MinVelConstraint(Arrays.asList(new TranslationalVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxWheelVel*0.01), new AngularVelConstraint(extractAuto.getVelocityFromList(vector.get(i))*MecanumDrive.PARAMS.maxAngVel*0.01))));
                 }
             }
             if (!PitchareSame || !RollareSame || !ClawareSame) {
@@ -358,6 +362,7 @@ public class ascentPreloadPark extends LinearOpMode {
         elbow.setTargetAngleAndSpeed(elbow.degreesToTicks(ELBOW_START), 1);
         //autoClaw.setPitch(PITCH_START);
         //autoClaw.setClaw(0.21);
+        pitchLeft.setPosition(PITCH_START);
 
 
         if (elbow.degreesToTicks(ELBOW_START)-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < elbow.degreesToTicks(ELBOW_START)+30) {
@@ -372,6 +377,7 @@ public class ascentPreloadPark extends LinearOpMode {
         }
 
         elbowMotor.setPower(0);
+        slide.setSlidePower(0);
 
         //autoClaw.setClaw(CLAW_START);
 

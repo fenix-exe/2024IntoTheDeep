@@ -69,6 +69,7 @@ public class Slide extends CommonSlide {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (!initialized) {
                 time = System.currentTimeMillis();
+                slideStatusWriter.write(new StatusMessage("SLIDES MOVING"));
                 initialized=true;
             }
             setSlideExtensionLengthAndSpeed(targetPos, speed);
