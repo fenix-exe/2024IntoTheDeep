@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.modules.arm;
 public class ArmConstants {
     public static int ELBOWPRESETTOLERANCE = 3;
     public static int SLIDEPRESETTOLERANCE = 1;
-    public static int MAXSLIDEEXTENSIONLENGTHINCHES = 18;
+    public static int MAXSLIDEEXTENSIONLENGTHINCHES = 16;
     public static int ELBOWINTERMEDIATETHRESHOLD = 23;
     public static int ELBOWBOTTOMANGLE = -90;
     public static int ELBOWTICKSTOLERANCE = 100;
