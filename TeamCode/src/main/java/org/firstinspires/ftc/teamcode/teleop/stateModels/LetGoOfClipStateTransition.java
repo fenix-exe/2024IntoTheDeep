@@ -13,7 +13,6 @@ public class LetGoOfClipStateTransition implements IStateTransition{
         START,
         OPENING_CLAW,
         RETRACTING_SLIDES,
-        MOVING_WRIST,
     }
 
     private TransitionSteps clipState;
@@ -55,16 +54,8 @@ public class LetGoOfClipStateTransition implements IStateTransition{
                 break;
             case RETRACTING_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
-                    timer.reset();
-                    wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
-                    clipState = TransitionSteps.MOVING_WRIST;
-                }
-                break;
-            case MOVING_WRIST:
-                if (timer.milliseconds() > 250){
-                    intake.intake();
                     clipState = TransitionSteps.START;
-                    FSMManager.robotState = RobotState.READY_TO_GRAB_SPECIMEN;
+                    FSMManager.robotState = RobotState.CLIPPED;
                 }
                 break;
         }
