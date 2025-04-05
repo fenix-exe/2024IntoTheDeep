@@ -67,6 +67,7 @@ public class Slide extends CommonSlide {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized && ((ticksToInches(leftSlideMotor.getCurrentPosition()) - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < ticksToInches(leftSlideMotor.getCurrentPosition()) + 0.5))) {
             if (!initialized) {
                 time = System.currentTimeMillis();
                 slideStatusWriter.write(new StatusMessage("SLIDES MOVING"));
@@ -82,9 +83,13 @@ public class Slide extends CommonSlide {
                 time = System.currentTimeMillis();
             }
 
-            slideWriter.write(new SlideMessage(getSlideExtensionInInches(), targetPos, leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getCurrentPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 
             return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
+            } else {
+                slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getCurrentPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+                slideStatusWriter.write(new StatusMessage("NOT REACHED PREVIOUS TARGET POS"));
+                return true;}
         }
     }
     public Action slideControl(double targetPos, double speed){

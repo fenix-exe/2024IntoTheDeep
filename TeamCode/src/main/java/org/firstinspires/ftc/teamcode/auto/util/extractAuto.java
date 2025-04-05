@@ -123,7 +123,7 @@ public class extractAuto {
     }
 
     public double getCorrectionFromList(PositionInSpace position) {
-        if (useSeconds) {return position.correction;}
+        if (useSeconds) {return position.correction-0.5;}
         else {return (position.correction-0.5)/1000;}
     }
 
