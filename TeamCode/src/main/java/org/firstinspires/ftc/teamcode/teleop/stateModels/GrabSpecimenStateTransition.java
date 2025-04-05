@@ -61,6 +61,8 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                             driveTrain.stopDriveTrain();
                             intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
                         }
+                    } else {
+                        intake.intake();
                     }
                     if (driverControls.pickupAndDepositSpecimens()){
                         FSMManager.stopTransitions();
