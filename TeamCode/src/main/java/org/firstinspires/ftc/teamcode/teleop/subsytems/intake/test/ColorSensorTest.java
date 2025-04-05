@@ -22,7 +22,7 @@ public class ColorSensorTest extends LinearOpMode {
     boolean detectingColor = false;
     @Override
     public void runOpMode() throws InterruptedException {
-        hardwareColorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
+        hardwareColorSensor = hardwareMap.get(RevColorSensorV3.class, "color sensor");
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
         rightRoller = hardwareMap.get(CRServoImplEx.class, "rightRoller");
         leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -90,6 +90,8 @@ public class ColorSensorTest extends LinearOpMode {
             } else {
                 intake.outtake();
             }
+            telemetry.addData("H", colorSensor.getH());
+            telemetry.addData("Detecting Blue", colorSensor.getBlue());
             telemetry.update();
 
         }
