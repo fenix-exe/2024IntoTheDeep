@@ -22,7 +22,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.MoveToLeaveSubmersibleStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
@@ -298,7 +297,6 @@ public class TeleOpBlue extends LinearOpMode {
             multiTelemetry.addData("Green", colorSensor.green());*/
             //telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
-            telemetry.addData("Grab Sample State", MoveToLeaveSubmersibleStateTransition.grabSampleState);
             /*telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
             telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
             telemetry.addData("Right Slide", rightSlide.getCurrentPosition());
