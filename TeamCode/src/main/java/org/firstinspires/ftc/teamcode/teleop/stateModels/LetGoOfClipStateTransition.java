@@ -54,6 +54,7 @@ public class LetGoOfClipStateTransition implements IStateTransition{
                 break;
             case RETRACTING_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
+                    intake.stop();
                     clipState = TransitionSteps.START;
                     FSMManager.robotState = RobotState.CLIPPED;
                 }
