@@ -59,33 +59,20 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                         colorSensor.updateHSVandDistance();
                         colorSensor.updateDetectColor();
                         if (colorSensor.detectingYellow()){
-                            FSMManager.stopTransitions();
-                            timer.reset();
-                            wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
-                            grabSampleState = TransitionSteps.PITCH_UP;
+                            caseStartMovementForSuccessfulPickup();
                         }
                         if (colorSensor.detectingBlue()){
                             if (alliance == Alliance.BLUE){
-                                FSMManager.stopTransitions();
-                                timer.reset();
-                                wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
-                                grabSampleState = TransitionSteps.PITCH_UP;
+                                caseStartMovementForSuccessfulPickup();
                             } else {
-                                timer.reset();
-                                intake.outtake();
-                                grabSampleState = TransitionSteps.EJECTION;
+                                caseStartMovementForUnsuccesfulPickup();
                             }
                         }
                         if (colorSensor.detectingRed()){
                             if (alliance == Alliance.RED){
-                                FSMManager.stopTransitions();
-                                timer.reset();
-                                wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
-                                grabSampleState = TransitionSteps.PITCH_UP;
+                                caseStartMovementForSuccessfulPickup();
                             } else {
-                                timer.reset();
-                                intake.outtake();
-                                grabSampleState = TransitionSteps.EJECTION;
+                                caseStartMovementForUnsuccesfulPickup();
                             }
                         }
                     }
@@ -125,5 +112,17 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     @Override
     public boolean inProgress() {
         return !(grabSampleState == TransitionSteps.START);
+    }
+    private void caseStartMovementForSuccessfulPickup(){
+        FSMManager.stopTransitions();
+        timer.reset();
+        wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
+        grabSampleState = TransitionSteps.PITCH_UP;
+    }
+    private void caseStartMovementForUnsuccesfulPickup(){
+        FSMManager.stopTransitions();
+        timer.reset();
+        intake.outtake();
+        grabSampleState = TransitionSteps.EJECTION;
     }
 }
