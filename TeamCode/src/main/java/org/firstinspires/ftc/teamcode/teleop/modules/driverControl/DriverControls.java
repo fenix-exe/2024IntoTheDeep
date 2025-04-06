@@ -299,6 +299,7 @@ public class DriverControls implements DriveControlMap {
     public void rumbleArmGamepad(){gamepad2current.rumble(10);}
     public boolean resetEncoders(){return false;}
     public boolean hang(){return gamepad2current.x;}
+    public boolean turnOffAutoGrab(){return gamepad1current.back;}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){

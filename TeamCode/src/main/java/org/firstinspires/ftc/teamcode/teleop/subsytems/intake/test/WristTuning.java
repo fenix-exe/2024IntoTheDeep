@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.subsytems.intake.test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 @Config
 @TeleOp
+@Disabled
 public class WristTuning extends LinearOpMode {
     Servo pitchLeft;
     Servo pitchRight;

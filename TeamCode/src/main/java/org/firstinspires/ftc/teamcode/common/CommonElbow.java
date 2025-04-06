@@ -10,6 +10,7 @@ public abstract class CommonElbow {
     public DcMotorEx elbowMotor;
     public RevTouchSensor limitSwitch;
     int elbowPosition;
+    private final double OFFSET = 1;
     public int topPosition;
     public CommonElbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPositionInDegrees){
         this.elbowMotor = elbow;
@@ -22,11 +23,11 @@ public abstract class CommonElbow {
         elbowMotor.setPower(1);
     }
     public void setTargetAngle(double degrees){
-        elbowPosition = degreesToTicks(degrees);
+        elbowPosition = degreesToTicks(degrees - OFFSET);
         goToTargetPosition(elbowPosition);
     }
     public void setTargetAngleAndSpeed(double deg, double power) {
-        elbowPosition = degreesToTicks(deg);
+        elbowPosition = degreesToTicks(deg - OFFSET);
         elbowMotor.setTargetPosition(elbowPosition);
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elbowMotor.setPower(power);
