@@ -19,7 +19,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         SLIDES_IN,
         EJECTION
     }
-    private TransitionSteps grabSampleState;
+    public static TransitionSteps grabSampleState;
     ElapsedTime timer;
     Wrist wrist;
     IIntake intake;
@@ -50,25 +50,21 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
             case START:
                 if (FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
                     if (driverControls.grabSampleFromOutside()) {
-                        FSMManager.stopTransitions();
-                        timer.reset();
-                        wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
-                        grabSampleState = TransitionSteps.PITCH_UP;
+                        caseStartMovementForSuccessfulPickup();
+                        break;
                     }
                     if (colorSensor != null){
                         colorSensor.updateHSVandDistance();
                         colorSensor.updateDetectColor();
                         if (colorSensor.detectingYellow()){
                             caseStartMovementForSuccessfulPickup();
-                        }
-                        if (colorSensor.detectingBlue()){
+                        } else if (colorSensor.detectingBlue()){
                             if (alliance == Alliance.BLUE){
                                 caseStartMovementForSuccessfulPickup();
                             } else {
                                 caseStartMovementForUnsuccesfulPickup();
                             }
-                        }
-                        if (colorSensor.detectingRed()){
+                        } else if (colorSensor.detectingRed()){
                             if (alliance == Alliance.RED){
                                 caseStartMovementForSuccessfulPickup();
                             } else {
