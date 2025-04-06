@@ -59,6 +59,8 @@ public class Slide extends CommonSlide {
         private final double speed;
         private boolean initialized = false;
         private double time;
+        private boolean oldPos;
+        private boolean runOnce = false;
 
         slideControl(double targetPos, double speed){
             this.targetPos = targetPos;
@@ -67,32 +69,34 @@ public class Slide extends CommonSlide {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initialized && ((ticksToInches(leftSlideMotor.getCurrentPosition()) - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < ticksToInches(leftSlideMotor.getCurrentPosition()) + 0.5))) {
             if (!initialized) {
                 time = System.currentTimeMillis();
                 slideStatusWriter.write(new StatusMessage("SLIDES MOVING"));
-                initialized=true;
-            }
-            setSlideExtensionLengthAndSpeed(targetPos, speed);
-
-            if (homingSwitch.isPressed() && System.currentTimeMillis()>=time+500){
-                leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                setSlideExtensionLengthAndSpeed(targetPos, speed);
-                slideStatusWriter.write(new StatusMessage("SLIDES RESET"));
-                time = System.currentTimeMillis();
+                initialized = true;
+                oldPos = ((ticksToInches(leftSlideMotor.getCurrentPosition()) - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < ticksToInches(leftSlideMotor.getCurrentPosition()) + 0.5));
             }
 
-            slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-
-            return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
-            } else {
-                slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-                slideStatusWriter.write(new StatusMessage("NOT REACHED PREVIOUS TARGET POS"));
+            if (!oldPos) {
                 return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
+            } else {
+
+
+                setSlideExtensionLengthAndSpeed(targetPos, speed);
+
+                if (homingSwitch.isPressed() && System.currentTimeMillis() >= time + 500) {
+                    leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    setSlideExtensionLengthAndSpeed(targetPos, speed);
+                    slideStatusWriter.write(new StatusMessage("SLIDES RESET"));
+                    time = System.currentTimeMillis();
                 }
+
+                slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+
+                return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
+            }
         }
-    }
+        }
     public Action slideControl(double targetPos, double speed){
         return new slideControl(targetPos, speed);
     }
