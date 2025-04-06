@@ -25,7 +25,7 @@ public class Homing {
     private final Elbow elbow;
     private final LinearOpMode opMode;
     private final Telemetry telemetry;
-    private final double LOW_ELBOW_POS = -11.5;
+    private final double LOW_ELBOW_POS = -10.4;
     private final double ELBOW_TOLERANCE = 0.5;
     private final double SLIDE_EXTENSION_LENGTH = 10;
     private final DownsampledWriter homingWriter;

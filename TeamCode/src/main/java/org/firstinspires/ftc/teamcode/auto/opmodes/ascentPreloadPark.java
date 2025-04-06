@@ -60,8 +60,8 @@ public class ascentPreloadPark extends LinearOpMode {
     RobotWideFunctions robot = new RobotWideFunctions();
 
 
-    double ELBOW_START = extractAuto.getElbowPhiFromList(vector.get(0));
-    double PITCH_START = extractAuto.getPitchFromList(vector.get(0));
+    double ELBOW_START = 21.7;
+    double PITCH_START = 0.88;
 
     //declare end effector
     ServoImplEx pitchLeft;
@@ -110,6 +110,8 @@ public class ascentPreloadPark extends LinearOpMode {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        //ELBOW_START = getElbowPhiFromList(vector.get(i))
 
         //set up writer
         writeAuto writer = new writeAuto(LOG_NAME);
