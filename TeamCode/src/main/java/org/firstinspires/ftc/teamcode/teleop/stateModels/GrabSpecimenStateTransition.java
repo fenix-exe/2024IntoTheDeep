@@ -54,7 +54,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                             intake.intake();
                             intakeOn = true;
                         }
-                        if (distance < 30){
+                        if (distance < 32.5){
                             FSMManager.stopTransitions();
                             timer = new ElapsedTime();
                             intake.stop();
