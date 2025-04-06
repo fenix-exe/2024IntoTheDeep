@@ -373,6 +373,7 @@ public class ascentClipCyclePark extends LinearOpMode {
             elbow.setTargetAngleAndSpeed(ELBOW_START, 1);
         }
 
+
         while(!gamepad1.y && !isStopRequested()) {
 
         }

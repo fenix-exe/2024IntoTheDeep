@@ -60,9 +60,8 @@ public class Slide extends CommonSlide {
         private boolean initialized = false;
         private double time;
         private boolean oldPos;
-        private boolean runOnce = false;
 
-        slideControl(double targetPos, double speed){
+        slideControl(double targetPos, double speed) {
             this.targetPos = targetPos;
             this.speed = speed;
         }
@@ -73,12 +72,9 @@ public class Slide extends CommonSlide {
                 time = System.currentTimeMillis();
                 slideStatusWriter.write(new StatusMessage("SLIDES MOVING"));
                 initialized = true;
-                oldPos = ((ticksToInches(leftSlideMotor.getCurrentPosition()) - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < ticksToInches(leftSlideMotor.getCurrentPosition()) + 0.5));
+                oldPos = ((ticksToInches(leftSlideMotor.getTargetPosition()) - 2 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < ticksToInches(leftSlideMotor.getTargetPosition()) + 2));
             }
 
-            if (!oldPos) {
-                return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
-            } else {
 
 
                 setSlideExtensionLengthAndSpeed(targetPos, speed);
@@ -93,10 +89,13 @@ public class Slide extends CommonSlide {
 
                 slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 
-                return !(targetPos - 0.5 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < targetPos + 0.5);
-            }
+                if (targetPos - 1 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos + 1) {
+                    return false;
+                } else {
+                    return true;
+                }
         }
-        }
+    }
     public Action slideControl(double targetPos, double speed){
         return new slideControl(targetPos, speed);
     }
