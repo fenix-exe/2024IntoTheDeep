@@ -261,6 +261,8 @@ public class TeleOpBlue extends LinearOpMode {
             driveTrain.Update();
 
             //telemetry
+            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            telemetry.addData("Elbow Target Angle", arm.getElbowTargetPositionInDegrees());
             /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
