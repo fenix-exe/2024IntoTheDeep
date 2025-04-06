@@ -17,7 +17,6 @@ public class FSMManager {
     public static RobotState robotState;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
     public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator, Alliance alliance, boolean colorSensorConnected){
-        robotState = RobotState.START;
         stateTransitions.add(new GoToIntakeStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(new MoveToLeaveSubmersibleStateTransition(wrist, intake, arm, driveTrain, driverControls, colorSensorConnected?color:null, alliance));
         stateTransitions.add(new GrabFailedStateTransition(wrist, intake, arm, driverControls));
@@ -31,6 +30,8 @@ public class FSMManager {
         stateTransitions.add(new HangStateTransition(wrist, arm, driverControls,linearActuator));
         stateTransitions.add(new EnterSubmersibleStateTransition(wrist,intake,driverControls));
         stateTransitions.add(new LeaveDepositStateTransition(wrist, intake, arm, driverControls));
+        stopTransitions();
+        setRobotStateToStart();
     }
     public static void execute(){
         for(int i = 0; i < stateTransitions.size(); i++){

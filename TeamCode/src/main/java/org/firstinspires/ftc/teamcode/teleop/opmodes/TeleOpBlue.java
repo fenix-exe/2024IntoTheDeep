@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.MoveToLeaveSubmersibleStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
@@ -155,7 +156,7 @@ public class TeleOpBlue extends LinearOpMode {
             }
 
             //speed adjustments
-            if (driverControls.microDriveAdjustments() || FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
+            if (driverControls.microDriveAdjustments() || FSMManager.robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
                 speedMultiplier = RobotConstants.SLOW_SPEED;
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
@@ -260,7 +261,7 @@ public class TeleOpBlue extends LinearOpMode {
             driveTrain.Update();
 
             //telemetry
-            multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+            /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
             multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
             multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
@@ -297,6 +298,7 @@ public class TeleOpBlue extends LinearOpMode {
             multiTelemetry.addData("Green", colorSensor.green());*/
             //telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
+            //telemetry.addData("GrabSampleState", MoveToLeaveSubmersibleStateTransition.grabSampleState);
             /*telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
             telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
             telemetry.addData("Right Slide", rightSlide.getCurrentPosition());

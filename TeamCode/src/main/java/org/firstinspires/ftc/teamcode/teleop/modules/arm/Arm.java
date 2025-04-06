@@ -27,6 +27,8 @@ public class Arm {
             } else if (slide.getSlideExtensionInInches() < RobotConstants.SLIDE_TOLERANCE
                     && slideMovement < 0){ //bottom limit
                 power = 0;
+            } else if (slide.getSlideExtensionInInches() > max_extension - 2 && slideMovement > 0){
+                power = slideMovement * 0.5;
             } else {
                 power = slideMovement;
             }

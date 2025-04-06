@@ -32,7 +32,7 @@ public class GoToClipSpecimenStateTransition implements IStateTransition{
     public void execute() {
         switch(goToClipState){
             case START:
-                if ((driverControls.pickupAndDepositSpecimens() || driverControls.extendSlidesForSpecimenCycle()) && FSMManager.robotState == RobotState.READY_TO_GO_TO_CLIP_POSITION){
+                if (driverControls.pickupAndDepositSpecimens() && FSMManager.robotState == RobotState.READY_TO_GO_TO_CLIP_POSITION){
                     FSMManager.stopTransitions();
                     arm.moveSlideToLength(StateModelParameters.DepositSpecimenPositionStateParameters.slideLength);
                     goToClipState = TransitionSteps.MOVING_SLIDES_AND_WRIST_TO_DEPOSIT;
