@@ -85,15 +85,11 @@ public class PresetConfigUtil {
                 break;
             case "HANG_STATE_MODEL_PARAMS":
                 StateModelParameters.Hang.pitch = Double.parseDouble(configValues[1]);
-                StateModelParameters.Hang.roll = Double.parseDouble(configValues[2]);
                 StateModelParameters.Hang.linearActuatorExtension = Double.parseDouble(configValues[3]);
                 StateModelParameters.Hang.linearActuatorRetraction = Double.parseDouble(configValues[4]);
-                StateModelParameters.Hang.initialElbowAngle = Double.parseDouble(configValues[5]);
+                StateModelParameters.Hang.elbowAngle = Double.parseDouble(configValues[5]);
                 StateModelParameters.Hang.slideExtension = Double.parseDouble(configValues[6]);
-                StateModelParameters.Hang.hangElbowAngle = Double.parseDouble(configValues[7]);
                 StateModelParameters.Hang.slideIntermediatePosition = Double.parseDouble(configValues[8]);
-                StateModelParameters.Hang.slideRetraction = Double.parseDouble(configValues[9]);
-                StateModelParameters.Hang.endElbowAngle = Double.parseDouble(configValues[10]);
                 break;
             case "DEPOSIT_SAMPLE_INTO_OBSERVATION_ZONE_STATE_MODEL_PARAMS":
                 StateModelParameters.DepositSampleIntoObservationZone.retractionLength = Double.parseDouble(configValues[1]);

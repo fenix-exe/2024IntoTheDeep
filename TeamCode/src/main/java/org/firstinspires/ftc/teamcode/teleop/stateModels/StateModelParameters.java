@@ -72,15 +72,11 @@ public class StateModelParameters {
     }
     public static class Hang{
         public static double pitch = 5;
-        public static double roll = 0;
         public static double linearActuatorExtension = 9.5;
         public static double linearActuatorRetraction = 5.75;
-        public static double initialElbowAngle = 83;
+        public static double elbowAngle = 83;
         public static double slideExtension = 26;
-        public static double hangElbowAngle = 103;
         public static double slideIntermediatePosition = 12.5;
-        public static double slideRetraction = 3;
-        public static double endElbowAngle = 15;
     }
     public static class DepositSampleIntoObservationZone{
         public static double retractionLength = 3;

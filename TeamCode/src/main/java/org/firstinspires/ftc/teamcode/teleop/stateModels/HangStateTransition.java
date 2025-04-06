@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActuator;
@@ -17,8 +16,7 @@ public class HangStateTransition implements IStateTransition{
         ELBOW_TO_SLIDE_EXTENSION_POSITION,
         EXTENDING_SLIDES,
         ELBOW_TO_HANG_POSITION,
-        SLIDES_RETRACT,
-        ELBOW_TO_SAFE
+        SLIDES_RETRACT_AND_LINEAR_ACTUATOR_DOWN
 
     }
     TransitionSteps hangState;
@@ -58,20 +56,12 @@ public class HangStateTransition implements IStateTransition{
                     linearActuator.goToTargetPositionInches(StateModelParameters.Hang.linearActuatorRetraction);
                     hangState = TransitionSteps.LINEAR_ACTUATOR_DOWN;
                 }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    hangState = TransitionSteps.START;
-                }
                 break;
             case LINEAR_ACTUATOR_DOWN:
                 if ((Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)
                         && driverControls.hang()){
-                    arm.moveElbowToAngle(StateModelParameters.Hang.initialElbowAngle);
+                    arm.moveElbowToAngle(StateModelParameters.Hang.elbowAngle);
                     hangState = TransitionSteps.ELBOW_TO_SLIDE_EXTENSION_POSITION;
-                }
-                if (driverControls.escapePresets()){
-                    arm.holdArm();
-                    hangState = TransitionSteps.START;
                 }
                 break;
             case ELBOW_TO_SLIDE_EXTENSION_POSITION:
@@ -80,34 +70,19 @@ public class HangStateTransition implements IStateTransition{
                     arm.moveSlideToLength(StateModelParameters.Hang.slideExtension);
                     hangState = TransitionSteps.EXTENDING_SLIDES;
                 }
-
                 break;
             case EXTENDING_SLIDES:
                 if ((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.ELBOW_TOLERANCE)
                         && driverControls.hang()){
-                    arm.moveElbowToAngle(StateModelParameters.Hang.hangElbowAngle);
-                    hangState = TransitionSteps.ELBOW_TO_HANG_POSITION;
-                }
-                break;
-            case ELBOW_TO_HANG_POSITION:
-                if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
-                        && driverControls.hang()){
                     arm.moveSlideToLength(StateModelParameters.Hang.slideIntermediatePosition);
-                    hangState = TransitionSteps.SLIDES_RETRACT;
+                    linearActuator.goToTargetPositionInches(0);
+                    hangState = TransitionSteps.SLIDES_RETRACT_AND_LINEAR_ACTUATOR_DOWN;
                 }
                 break;
-            case SLIDES_RETRACT:
+            case SLIDES_RETRACT_AND_LINEAR_ACTUATOR_DOWN:
                 if (((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE))
                         && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
                         && driverControls.hang()){
-                    arm.moveElbowToAngle(StateModelParameters.Hang.endElbowAngle);
-                    linearActuator.goToTargetPositionInches(StateModelParameters.Hang.linearActuatorExtension);
-                    hangState = TransitionSteps.ELBOW_TO_SAFE;
-                }
-                break;
-            case ELBOW_TO_SAFE:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
-                    FSMManager.robotState = RobotState.HANGING;
                     hangState = TransitionSteps.START;
                 }
                 break;
