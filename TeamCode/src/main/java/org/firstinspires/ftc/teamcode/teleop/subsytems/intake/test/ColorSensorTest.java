@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.intake.test;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.BigWheelIntake;
 @TeleOp
+@Disabled
 public class ColorSensorTest extends LinearOpMode {
     ColorSensor colorSensor;
     RevColorSensorV3 hardwareColorSensor;

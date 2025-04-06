@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.test;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
+@Disabled
 public class ColorSensorStatus extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
