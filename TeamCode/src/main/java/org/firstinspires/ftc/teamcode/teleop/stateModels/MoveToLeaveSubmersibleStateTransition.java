@@ -53,7 +53,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                         caseStartMovementForSuccessfulPickup();
                         break;
                     }
-                    if (colorSensor != null){
+                    if (colorSensor != null && driverControls.turnOffAutoGrab()){
                         colorSensor.updateHSVandDistance();
                         colorSensor.updateDetectColor();
                         if (colorSensor.detectingYellow()){
