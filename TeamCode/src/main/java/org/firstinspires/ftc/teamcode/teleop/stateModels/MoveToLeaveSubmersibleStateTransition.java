@@ -53,7 +53,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                         caseStartMovementForSuccessfulPickup();
                         break;
                     }
-                    if (colorSensor != null && driverControls.turnOffAutoGrab()){
+                    if (colorSensor != null && !driverControls.turnOffAutoGrab()){
                         colorSensor.updateHSVandDistance();
                         colorSensor.updateDetectColor();
                         if (colorSensor.detectingYellow()){
@@ -111,6 +111,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     private void caseStartMovementForSuccessfulPickup(){
         FSMManager.stopTransitions();
         timer.reset();
+        StateModelParameters.EnterSubmersibleStateParameters.pitch = wrist.getPitchAngle();
         wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
         grabSampleState = TransitionSteps.PITCH_UP;
     }
