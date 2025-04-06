@@ -13,8 +13,7 @@ public class WristTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        pitchServo = hardwareMap.get(Servo.class, "pitch");
-        rollServo = hardwareMap.get(Servo.class, "roll");
+        pitchServo = hardwareMap.get(Servo.class, "pitchLeft");
         wrist = new Wrist(pitchServo);
         wrist.presetPositionPitch(0);
 

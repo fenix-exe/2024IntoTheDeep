@@ -27,7 +27,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.auto.subsystems.activeIntake.autoBigWheelIntake;
 import org.firstinspires.ftc.teamcode.auto.subsystems.claw.Claw;
 import org.firstinspires.ftc.teamcode.auto.subsystems.wrist.Wrist;
-import org.firstinspires.ftc.teamcode.common.CommonWrist;
 import org.firstinspires.ftc.teamcode.common.util.Homing;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
@@ -38,6 +37,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.linearActuator.LinearActu
 import org.firstinspires.ftc.teamcode.auto.util.RobotWideFunctions;
 import org.firstinspires.ftc.teamcode.auto.util.extractAuto;
 import org.firstinspires.ftc.teamcode.auto.util.writeAuto;
+import org.firstinspires.ftc.teamcode.teleop.util.testCode.homing.HomeTeleOpDown;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,8 +51,6 @@ public class ascentClipCyclePark extends LinearOpMode {
     //declare vars
     String FILE_NAME = "/sdcard/Download/autoPositions/ascentClipCyclePark.csv";
     String LOG_NAME = "ascentClipCyclePark";
-    int ELBOW_START = 0;
-    double PITCH_START = 0.7;
     //double ROLL_START = 0.21;
     //double CLAW_START = 0.86;
 
@@ -60,6 +58,9 @@ public class ascentClipCyclePark extends LinearOpMode {
     extractAuto extractAuto = new extractAuto();
     ArrayList<extractAuto.PositionInSpace> vector = new ArrayList<>();
     RobotWideFunctions robot = new RobotWideFunctions();
+
+    double ELBOW_START = extractAuto.getElbowPhiFromList(vector.get(0));
+    double PITCH_START = extractAuto.getPitchFromList(vector.get(0));
 
     //declare end effector
     ServoImplEx pitchLeft;
@@ -97,7 +98,7 @@ public class ascentClipCyclePark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //add telemetry to FTC dashboard
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //MultipleTelemetry p = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //try to read and extract data from file
         try {
@@ -159,20 +160,32 @@ public class ascentClipCyclePark extends LinearOpMode {
         pinpoint.setPosition(new Pose2d(0,0,0));
         elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
         homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
-        boolean moveElUp;
 
-
+        boolean moveElUp = false;
+        String telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
         //wait for user input to begin homing
         while (!gamepad1.a && !isStopRequested()) {
             pinpoint.update();
-            telemetry.addData("pose x", pinpoint.getPositionRR().position.x);
-            telemetry.addData("pose y", pinpoint.getPositionRR().position.y);
-            telemetry.addLine("Hold Left Button to Move Elbow Up");
+            telemetry.addLine("Step 1: Check Pinpoint Location. Try Moving Robot");
+            telemetry.addLine("Step 2: Choose Homing Type.");
+            telemetry.addLine("Hold D-Pad Up and A at the same time to home up.");
+            telemetry.addLine("Simply hold A at the same time to home down.");
+            telemetry.addData("Position X", pinpoint.getPositionRR().position.x);
+            telemetry.addData("Position Y", pinpoint.getPositionRR().position.y);
+            telemetry.addData("Position Heading", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
 
+            if (gamepad1.dpad_up){
+                telemetryMessage = "ELBOW UP 30 DEGREES, THEN HOME DOWN";
+                moveElUp = true;
+            }
+            if (gamepad1.dpad_down){
+                telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
+                moveElUp = false;
+            }
+
+            telemetry.addLine("You will be homing in this way: " + telemetryMessage);
             telemetry.update();
         }
-
-        moveElUp = gamepad1.x;
 
 
         //HOMING
@@ -241,18 +254,10 @@ public class ascentClipCyclePark extends LinearOpMode {
         //wait for user input to begin interpreter parsing and setup
         while(!gamepad1.b && !isStopRequested()) {
             telemetry.addLine("Homing Complete!");
+            telemetry.addLine("Add Specimen, then click B to continue.");
             telemetry.update();
         }
 
-        /*initialize IMU
-         *IS THIS NECESSARY?
-         */
-        IMU revIMU = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters= new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        revIMU.initialize(parameters);
-        revIMU.resetYaw();
 
         //initalize pinpoint drive
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
@@ -360,31 +365,26 @@ public class ascentClipCyclePark extends LinearOpMode {
         Action action1 = traj1.build();
 
         //initialize elbow, slide, and claw to starting positions
-        elbow.setTargetAngleAndSpeed(elbow.degreesToTicks(ELBOW_START), 1);
+        elbow.setTargetAngleAndSpeed(ELBOW_START, 1);
         //autoClaw.setPitch(PITCH_START);
         //autoClaw.setClaw(0.21);
         pitchLeft.setPosition(PITCH_START);
 
 
-        if (elbow.degreesToTicks(ELBOW_START)-30 < elbowMotor.getCurrentPosition() && elbowMotor.getCurrentPosition() < elbow.degreesToTicks(ELBOW_START)+30) {
-            elbowMotor.setPower(0);
-
-        } else {
-            elbow.setTargetAngleAndSpeed(ELBOW_START, 1);
-        }
-
-
         while(!gamepad1.y && !isStopRequested()) {
-
+            telemetry.addLine("Press Y to get into ready-to-run position");
+            telemetry.update();
         }
 
         elbowMotor.setPower(0);
         slide.setSlidePower(0);
 
-
         //autoClaw.setClaw(CLAW_START);
 
         ElapsedTime timer = new ElapsedTime();
+
+        telemetry.addLine("Ready to run! Get out of the field");
+        telemetry.update();
 
 
         waitForStart();
