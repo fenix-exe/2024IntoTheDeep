@@ -59,7 +59,8 @@ public class Slide extends CommonSlide {
         private final double speed;
         private boolean initialized = false;
         private double time;
-        private boolean oldPos;
+        private double oldPos;
+        private boolean metOld = false;
 
         slideControl(double targetPos, double speed) {
             this.targetPos = targetPos;
@@ -72,11 +73,20 @@ public class Slide extends CommonSlide {
                 time = System.currentTimeMillis();
                 slideStatusWriter.write(new StatusMessage("SLIDES MOVING"));
                 initialized = true;
-                oldPos = ((ticksToInches(leftSlideMotor.getTargetPosition()) - 2 < getSlideExtensionInInches()) || !(getSlideExtensionInInches() < ticksToInches(leftSlideMotor.getTargetPosition()) + 2));
+                oldPos = ticksToInches(leftSlideMotor.getTargetPosition());
             }
 
+            if (!metOld && !(oldPos-1 <= getSlideExtensionInInches() && getSlideExtensionInInches() <= oldPos+1)) {
+                slideStatusWriter.write(new StatusMessage("SLIDES NOT MET TARGET"));
+                slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+                if (targetPos - 1 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos + 1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
 
-
+                metOld = true;
                 setSlideExtensionLengthAndSpeed(targetPos, speed);
 
                 if (homingSwitch.isPressed() && System.currentTimeMillis() >= time + 500) {
@@ -94,6 +104,7 @@ public class Slide extends CommonSlide {
                 } else {
                     return true;
                 }
+            }
         }
     }
     public Action slideControl(double targetPos, double speed){
