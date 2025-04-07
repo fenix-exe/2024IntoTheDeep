@@ -16,14 +16,15 @@ public class Wrist extends CommonWrist {
 
     Servo pitchLeft;
     Servo pitchRight;
-    double pitchOffset = 0.02;
+    double pitchOffset;
 
     private final DownsampledWriter wristWriter;
 
 
-    public Wrist(Servo pitch){
+    public Wrist(Servo pitch, double offset){
         super(pitch);
         this.pitchLeft = pitch;
+        this.pitchOffset = offset;
 
         wristWriter = new DownsampledWriter("WRIST INFO", 50_000_000);
     }
