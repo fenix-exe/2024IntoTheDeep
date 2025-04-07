@@ -28,7 +28,7 @@ public class Homing {
     private final double LOW_ELBOW_POS = -10.3;
     private final double ELBOW_TOLERANCE = 0.5;
     private final double SLIDE_EXTENSION_LENGTH = 10;
-    private final DownsampledWriter homingWriter;
+    //private final DownsampledWriter homingWriter;
     public Homing(DcMotorEx leftSlide, DcMotorEx rightSlide, DcMotorEx elbowMotor, DcMotorEx linearActuator, LinearOpMode opMode, Telemetry telemetry, RevTouchSensor slideHoming, RevTouchSensor linearActuatorHoming, RevTouchSensor elbowHoming){
         this.leftSlideMotor = leftSlide;
         this.rightSlideMotor = rightSlide;
@@ -39,7 +39,7 @@ public class Homing {
         slide = new Slide(this.leftSlideMotor, this.rightSlideMotor, slideHoming);
         elbow = new Elbow(this.elbowMotor, elbowHoming, 100);
         this.linearActuator = new LinearActuator(linearActuatorMotor,linearActuatorHoming);
-        this.homingWriter = new DownsampledWriter("HOMING INFO", 50_000_000);
+        //this.homingWriter = new DownsampledWriter("HOMING INFO", 50_000_000);
     }
 
     public String slideNullCheck() {
@@ -66,7 +66,7 @@ public class Homing {
         elbow.resetEncoder();
         elbow.setTargetAngle(45);
         while ((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > RobotConstants.ELBOW_TOLERANCE)) {
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), elbow.getElbowTargetAngle(), elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), elbow.getElbowTargetAngle(), elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
         }
         elbow.setElbowPower(0);
         elbow.resetEncoder();
@@ -74,21 +74,21 @@ public class Homing {
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             telemetry.addLine("ELBOW MOVING DOWN");
             elbow.setElbowPower(-0.2);
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-            homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
         }
         slide.setSlideExtensionLength(SLIDE_EXTENSION_LENGTH);
         while (elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             elbow.setElbowPower(-0.4);
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-            homingWriter.write(new StatusMessage("LIMIT SWITCH PRESSED"));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new StatusMessage("LIMIT SWITCH PRESSED"));
         }
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             telemetry.addLine("ELBOW MOVING UP");
             telemetry.update();
             elbow.setElbowPower(0.1);
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-            homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
         }
         elbow.setElbowPower(0);
 
@@ -97,7 +97,7 @@ public class Homing {
         elbow.setTargetAngle(LOW_ELBOW_POS);
 
         while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > ELBOW_TOLERANCE)){
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), elbow.getElbowTargetAngle(), elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), elbow.getElbowTargetAngle(), elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
         }
 
         elbow.setElbowPower(0);
@@ -142,21 +142,21 @@ public class Homing {
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             telemetry.addLine("ELBOW MOVING DOWN");
             elbow.setElbowPower(-0.2);
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-            homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
         }
         slide.setSlideExtensionLength(SLIDE_EXTENSION_LENGTH);
         while (elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             elbow.setElbowPower(-0.4);
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-            homingWriter.write(new StatusMessage("LIMIT SWITCH PRESSED"));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new StatusMessage("LIMIT SWITCH PRESSED"));
         }
         while (!elbow.isLimitSwitchPressed() && !opMode.isStopRequested()){
             telemetry.addLine("ELBOW MOVING UP");
             telemetry.update();
             elbow.setElbowPower(0.1);
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-            homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), 0, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new StatusMessage("LIMIT SWITCH NOT PRESSED"));
         }
         elbow.setElbowPower(0);
 
@@ -165,7 +165,7 @@ public class Homing {
         elbow.setTargetAngle(LOW_ELBOW_POS);
 
         while((Math.abs(elbow.getElbowAngle() - elbow.getElbowTargetAngle()) > ELBOW_TOLERANCE)){
-            homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), elbow.getElbowTargetAngle(), elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //homingWriter.write(new ElbowMessage(elbow.getElbowAngle(), elbow.getElbowTargetAngle(), elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
         }
 
         elbow.setElbowPower(0);

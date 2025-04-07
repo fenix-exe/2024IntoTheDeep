@@ -16,7 +16,7 @@ public class Wrist extends CommonWrist {
 
     Servo pitchLeft;
     Servo pitchRight;
-    double pitchOffset = 0.025;
+    double pitchOffset = 0.02;
 
     private final DownsampledWriter wristWriter;
 

@@ -98,7 +98,7 @@ public class MecanumDrive {
         public double headingVelGain = 0.0; // shared with turn
 
         public double time_increase = 0;
-        public double accuracy = 1;
+        public double accuracy = 0.25;
         public double velocity = 0.5;
 
         public double xP = 0.065;
