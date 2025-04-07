@@ -288,8 +288,8 @@ public class DriverControls implements DriveControlMap {
     public boolean wristDown(){return gamepad2current.back;}
     public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
     public boolean removeArmRules(){return false;}
-    public boolean diffUp(){return (gamepad2current.dpad_down && !gamepad2previous.dpad_down) || (gamepad1current.b && !gamepad1previous.b);}
-    public boolean diffDown(){return (gamepad2current.dpad_up && !gamepad2previous.dpad_up) || (gamepad1current.a && !gamepad1previous.a);}
+    public boolean diffUp(){return gamepad2current.dpad_down  || gamepad1current.b;}
+    public boolean diffDown(){return gamepad2current.dpad_up || gamepad1current.a;}
     public boolean continuousDiffUp(){
         return gamepad2current.dpad_up && gamepad2current.left_stick_button;
     }
