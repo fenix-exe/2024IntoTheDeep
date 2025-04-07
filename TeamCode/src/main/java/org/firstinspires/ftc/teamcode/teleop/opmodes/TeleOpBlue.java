@@ -52,6 +52,8 @@ import org.firstinspires.ftc.teamcode.teleop.util.Alliance;
 import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -322,6 +324,7 @@ public class TeleOpBlue extends LinearOpMode {
                 logButtonPressed();
             }
         }
+        writePitchToFile();
     }
 
     private void initializeGamePads() {
@@ -483,6 +486,18 @@ public class TeleOpBlue extends LinearOpMode {
             led.setColor(ILED.LEDColor.RED);
         } else if (led.isOn()){
             led.turnOff();
+        }
+    }
+    private void writePitchToFile(){
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter("/sdcard/Download/teleop/EndTeleOpPresetPositions.csv"));
+            writer.write("");
+            writer.flush();
+            writer.write((int)(StateModelParameters.EnterSubmersibleStateParameters.pitch * 100) + "is the pitch value times 100");
+            writer.close();
+        } catch (Exception e){
+            telemetry.addLine("Failed to write value updates");
+            telemetry.update();
         }
     }
 }
