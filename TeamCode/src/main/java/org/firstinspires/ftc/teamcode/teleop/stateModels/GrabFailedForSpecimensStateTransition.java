@@ -49,7 +49,7 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
                 }
                 break;
             case BACK_TO_INTAKE_POSITION:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE
                         && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE
                         && timer.milliseconds() > 400){
                     intake.stop();

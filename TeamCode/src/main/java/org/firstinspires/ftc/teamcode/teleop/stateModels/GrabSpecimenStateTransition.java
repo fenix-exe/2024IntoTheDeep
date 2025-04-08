@@ -17,7 +17,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         MOVING_PITCH
     }
 
-    private TransitionSteps intakeTransitionStep;
+    public static TransitionSteps intakeTransitionStep;
     ElapsedTime timer;
     Wrist wrist;
     IIntake intake;
@@ -35,6 +35,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         intakeTransitionStep = TransitionSteps.START;
         this.color = color;
         intakeOn = false;
+        timer = new ElapsedTime();
     }
     @Override
     public void reset() {
@@ -56,10 +57,9 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                         }
                         if (distance < 32.5){
                             FSMManager.stopTransitions();
-                            timer = new ElapsedTime();
+                            timer.reset();
                             intake.stop();
                             intakeOn = false;
-                            driveTrain.stopDriveTrain();
                             intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
                         }
                     } else {
@@ -67,7 +67,6 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                     }
                     if (driverControls.pickupAndDepositSpecimens()){
                         FSMManager.stopTransitions();
-                        timer = new ElapsedTime();
                         timer.reset();
                         intake.stop();
                         intakeOn = false;
@@ -80,10 +79,6 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.DepositSpecimenPositionStateParameters.pitch);
                     intakeTransitionStep = TransitionSteps.MOVING_PITCH;
-                }
-                if (driverControls.enterIntakePosition()){
-                    arm.holdArm();
-                    intake.outtake();
                 }
                 break;
             case MOVING_PITCH:
