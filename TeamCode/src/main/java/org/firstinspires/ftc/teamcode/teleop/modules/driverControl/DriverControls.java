@@ -250,7 +250,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean pickupAndDepositSpecimens(){
-        return gamepad2current.a && !gamepad2previous.a;
+        return gamepad2current.y && !gamepad2previous.y;
     }
     public boolean switchStrategy(){
         return gamepad2current.back && !gamepad2previous.back;
@@ -265,7 +265,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad2current.back && !gamepad2previous.back;
     }
     public boolean depositBack(){
-        return gamepad2current.y && !gamepad2previous.y;
+        return gamepad2current.a && !gamepad2previous.a;
     }
     public boolean intakeDown(){
         return gamepad2current.start;
@@ -300,6 +300,7 @@ public class DriverControls implements DriveControlMap {
     public boolean resetEncoders(){return false;}
     public boolean hang(){return gamepad2current.x;}
     public boolean turnOffAutoGrab(){return gamepad1current.back;}
+    public boolean programPos(){return gamepad2current.dpad_right;}
     public Set<UserDirective> getUserIntents(){
         Set<UserDirective> returnList = new HashSet<UserDirective>();
         if (isDriving()){
