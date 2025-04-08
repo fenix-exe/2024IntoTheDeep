@@ -20,9 +20,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.MoveToLeaveSubmersibleStateTransition;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.GrabSpecimenStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
@@ -53,6 +52,7 @@ import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -256,6 +256,10 @@ public class TeleOpBlue extends LinearOpMode {
                 FSMManager.stopTransitions();
                 FSMManager.setRobotStateToStart();
             }
+
+            if (driverControls.programPos()){
+                FSMManager.updatePositions();
+            }
             //state models for preset positions
             FSMManager.execute();
 
@@ -302,6 +306,11 @@ public class TeleOpBlue extends LinearOpMode {
             multiTelemetry.addData("Green", colorSensor.green());*/
             //telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
+            telemetry.addData("Robot State", FSMManager.robotState);
+            telemetry.addData("Specimen Pickup State", GrabSpecimenStateTransition.intakeTransitionStep);
+            telemetry.addData("Distance", color.getDistance());
+            telemetry.addData("Pitch Angle", wrist.getPitchAngle());
+            telemetry.addData("Slide Pos", arm.getSlideExtension());
             //telemetry.addData("GrabSampleState", MoveToLeaveSubmersibleStateTransition.grabSampleState);
             /*telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
             telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
@@ -324,7 +333,7 @@ public class TeleOpBlue extends LinearOpMode {
                 logButtonPressed();
             }
         }
-        writePitchToFile();
+        writePositionsToFile();
     }
 
     private void initializeGamePads() {
@@ -488,12 +497,18 @@ public class TeleOpBlue extends LinearOpMode {
             led.turnOff();
         }
     }
-    private void writePitchToFile(){
+    private void writePositionsToFile(){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter("/sdcard/Download/teleop/EndTeleOpPresetPositions.csv"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("/sdcard/Download/teleop/EndTeleOpPresetPositions.csv",false));
             writer.write("");
             writer.flush();
-            writer.write((int)(StateModelParameters.EnterSubmersibleStateParameters.pitch * 100) + "is the pitch value times 100");
+            writer.write("ENTER SUBMERSIBLE PITCH VALUE(1ST NUMBER IN FILE): " + StateModelParameters.EnterSubmersibleStateParameters.pitch);
+            writer.newLine();
+            writer.write("DEPOSIT POSITION SLIDE LENGTH(2ND TO LAST NUMBER IN FILE): " + StateModelParameters.DepositStateParameters.slideLength);
+            writer.newLine();
+            writer.write("DEPOSIT POSITION PITCH ANGLE(2ND NUMBER IN FILE): " + StateModelParameters.DepositStateParameters.pitch);
+            writer.newLine();
+            writer.write("CLIP ELBOW ANGLE:(3RD NUMBER IN FILE): "+ StateModelParameters.PickupSpecimensStateParameters.elbowAngle);
             writer.close();
         } catch (Exception e){
             telemetry.addLine("Failed to write value updates");

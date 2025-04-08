@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 public class FSMManager {
     public static RobotState robotState;
+    static Arm arm;
+    static Wrist wrist;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
     public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator, Alliance alliance, boolean colorSensorConnected){
         stateTransitions.add(new GoToIntakeStateTransition(wrist, intake, arm, driverControls));
@@ -32,6 +34,8 @@ public class FSMManager {
         stateTransitions.add(new LeaveDepositStateTransition(wrist, intake, arm, driverControls));
         stopTransitions();
         setRobotStateToStart();
+        FSMManager.arm = arm;
+        FSMManager.wrist = wrist;
     }
     public static void execute(){
         for(int i = 0; i < stateTransitions.size(); i++){
@@ -48,6 +52,22 @@ public class FSMManager {
     }
     public static boolean isAtStart(){
         return robotState == RobotState.START;
+    }
+    public static void updatePositions(){
+            switch (robotState){
+                case READY_TO_DEPOSIT_IN_BUCKET:
+                    StateModelParameters.DepositStateParameters.slideLength = arm.getSlideExtension();
+                    StateModelParameters.DepositStateParameters.pitch = wrist.getPitchAngle();
+                    break;
+                case READY_TO_GO_TO_GRAB_SPECIMEN:
+                case READY_TO_GRAB_SPECIMEN:
+                case READY_TO_GO_TO_CLIP_POSITION:
+                case CLIPPED:
+                case READY_TO_DEPOSIT_CLIP:
+                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowAngleInDegrees();
+                    break;
+            }
+
     }
 
 }
