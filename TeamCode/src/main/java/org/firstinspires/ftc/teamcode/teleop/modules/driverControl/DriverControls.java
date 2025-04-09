@@ -44,27 +44,26 @@ public class DriverControls implements DriveControlMap {
     public double gamepadStickValue(double stickValue){
         return Math.pow(stickValue, y);
     }
+    @Override
     public double forwardDrive(){
         if (Math.abs(gamepad1current.left_stick_y) > 0.3){
             return -gamepad1current.left_stick_y;
         }
         return 0;
     }
+    @Override
     public double strafeDrive(){
         if (Math.abs(gamepad1current.left_stick_x) > 0.3){
             return gamepad1current.left_stick_x;
         }
         return 0;
     }
+    @Override
     public double turnDrive(){
         if (Math.abs(gamepad1current.right_stick_x) > 0.3){
             return gamepad1current.right_stick_x;
         }
         return 0;
-    }
-    @Override
-    public boolean slowMode() {
-        return false;
     }
 
     @Override
@@ -76,56 +75,9 @@ public class DriverControls implements DriveControlMap {
     public boolean resetIMU() {
         return gamepad1current.dpad_up;
     }
-
     @Override
-    public boolean emergencyStop() {
-        //return gamepad1current.start;
-        return false;
-    }
-
-
-    @Override
-    public boolean undoEmergencyStop() {
-        //return gamepad1current.options;
-        return false;
-    }
-    public boolean homeArm(){
-        return gamepad2current.touchpad;
-    }
     public boolean microDriveAdjustments(){
         return gamepad1current.right_bumper;
-    }
-    public boolean removeSpeedRules(){return false;}
-    public boolean goToOrigin(){return gamepad2current.touchpad;}
-    public boolean goToPositionWithDriveTrain(){return gamepad2current.back;}
-    @Override
-    public boolean slidesFullyUp() {
-        return false;
-        //return gamepad1.dpad_up;
-    }
-
-    @Override
-    public boolean slidesFullyDown() {
-        return false;
-        //return gamepad1.dpad_down;
-    }
-
-    @Override
-    public boolean pivotParallel() {
-        //return gamepad2current.b
-        return false;
-    }
-    public boolean setNewPivotParallel(){
-        return false;
-    }
-
-    @Override
-    public boolean pivotPerp() {
-        //return gamepad2.y
-        return false;
-    }
-    public boolean setNewPivotPerp(){
-        return false;
     }
 
     @Override
@@ -152,6 +104,7 @@ public class DriverControls implements DriveControlMap {
         }
         return 0;
     }
+    @Override
     public boolean slideStopped() {
         if (Math.abs(gamepad2previous.right_stick_y) > 0.5 && !(Math.abs(gamepad2current.right_stick_y) > 0.5)){
             return true;
@@ -161,245 +114,56 @@ public class DriverControls implements DriveControlMap {
         }
         return (gamepad1previous.left_trigger > 0.3) && !(gamepad1current.left_trigger > 0.3);
     }
+    @Override
     public boolean linearActuatorUp(){
         return gamepad1current.dpad_right;
     }
+    @Override
     public boolean linearActuatorDown(){
         return gamepad1current.dpad_left;
     }
     @Override
-    public double degreeOfFreedomX() {
-        return gamepad2current.right_stick_x;
-    }
-
-    @Override
-    public double degreeOfFreedomY() {
-        return -gamepad2current.right_stick_y;
-    }
-
-    @Override
-    public boolean intakePower() {
-        return false;
-    }
-
-    @Override
-    public boolean intakeDirection() {
-        return false;
-    }
-
-    @Override
-    public float intakenewForward() {
-        return gamepad2current.left_trigger;
-    }
-
-    @Override
-    public float intakenewBackward() {
-        return gamepad2current.right_trigger;
-    }
-
-    @Override
-    public boolean submersibleIntakeReady() {
-        return false;
-    }
     public boolean specimenSampleIntake(){
         return gamepad2current.b && !gamepad2current.start;
     }
+    @Override
     public boolean outtake(){
         return (gamepad2current.left_bumper && !gamepad2previous.left_bumper);
     }
+    @Override
     public boolean intake(){
         return (gamepad2current.right_bumper && !gamepad2previous.right_bumper);
     }
+    @Override
     public boolean grabSampleFromOutside(){
         return ((gamepad2current.right_trigger > 0.1) && !(gamepad2previous.right_trigger > 0.1)) || ((gamepad1current.x) && !(gamepad1previous.x));
     }
-    public boolean letGoOfGrabSampleFromOutside(){
-        return ((gamepad2previous.right_trigger > 0.1) && !(gamepad2current.right_trigger > 0.1) || ((gamepad1previous.x) && !gamepad1current.x));
-    }
+    @Override
     public boolean enterIntakePosition(){
         return ((gamepad2current.left_trigger > 0.1) && !(gamepad2previous.left_trigger > 0.1)) || ((gamepad1current.y) && !gamepad1previous.y);
     }
-
     @Override
-    public boolean acsent1Park() {
-        return false;
-    }
-
-    @Override
-    public boolean drivingPos() {
-        return false;
-    }
-
-    @Override
-    public boolean depositReadyBackTopBucket() {
-        return gamepad2current.a && !gamepad2previous.a;
-    }
-
-    @Override
-    public boolean depositReadyFrontTopBucket() {
-        return false;
-    }
-
-    public boolean depositReadyBackBottomBucket(){
-        return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
-    }
-    public boolean depositReadyFrontBottomBucket(){
-        return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && !gamepad2current.left_stick_button;
-    }
-    public boolean leaveDeposit(){
-        return gamepad2current.y && !gamepad2previous.y;
-    }
     public boolean pickupAndDepositSpecimens(){
         return gamepad2current.y && !gamepad2previous.y;
     }
-    public boolean switchStrategy(){
-        return gamepad2current.back && !gamepad2previous.back;
-    }
-    public scoringType getGameStrategyMode(){
-        return gameStrategyMode;
-    }
-    public void setGameStrategyMode(scoringType type){
-        gameStrategyMode = type;
-    }
-    public boolean depositSpecimenPreset(){
-        return gamepad2current.back && !gamepad2previous.back;
-    }
+    @Override
     public boolean depositBack(){
         return gamepad2current.a && !gamepad2previous.a;
     }
-    public boolean intakeDown(){
-        return gamepad2current.start;
-    }
-    public boolean setNewDrivingPos(){return gamepad2current.x && gamepad2current.left_stick_button;}
-    public boolean setNewDepositReadyBackTopBucket(){return gamepad2current.y && !gamepad2previous.y && !(gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
-    public boolean setNewDepositReadyFrontTopBucket(){return gamepad2current.b && !gamepad2previous.b && !(gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
-    public boolean setNewDepositReadyBackBottomBucket(){return gamepad2current.y && !gamepad2previous.y && (gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
-    public boolean setNewDepositReadyFrontBottomBucket(){return gamepad2current.b && !gamepad2previous.b && (gamepad2current.right_bumper) && gamepad2current.left_stick_button;}
-
     @Override
     public boolean escapePresets() {
         return gamepad2current.dpad_left;
     }
-
-    public boolean setNewSubmersibleIntakeReady(){return gamepad2current.a && !gamepad2previous.a && gamepad2current.left_stick_button;}
-    public boolean resetWrist() {
-        return gamepad2current.back;
-    }
-    public boolean wristDown(){return gamepad2current.back;}
-    public boolean isDriving(){return Math.abs(gamepad1current.left_stick_x) > 0 || Math.abs(gamepad1current.left_stick_y) > 0 || Math.abs(gamepad1current.right_stick_x) > 0;}
+    @Override
     public boolean removeArmRules(){return false;}
+    @Override
     public boolean diffUp(){return gamepad2current.dpad_down  || gamepad1current.b;}
+    @Override
     public boolean diffDown(){return gamepad2current.dpad_up || gamepad1current.a;}
-    public boolean continuousDiffUp(){
-        return gamepad2current.dpad_up && gamepad2current.left_stick_button;
-    }
-    public boolean continuousDiffDown(){
-        return gamepad2current.dpad_down && gamepad2current.left_stick_button;
-    }
-    public void rumbleArmGamepad(){gamepad2current.rumble(10);}
-    public boolean resetEncoders(){return false;}
+    @Override
     public boolean hang(){return gamepad2current.x;}
+    @Override
     public boolean turnOffAutoGrab(){return gamepad2current.dpad_right;}
+    @Override
     public boolean programPos(){return gamepad2current.touchpad;}
-    public Set<UserDirective> getUserIntents(){
-        Set<UserDirective> returnList = new HashSet<UserDirective>();
-        if (isDriving()){
-            if (microDriveAdjustments()){
-                returnList.add(UserDirective.MANUAL_DRIVE_ADJUSTMENTS);
-            } else {
-                returnList.add(UserDirective.MANUAL_DRIVE_NORMAL);
-            }
-        }
-        if (driveTypeSwitch()){
-            returnList.add(UserDirective.DRIVE_SWITCH);
-        }
-        if (slowMode()){
-            returnList.add(UserDirective.SPEED_SWITCH);
-        }
-        if(resetIMU()){
-            returnList.add(UserDirective.IMU_RESET);
-        }
-        if(Math.abs(pivotJoystick()) > 0){
-            returnList.add(UserDirective.MANUAL_ELBOW);
-        }
-        if(Math.abs(slideMovement()) > 0){
-            returnList.add(UserDirective.MANUAL_SLIDE);
-        }
-        if(depositReadyBackTopBucket()){
-            returnList.add(UserDirective.PRESET_DEPOSIT_BACK_TOP);
-        }
-        if(depositReadyFrontTopBucket()){
-            returnList.add(UserDirective.PRESET_DEPOSIT_FRONT_TOP);
-        }
-        if(depositReadyBackBottomBucket()){
-            returnList.add(UserDirective.PRESET_DEPOSIT_BACK_BOTTOM);
-        }
-        if(depositReadyFrontBottomBucket()){
-            returnList.add(UserDirective.PRESET_DEPOSIT_FRONT_BOTTOM);
-        }
-        if(drivingPos()){
-            returnList.add(UserDirective.PRESET_SAFE_DRIVING_POSITION);
-        }
-        if(submersibleIntakeReady()){
-            returnList.add(UserDirective.PRESET_SUBMERSIBLE_INTAKE);
-        }
-        if(intakenewBackward() > 0.5){
-            returnList.add(UserDirective.INTAKE_BACKWARD);
-        }
-        if(intakenewForward() > 0.5){
-            returnList.add(UserDirective.INTAKE_FORWARD);
-        }
-        if (pivotParallel()){
-            returnList.add(UserDirective.ELBOW_0);
-        }
-        if (pivotPerp()){
-            returnList.add(UserDirective.ELBOW_90);
-        }
-        if (removeSpeedRules()){
-            returnList.add(UserDirective.REMOVE_SPEED_RULES);
-        }
-        if (wristDown()){
-            returnList.add(UserDirective.WRIST_DOWN);
-        }
-        if (setNewDepositReadyBackBottomBucket()){
-            returnList.add(UserDirective.SET_DEPOSIT_BACK_BOTTOM);
-        }
-        if (setNewDepositReadyBackTopBucket()){
-            returnList.add(UserDirective.SET_DEPOSIT_BACK_TOP);
-        }
-        if (setNewDepositReadyFrontBottomBucket()){
-            returnList.add(UserDirective.SET_DEPOSIT_FRONT_BOTTOM);
-        }
-        if (setNewDepositReadyFrontTopBucket()){
-            returnList.add(UserDirective.SET_DEPOSIT_FRONT_TOP);
-        }
-        if (setNewDrivingPos()){
-            returnList.add(UserDirective.SET_SAFE_DRIVING_POSITION);
-        }
-        if (setNewSubmersibleIntakeReady()){
-            returnList.add(UserDirective.SET_SUBMERSIBLE_INTAKE);
-        }
-        if (setNewPivotParallel()){
-            returnList.add(UserDirective.SET_ELBOW_0);
-        }
-        if (setNewPivotPerp()){
-            returnList.add(UserDirective.SET_ELBOW_90);
-        }
-        if (removeArmRules()){
-            returnList.add(UserDirective.REMOVE_ARM_RULES);
-        }
-        if (diffUp()){
-            returnList.add(UserDirective.DIFF_UP);
-        }
-        if (diffDown()){
-            returnList.add(UserDirective.DIFF_DOWN);
-        }
-        if (homeArm()){
-            returnList.add(UserDirective.HOME_ARM);
-        }
-        if (intakeDown()){
-            returnList.add(UserDirective.INTAKE_DOWN);
-        }
-        return returnList;
-    }
 }
