@@ -95,6 +95,7 @@ public class TeleOpBlue extends LinearOpMode {
     public static boolean enableLogging=false;
     protected static Alliance alliance = Alliance.BLUE;
     boolean colorSensorDetected;
+    boolean checkColorSensor=true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -239,7 +240,7 @@ public class TeleOpBlue extends LinearOpMode {
                     //for manual movements
                     if (!linearActuator.getLimitSwitchState()){
                         //prevents the linear actuator from driving into the ground
-                        linearActuator.goToTargetPositionInches(Math.max(linearActuator.getLinearActuatorPositionInches() - 0.25,0.5));
+                        linearActuator.goToTargetPositionInches(Math.max(linearActuator.getLinearActuatorPositionInches() - 0.25,0.4));
                     }
                 } else {
                     //preset position
@@ -260,9 +261,21 @@ public class TeleOpBlue extends LinearOpMode {
             if (driverControls.programPos()){
                 FSMManager.updatePositions();
             }
+
+            //check color sensor based on robot state
+            if ((FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE || FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN) && checkColorSensor && colorSensorDetected){
+                if (color.isConnected()){
+                    FSMManager.updateBasedOnColorSensorStatus();
+                    colorSensorDetected = false;
+                    led.setColor(ILED.LEDColor.ORANGE);
+                }
+                checkColorSensor = false;
+            } else if (!(FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE  || FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN) && !checkColorSensor){
+                checkColorSensor = true;
+                led.turnOff();
+            }
             //state models for preset positions
             FSMManager.execute();
-
             //update drivetrain
             driveTrain.Update();
 

@@ -24,7 +24,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     Arm arm;
     IDriveTrain driveTrain;
     DriverControls driverControls;
-    ColorSensor color;
+    public static ColorSensor color;
     boolean intakeOn;
     public GrabSpecimenStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
         this.wrist = wrist;
@@ -33,7 +33,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         this.driveTrain = driveTrain;
         this.driverControls = driverControls;
         intakeTransitionStep = TransitionSteps.START;
-        this.color = color;
+        GrabSpecimenStateTransition.color = color;
         intakeOn = false;
         timer = new ElapsedTime();
     }

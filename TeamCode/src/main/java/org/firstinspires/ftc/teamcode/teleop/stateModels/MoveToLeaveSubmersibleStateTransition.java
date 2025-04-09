@@ -26,7 +26,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     Arm arm;
     IDriveTrain driveTrain;
     DriverControls driverControls;
-    ColorSensor colorSensor;
+    public static ColorSensor colorSensor;
     Alliance alliance;
     public MoveToLeaveSubmersibleStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor colorSensor, Alliance alliance){
         this.wrist = wrist;
@@ -35,7 +35,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         this.driveTrain = driveTrain;
         this.driverControls = driverControls;
         grabSampleState = TransitionSteps.START;
-        this.colorSensor = colorSensor;
+        MoveToLeaveSubmersibleStateTransition.colorSensor = colorSensor;
         this.alliance = alliance;
         timer = new ElapsedTime();
     }

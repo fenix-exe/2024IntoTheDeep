@@ -67,7 +67,10 @@ public class FSMManager {
                     StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowAngleInDegrees();
                     break;
             }
-
+    }
+    public static void updateBasedOnColorSensorStatus(){
+        GrabSpecimenStateTransition.color = null;
+        MoveToLeaveSubmersibleStateTransition.colorSensor = null;
     }
 
 }
