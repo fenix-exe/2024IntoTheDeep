@@ -46,7 +46,7 @@ public class GoToIntakeStateTransition implements IStateTransition {
                 boolean atStart = FSMManager.robotState == RobotState.START;
                 // Is the Robot at a deposit position holding onto a sample?
                 boolean fromBucket = FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE;
-                boolean readyToDepositToHumanPlayer = driverControls.specimenSampleIntake() && FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE;
+                boolean readyToDepositToHumanPlayer = driverControls.specimenSampleIntake() && (FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE || FSMManager.robotState == RobotState.START);
                 if (((driverControls.depositBack())
                         &&(atStart || fromBucket || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN)) || (readyToDepositToHumanPlayer)) {
                     FSMManager.stopTransitions();
