@@ -13,7 +13,7 @@ public class Wrist extends CommonWrist {
         this.pitch = pitch;
     }
     public void manualControlPitch(double stepSize){
-        double targetPosition = stepSize + pitch.getPosition();
+        double targetPosition = stepSize + pitch.getPosition()-SERVO_OFFSET;
         if (targetPosition > 1 - CommonWrist.SERVO_OFFSET){
             targetPosition = 1 - CommonWrist.SERVO_OFFSET;
         }
