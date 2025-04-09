@@ -264,7 +264,7 @@ public class TeleOpBlue extends LinearOpMode {
 
             //check color sensor based on robot state
             if ((FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE || FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN) && checkColorSensor && colorSensorDetected){
-                if (color.isConnected()){
+                if (!color.isConnected()){
                     FSMManager.updateBasedOnColorSensorStatus();
                     colorSensorDetected = false;
                     led.setColor(ILED.LEDColor.ORANGE);
