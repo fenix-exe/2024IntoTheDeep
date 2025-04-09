@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public abstract class CommonWrist {
 
     protected Servo pitchLeft;
-    public static double SERVO_OFFSET = 0.005;
+    public static double SERVO_OFFSET = 0.01;
     public CommonWrist(Servo pitch){
         this.pitchLeft = pitch;
     }
@@ -16,7 +16,7 @@ public abstract class CommonWrist {
 
 
     public void presetPositionPitch (double presetPosition){
-        pitchLeft.setPosition(presetPosition);
+        pitchLeft.setPosition(presetPosition + SERVO_OFFSET);
     }
     public double getPitchAngle(){
         return pitchLeft.getPosition();
