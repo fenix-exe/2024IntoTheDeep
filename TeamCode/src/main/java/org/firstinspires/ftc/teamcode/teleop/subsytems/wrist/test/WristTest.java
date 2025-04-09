@@ -33,6 +33,7 @@ public class WristTest extends LinearOpMode {
             }
             sleep(100);
             telemetry.addData("Servo Pos", wrist.getPitchAngle());
+            telemetry.addData("Offst",Wrist.SERVO_OFFSET);
             telemetry.update();
         }
     }

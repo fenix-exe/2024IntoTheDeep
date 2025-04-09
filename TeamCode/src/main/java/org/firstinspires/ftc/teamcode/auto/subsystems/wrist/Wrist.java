@@ -21,10 +21,9 @@ public class Wrist extends CommonWrist {
     private final DownsampledWriter wristWriter;
 
 
-    public Wrist(Servo pitch, double offset){
+    public Wrist(Servo pitch){
         super(pitch);
         this.pitchLeft = pitch;
-        this.pitchOffset = offset;
 
         wristWriter = new DownsampledWriter("WRIST INFO", 50_000_000);
     }
@@ -43,7 +42,8 @@ public class Wrist extends CommonWrist {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            pitchLeft.setPosition(pitchPos + pitchOffset);
+            //pitchLeft.setPosition(pitchPos + pitchOffset);
+            presetPositionPitch(pitchPos);
             wristWriter.write(new WristMessage(getPitchAngle(), 0));
             return false;
         }

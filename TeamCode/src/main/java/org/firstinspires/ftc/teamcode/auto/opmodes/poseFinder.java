@@ -1,20 +1,16 @@
 package org.firstinspires.ftc.teamcode.auto.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.auto.roadrunner.Drawing;
-import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.common.util.extractOffsets;
 
-import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
 
 import static org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive.PARAMS;
 
@@ -34,6 +30,13 @@ public class poseFinder extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,PARAMS.pinpointDeviceName);
+        extractOffsets offsets = new extractOffsets();
+
+        try {
+            offsets.offsetGetter("/sdcard/Download/autoOffsets/clipOffsets.csv");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
         //set up ftc dashboard telemetry
@@ -47,6 +50,7 @@ public class poseFinder extends LinearOpMode {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         pinpoint.setPosition(new Pose2d(x,y,Math.toRadians(heading)));
 
 
@@ -61,6 +65,7 @@ public class poseFinder extends LinearOpMode {
             multi.addData("pose x", pinpoint.getPositionRR().position.x);
             multi.addData("pose y", pinpoint.getPositionRR().position.y);
             multi.addData("pose heading", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
+            multi.addLine("" + offsets.getPitchOffset());
             multi.update();
 
             /*
