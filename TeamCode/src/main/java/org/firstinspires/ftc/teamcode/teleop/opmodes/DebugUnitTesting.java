@@ -10,6 +10,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,7 +29,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.BigWheelIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.test.ColorSensorTest;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
-
+@TeleOp(group="Testing")
 public class DebugUnitTesting extends LinearOpMode {
 
      enum mode {
