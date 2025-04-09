@@ -324,6 +324,7 @@ public class TeleOpBlue extends LinearOpMode {
             telemetry.addData("Distance", color.getDistance());
             telemetry.addData("Pitch Angle", wrist.getPitchAngle());
             telemetry.addData("Slide Pos", arm.getSlideExtension());
+            telemetry.addData("Turn Off Auto Grab", driverControls.turnOffAutoGrab());
             //telemetry.addData("GrabSampleState", MoveToLeaveSubmersibleStateTransition.grabSampleState);
             /*telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
             telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
