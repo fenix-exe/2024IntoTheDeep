@@ -27,10 +27,9 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.BigWheelIntake;
-import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.test.ColorSensorTest;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @TeleOp(group="Testing")
-public class DebugUnitTesting extends LinearOpMode {
+public class UnitTesting extends LinearOpMode {
 
      enum mode {
         DRIVETRAIN,
@@ -55,12 +54,12 @@ public class DebugUnitTesting extends LinearOpMode {
     BigWheelIntake intake;
 
     enum Alliance{RED,BLUE}
-    DebugUnitTesting.Alliance alliance = DebugUnitTesting.Alliance.RED;
+    UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;
     DriveTrain driveTrain;
     IMU imu;
     DriverControls driverControls;
     double speedMultiplier;
-    private DcMotorEx slide;
+    private DcMotorEx leftslide, rightslide;
 
     double intakePower = 0;
     boolean exitingWrongColor = false;
@@ -71,8 +70,10 @@ public class DebugUnitTesting extends LinearOpMode {
         mode Mode = mode.DRIVETRAIN;
         telemetry.addData("Instructions", "Press the d-pad to cycle between units to test. In any unit, hold down Gamepad 1's x to see instructions.");
         waitForStart();
-        slide = hardwareMap.get(DcMotorEx.class, "slide");
-        slide.setDirection(DcMotor.Direction.REVERSE);
+        leftslide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        rightslide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+
+        leftslide.setDirection(DcMotor.Direction.REVERSE);
         pitchLeft = hardwareMap.get(Servo.class, "pitchLeft");
         pitchRight = hardwareMap.get(Servo.class, "pitchRight");
         wrist = new Wrist(pitchLeft);
@@ -205,7 +206,7 @@ public class DebugUnitTesting extends LinearOpMode {
             alliance = Alliance.RED;
         }
         if (colorSensor.detectingBlue()){
-            if (alliance == DebugUnitTesting.Alliance.BLUE){
+            if (alliance == UnitTesting.Alliance.BLUE){
                 telemetry.addLine("PICKED UP ALLIANCE COLOR, READY TO RETRACT SLIDES");
                 intakePower = 0;
             } else {
@@ -214,7 +215,7 @@ public class DebugUnitTesting extends LinearOpMode {
                 intakePower = -1;
             }
         } else if (colorSensor.detectingRed()){
-            if (alliance == DebugUnitTesting.Alliance.BLUE){
+            if (alliance == UnitTesting.Alliance.BLUE){
                 telemetry.addLine("EJECT");
                 exitingWrongColor = true;
                 intakePower = -1;
@@ -289,15 +290,19 @@ public class DebugUnitTesting extends LinearOpMode {
         }
     }
     private void slideManualTesting() {
-        if (slide.getCurrentPosition() < 0 && -gamepad1.right_stick_y < 0) {
-            slide.setPower(0);
-        } else if (slide.getCurrentPosition() > 3496 && -gamepad1.right_stick_y > 0) {
-            slide.setPower(0);
+        if (leftslide.getCurrentPosition() < 0 && -gamepad1.right_stick_y < 0) {
+            leftslide.setPower(0);
+            rightslide.setPower(0);
+        } else if (leftslide.getCurrentPosition() > 3496 && -gamepad1.right_stick_y > 0) {
+            leftslide.setPower(0);
+            rightslide.setPower(0);
         } else {
-            slide.setPower(-gamepad1.right_stick_y);
+            leftslide.setPower(-gamepad1.right_stick_y);
+            rightslide.setPower(-gamepad1.right_stick_y);
+
         }
-        telemetry.addData("slide current", slide.getCurrent(CurrentUnit.MILLIAMPS));
-        telemetry.addData("slide encoder", slide.getCurrentPosition());
+        telemetry.addData("slide current", leftslide.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("slide encoder", leftslide.getCurrentPosition());
         // Put loop blocks here.
         telemetry.update();
     }
