@@ -13,6 +13,7 @@ public class HangStateTransition implements IStateTransition{
         START,
         LINEAR_ACTUATOR_UP,
         LINEAR_ACTUATOR_DOWN,
+        SLIDES_TO_ELBOW_MOVE_POSITION,
         ELBOW_TO_SLIDE_EXTENSION_POSITION,
         EXTENDING_SLIDES,
         ELBOW_TO_HANG_POSITION,
@@ -59,6 +60,13 @@ public class HangStateTransition implements IStateTransition{
                 break;
             case LINEAR_ACTUATOR_DOWN:
                 if ((Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)
+                        && driverControls.hang()){
+                    arm.moveSlideToLength(StateModelParameters.Hang.slideExtensionToMoveElbow);
+                    hangState = TransitionSteps.SLIDES_TO_ELBOW_MOVE_POSITION;
+                }
+                break;
+            case SLIDES_TO_ELBOW_MOVE_POSITION:
+                if ((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)
                         && driverControls.hang()){
                     arm.moveElbowToAngle(StateModelParameters.Hang.elbowAngle);
                     hangState = TransitionSteps.ELBOW_TO_SLIDE_EXTENSION_POSITION;

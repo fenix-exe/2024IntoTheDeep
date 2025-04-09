@@ -74,6 +74,7 @@ public class StateModelParameters {
         public static double pitch = 5;
         public static double linearActuatorExtension = 9.5;
         public static double linearActuatorRetraction = 5.75;
+        public static double slideExtensionToMoveElbow = 6;
         public static double elbowAngle = 83;
         public static double slideExtension = 26;
         public static double slideIntermediatePosition = 12.5;
