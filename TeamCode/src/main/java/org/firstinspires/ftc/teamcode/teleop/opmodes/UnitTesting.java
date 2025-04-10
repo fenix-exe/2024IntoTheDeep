@@ -49,7 +49,7 @@ public class UnitTesting extends LinearOpMode {
         leftRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         colorSensor = new ColorSensor(hardwareColorSensor);
         elbowMotor = hardwareMap.get(DcMotorEx.class, "pivot");
-        RevTouchSensor limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit switch");
+        RevTouchSensor limitSwitch = hardwareMap.get(RevTouchSensor.class, "elbow switch");
         elbowMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
