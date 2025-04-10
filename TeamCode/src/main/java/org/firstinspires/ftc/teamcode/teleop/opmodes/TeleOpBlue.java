@@ -247,6 +247,7 @@ public class TeleOpBlue extends LinearOpMode {
                 FSMManager.setRobotStateToStart();
             }
 
+            //persistent positions
             if (driverControls.programPos()){
                 FSMManager.updatePositions();
             }
