@@ -247,6 +247,7 @@ public class TeleOpBlue extends LinearOpMode {
                 FSMManager.setRobotStateToStart();
             }
 
+            //persistent positions
             if (driverControls.programPos()){
                 FSMManager.updatePositions();
             }
@@ -269,42 +270,6 @@ public class TeleOpBlue extends LinearOpMode {
             //telemetry
             telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Elbow Target Angle", arm.getElbowTargetPositionInDegrees());
-            /*multiTelemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
-            multiTelemetry.addData("Target Pos Linear Actuator", linearActuatorMotor.getTargetPosition());
-            multiTelemetry.addData("Elbow Current", pivot.getCurrent(CurrentUnit.MILLIAMPS));
-            multiTelemetry.addData("Elbow at Target Angle?", Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE);
-            multiTelemetry.addData("Slide Length", arm.getSlideExtension());
-            multiTelemetry.addData("Slide Encoder Left", leftSlide.getCurrentPosition());
-            multiTelemetry.addData("Slide Encoder Right", rightSlide.getCurrentPosition());
-            multiTelemetry.addData("Slide Current Left", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
-            multiTelemetry.addData("Slide Current Right", rightSlide.getCurrent(CurrentUnit.MILLIAMPS));
-            multiTelemetry.addData("Slide Target Left", leftSlide.getTargetPosition());
-            multiTelemetry.addData("Slide Target Right", rightSlide.getTargetPosition());
-            multiTelemetry.addData("Wrist Pitch", wrist.getPitchAngle());
-            multiTelemetry.addData("Pitch Servo Pos", pitch.getPosition());
-            multiTelemetry.addData("IMU", Math.toDegrees(imu.getYaw()));
-            telemetry.addData("ROBOT STATE", FSMManager.robotState);
-            telemetry.addData("Deposit To HP State Parameters extensionLength", StateModelParameters.DepositSampleIntoObservationZone.extensionLength);
-            telemetry.addData("Enter Submersible Pitch",StateModelParameters.EnterSubmersibleStateParameters.pitch);
-            telemetry.addData("Intake Pos Slide Length", StateModelParameters.IntakeStateParameters.slideLength);
-            /*multiTelemetry.addData("Dropping Block State Model", StateModelsZapdos.enterIntakePositionStates);
-            multiTelemetry.addData("Deposit State Model", StateModelsZapdos.depositBackPresetState);
-            multiTelemetry.addData("Intake State Model", StateModelsZapdos.intakePresetState);
-            multiTelemetry.addData("Y Cycle", StateModelsZapdos.depositCycle);
-            multiTelemetry.addData("At intake position?", StateModelsZapdos.intakePosition);
-            multiTelemetry.addData("Specimen Pickup State", StateModelsZapdos.pickupSpecimenState);
-            multiTelemetry.addData("Sample Intake State", StateModelsZapdos.grabBlockFromOutsidePresetState);
-            multiTelemetry.addData("Block Pickup Type", StateModelsZapdos.blockPickupType);
-            multiTelemetry.addData("Strategy", driverControls.getGameStrategyMode());
-            multiTelemetry.addData("Driving Mode", DriveTrain.driveType);
-            multiTelemetry.addData("Speed Multiplier", speedMultiplier);
-            multiTelemetry.addData("linear actuator", linearActuator.getLinearActuatorPositionInches());
-            multiTelemetry.addData("Claw Distance in CM", colorSensor.getDistance(DistanceUnit.CM));
-            multiTelemetry.addData("Claw Alpha", colorSensor.alpha());
-            multiTelemetry.addData("Red", colorSensor.red());
-            multiTelemetry.addData("Blue", colorSensor.blue());
-            multiTelemetry.addData("Green", colorSensor.green());*/
-            //telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
             telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
             telemetry.addData("Robot State", FSMManager.robotState);
             telemetry.addData("Specimen Pickup State", GrabSpecimenStateTransition.intakeTransitionStep);
@@ -312,16 +277,6 @@ public class TeleOpBlue extends LinearOpMode {
             telemetry.addData("Pitch Angle", wrist.getPitchAngle());
             telemetry.addData("Slide Pos", arm.getSlideExtension());
             telemetry.addData("Turn Off Auto Grab", driverControls.turnOffAutoGrab());
-            //telemetry.addData("GrabSampleState", MoveToLeaveSubmersibleStateTransition.grabSampleState);
-            /*telemetry.addData("Grab Sample Elbow Down Angle", StateModelParameters.GrabBlockFromOutsideStateParameters.elbowIntakeDownAngle);
-            telemetry.addData("Left Slide", leftSlide.getCurrentPosition());
-            telemetry.addData("Right Slide", rightSlide.getCurrentPosition());
-            telemetry.addData("Left Slide Target", leftSlide.getTargetPosition());
-            telemetry.addData("Right Slide Target", rightSlide.getTargetPosition());
-            telemetry.addData("Left Slide Current", leftSlide.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("Right Slide Current", rightSlide.getCurrent(CurrentUnit.MILLIAMPS));
-            telemetry.addData("IMU in degrees", Math.toDegrees(imu.getYaw()));
-            telemetry.addData("Pose", (localization.getX()/25.4) + "," + (localization.getY()/25.4));*/
             telemetry.update();
 
 

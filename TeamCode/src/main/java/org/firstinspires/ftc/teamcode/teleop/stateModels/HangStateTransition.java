@@ -53,45 +53,45 @@ public class HangStateTransition implements IStateTransition{
                 }
                 break;
             case LINEAR_ACTUATOR_UP:
-                if ((Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)
-                        && driverControls.hang()){
+                if (driverControls.hang()
+                        && (Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)){
                     linearActuator.goToTargetPositionInches(StateModelParameters.Hang.linearActuatorRetraction);
                     hangState = TransitionSteps.LINEAR_ACTUATOR_DOWN;
                 }
                 break;
             case LINEAR_ACTUATOR_DOWN:
-                if ((Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)
-                        && driverControls.hang()){
+                if (driverControls.hang()
+                        && (Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)){
                     arm.moveSlideToLength(StateModelParameters.Hang.slideExtensionToMoveElbow);
                     hangState = TransitionSteps.SLIDES_TO_ELBOW_MOVE_POSITION;
                 }
                 break;
             case SLIDES_TO_ELBOW_MOVE_POSITION:
-                if ((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)
-                        && driverControls.hang()){
+                if (driverControls.hang()
+                        && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)){
                     arm.moveElbowToAngle(StateModelParameters.Hang.elbowAngle);
                     hangState = TransitionSteps.ELBOW_TO_SLIDE_EXTENSION_POSITION;
                 }
                 break;
             case ELBOW_TO_SLIDE_EXTENSION_POSITION:
-                if ((Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
-                        && driverControls.hang()){
+                if (driverControls.hang()
+                        && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)){
                     arm.moveSlideToLength(StateModelParameters.Hang.slideExtension);
                     hangState = TransitionSteps.EXTENDING_SLIDES;
                 }
                 break;
             case EXTENDING_SLIDES:
-                if ((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.ELBOW_TOLERANCE)
-                        && driverControls.hang()){
+                if (driverControls.hang()
+                        && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.ELBOW_TOLERANCE)){
                     arm.moveSlideToLength(StateModelParameters.Hang.slideIntermediatePosition);
                     linearActuator.goToTargetPositionInches(0);
                     hangState = TransitionSteps.SLIDES_RETRACT_AND_LINEAR_ACTUATOR_DOWN;
                 }
                 break;
             case SLIDES_RETRACT_AND_LINEAR_ACTUATOR_DOWN:
-                if (((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE))
-                        && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)
-                        && driverControls.hang()){
+                if (driverControls.hang()
+                        && ((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE))
+                        && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)){
                     hangState = TransitionSteps.START;
                 }
                 break;
