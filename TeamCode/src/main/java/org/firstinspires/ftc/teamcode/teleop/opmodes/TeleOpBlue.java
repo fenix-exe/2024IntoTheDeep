@@ -184,7 +184,6 @@ public class TeleOpBlue extends LinearOpMode {
             }
 
             //Manual control for wrist up
-            //precedence is the following - continous diff > 42in > manual diff
             if (driverControls.diffUp()){
                 wrist.manualControlPitch(0.005);
             }
