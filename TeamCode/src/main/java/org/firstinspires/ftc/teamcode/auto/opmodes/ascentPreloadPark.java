@@ -128,6 +128,7 @@ public class ascentPreloadPark extends LinearOpMode {
         wrist = new Wrist(pitchLeft);
         //clawCode = new Claw(claw);
         autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
+        MecanumDrive.PARAMS.headingGain = 7;
 
 
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
@@ -299,10 +300,10 @@ public class ascentPreloadPark extends LinearOpMode {
             }
 
             if (XareSame && YareSame && AngleareSame) {
-                if (!ElbowareSame) {
+                if (true) {
                     traj1 = traj1.stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))));
                 }
-                if (!SlideareSame) {
+                if (true) {
                     traj1 = traj1.stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 }
             }

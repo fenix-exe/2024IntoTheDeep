@@ -12,11 +12,13 @@ import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -70,6 +72,7 @@ public class ascentClipCyclePark extends LinearOpMode {
     autoClaw autoClaw;
     Wrist wrist;
     Claw clawCode;
+    RevColorSensorV3 color;
 
     // declare elbow
     Elbow elbow;
@@ -127,6 +130,8 @@ public class ascentClipCyclePark extends LinearOpMode {
         wrist = new Wrist(pitchLeft);
         //clawCode = new Claw(claw);
         autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
+        color = hardwareMap.get(RevColorSensorV3.class, "color sensor");
+        org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor sensor = new org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor(color);
 
 
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");
@@ -298,10 +303,10 @@ public class ascentClipCyclePark extends LinearOpMode {
             }
 
             if (XareSame && YareSame && AngleareSame) {
-                if (!ElbowareSame) {
+                if (true) {
                     traj1 = traj1.stopAndAdd(elbow.elbowControl(extractAuto.getElbowPhiFromList(vector.get(i)), extractAuto.getElbowSpeedFromList(vector.get(i))));
                 }
-                if (!SlideareSame) {
+                if (true) {
                     traj1 = traj1.stopAndAdd(slide.slideControl(extractAuto.getLinearSlideFromList(vector.get(i)), extractAuto.getSlideSpeedFromList(vector.get(i))));
                 }
             }
@@ -337,7 +342,10 @@ public class ascentClipCyclePark extends LinearOpMode {
             }
             if (!PitchareSame || !RollareSame || !ClawareSame) {
                 //traj1 = traj1.stopAndAdd(autoClaw.clawControl(extractAuto.getPitchFromList(vector.get(i)),extractAuto.getRollFromList(vector.get(i)), extractAuto.getClawFromList(vector.get(i))));
-                traj1 = traj1.stopAndAdd(bigWheelIntake.bigWheelIntakePower(extractAuto.getClawFromList(vector.get(i))));
+                if (extractAuto.getClawFromList(vector.get(i)) == 2) {
+                    traj1.stopAndAdd(bigWheelIntake.colorIntake());
+                } else {
+                traj1 = traj1.stopAndAdd(bigWheelIntake.bigWheelIntakePower(extractAuto.getClawFromList(vector.get(i)))); }
                 traj1 = traj1.stopAndAdd(wrist.wristControl(extractAuto.getPitchFromList(vector.get(i))));
                 //traj1 = traj1.stopAndAdd(clawCode.clawControl(extractAuto.getClawFromList(vector.get(i))));
             }

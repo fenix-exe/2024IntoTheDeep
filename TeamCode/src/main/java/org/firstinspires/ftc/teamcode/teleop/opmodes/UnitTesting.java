@@ -31,13 +31,15 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @TeleOp(group="Testing")
 public class UnitTesting extends LinearOpMode {
 
-     enum mode {DRIVETRAIN, ELBOW, SLIDES, INTAKE;}public static double x = 39.7, y = 65, heading = -180;public GoBildaPinpointDriverRR pinpoint;Servo pitchLeft;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
+     enum mode {DRIVETRAIN, ELBOW, SLIDES, INTAKE;}
+    public static double x = 39.7, y = 65, heading = -180;
+     public GoBildaPinpointDriverRR pinpoint;
+     Servo pitchLeft;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
         mode Mode = mode.DRIVETRAIN;
         telemetry.addData("Instructions", "Press the d-pad to cycle between units to test. In any unit, hold down Gamepad 1's x to see instructions.");
-        waitForStart();
         leftslide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightslide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         leftslide.setDirection(DcMotor.Direction.REVERSE);
@@ -56,6 +58,9 @@ public class UnitTesting extends LinearOpMode {
         elbow = new Elbow(elbowMotor, limitSwitch, 90);
         intake = new BigWheelIntake(leftRoller,rightRoller);
         initializeDriveTrain();
+        initializePinPoint();
+        driverControls = new DriverControls(gamepad1,gamepad2,1);
+        waitForStart();
         while (opModeIsActive()) {
             telemetry.addData("Current Unit", Mode.toString());
             if (Mode == mode.DRIVETRAIN) {

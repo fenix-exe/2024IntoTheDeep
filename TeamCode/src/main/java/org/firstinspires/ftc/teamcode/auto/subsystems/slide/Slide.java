@@ -76,17 +76,6 @@ public class Slide extends CommonSlide {
                 oldPos = ticksToInches(leftSlideMotor.getTargetPosition());
             }
 
-            if (!metOld && !(oldPos-1 <= getSlideExtensionInInches() && getSlideExtensionInInches() <= oldPos+1)) {
-                slideStatusWriter.write(new StatusMessage("SLIDES NOT MET TARGET"));
-                slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
-                if (targetPos - 1 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos + 1) {
-                    return false;
-                } else {
-                    return true;
-                }
-            } else {
-
-                metOld = true;
                 setSlideExtensionLengthAndSpeed(targetPos, speed);
 
                 if (homingSwitch.isPressed() && System.currentTimeMillis() >= time + 500) {
@@ -103,7 +92,6 @@ public class Slide extends CommonSlide {
                     return false;
                 } else {
                     return true;
-                }
             }
         }
     }

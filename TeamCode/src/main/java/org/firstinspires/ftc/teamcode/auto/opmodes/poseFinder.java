@@ -33,7 +33,7 @@ public class poseFinder extends LinearOpMode {
         extractOffsets offsets = new extractOffsets();
 
         try {
-            offsets.offsetGetter("/sdcard/Download/autoOffsets/clipOffsets.csv");
+            offsets.offsetGetter("/sdcard/Download/offsets/clipOffsets.csv");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
