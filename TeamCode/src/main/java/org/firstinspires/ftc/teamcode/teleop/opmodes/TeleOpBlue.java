@@ -264,12 +264,10 @@ public class TeleOpBlue extends LinearOpMode {
                 if (!color.isConnected()){
                     FSMManager.updateBasedOnColorSensorStatus();
                     colorSensorDetected = false;
-                    led.setColor(ILED.LEDColor.ORANGE);
                 }
                 checkColorSensor = false;
             } else if (!(FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE  || FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN) && !checkColorSensor){
                 checkColorSensor = true;
-                led.turnOff();
             }
             //state models for preset positions
             FSMManager.execute();
@@ -496,8 +494,10 @@ public class TeleOpBlue extends LinearOpMode {
         LoggerUtil.debug("buttonPresses", String.valueOf(driverControls.slideMovement()));
     }
     private void updateLED(){
-        if (driveTrain.getLockDriveTrain()){
+        if (driveTrain.getLockDriveTrain()) {
             led.setColor(ILED.LEDColor.GREEN);
+        } else if (!colorSensorDetected){
+            led.setColor(ILED.LEDColor.ORANGE);
         } else if (FSMManager.isAtStart()) {
             led.setColor(ILED.LEDColor.YELLOW);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
