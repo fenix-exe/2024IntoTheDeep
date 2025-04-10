@@ -185,20 +185,12 @@ public class TeleOpBlue extends LinearOpMode {
 
             //Manual control for wrist up
             //precedence is the following - continous diff > 42in > manual diff
-            /*if (driverControls.continuousDiffUp()){
-                wrist.manualControlPitch(0.005);
-            } /*else if (arm.getSlideExtension() > arm.getMaximumSlideExtensionAllowedInInches() - 7
-                    && arm.getElbowAngleInDegrees() < 10){
-                // When slide is extended, making sure pitch is down or we can break the 42in limit
-                wrist.presetPositionPitch(-90);
-            } else*/ if (driverControls.diffUp()){
+            if (driverControls.diffUp()){
                 wrist.manualControlPitch(0.005);
             }
 
             //manual control for wrist down
-            /*if (driverControls.continuousDiffDown()){
-                wrist.manualControlPitch(-0.005);
-            } else*/ if (driverControls.diffDown()){
+            if (driverControls.diffDown()){
                 wrist.manualControlPitch(-0.005);
             }
 
