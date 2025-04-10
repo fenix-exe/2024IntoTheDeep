@@ -31,39 +31,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @TeleOp(group="Testing")
 public class UnitTesting extends LinearOpMode {
 
-     enum mode {
-        DRIVETRAIN,
-        ELBOW,
-        SLIDES,
-        INTAKE;
-
-    }
-    public static double x = 39.7;
-    public static double y = 65;
-    public static double heading = -180;
-    public GoBildaPinpointDriverRR pinpoint;
-    Servo pitchLeft;
-    Servo pitchRight;
-    Wrist wrist;
-    DcMotorEx elbowMotor;
-    Elbow elbow;
-    ColorSensor colorSensor;
-    RevColorSensorV3 hardwareColorSensor;
-    CRServoImplEx leftRoller;
-    CRServoImplEx rightRoller;
-    BigWheelIntake intake;
-
-    enum Alliance{RED,BLUE}
-    UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;
-    DriveTrain driveTrain;
-    IMU imu;
-    DriverControls driverControls;
-    double speedMultiplier;
-    private DcMotorEx leftslide, rightslide;
-
-    double intakePower = 0;
-    boolean exitingWrongColor = false;
-    boolean detectingColor = false;
+     enum mode {DRIVETRAIN, ELBOW, SLIDES, INTAKE;}public static double x = 39.7, y = 65, heading = -180;public GoBildaPinpointDriverRR pinpoint;Servo pitchLeft, pitchRight;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
