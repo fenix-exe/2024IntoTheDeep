@@ -74,8 +74,6 @@ public class TeleOpBlue extends LinearOpMode {
     CRServoImplEx leftRoller;
     CRServoImplEx rightRoller;
     Servo pitch;
-    Servo pitchRight;
-    Servo roll;
     EndEffectorV2 endEffector;
     Wrist wrist;
     Claw claw;
