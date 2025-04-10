@@ -5,10 +5,8 @@ public interface DriveControlMap {
     double strafeDrive();
     double turnDrive();
     boolean driveTypeSwitch();
-    //switches robot modes, is a toggle
     boolean resetIMU();
     boolean microDriveAdjustments();
-    //pivot perpendicular to ground
     double pivotJoystick();
     double slideMovement();
     boolean slideStopped();
