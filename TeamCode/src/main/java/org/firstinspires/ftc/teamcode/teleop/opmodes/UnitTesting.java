@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @TeleOp(group="Testing")
 public class UnitTesting extends LinearOpMode {
 
-     enum mode {DRIVETRAIN, ELBOW, SLIDES, INTAKE;}public static double x = 39.7, y = 65, heading = -180;public GoBildaPinpointDriverRR pinpoint;Servo pitchLeft, pitchRight;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
+     enum mode {DRIVETRAIN, ELBOW, SLIDES, INTAKE;}public static double x = 39.7, y = 65, heading = -180;public GoBildaPinpointDriverRR pinpoint;Servo pitchLeft;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,7 +43,6 @@ public class UnitTesting extends LinearOpMode {
 
         leftslide.setDirection(DcMotor.Direction.REVERSE);
         pitchLeft = hardwareMap.get(Servo.class, "pitchLeft");
-        pitchRight = hardwareMap.get(Servo.class, "pitchRight");
         wrist = new Wrist(pitchLeft);
         hardwareColorSensor = hardwareMap.get(RevColorSensorV3.class, "color sensor");
         leftRoller = hardwareMap.get(CRServoImplEx.class, "leftRoller");
@@ -164,7 +163,6 @@ public class UnitTesting extends LinearOpMode {
             wrist.presetPositionPitch(0.5);
         }
         telemetry.addData("Left Servo Pos", pitchLeft.getPosition());
-        telemetry.addData("Right Servo Pos", pitchRight.getPosition());
     }
     private void colorSensorTesting() {
         if (gamepad1.left_bumper) {
