@@ -241,7 +241,7 @@ public class UnitTesting extends LinearOpMode {
         }
 
         //speed adjustments
-        if (driverControls.microDriveAdjustments()) {
+        if (driverControls.slowMode()) {
             speedMultiplier = RobotConstants.SLOW_SPEED;
         } else {
             speedMultiplier = RobotConstants.NORMAL_SPEED;

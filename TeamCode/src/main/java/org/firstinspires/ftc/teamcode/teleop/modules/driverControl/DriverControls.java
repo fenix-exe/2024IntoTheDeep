@@ -76,7 +76,7 @@ public class DriverControls implements DriveControlMap {
         return gamepad1current.dpad_up;
     }
     @Override
-    public boolean microDriveAdjustments(){
+    public boolean slowMode(){
         return gamepad1current.right_bumper;
     }
 

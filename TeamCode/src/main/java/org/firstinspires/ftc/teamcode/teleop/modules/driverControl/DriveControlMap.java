@@ -6,7 +6,7 @@ public interface DriveControlMap {
     double turnDrive();
     boolean driveTypeSwitch();
     boolean resetIMU();
-    boolean microDriveAdjustments();
+    boolean slowMode();
     double pivotJoystick();
     double slideMovement();
     boolean slideStopped();

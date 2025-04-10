@@ -52,7 +52,6 @@ import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -157,7 +156,7 @@ public class TeleOpBlue extends LinearOpMode {
             }
 
             //speed adjustments
-            if (driverControls.microDriveAdjustments() || FSMManager.robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
+            if (driverControls.slowMode() || FSMManager.robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
                 speedMultiplier = RobotConstants.SLOW_SPEED;
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
@@ -224,7 +223,7 @@ public class TeleOpBlue extends LinearOpMode {
 
             //linear actuator code for driver control outside of state models
             if (driverControls.linearActuatorUp()){
-                if (driverControls.microDriveAdjustments()){
+                if (driverControls.slowMode()){
                     //for manual movements
                     double pos = linearActuator.getLinearActuatorPositionInches() + 1;
                     linearActuator.goToTargetPositionInches(pos);
@@ -234,7 +233,7 @@ public class TeleOpBlue extends LinearOpMode {
                 }
             }
             if (driverControls.linearActuatorDown()){
-                if (driverControls.microDriveAdjustments()){
+                if (driverControls.slowMode()){
                     //for manual movements
                     if (!linearActuator.getLimitSwitchState()){
                         //prevents the linear actuator from driving into the ground
