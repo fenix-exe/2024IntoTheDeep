@@ -416,7 +416,7 @@ public class TeleOpBlue extends LinearOpMode {
         Elbow elbow = new Elbow(pivot, elbowSwitch, 100);
         arm = new Arm(slideControl, elbow);
 
-        leftSlide.setTargetPosition(0);
+        arm.moveSlideToLength(0);
         pivot.setTargetPosition(0);
 
     }
