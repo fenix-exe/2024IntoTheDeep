@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
@@ -25,8 +26,8 @@ public class GoToIntakeStateTransition implements IStateTransition {
     Wrist wrist;
     IIntake intake;
     Arm arm;
-    DriverControls driverControls;
-    public GoToIntakeStateTransition(Wrist wrist, IIntake intake, Arm arm, DriverControls driverControls){
+    DriveControlMap driverControls;
+    public GoToIntakeStateTransition(Wrist wrist, IIntake intake, Arm arm, DriveControlMap driverControls){
         intakeTransitionStep = TransitionSteps.START;
         this.wrist = wrist;
         this.intake = intake;

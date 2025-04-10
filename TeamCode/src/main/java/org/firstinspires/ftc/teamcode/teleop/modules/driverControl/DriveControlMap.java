@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.modules.driverControl;
 
 public interface DriveControlMap {
+    void update();
     double forwardDrive();
     double strafeDrive();
     double turnDrive();
@@ -8,6 +9,7 @@ public interface DriveControlMap {
     boolean resetIMU();
     boolean slowMode();
     double pivotJoystick();
+    boolean pivotManualStopped();
     double slideMovement();
     boolean slideStopped();
     boolean linearActuatorUp();

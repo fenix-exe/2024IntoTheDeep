@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
@@ -13,11 +14,11 @@ public class EnterSubmersibleStateTransition implements IStateTransition{
         WAIT_A_BIT
     }
     TransitionSteps steps;
-    DriverControls controls;
+    DriveControlMap controls;
     Wrist wrist;
     IIntake intake;
     ElapsedTime timer;
-    public EnterSubmersibleStateTransition(Wrist wrist, IIntake intake, DriverControls controls){
+    public EnterSubmersibleStateTransition(Wrist wrist, IIntake intake, DriveControlMap controls){
         this.controls =controls;
         this.wrist=wrist;
         this.intake=intake;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
@@ -16,8 +17,8 @@ public class GoToClipSpecimenStateTransition implements IStateTransition{
     private TransitionSteps goToClipState;
     Wrist wrist;
     Arm arm;
-    DriverControls driverControls;
-    public GoToClipSpecimenStateTransition(Wrist wrist, Arm arm, DriverControls driverControls){
+    DriveControlMap driverControls;
+    public GoToClipSpecimenStateTransition(Wrist wrist, Arm arm, DriveControlMap driverControls){
         this.wrist = wrist;
         this.arm = arm;
         this.driverControls = driverControls;

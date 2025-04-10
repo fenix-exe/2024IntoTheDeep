@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 
 
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -18,7 +19,7 @@ public class FSMManager {
     static Arm arm;
     static Wrist wrist;
     static ArrayList<IStateTransition> stateTransitions = new ArrayList<>();
-    public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color, LinearActuator linearActuator, Alliance alliance, boolean colorSensorConnected){
+    public static void initialize(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriveControlMap driverControls, ColorSensor color, LinearActuator linearActuator, Alliance alliance, boolean colorSensorConnected){
         stateTransitions.add(new GoToIntakeStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(new MoveToLeaveSubmersibleStateTransition(wrist, intake, arm, driveTrain, driverControls, colorSensorConnected?color:null, alliance));
         stateTransitions.add(new GrabFailedStateTransition(wrist, intake, arm, driverControls));

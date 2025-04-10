@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -23,10 +24,10 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     IIntake intake;
     Arm arm;
     IDriveTrain driveTrain;
-    DriverControls driverControls;
+    DriveControlMap driverControls;
     public static ColorSensor color;
     boolean intakeOn;
-    public GrabSpecimenStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor color){
+    public GrabSpecimenStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriveControlMap driverControls, ColorSensor color){
         this.wrist = wrist;
         this.intake = intake;
         this.arm = arm;

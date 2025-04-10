@@ -32,7 +32,7 @@ public class DriverControls implements DriveControlMap {
 
         gameStrategyMode = scoringType.SAMPLE;
     }
-
+    @Override
     public void update(){
             gamepad1previous.copy(gamepad1current);
             gamepad2previous.copy(gamepad2current);
@@ -87,6 +87,7 @@ public class DriverControls implements DriveControlMap {
         }
         return 0;
     }
+    @Override
     public boolean pivotManualStopped(){
         return Math.abs(gamepad2previous.left_stick_y) > 0.65 && !(Math.abs(gamepad2current.left_stick_y) > 0.65);
     }

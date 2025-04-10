@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -25,8 +26,8 @@ public class HangStateTransition implements IStateTransition{
     Wrist wrist;
     Arm arm;
     LinearActuator linearActuator;
-    DriverControls driverControls;
-    public HangStateTransition(Wrist wrist, Arm arm, DriverControls driverControls, LinearActuator linearActuator){
+    DriveControlMap driverControls;
+    public HangStateTransition(Wrist wrist, Arm arm, DriveControlMap driverControls, LinearActuator linearActuator){
         this.wrist = wrist;
         this.arm = arm;
         this.driverControls = driverControls;

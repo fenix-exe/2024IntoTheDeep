@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.GrabSpecimenStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
@@ -65,7 +66,7 @@ public class TeleOpBlue extends LinearOpMode {
     MultipleTelemetry multiTelemetry;
     IDriveTrain driveTrain;
     Arm arm;
-    DriverControls driverControls;
+    DriveControlMap driverControls;
     DcMotorEx leftSlide;
     DcMotorEx rightSlide;
     DcMotorEx pivot;

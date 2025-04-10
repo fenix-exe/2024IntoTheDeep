@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -25,10 +26,10 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     IIntake intake;
     Arm arm;
     IDriveTrain driveTrain;
-    DriverControls driverControls;
+    DriveControlMap driverControls;
     public static ColorSensor colorSensor;
     Alliance alliance;
-    public MoveToLeaveSubmersibleStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriverControls driverControls, ColorSensor colorSensor, Alliance alliance){
+    public MoveToLeaveSubmersibleStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriveControlMap driverControls, ColorSensor colorSensor, Alliance alliance){
         this.wrist = wrist;
         this.intake = intake;
         this.arm = arm;
