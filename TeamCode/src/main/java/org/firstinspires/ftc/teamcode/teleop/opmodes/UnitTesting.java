@@ -68,6 +68,7 @@ public class UnitTesting extends LinearOpMode {
         driverControls = new DriverControls(gamepad1,gamepad2,1);
         //display instructions for unit testing
         telemetry.addLine("Press the d-pad to cycle between units to test. In any unit, hold down Gamepad 1's x to see instructions.");
+        telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
             //the actual unit-testing with almost full functionality
