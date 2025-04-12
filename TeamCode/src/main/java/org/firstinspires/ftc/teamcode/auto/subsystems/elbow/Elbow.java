@@ -55,10 +55,9 @@ public class Elbow extends CommonElbow {
                 initialized = true;
             }
 
-            elbowWriter.write(new ElbowMessage(getElbowAngle(), target, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+            //elbowWriter.write(new ElbowMessage(getElbowAngle(), target, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 
-            if (getElbowTargetAngle()-1 < getElbowAngle() && getElbowAngle() < getElbowTargetAngle()+1) {
-                elbowMotor.setPower(0);
+            if (getElbowTargetAngle()-1.5 < getElbowAngle() && getElbowAngle() < getElbowTargetAngle()+1.5) {
                 return false;
             } else {
                 return true;

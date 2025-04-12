@@ -44,7 +44,7 @@ public class Wrist extends CommonWrist {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             //pitchLeft.setPosition(pitchPos + pitchOffset);
             presetPositionPitch(pitchPos);
-            wristWriter.write(new WristMessage(getPitchAngle(), 0));
+            //wristWriter.write(new WristMessage(getPitchAngle(), 0));
             return false;
         }
     }

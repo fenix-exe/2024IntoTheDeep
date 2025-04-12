@@ -64,9 +64,13 @@ public class FSMManager {
                 case READY_TO_GRAB_SPECIMEN:
                 case READY_TO_GO_TO_CLIP_POSITION:
                 case CLIPPED:
-                case READY_TO_DEPOSIT_CLIP:
                     StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowAngleInDegrees();
                     break;
+                case READY_TO_DEPOSIT_CLIP:
+                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowAngleInDegrees();
+                    StateModelParameters.DepositSpecimenPositionStateParameters.pitch = wrist.getPitchAngle();
+                    break;
+
             }
     }
     public static void updateBasedOnColorSensorStatus(){

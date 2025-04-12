@@ -128,7 +128,7 @@ public class ascentPreloadPark extends LinearOpMode {
         wrist = new Wrist(pitchLeft);
         //clawCode = new Claw(claw);
         autoBigWheelIntake bigWheelIntake = new autoBigWheelIntake(leftRoller, rightRoller);
-        MecanumDrive.PARAMS.headingGain = 7;
+        //MecanumDrive.PARAMS.headingGain = 15;
 
 
         linearActuatorMotor = hardwareMap.get(DcMotorEx.class, "linear actuator");

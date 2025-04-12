@@ -71,7 +71,7 @@ public class Slide extends CommonSlide {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (!initialized) {
                 time = System.currentTimeMillis();
-                slideStatusWriter.write(new StatusMessage("SLIDES MOVING"));
+                //slideStatusWriter.write(new StatusMessage("SLIDES MOVING"));
                 initialized = true;
                 oldPos = ticksToInches(leftSlideMotor.getTargetPosition());
             }
@@ -82,11 +82,11 @@ public class Slide extends CommonSlide {
                     leftSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     rightSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     setSlideExtensionLengthAndSpeed(targetPos, speed);
-                    slideStatusWriter.write(new StatusMessage("SLIDES RESET"));
+                    //slideStatusWriter.write(new StatusMessage("SLIDES RESET"));
                     time = System.currentTimeMillis();
                 }
 
-                slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
+                //slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 
                 if (targetPos - 1 < getSlideExtensionInInches() && getSlideExtensionInInches() < targetPos + 1) {
                     return false;
