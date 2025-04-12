@@ -258,8 +258,16 @@ public class ascentPreloadPark extends LinearOpMode {
         //wait for user input to begin interpreter parsing and setup
         while(!gamepad1.b && !isStopRequested()) {
             telemetry.addLine("Homing Complete!");
-            telemetry.addLine("Add Sample, then click B to continue.");
+            telemetry.addLine("Add Specimen, then click B to continue.");
+            telemetry.addLine("Left Bumper: Intake. Right Bumper: Outtake");
             telemetry.update();
+            if (gamepad1.left_bumper) {
+                bigWheelIntake.setPower(1);
+            } else if (gamepad1.right_bumper) {
+                bigWheelIntake.setPower(-1);
+            } else {
+                bigWheelIntake.setPower(0);
+            }
         }
 
 
@@ -376,7 +384,7 @@ public class ascentPreloadPark extends LinearOpMode {
 
 
         while(!gamepad1.y && !isStopRequested()) {
-            telemetry.addLine("Press Y to get into ready-to-run position");
+            telemetry.addLine("Press Y to get into ready-to-run position.");
             telemetry.update();
         }
 
