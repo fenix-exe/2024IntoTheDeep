@@ -398,6 +398,8 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         elbowMotor.setPower(0);
         slide.setSlidePower(0);
+        pitchLeft.setPwmDisable();
+
 
         //autoClaw.setClaw(CLAW_START);
 
