@@ -54,25 +54,6 @@ public class FSMManager {
     public static boolean isAtStart(){
         return robotState == RobotState.START;
     }
-    public static void updatePositions(){
-            switch (robotState){
-                case READY_TO_DEPOSIT_IN_BUCKET:
-                    StateModelParameters.DepositStateParameters.slideLength = arm.getSlideExtension();
-                    StateModelParameters.DepositStateParameters.pitch = wrist.getPitchAngle();
-                    break;
-                case READY_TO_GO_TO_GRAB_SPECIMEN:
-                case READY_TO_GRAB_SPECIMEN:
-                case READY_TO_GO_TO_CLIP_POSITION:
-                case CLIPPED:
-                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowAngleInDegrees();
-                    break;
-                case READY_TO_DEPOSIT_CLIP:
-                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowAngleInDegrees();
-                    StateModelParameters.DepositSpecimenPositionStateParameters.pitch = wrist.getPitchAngle();
-                    break;
-
-            }
-    }
     public static void updateBasedOnColorSensorStatus(){
         GrabSpecimenStateTransition.color = null;
         MoveToLeaveSubmersibleStateTransition.colorSensor = null;

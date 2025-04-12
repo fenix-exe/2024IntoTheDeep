@@ -44,6 +44,8 @@ public class LeaveDepositStateTransition implements IStateTransition{
                 if ((controls.depositBack() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET)
                         || (controls.specimenSampleIntake() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER)){
                     FSMManager.stopTransitions();
+                    StateModelParameters.DepositStateParameters.slideLength = arm.getSlideTargetPositionInInches();
+                    StateModelParameters.DepositStateParameters.pitch = wrist.getPitchAngle();
                     timer.reset();
                     intake.slowOuttake();
                     steps = TransitionSteps.OUTTAKING;

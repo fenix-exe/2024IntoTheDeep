@@ -58,6 +58,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                         }
                         if (distance < 32.5){
                             FSMManager.stopTransitions();
+                            StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
                             timer.reset();
                             intake.stop();
                             intakeOn = false;
@@ -68,6 +69,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                     }
                     if (driverControls.pickupAndDepositSpecimens()){
                         FSMManager.stopTransitions();
+                        StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
                         timer.reset();
                         intake.stop();
                         intakeOn = false;

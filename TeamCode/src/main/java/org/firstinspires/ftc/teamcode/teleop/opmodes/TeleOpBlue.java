@@ -247,11 +247,6 @@ public class TeleOpBlue extends LinearOpMode {
                 FSMManager.setRobotStateToStart();
             }
 
-            //persistent positions
-            if (driverControls.programPos()){
-                FSMManager.updatePositions();
-            }
-
             //check color sensor based on robot state
             if ((FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE || FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN) && checkColorSensor && colorSensorDetected){
                 if (!color.isConnected()){

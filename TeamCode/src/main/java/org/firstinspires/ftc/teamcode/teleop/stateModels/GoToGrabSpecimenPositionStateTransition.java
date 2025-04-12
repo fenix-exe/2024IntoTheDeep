@@ -47,6 +47,7 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
                         || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN) {
                     timer = new ElapsedTime();
                     FSMManager.stopTransitions();
+                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
                     timer.reset();
                     intake.outtake();
                     wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
