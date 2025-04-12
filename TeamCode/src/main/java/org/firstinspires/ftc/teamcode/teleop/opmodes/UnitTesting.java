@@ -28,6 +28,10 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.BigWheelIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 @TeleOp(group="Testing")
 public class UnitTesting extends LinearOpMode {
 
@@ -35,6 +39,14 @@ public class UnitTesting extends LinearOpMode {
     public static double x = 39.7, y = 65, heading = -180;
      public GoBildaPinpointDriverRR pinpoint;
      Servo pitchLeft;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
+
+    DcMotorEx FL;
+    DcMotorEx FR;
+    DcMotorEx BR;
+    DcMotorEx BL;
+    ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
+    DcMotorEx linearActuator;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,6 +70,7 @@ public class UnitTesting extends LinearOpMode {
         intake = new BigWheelIntake(leftRoller,rightRoller);
         initializeDriveTrain();
         initializePinPoint();
+        linearActuator = hardwareMap.get(DcMotorEx.class, "linear actuator");
         driverControls = new DriverControls(gamepad1,gamepad2,1);
         telemetry.addLine("Press the d-pad to cycle between units to test. In any unit, hold down Gamepad 1's x to see instructions.");
         waitForStart();
@@ -132,18 +145,25 @@ public class UnitTesting extends LinearOpMode {
         telemetry.addData("pose heading", Math.toDegrees(pinpoint.getPositionRR().heading.toDouble()));
     }
     private void initializeDriveTrain(){
-        DcMotorEx FL = hardwareMap.get(DcMotorEx.class, "FL");
-        DcMotorEx FR = hardwareMap.get(DcMotorEx.class, "FR");
-        DcMotorEx BL = hardwareMap.get(DcMotorEx.class, "BL");
-        DcMotorEx BR = hardwareMap.get(DcMotorEx.class, "BR");
+        FL = hardwareMap.get(DcMotorEx.class, "FL");
+        FR = hardwareMap.get(DcMotorEx.class, "FR");
+        BL = hardwareMap.get(DcMotorEx.class, "BL");
+        BR = hardwareMap.get(DcMotorEx.class, "BR");
+
+        driveMotors.add(FL);
+        driveMotors.add(FR);
+        driveMotors.add(BL);
+        driveMotors.add(BR);
+
 
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        for (DcMotorEx d :driveMotors) {
+            d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            d.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         //imu initializations
         imu = hardwareMap.get(IMU.class, "imu");
@@ -227,9 +247,45 @@ public class UnitTesting extends LinearOpMode {
     }
     private void drivetrainTesting() {
         driverControls.update();
+        
+        if (gamepad1.a) {
+            FL.setPower(1);
+        } else if (gamepad1.b) {
+            BL.setPower(1);
+        } else if (gamepad1.x) {
+            FR.setPower(1);
+        } else if (gamepad1.y) {
+            BR.setPower(1);
+        } else {
+            FL.setPower(1);
+            BL.setPower(1);
+            FR.setPower(1);
+            BR.setPower(1);
+        }
+
+        if (gamepad1.left_bumper) {
+            for (DcMotorEx d : driveMotors) {
+                d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+            telemetry.addLine("Reset Complete");
+        }
+
+        linearActuator.setPower(-gamepad1.right_stick_y/2);
+        
+        telemetry.addLine("A: FL, B: BL, X: FR, Y: BR, Left Bumper: Reset Encoders");
+        telemetry.addLine("Right Stick Y: Linear Actuator");
+        telemetry.addData("FL Encoder Value", FL.getCurrentPosition());
+        telemetry.addData("BL Encoder Value", BL.getCurrentPosition());
+        telemetry.addData("FR Encoder Value", FR.getCurrentPosition());
+        telemetry.addData("BR Encoder Value", BR.getCurrentPosition());
+
+
+
+
 
         //driving code
-        if (driverControls.driveTypeSwitch()) {
+        /*if (driverControls.driveTypeSwitch()) {
             if (DriveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC) {
                 DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
             } else {
@@ -257,7 +313,7 @@ public class UnitTesting extends LinearOpMode {
             case FIELD_CENTRIC:
                 driveTrain.FieldCentricDrive(speedMultiplier);
                 break;
-        }
+        }*/
     }
     private void slideManualTesting() {
         if (leftslide.getCurrentPosition() < 0 && -gamepad1.right_stick_y < 0) {

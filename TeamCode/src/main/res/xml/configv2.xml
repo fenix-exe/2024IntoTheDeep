@@ -11,14 +11,14 @@
             <RevColorSensorV3 name="color sensor" port="0" bus="1" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
-            <goBILDA5202SeriesMotor name="BL" port="0" />
-            <goBILDA5202SeriesMotor name="BR" port="2" />
-            <goBILDA5202SeriesMotor name="rightSlide" port="1" />
-            <goBILDA5202SeriesMotor name="leftSlide" port="3" />
+            <goBILDA5202SeriesMotor name="BL" port="1" />
+            <goBILDA5202SeriesMotor name="BR" port="3" />
+            <goBILDA5202SeriesMotor name="rightSlide" port="0" />
+            <goBILDA5202SeriesMotor name="leftSlide" port="2" />
             <ContinuousRotationServo name="leftRoller" port="0" />
-            <RevBlinkinLedDriver name="blinkin" port="4" />
+            <RevBlinkinLedDriver name="blinkin" port="5" />
             <ContinuousRotationServo name="rightRoller" port="3" />
-            <Servo name="pitchLeft" port="2"/>
+            <Servo name="pitchLeft" port="4"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpointRR name="pinpoint" port="0" bus="2" />
             <RevTouchSensor name="slide switch" port="1" />
