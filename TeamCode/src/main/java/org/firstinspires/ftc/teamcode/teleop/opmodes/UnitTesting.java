@@ -31,25 +31,19 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-
 @TeleOp(group="Testing")
 public class UnitTesting extends LinearOpMode {
-
-     enum mode {DRIVETRAIN, ELBOW, SLIDES, INTAKE;}
+    //initialize the variables
+    enum mode {DRIVETRAIN, ELBOW, SLIDES, INTAKE;}
     public static double x = 39.7, y = 65, heading = -180;
-     public GoBildaPinpointDriverRR pinpoint;
-     Servo pitchLeft;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
-
-    DcMotorEx FL;
-    DcMotorEx FR;
-    DcMotorEx BR;
-    DcMotorEx BL;
+    public GoBildaPinpointDriverRR pinpoint;
+    Servo pitchLeft;Wrist wrist;DcMotorEx elbowMotor;Elbow elbow;ColorSensor colorSensor;RevColorSensorV3 hardwareColorSensor;CRServoImplEx leftRoller, rightRoller;BigWheelIntake intake;enum Alliance{RED,BLUE}UnitTesting.Alliance alliance = UnitTesting.Alliance.RED;DriveTrain driveTrain;IMU imu;DriverControls driverControls;double speedMultiplier, intakePower = 0;private DcMotorEx leftslide, rightslide;boolean exitingWrongColor = false, detectingColor = false;
+    DcMotorEx FL,FR,BR,BL;
     ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
     DcMotorEx linearActuator;
-
-
     @Override
     public void runOpMode() throws InterruptedException {
+        //set the variables
         mode Mode = mode.DRIVETRAIN;
         leftslide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightslide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -72,9 +66,11 @@ public class UnitTesting extends LinearOpMode {
         initializePinPoint();
         linearActuator = hardwareMap.get(DcMotorEx.class, "linear actuator");
         driverControls = new DriverControls(gamepad1,gamepad2,1);
+        //display instructions for unit testing
         telemetry.addLine("Press the d-pad to cycle between units to test. In any unit, hold down Gamepad 1's x to see instructions.");
         waitForStart();
         while (opModeIsActive()) {
+            //the actual unit-testing with almost full functionality
             telemetry.addData("Current Unit", Mode.toString());
             if (Mode == mode.DRIVETRAIN) {
                 if(gamepad1.x) {
