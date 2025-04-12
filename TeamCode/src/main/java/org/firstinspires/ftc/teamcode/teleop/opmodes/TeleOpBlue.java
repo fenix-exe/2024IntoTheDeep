@@ -318,7 +318,6 @@ public class TeleOpBlue extends LinearOpMode {
         revIMU.initialize(parameters);
 
         GoBildaPinpointDriverRR pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        pinpoint.setPosition(new Pose2d(0,0,0));
         imu = new IMUforPinpoint(pinpoint);
 
         localization = new Localization(pinpoint, imu);
