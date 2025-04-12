@@ -39,7 +39,6 @@ public class UnitTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         mode Mode = mode.DRIVETRAIN;
-        telemetry.addData("Instructions", "Press the d-pad to cycle between units to test. In any unit, hold down Gamepad 1's x to see instructions.");
         leftslide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightslide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         leftslide.setDirection(DcMotor.Direction.REVERSE);
@@ -60,6 +59,7 @@ public class UnitTesting extends LinearOpMode {
         initializeDriveTrain();
         initializePinPoint();
         driverControls = new DriverControls(gamepad1,gamepad2,1);
+        telemetry.addLine("Press the d-pad to cycle between units to test. In any unit, hold down Gamepad 1's x to see instructions.");
         waitForStart();
         while (opModeIsActive()) {
             telemetry.addData("Current Unit", Mode.toString());
