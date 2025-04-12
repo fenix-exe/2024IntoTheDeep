@@ -267,8 +267,8 @@ public class UnitTesting extends LinearOpMode {
             leftslide.setPower(0);
             rightslide.setPower(0);
         } else {
-            leftslide.setPower(-gamepad1.right_stick_y);
-            rightslide.setPower(-gamepad1.right_stick_y);
+            leftslide.setPower(-gamepad1.right_stick_y/2);
+            rightslide.setPower(-gamepad1.right_stick_y/2);
 
         }
         telemetry.addData("slide current", leftslide.getCurrent(CurrentUnit.MILLIAMPS));
