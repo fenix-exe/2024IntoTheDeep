@@ -350,6 +350,8 @@ public class TeleOpBlue extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        arm.moveSlideToLength(arm.getSlideExtension());
+
         Slide slideControl = new Slide(leftSlide, rightSlide, slideSwitch);
         Elbow elbow = new Elbow(pivot, elbowSwitch, 100);
         arm = new Arm(slideControl, elbow);
