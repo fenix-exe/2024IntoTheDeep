@@ -74,29 +74,36 @@ public class UnitTesting extends LinearOpMode {
             telemetry.addData("Current Unit", Mode.toString());
             if (Mode == mode.DRIVETRAIN) {
                 if(gamepad1.x) {
-                    telemetry.addData("Instructions", "Use regular drive controls. Pinpoint data appears in telemetry.");
+                    telemetry.addData("Instructions", "Use a, b, y, x to move FL, BL, BR, FR. Pinpoint data appears in telemetry.");
                 }
+                //displays coordinates
                 pinpointTesting();
+                //use the four buttons to move each motor individually
                 drivetrainTesting();
             }
             if (Mode == mode.ELBOW) {
                 if (gamepad1.x) {
                     telemetry.addData("Instructions", "Use a, y, and b, to cycle between 90, 45, and 0. Use the left stick y to manually move the elbow.");
                 }
+                //some presets and manual movement
                 elbowManualTesting();
             }
             if (Mode == mode.SLIDES) {
                 if (gamepad1.x) {
                     telemetry.addData("Instructions", "Use the right stick up and down to set slide power for manual control.");
                 }
+                //directly using motor power with some limits on either side
                 slideManualTesting();
             }
             if (Mode == mode.INTAKE) {
                 if (gamepad1.x) {
-                    telemetry.addData("Instructions", "Press a to rise the wrist. Press b to lower the wrist. Press y to reset the wrist to center. Left and right bumpers change alliance, left and right triggers toggle intake power, and the left stick button cuts off intake.");
+                    telemetry.addData("Instructions", "Press a to rise the wrist. Press b to lower the wrist. Press y to reset the wrist to center. Left and right triggers toggle intake power, and the left stick button cuts off intake.");
                 }
+                //preset at center and manual for both directions
                 wristTesting();
+                //just prints telemetry data
                 colorSensorTesting();
+                //can toggle power and be stopped
                 intakeTesting();
 
             }
@@ -321,8 +328,8 @@ public class UnitTesting extends LinearOpMode {
             leftslide.setPower(0);
             rightslide.setPower(0);
         } else {
-            leftslide.setPower(-gamepad1.right_stick_y/2);
-            rightslide.setPower(-gamepad1.right_stick_y/2);
+            leftslide.setPower(-gamepad1.right_stick_y/1.67);
+            rightslide.setPower(-gamepad1.right_stick_y/1.67);
 
         }
         telemetry.addData("slide current", leftslide.getCurrent(CurrentUnit.MILLIAMPS));
