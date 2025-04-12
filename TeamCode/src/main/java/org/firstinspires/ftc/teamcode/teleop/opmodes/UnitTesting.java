@@ -72,7 +72,7 @@ public class UnitTesting extends LinearOpMode {
             }
             if (Mode == mode.ELBOW) {
                 if (gamepad1.x) {
-                    telemetry.addData("Instructions", "Sorry, this functionality has not been added yet. Stay tuned for updates :)");
+                    telemetry.addData("Instructions", "Use a, y, and b, to cycle between 90, 45, and 0. Use the left stick y to manually move the elbow.");
                 }
                 elbowManualTesting();
             }
