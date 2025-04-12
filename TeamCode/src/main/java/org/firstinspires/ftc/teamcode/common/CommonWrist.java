@@ -17,7 +17,7 @@ public abstract class CommonWrist {
     public CommonWrist(Servo pitch){
         this.pitchLeft = pitch;
         try {
-            offsets.offsetGetter("sdcard/Download/offsets/clipOffsets.csv");
+            offsets.offsetGetter("sdcard/Download/offsets/offsets.csv");
         } catch (IOException e) {
             SERVO_OFFSET = 0;
         }

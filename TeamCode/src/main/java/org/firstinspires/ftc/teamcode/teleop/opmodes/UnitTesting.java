@@ -259,10 +259,10 @@ public class UnitTesting extends LinearOpMode {
         } else if (gamepad1.y) {
             BR.setPower(1);
         } else {
-            FL.setPower(1);
-            BL.setPower(1);
-            FR.setPower(1);
-            BR.setPower(1);
+            FL.setPower(0);
+            BL.setPower(0);
+            FR.setPower(0);
+            BR.setPower(0);
         }
 
         if (gamepad1.left_bumper) {
