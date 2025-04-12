@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.teleop.modules.driverControl;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class DriverControlsDriver1StateModels extends DriverControls{
-    public DriverControlsDriver1StateModels(Gamepad gamepad1, Gamepad gamepad2, double y) {
+public class DriverControlsDriver1Master extends DriverControls{
+    public DriverControlsDriver1Master(Gamepad gamepad1, Gamepad gamepad2, double y) {
         super(gamepad1, gamepad2, y);
     }
 
