@@ -42,7 +42,8 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
                         (FSMManager.robotState == RobotState.START
                                 || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE
                                 || FSMManager.robotState == RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE
-                                || FSMManager.robotState == RobotState.CLIPPED))
+                                || FSMManager.robotState == RobotState.CLIPPED
+                                || FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE))
                         || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN) {
                     timer = new ElapsedTime();
                     FSMManager.stopTransitions();
