@@ -91,6 +91,7 @@ public class TeleOpBlue extends LinearOpMode {
     FrequencyCounter freqCounter;
     double speedMultiplier;
     public static boolean enableLogging=false;
+    public static boolean enableTelemetry = true;
     protected static Alliance alliance = Alliance.BLUE;
     boolean colorSensorDetected;
     boolean checkColorSensor=true;
@@ -263,17 +264,18 @@ public class TeleOpBlue extends LinearOpMode {
             driveTrain.Update();
 
             //telemetry
-            telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
-            telemetry.addData("Elbow Target Angle", arm.getElbowTargetPositionInDegrees());
-            telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
-            telemetry.addData("Robot State", FSMManager.robotState);
-            telemetry.addData("Specimen Pickup State", GrabSpecimenStateTransition.intakeTransitionStep);
-            telemetry.addData("Distance", color.getDistance());
-            telemetry.addData("Pitch Angle", wrist.getPitchAngle());
-            telemetry.addData("Slide Pos", arm.getSlideExtension());
-            telemetry.addData("Turn Off Auto Grab", driverControls.turnOffAutoGrab());
-            telemetry.update();
-
+            if (enableTelemetry){
+                telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
+                telemetry.addData("Elbow Target Angle", arm.getElbowTargetPositionInDegrees());
+                telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
+                telemetry.addData("Robot State", FSMManager.robotState);
+                telemetry.addData("Specimen Pickup State", GrabSpecimenStateTransition.intakeTransitionStep);
+                telemetry.addData("Distance", color.getDistance());
+                telemetry.addData("Pitch Angle", wrist.getPitchAngle());
+                telemetry.addData("Slide Pos", arm.getSlideExtension());
+                telemetry.addData("Turn Off Auto Grab", driverControls.turnOffAutoGrab());
+                telemetry.update();
+            }
 
             //logging
             if (enableLogging){
