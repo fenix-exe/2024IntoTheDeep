@@ -69,13 +69,15 @@ public class MecanumDrive {
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
         public double lateralInPerTick = 1; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
-        public double trackWidthTicks = 11.478871416511444;
+        public double trackWidthTicks = 12.25;
+
+                //12.25;
         //12;
 
         // feedforward parameters (in tick units)
         public double kS = 0.05;
         //0.9290648042282834;
-        public double kV = 0.16;
+        public double kV = 0.13;
         //0.18;
         public double kA = 0.04;
 
@@ -85,17 +87,19 @@ public class MecanumDrive {
         public double maxProfileAccel = 75;
 
         // turn profile parameters (in radians)
-        public double maxAngVel = Math.PI; // shared with path
-        public double maxAngAccel = Math.PI;
+        public double maxAngVel = 5;
+                //6; // shared with path
+        public double maxAngAccel = 5;
+                        //6;
 
         // path controller gains
         public double axialGain = 4.0;
         public double lateralGain = 3.0;
-        public double headingGain = 8.0; // shared with turn
+        public double headingGain = 7.5; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+        public double headingVelGain = 0; // shared with turn
 
         public double time_increase = 0;
         public double accuracy = 0.25;
@@ -174,8 +178,8 @@ public class MecanumDrive {
 
             YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
 
-            FlightRecorder.write("MECANUM_LOCALIZER_INPUTS", new MecanumLocalizerInputsMessage(
-                    leftFrontPosVel, leftBackPosVel, rightBackPosVel, rightFrontPosVel, angles));
+            //FlightRecorder.write("MECANUM_LOCALIZER_INPUTS", new MecanumLocalizerInputsMessage(
+            //        leftFrontPosVel, leftBackPosVel, rightBackPosVel, rightFrontPosVel, angles));
 
             Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
 
@@ -264,7 +268,7 @@ public class MecanumDrive {
 
         localizer = new DriveLocalizer();
 
-        FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+        //FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
     public Pose2d getPoseEstimate() {
@@ -333,14 +337,14 @@ public class MecanumDrive {
                 t = Actions.now() - beginTs;
             }
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
-            targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
+            //targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
             Pose2d error = txWorldTarget.value().minusExp(pose);
 
 
-            if (t >= timeTrajectory.duration && error.position.norm() < PARAMS.accuracy
-                    && robotVelRobot.linearVel.norm() < PARAMS.velocity || t >= timeTrajectory.duration + PARAMS.time_increase) {
+            if ((t >= timeTrajectory.duration && error.position.norm() < PARAMS.accuracy
+                    && abs(error.heading.toDouble()) < Math.toRadians(2.5)) || t >= timeTrajectory.duration + PARAMS.time_increase) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
@@ -356,7 +360,7 @@ public class MecanumDrive {
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
             )
                     .compute(txWorldTarget, pose, robotVelRobot);
-            driveCommandWriter.write(new DriveCommandMessage(command));
+            //driveCommandWriter.write(new DriveCommandMessage(command));
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
             double voltage = voltageSensor.getVoltage();
@@ -367,45 +371,45 @@ public class MecanumDrive {
             double leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
             double rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             double rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
-            mecanumCommandWriter.write(new MecanumCommandMessage(
+            /*mecanumCommandWriter.write(new MecanumCommandMessage(
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
+            ));*/
 
             leftFront.setPower(leftFrontPower);
             leftBack.setPower(leftBackPower);
             rightBack.setPower(rightBackPower);
             rightFront.setPower(rightFrontPower);
 
-            p.put("x", pose.position.x);
-            p.put("y", pose.position.y);
-            p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
+            //p.put("x", pose.position.x);
+           // p.put("y", pose.position.y);
+            //p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
 
-            p.put("xError", error.position.x);
-            p.put("yError", error.position.y);
-            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+           // p.put("xError", error.position.x);
+           // p.put("yError", error.position.y);
+           // p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
             // only draw when active; only one drive action should be active at a time
-            Canvas c = p.fieldOverlay();
-            drawPoseHistory(c);
+           // Canvas c = p.fieldOverlay();
+           // drawPoseHistory(c);
 
-            c.setStroke("#4CAF50");
-            Drawing.drawRobot(c, txWorldTarget.value());
+           // c.setStroke("#4CAF50");
+           // Drawing.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, pose);
+           // c.setStroke("#3F51B5");
+            //Drawing.drawRobot(c, pose);
 
-            c.setStroke("#4CAF50FF");
-            c.setStrokeWidth(1);
-            c.strokePolyline(xPoints, yPoints);
+           // c.setStroke("#4CAF50FF");
+           // c.setStrokeWidth(1);
+           // c.strokePolyline(xPoints, yPoints);
 
             return true;
         }
 
         @Override
         public void preview(Canvas c) {
-            c.setStroke("#4CAF507A");
-            c.setStrokeWidth(1);
-            c.strokePolyline(xPoints, yPoints);
+            //c.setStroke("#4CAF507A");
+            //c.setStrokeWidth(1);
+            //c.strokePolyline(xPoints, yPoints);
         }
     }
 
@@ -438,7 +442,7 @@ public class MecanumDrive {
             }
 
             Pose2dDual<Time> txWorldTarget = turn.get(t);
-            targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
+            //targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
 
@@ -447,7 +451,7 @@ public class MecanumDrive {
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
             )
                     .compute(txWorldTarget, pose, robotVelRobot);
-            driveCommandWriter.write(new DriveCommandMessage(command));
+            //driveCommandWriter.write(new DriveCommandMessage(command));
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
             double voltage = voltageSensor.getVoltage();
@@ -457,16 +461,16 @@ public class MecanumDrive {
             double leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
             double rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             double rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
-            mecanumCommandWriter.write(new MecanumCommandMessage(
+            /*mecanumCommandWriter.write(new MecanumCommandMessage(
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
+            ));*/
 
             leftFront.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
             leftBack.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
             rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
             rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
 
-            Canvas c = p.fieldOverlay();
+            /*Canvas c = p.fieldOverlay();
             drawPoseHistory(c);
 
             c.setStroke("#4CAF50");
@@ -476,15 +480,15 @@ public class MecanumDrive {
             Drawing.drawRobot(c, pose);
 
             c.setStroke("#7C4DFFFF");
-            c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
+            c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);*/
 
             return true;
         }
 
         @Override
         public void preview(Canvas c) {
-            c.setStroke("#7C4DFF7A");
-            c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
+            //c.setStroke("#7C4DFF7A");
+            //c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
         }
     }
 
@@ -497,7 +501,7 @@ public class MecanumDrive {
             poseHistory.removeFirst();
         }
 
-        estimatedPoseWriter.write(new PoseMessage(pose));
+        //estimatedPoseWriter.write(new PoseMessage(pose));
 
         return twist.velocity().value();
     }
@@ -514,9 +518,9 @@ public class MecanumDrive {
             i++;
         }
 
-        c.setStrokeWidth(1);
+        /*c.setStrokeWidth(1);
         c.setStroke("#3F51B5");
-        c.strokePolyline(xPoints, yPoints);
+        c.strokePolyline(xPoints, yPoints);*/
     }
 
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
