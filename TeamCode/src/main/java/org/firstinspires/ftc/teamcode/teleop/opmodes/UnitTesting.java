@@ -189,7 +189,9 @@ public class UnitTesting extends LinearOpMode {
         telemetry.addData("Left Servo Pos", pitchLeft.getPosition());
     }
     private void colorSensorTesting() {
-        if (gamepad1.left_bumper) {
+        colorSensor.updateHSVandDistance();
+        telemetry.addData("Distance", colorSensor.getDistance());
+       /* if (gamepad1.left_bumper) {
             alliance = Alliance.BLUE;
         }
         if (gamepad1.right_bumper) {
@@ -221,7 +223,7 @@ public class UnitTesting extends LinearOpMode {
         if (exitingWrongColor && !detectingColor){
             exitingWrongColor = false;
             intakePower = 0;
-        }
+        }*/
 
     }
     private void intakeTesting() {
