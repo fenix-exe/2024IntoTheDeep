@@ -37,6 +37,7 @@ public class GoToIntakeStateTransition implements IStateTransition {
 
     @Override
     public void reset() {
+
         intakeTransitionStep = TransitionSteps.START;
     }
     @Override
@@ -44,13 +45,13 @@ public class GoToIntakeStateTransition implements IStateTransition {
 
         switch (intakeTransitionStep) {
             case START:
-                boolean atStart = FSMManager.robotState == RobotState.START;
+                boolean atStart = FSMManager.getInstance().robotState == RobotState.START;
                 // Is the Robot at a deposit position holding onto a sample?
-                boolean fromBucket = FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE;
-                boolean readyToDepositToHumanPlayer = driverControls.specimenSampleIntake() && (FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE || FSMManager.robotState == RobotState.START);
+                boolean fromBucket = FSMManager.getInstance().robotState == RobotState.DRIVING_TO_SUBMERSIBLE;
+                boolean readyToDepositToHumanPlayer = driverControls.specimenSampleIntake() && (FSMManager.getInstance().robotState == RobotState.DRIVING_TO_SUBMERSIBLE || FSMManager.getInstance().robotState == RobotState.START);
                 if (((driverControls.depositBack())
-                        &&(atStart || fromBucket || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN)) || (readyToDepositToHumanPlayer)) {
-                    FSMManager.stopTransitions();
+                        &&(atStart || fromBucket || FSMManager.getInstance().robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN)) || (readyToDepositToHumanPlayer)) {
+                    FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
                     if (fromBucket){
@@ -96,7 +97,7 @@ public class GoToIntakeStateTransition implements IStateTransition {
                 break;
             case MOVING_SLIDE:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
-                    FSMManager.robotState = RobotState.READY_TO_ENTER_SUBMERSIBLE;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_ENTER_SUBMERSIBLE;
                     intakeTransitionStep = TransitionSteps.START;
                 }
                 break;

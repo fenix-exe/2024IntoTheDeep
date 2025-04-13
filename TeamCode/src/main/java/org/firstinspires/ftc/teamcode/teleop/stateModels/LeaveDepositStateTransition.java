@@ -41,9 +41,9 @@ public class LeaveDepositStateTransition implements IStateTransition{
     public void execute() {
         switch(steps){
             case START:
-                if ((controls.depositBack() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET)
-                        || (controls.specimenSampleIntake() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER)){
-                    FSMManager.stopTransitions();
+                if ((controls.depositBack() && FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET)
+                        || (controls.specimenSampleIntake() && FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER)){
+                    FSMManager.getInstance().stopTransitions();
                     StateModelParameters.DepositStateParameters.slideLength = arm.getSlideTargetPositionInInches();
                     StateModelParameters.DepositStateParameters.pitch = wrist.getPitchAngle();
                     timer.reset();
@@ -73,7 +73,7 @@ public class LeaveDepositStateTransition implements IStateTransition{
                 break;
             case MOVING_ELBOW:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
-                    FSMManager.robotState = RobotState.DRIVING_TO_SUBMERSIBLE;
+                    FSMManager.getInstance().robotState = RobotState.DRIVING_TO_SUBMERSIBLE;
                     steps = TransitionSteps.START;
                 }
                 break;

@@ -27,7 +27,7 @@ public interface DriveControlMap {
     boolean diffDown();
     boolean hang();
     boolean turnOffAutoGrab();
-    boolean programPos();
+    boolean turnOffColorSensor();
 
 
 

@@ -18,14 +18,14 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         MOVING_PITCH
     }
 
-    public static TransitionSteps intakeTransitionStep;
+    TransitionSteps intakeTransitionStep;
     ElapsedTime timer;
     Wrist wrist;
     IIntake intake;
     Arm arm;
     IDriveTrain driveTrain;
     DriveControlMap driverControls;
-    public static ColorSensor color;
+    public ColorSensor color;
     boolean intakeOn;
     public GrabSpecimenStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriveControlMap driverControls, ColorSensor color){
         this.wrist = wrist;
@@ -34,7 +34,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         this.driveTrain = driveTrain;
         this.driverControls = driverControls;
         intakeTransitionStep = TransitionSteps.START;
-        GrabSpecimenStateTransition.color = color;
+        this.color = color;
         intakeOn = false;
         timer = new ElapsedTime();
     }
@@ -48,7 +48,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     public void execute() {
         switch(intakeTransitionStep){
             case START:
-                if(FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN){
+                if(FSMManager.getInstance().robotState == RobotState.READY_TO_GRAB_SPECIMEN){
                     if(color != null){
                         color.updateHSVandDistance();
                         double distance = color.getDistance();
@@ -57,7 +57,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                             intakeOn = true;
                         }
                         if (distance < 32.5){
-                            FSMManager.stopTransitions();
+                            FSMManager.getInstance().stopTransitions();
                             StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
                             timer.reset();
                             intake.stop();
@@ -68,7 +68,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                         intake.intake();
                     }
                     if (driverControls.pickupAndDepositSpecimens()){
-                        FSMManager.stopTransitions();
+                        FSMManager.getInstance().stopTransitions();
                         StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
                         timer.reset();
                         intake.stop();
@@ -86,7 +86,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 break;
             case MOVING_PITCH:
                 if (timer.milliseconds()>400){
-                    FSMManager.robotState = RobotState.READY_TO_GO_TO_CLIP_POSITION;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_GO_TO_CLIP_POSITION;
                     intakeTransitionStep = TransitionSteps.START;
                 }
                 break;

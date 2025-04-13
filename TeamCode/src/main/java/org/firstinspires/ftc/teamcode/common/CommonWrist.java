@@ -33,6 +33,6 @@ public abstract class CommonWrist {
         pitchLeft.setPosition(presetPosition + SERVO_OFFSET);
     }
     public double getPitchAngle(){
-        return pitchLeft.getPosition();
+        return pitchLeft.getPosition() - SERVO_OFFSET;
     }
 }

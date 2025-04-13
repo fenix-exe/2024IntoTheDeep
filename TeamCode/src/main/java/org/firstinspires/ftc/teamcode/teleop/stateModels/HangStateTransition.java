@@ -44,7 +44,7 @@ public class HangStateTransition implements IStateTransition{
         switch(hangState){
             case START:
                 if (driverControls.hang()){
-                    FSMManager.stopTransitions();
+                    FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.Hang.pitch);

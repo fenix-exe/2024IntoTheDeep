@@ -38,8 +38,8 @@ public class GrabFailedStateTransition implements IStateTransition{
     public void execute() {
         switch (grabFailedState){
             case START:
-                if (driverControls.enterIntakePosition() && FSMManager.robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
-                    FSMManager.stopTransitions();
+                if (driverControls.enterIntakePosition() && FSMManager.getInstance().robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
+                    FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
                     intake.outtake();
@@ -63,7 +63,7 @@ public class GrabFailedStateTransition implements IStateTransition{
             case MOVING_WRIST_DOWN:
                 if (timer.milliseconds() > 250){
                     intake.intake();
-                    FSMManager.robotState = RobotState.READY_TO_INTAKE_SAMPLE;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_INTAKE_SAMPLE;
                     grabFailedState = TransitionSteps.START;
                 }
                 break;

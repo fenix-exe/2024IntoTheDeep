@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -28,9 +29,12 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.elbow.Elbow;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.BigWheelIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
+import org.firstinspires.ftc.teamcode.teleop.util.FrequencyCounter;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+
 @TeleOp(group="Testing")
 public class UnitTesting extends LinearOpMode {
     //initialize the variables
@@ -43,6 +47,12 @@ public class UnitTesting extends LinearOpMode {
     DcMotorEx linearActuator;
     @Override
     public void runOpMode() throws InterruptedException {
+
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+        FrequencyCounter counter = new FrequencyCounter();
         //set the variables
         mode Mode = mode.DRIVETRAIN;
         leftslide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -71,8 +81,13 @@ public class UnitTesting extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
+            counter.count();
             //the actual unit-testing with almost full functionality
             telemetry.addData("Current Unit", Mode.toString());
+            telemetry.addData("Ave Freq", counter.getAveFrequency());
             if (Mode == mode.DRIVETRAIN) {
                 if(gamepad1.x) {
                     telemetry.addData("Instructions", "Use a, b, y, x to move FL, BL, BR, FR. Pinpoint data appears in telemetry.");
@@ -194,7 +209,12 @@ public class UnitTesting extends LinearOpMode {
     }
     private void colorSensorTesting() {
         colorSensor.updateHSVandDistance();
+        colorSensor.updateDetectColor();
         telemetry.addData("Distance", colorSensor.getDistance());
+        telemetry.addData("Detecting Blue", colorSensor.detectingBlue());
+        telemetry.addData("Detecting Red", colorSensor.detectingRed());
+        telemetry.addData("Detecting Yellow", colorSensor.detectingYellow());
+        telemetry.addData("H", colorSensor.getH());
        /* if (gamepad1.left_bumper) {
             alliance = Alliance.BLUE;
         }
@@ -248,8 +268,6 @@ public class UnitTesting extends LinearOpMode {
         } else {
             intake.outtake();
         }
-        telemetry.addData("H", colorSensor.getH());
-        telemetry.addData("Detecting Blue", colorSensor.getBlue());
     }
     private void drivetrainTesting() {
         driverControls.update();

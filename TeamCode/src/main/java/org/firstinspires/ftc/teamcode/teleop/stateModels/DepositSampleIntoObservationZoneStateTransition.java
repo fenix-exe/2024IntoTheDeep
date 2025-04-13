@@ -28,6 +28,7 @@ public class DepositSampleIntoObservationZoneStateTransition implements IStateTr
     }
     @Override
     public void reset() {
+
         depositSampleIntoObservationZoneState = TransitionSteps.START;
     }
 
@@ -35,17 +36,18 @@ public class DepositSampleIntoObservationZoneStateTransition implements IStateTr
     public void execute() {
         switch (depositSampleIntoObservationZoneState){
             case START:
-                if (driverControls.specimenSampleIntake() && FSMManager.robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
-                    FSMManager.stopTransitions();
+                if (driverControls.specimenSampleIntake() && FSMManager.getInstance().robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
+                    FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
                     arm.moveSlideToLength(StateModelParameters.DepositSampleIntoObservationZone.extensionLength);
+                    wrist.presetPositionPitch(StateModelParameters.DepositSampleIntoObservationZone.downPitch);
                     depositSampleIntoObservationZoneState = TransitionSteps.EXTEND_SLIDES_AND_FIX_ROLL;
                 }
                 break;
             case EXTEND_SLIDES_AND_FIX_ROLL:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
-                    FSMManager.robotState = RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER;
                     depositSampleIntoObservationZoneState = TransitionSteps.START;
                 }
                 break;

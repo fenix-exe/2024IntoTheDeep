@@ -38,8 +38,8 @@ public class LetGoOfClipStateTransition implements IStateTransition{
     public void execute() {
         switch (clipState){
             case START:
-                if (driverControls.pickupAndDepositSpecimens() && FSMManager.robotState == RobotState.READY_TO_DEPOSIT_CLIP){
-                    FSMManager.stopTransitions();
+                if (driverControls.pickupAndDepositSpecimens() && FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_CLIP){
+                    FSMManager.getInstance().stopTransitions();
                     StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
                     StateModelParameters.DepositSpecimenPositionStateParameters.pitch = wrist.getPitchAngle();
                     timer = new ElapsedTime();
@@ -59,7 +59,7 @@ public class LetGoOfClipStateTransition implements IStateTransition{
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
                     intake.stop();
                     clipState = TransitionSteps.START;
-                    FSMManager.robotState = RobotState.CLIPPED;
+                    FSMManager.getInstance().robotState = RobotState.CLIPPED;
                 }
                 break;
         }

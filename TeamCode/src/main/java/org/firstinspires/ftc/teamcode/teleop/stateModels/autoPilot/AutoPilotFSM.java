@@ -58,7 +58,7 @@ public class AutoPilotFSM {
     }
     public static boolean returnToSubmersible(){
         //if (driverControls.activateAutoDrive()){
-                return FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE;
+                return FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE;
         //}
         //return false;
     }

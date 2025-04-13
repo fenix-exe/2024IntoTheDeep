@@ -16,7 +16,7 @@ public class LoggerUtil {
     private static final String logFileNameTemplate = "/sdcard/Download/logs/logs-%s.tsv";
 
     private static boolean isLoggingEnabled = true;
-    private static boolean writeToFile = true;
+    private static boolean writeToFile = false;
 
     private static PrintWriter stream = null;
 

@@ -38,8 +38,8 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
     public void execute() {
         switch(dropSpecimenState){
             case START:
-                if (driverControls.enterIntakePosition() && FSMManager.robotState == RobotState.READY_TO_GO_TO_CLIP_POSITION) {
-                    FSMManager.stopTransitions();
+                if (driverControls.enterIntakePosition() && FSMManager.getInstance().robotState == RobotState.READY_TO_GO_TO_CLIP_POSITION) {
+                    FSMManager.getInstance().stopTransitions();
                     timer.reset();
                     arm.holdArm();
                     intake.outtake();
@@ -54,7 +54,7 @@ public class GrabFailedForSpecimensStateTransition implements IStateTransition{
                         && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE
                         && timer.milliseconds() > 400){
                     intake.stop();
-                    FSMManager.robotState = RobotState.READY_TO_GRAB_SPECIMEN;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_GRAB_SPECIMEN;
                     dropSpecimenState = TransitionSteps.START;
                 }
                 break;

@@ -405,7 +405,8 @@ public class DebugTeleOp extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, null, arm, driveTrain, driverControls,color, linearActuator, null, colorSensorDetected);
+        FSMManager manager = FSMManager.getInstance(true);
+        manager.initialize(wrist, null, arm, driveTrain, driverControls,color, linearActuator, null, colorSensorDetected);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
@@ -514,7 +515,7 @@ public class DebugTeleOp extends LinearOpMode {
     private void updateLED(){
         if (driveTrain.getLockDriveTrain()){
             led.setColor(ILED.LEDColor.GREEN);
-        } else if (FSMManager.isAtStart()) {
+        } else if (FSMManager.getInstance().isAtStart()) {
             led.setColor(ILED.LEDColor.YELLOW);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);

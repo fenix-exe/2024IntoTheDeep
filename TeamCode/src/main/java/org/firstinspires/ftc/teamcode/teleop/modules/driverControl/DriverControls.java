@@ -166,5 +166,5 @@ public class DriverControls implements DriveControlMap {
     @Override
     public boolean turnOffAutoGrab(){return gamepad2current.dpad_right;}
     @Override
-    public boolean programPos(){return gamepad2current.touchpad;}
+    public boolean turnOffColorSensor(){return gamepad2current.touchpad;}
 }

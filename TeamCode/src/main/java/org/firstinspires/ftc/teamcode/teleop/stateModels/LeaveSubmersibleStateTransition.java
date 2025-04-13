@@ -34,17 +34,17 @@ public class LeaveSubmersibleStateTransition implements IStateTransition{
     public void execute() {
         switch (leaveSubmersibleState){
             case START:
-                if (driverControls.depositBack() && FSMManager.robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
+                if (driverControls.depositBack() && FSMManager.getInstance().robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
                     timer = new ElapsedTime();
                     timer.reset();
                     arm.moveSlideToLength(StateModelParameters.DriveStateParameters.slideLength);
-                    FSMManager.stopTransitions();
+                    FSMManager.getInstance().stopTransitions();
                     leaveSubmersibleState = TransitionSteps.RETRACTING_SLIDES;
                 }
                 break;
             case RETRACTING_SLIDES:
                 if (arm.getSlideExtension() - arm.getSlideTargetPositionInInches() < RobotConstants.SLIDE_TOLERANCE) {
-                    FSMManager.robotState = RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE;
+                    FSMManager.getInstance().robotState = RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE;
                     leaveSubmersibleState = TransitionSteps.START;
                 }
         }

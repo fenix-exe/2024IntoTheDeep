@@ -37,8 +37,8 @@ public class GoToDepositStateTransition implements IStateTransition{
     public void execute() {
         switch (goToDepositState){
             case START:
-                if (driverControls.depositBack() && FSMManager.robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
-                    FSMManager.stopTransitions();
+                if (driverControls.depositBack() && FSMManager.getInstance().robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
+                    FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
                     wrist.presetPositionPitch(0.5); //goes to 0.5 pitch to not catch on the bucket
@@ -61,7 +61,7 @@ public class GoToDepositStateTransition implements IStateTransition{
                 break;
             case MOVING_WRIST_TO_END:
                 if (timer.milliseconds() > 250){
-                    FSMManager.robotState = RobotState.READY_TO_DEPOSIT_IN_BUCKET;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_DEPOSIT_IN_BUCKET;
                     goToDepositState = TransitionSteps.START;
                 }
                 break;

@@ -29,6 +29,7 @@ public class EnterSubmersibleStateTransition implements IStateTransition{
 
     @Override
     public void reset() {
+
         steps = TransitionSteps.START;
     }
 
@@ -36,8 +37,8 @@ public class EnterSubmersibleStateTransition implements IStateTransition{
     public void execute() {
         switch(steps){
             case START:
-                if ((controls.depositBack() || controls.specimenSampleIntake() || controls.grabSampleFromOutside()) && FSMManager.robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE){
-                    FSMManager.stopTransitions();
+                if ((controls.depositBack() || controls.specimenSampleIntake() || controls.grabSampleFromOutside()) && FSMManager.getInstance().robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE){
+                    FSMManager.getInstance().stopTransitions();
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.EnterSubmersibleStateParameters.pitch);
                     steps = TransitionSteps.PITCH_DOWN;
@@ -52,7 +53,7 @@ public class EnterSubmersibleStateTransition implements IStateTransition{
             case WAIT_A_BIT:
                 if (timer.milliseconds() > StateModelParameters.EnterSubmersibleStateParameters.waitTime){
                     intake.intake();
-                    FSMManager.robotState = RobotState.READY_TO_INTAKE_SAMPLE;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_INTAKE_SAMPLE;
                     steps = TransitionSteps.START;
                 }
                 break;

@@ -39,15 +39,14 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
         switch (intakeTransitionStep) {
             case START:
                 if ((driverControls.pickupAndDepositSpecimens() &&
-                        (FSMManager.robotState == RobotState.START
-                                || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE
-                                || FSMManager.robotState == RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE
-                                || FSMManager.robotState == RobotState.CLIPPED
-                                || FSMManager.robotState == RobotState.DRIVING_TO_SUBMERSIBLE))
-                        || FSMManager.robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN) {
+                        (FSMManager.getInstance().robotState == RobotState.START
+                                || FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE
+                                || FSMManager.getInstance().robotState == RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE
+                                || FSMManager.getInstance().robotState == RobotState.CLIPPED
+                                || FSMManager.getInstance().robotState == RobotState.DRIVING_TO_SUBMERSIBLE))
+                        || FSMManager.getInstance().robotState == RobotState.READY_TO_GO_TO_GRAB_SPECIMEN) {
                     timer = new ElapsedTime();
-                    FSMManager.stopTransitions();
-                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
+                    FSMManager.getInstance().stopTransitions();
                     timer.reset();
                     intake.outtake();
                     wrist.presetPositionPitch(StateModelParameters.PickupSpecimensStateParameters.pitch);
@@ -65,7 +64,7 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
             case MOVING_ELBOW_AND_SLIDE:
                 if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.LOW_ELBOW_TOLERANCE && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE) {
                     arm.setElbowPower(0);
-                    FSMManager.robotState = RobotState.READY_TO_GRAB_SPECIMEN;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_GRAB_SPECIMEN;
                     intakeTransitionStep = TransitionSteps.START;
                 }
                 break;
