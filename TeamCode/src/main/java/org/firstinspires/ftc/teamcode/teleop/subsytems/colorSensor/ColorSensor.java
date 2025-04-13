@@ -1,29 +1,37 @@
 package org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.teleop.opmodes.TeleOpBlue;
 
 public class ColorSensor {
     private final RevColorSensorV3 colorSensor;
-    double H;
+    double H=0;
     double S;
     double V;
     double colorSensorDistance;
     boolean detectColor;
-    double colorSensorDetectionDistance = 8;
+    double colorSensorDetectionDistance = 20;
+    ElapsedTime timer;
     public ColorSensor(RevColorSensorV3 colorSensor){
         this.colorSensor =colorSensor;
+        timer = new ElapsedTime();
+        timer.reset();
     }
     public void updateHSVandDistance(){
-        int red = colorSensor.red();
-        int blue = colorSensor.blue();
-        int green = colorSensor.green();
-        H = JavaUtil.rgbToHue(red, green, blue);
-        S = JavaUtil.rgbToSaturation(red, green, blue);
-        V = JavaUtil.rgbToValue(red, green, blue);
-        colorSensorDistance = colorSensor.getDistance(DistanceUnit.MM);
+        if (timer.milliseconds() > 25) {
+            int red = colorSensor.red();
+            int blue = colorSensor.blue();
+            int green = colorSensor.green();
+            H = JavaUtil.rgbToHue(red, green, blue);
+            S = JavaUtil.rgbToSaturation(red, green, blue);
+            V = JavaUtil.rgbToValue(red, green, blue);
+            colorSensorDistance = colorSensor.getDistance(DistanceUnit.MM);
+            timer.reset();
+        }
     }
     public void updateDetectColor(){
         detectColor = colorSensorDistance < colorSensorDetectionDistance;
@@ -57,6 +65,7 @@ public class ColorSensor {
      */
     public boolean detectingBlue(){
         return H > 200 && H < 230 && detectColor;
+        //return detectColor;
     }
     /**
      * This function returns if the detected color is red or not, and returns false
@@ -65,6 +74,7 @@ public class ColorSensor {
      */
     public boolean detectingRed(){
         return H > 10 && H < 20 && detectColor;
+        //return detectColor;
     }
     /**
      * This function returns if the detected color is yellow or not, and returns false
@@ -73,9 +83,10 @@ public class ColorSensor {
      */
     public boolean detectingYellow(){
         return H > 75 && H < 95 && detectColor;
+        //return detectColor;
     }
     public boolean isConnected(){
-        return colorSensor.getDeviceID() == -62;
+        return true;
     }
 
 }

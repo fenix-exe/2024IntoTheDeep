@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
+import org.firstinspires.ftc.teamcode.teleop.opmodes.TeleOpBlue;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.Alliance;
+import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 
 public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     private enum TransitionSteps {
@@ -20,14 +23,14 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         SLIDES_IN,
         EJECTION
     }
-    public static TransitionSteps grabSampleState;
+    private TransitionSteps grabSampleState;
     ElapsedTime timer;
     Wrist wrist;
     IIntake intake;
     Arm arm;
     IDriveTrain driveTrain;
     DriveControlMap driverControls;
-    public static ColorSensor colorSensor;
+    public ColorSensor colorSensor;
     Alliance alliance;
     public MoveToLeaveSubmersibleStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriveControlMap driverControls, ColorSensor colorSensor, Alliance alliance){
         this.wrist = wrist;
@@ -35,8 +38,8 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         this.arm = arm;
         this.driveTrain = driveTrain;
         this.driverControls = driverControls;
-        grabSampleState = TransitionSteps.START;
-        MoveToLeaveSubmersibleStateTransition.colorSensor = colorSensor;
+        this.grabSampleState = TransitionSteps.START;
+        this.colorSensor = colorSensor;
         this.alliance = alliance;
         timer = new ElapsedTime();
     }
@@ -45,16 +48,43 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         grabSampleState = TransitionSteps.START;
     }
 
+    public void debug(Telemetry telemetry){
+        telemetry.addLine("Grab State: "+grabSampleState);
+    }
+
     @Override
     public void execute() {
         switch (grabSampleState) {
             case START:
-                if (FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
+                if (FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE){
                     if (driverControls.grabSampleFromOutside()) {
-                        caseStartMovementForSuccessfulPickup();
-                        break;
+                        //caseStartMovementForSuccessfulPickup();
+                        timer.reset();
+                        StateModelParameters.EnterSubmersibleStateParameters.pitch = wrist.getPitchAngle();
+                        wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
+                        LoggerUtil.logException("Deven TEST1:", new RuntimeException("checking where I am in the code"));
+                        grabSampleState = TransitionSteps.PITCH_UP;
+                    } else if (colorSensor != null && !driverControls.turnOffAutoGrab()) {
+                        colorSensor.updateHSVandDistance();
+                        colorSensor.updateDetectColor();
+                        if (colorSensor.detectingYellow()){
+                            caseStartMovementForSuccessfulPickup();
+                        } else if (colorSensor.detectingBlue()) {
+                            if (alliance == Alliance.BLUE){
+                                caseStartMovementForSuccessfulPickup();
+                            } else {
+                                caseStartMovementForUnsuccesfulPickup();
+                            }
+                        } else if (colorSensor.detectingRed()) {
+                            if (alliance == Alliance.RED){
+                                caseStartMovementForSuccessfulPickup();
+                            } else {
+                                caseStartMovementForUnsuccesfulPickup();
+                            }
+                        }
                     }
-                    if (colorSensor != null && !driverControls.turnOffAutoGrab()){
+
+                    /*if (colorSensor != null && !driverControls.turnOffAutoGrab()){
                         colorSensor.updateHSVandDistance();
                         colorSensor.updateDetectColor();
                         if (colorSensor.detectingYellow()){
@@ -72,7 +102,8 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                                 caseStartMovementForUnsuccesfulPickup();
                             }
                         }
-                    }
+                    }*/
+
                 }
                 break;
             case EJECTION:
@@ -99,7 +130,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
             case SLIDES_IN:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
                     grabSampleState = TransitionSteps.START;
-                    FSMManager.robotState = RobotState.READY_TO_LEAVE_SUBMERSIBLE;
+                    FSMManager.getInstance().robotState = RobotState.READY_TO_LEAVE_SUBMERSIBLE;
                 }
                 break;
         }
@@ -110,14 +141,14 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         return !(grabSampleState == TransitionSteps.START);
     }
     private void caseStartMovementForSuccessfulPickup(){
-        FSMManager.stopTransitions();
+        //FSMManager.getInstance().stopTransitions();
         timer.reset();
         StateModelParameters.EnterSubmersibleStateParameters.pitch = wrist.getPitchAngle();
         wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
         grabSampleState = TransitionSteps.PITCH_UP;
     }
     private void caseStartMovementForUnsuccesfulPickup(){
-        FSMManager.stopTransitions();
+        //FSMManager.getInstance().stopTransitions();
         timer.reset();
         intake.outtake();
         grabSampleState = TransitionSteps.EJECTION;
