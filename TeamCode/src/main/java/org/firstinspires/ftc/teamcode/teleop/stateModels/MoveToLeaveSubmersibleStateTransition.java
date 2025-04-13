@@ -105,6 +105,9 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                     }*/
 
                 }
+                if (FSMManager.getInstance().robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE && driverControls.hang()){
+                    caseStartMovementForSuccessfulPickup();
+                }
                 break;
             case EJECTION:
                 if (timer.milliseconds() > 400){

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 public class DepositSampleIntoObservationZoneStateTransition implements IStateTransition{
     private enum TransitionSteps{
         START,
+        MOVE_ELBOW,
         EXTEND_SLIDES_AND_FIX_ROLL
     }
     private TransitionSteps depositSampleIntoObservationZoneState;
@@ -36,9 +37,16 @@ public class DepositSampleIntoObservationZoneStateTransition implements IStateTr
     public void execute() {
         switch (depositSampleIntoObservationZoneState){
             case START:
-                if (driverControls.specimenSampleIntake() && FSMManager.getInstance().robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
+                if ((driverControls.specimenSampleIntake() && (FSMManager.getInstance().robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE || FSMManager.getInstance().robotState == RobotState.ELBOW_TO_DEPOSIT_IN_BUCKET))){
                     FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
+                    timer.reset();
+                    arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
+                    depositSampleIntoObservationZoneState = TransitionSteps.MOVE_ELBOW;
+                }
+                break;
+            case MOVE_ELBOW:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
                     timer.reset();
                     arm.moveSlideToLength(StateModelParameters.DepositSampleIntoObservationZone.extensionLength);
                     wrist.presetPositionPitch(StateModelParameters.DepositSampleIntoObservationZone.downPitch);

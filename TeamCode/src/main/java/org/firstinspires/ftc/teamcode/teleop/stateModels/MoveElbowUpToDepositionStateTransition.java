@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.intake.IIntake;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.util.Alliance;
 
+import kotlin.jvm.internal.MutablePropertyReference0;
+
 public class MoveElbowUpToDepositionStateTransition implements IStateTransition{
     private enum TransitionSteps {
         START,
@@ -24,6 +26,7 @@ public class MoveElbowUpToDepositionStateTransition implements IStateTransition{
         this.wrist = wrist;
         this.arm = arm;
         this.driverControls = driverControls;
+        moveElbowUpState = TransitionSteps.START;
     }
     @Override
     public void reset() {

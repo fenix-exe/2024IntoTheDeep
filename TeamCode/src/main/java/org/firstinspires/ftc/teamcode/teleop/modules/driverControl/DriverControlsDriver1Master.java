@@ -14,7 +14,7 @@ public class DriverControlsDriver1Master extends DriverControls{
 
     @Override
     public boolean specimenSampleIntake() {
-        return super.specimenSampleIntake() || (super.gamepad1current.right_trigger > 0.5);
+        return super.specimenSampleIntake() || (super.gamepad1current.right_trigger > 0.5 && !(super.gamepad1previous.right_trigger > 0.5));
     }
 
     @Override

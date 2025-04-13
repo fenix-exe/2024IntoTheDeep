@@ -43,7 +43,7 @@ public class HangStateTransition implements IStateTransition{
     public void execute() {
         switch(hangState){
             case START:
-                if (driverControls.hang() && !(FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE)){
+                if (driverControls.hang() && !(FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE) && !(FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_CLIP)){
                     FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
