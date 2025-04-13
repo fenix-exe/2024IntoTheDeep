@@ -26,11 +26,19 @@ public class Elbow extends CommonElbow {
     public DcMotorEx elbowMotor;
     public RevTouchSensor limitSwitch;
     private final DownsampledWriter elbowWriter;
+    private Telemetry telemetry;
 
     public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition){
         super(elbow, limitSwitch, topPosition);
         this.elbowMotor = elbow;
         elbowWriter = new DownsampledWriter("ELBOW INFO", 50_000_000);
+    }
+
+    public Elbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPosition, Telemetry telemetry){
+        super(elbow, limitSwitch, topPosition);
+        this.elbowMotor = elbow;
+        elbowWriter = new DownsampledWriter("ELBOW INFO", 50_000_000);
+        this.telemetry = telemetry;
     }
 
 
@@ -54,6 +62,7 @@ public class Elbow extends CommonElbow {
                 setTargetAngleAndSpeed(target, speed);
                 initialized = true;
             }
+            telemetry.addData("Elbow Pos", getElbowAngle());
 
             //elbowWriter.write(new ElbowMessage(getElbowAngle(), target, elbowMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 

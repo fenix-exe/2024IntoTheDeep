@@ -13,6 +13,8 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -115,6 +117,44 @@ public class PinpointDrive extends MecanumDrive {
 
         pinpoint.setPosition(pose);
     }
+
+    public PinpointDrive(HardwareMap hardwareMap, Pose2d pose, Telemetry telemetry) {
+        super(hardwareMap, pose, telemetry);
+        //FlightRecorder.write("PINPOINT_PARAMS",PARAMS);
+        pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,PARAMS.pinpointDeviceName);
+
+        if (PARAMS.usePinpointIMUForTuning) {
+            lazyImu = new LazyImu(hardwareMap, PARAMS.pinpointDeviceName, new RevHubOrientationOnRobot(zyxOrientation(0, 0, 0)));
+        }
+
+        // RR localizer note: don't love this conversion (change driver?)
+        pinpoint.setOffsets(DistanceUnit.MM.fromInches(PARAMS.xOffset), DistanceUnit.MM.fromInches(PARAMS.yOffset));
+
+
+        pinpoint.setEncoderResolution(PARAMS.encoderResolution);
+
+        pinpoint.setEncoderDirections(PARAMS.xDirection, PARAMS.yDirection);
+
+        /*
+        Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary
+        The IMU will automatically calibrate when first powered on, but recalibrating before running
+        the robot is a good idea to ensure that the calibration is "good".
+        resetPosAndIMU will reset the position to 0,0,0 and also recalibrate the IMU.
+        This is recommended before you run your autonomous, as a bad initial calibration can cause
+        an incorrect starting value for x, y, and heading.
+         */
+        //pinpoint.recalibrateIMU();
+        pinpoint.resetPosAndIMU();
+        // wait for pinpoint to finish calibrating
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        pinpoint.setPosition(pose);
+    }
+
     @Override
     public PoseVelocity2d updatePoseEstimate() {
         if (lastPinpointPose != pose) {

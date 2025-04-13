@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.SlideMessage;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.messages.StatusMessage;
@@ -27,6 +28,7 @@ public class Slide extends CommonSlide {
     public RevTouchSensor homingSwitch;
     private final DownsampledWriter slideWriter;
     private final DownsampledWriter slideStatusWriter;
+    private Telemetry telemetry;
 
 
 
@@ -37,6 +39,16 @@ public class Slide extends CommonSlide {
         this.rightSlideMotor = rightSlideMotor;
         slideWriter = new DownsampledWriter("SLIDE INFO", 50_000_000);
         slideStatusWriter = new DownsampledWriter("SLIDE STATUS", 50_000_000);
+    }
+
+    public Slide(DcMotorEx leftSlideMotor, DcMotorEx rightSlideMotor, RevTouchSensor homingSwitch, Telemetry telemetry){
+        super(leftSlideMotor, rightSlideMotor, homingSwitch);
+        this.homingSwitch = homingSwitch;
+        this.leftSlideMotor = leftSlideMotor;
+        this.rightSlideMotor = rightSlideMotor;
+        slideWriter = new DownsampledWriter("SLIDE INFO", 50_000_000);
+        slideStatusWriter = new DownsampledWriter("SLIDE STATUS", 50_000_000);
+        this.telemetry = telemetry;
     }
 
     public void setSlideExtensionLengthAndSpeed(double lengthInInches, double speed){
@@ -85,6 +97,7 @@ public class Slide extends CommonSlide {
                     //slideStatusWriter.write(new StatusMessage("SLIDES RESET"));
                     time = System.currentTimeMillis();
                 }
+                telemetry.addData("Slide Pos", getSlideExtensionInInches());
 
                 //slideWriter.write(new SlideMessage(getSlideExtensionInInches(), ticksToInches(leftSlideMotor.getTargetPosition()), leftSlideMotor.getCurrent(CurrentUnit.MILLIAMPS), rightSlideMotor.getCurrent(CurrentUnit.MILLIAMPS)));
 

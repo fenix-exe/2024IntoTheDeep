@@ -154,7 +154,7 @@ public class ascentClipCyclePark extends LinearOpMode {
         leftSlide.setTargetPositionTolerance(10);
         rightSlide.setTargetPositionTolerance(10);
         slideSwitch = hardwareMap.get(RevTouchSensor.class, "slide switch");
-        slide = new Slide(leftSlide,rightSlide, slideSwitch);
+        slide = new Slide(leftSlide,rightSlide, slideSwitch, telemetry);
 
         pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         pinpoint.resetPosAndIMU();
@@ -165,10 +165,11 @@ public class ascentClipCyclePark extends LinearOpMode {
             throw new RuntimeException(e);
         }
         pinpoint.setPosition(new Pose2d(0,0,0));
-        elbow = new Elbow(elbowMotor, elbowSwitch, 2500);
+        elbow = new Elbow(elbowMotor, elbowSwitch, 2500, telemetry);
         homingAgent = new Homing(leftSlide, rightSlide, elbowMotor, linearActuatorMotor, this, telemetry, slideSwitch, actuatorSwitch, elbowSwitch);
 
         boolean moveElUp = false;
+        boolean home = true;
         String telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
         //wait for user input to begin homing
         while (!gamepad1.a && !isStopRequested()) {
@@ -189,6 +190,10 @@ public class ascentClipCyclePark extends LinearOpMode {
                 telemetryMessage = "ELBOW DOES NOT GO UP 30 DEGREES";
                 moveElUp = false;
             }
+            if (gamepad1.dpad_left) {
+                telemetryMessage = "DOES NOT HOME";
+                home = false;
+            }
 
             telemetry.addLine("You will be homing in this way: " + telemetryMessage);
             telemetry.update();
@@ -198,10 +203,12 @@ public class ascentClipCyclePark extends LinearOpMode {
         //HOMING
         wrist.presetPositionPitch(0.5);
         sleep(250);
-        if (moveElUp) {
-            homingAgent.moveElbowUpAndHomeDown();
-        } else {
-            homingAgent.homeDown();
+        if (home) {
+            if (moveElUp) {
+                homingAgent.moveElbowUpAndHomeDown();
+            } else {
+                homingAgent.homeDown();
+            }
         }
         /* pitch.setPosition(0.66);
 
@@ -276,7 +283,7 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         //initalize pinpoint drive
         Pose2d beginPose = new Pose2d(extractAuto.getXFromList(vector.get(0)), extractAuto.getYFromList(vector.get(0)), extractAuto.getAngleFromList(vector.get(0)));
-        PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
+        PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose, telemetry);
         drive.pinpoint.setPosition(beginPose);
 
         //initialize trajaction builder to parse data
