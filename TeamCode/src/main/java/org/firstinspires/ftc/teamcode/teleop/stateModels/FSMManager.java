@@ -52,7 +52,7 @@ public class FSMManager {
         stateTransitions.add(this.moveToLeaveSubmersibleStateTransition);
         stateTransitions.add(new GrabFailedStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(new GoToDepositStateTransition(wrist, arm, driverControls));
-        stateTransitions.add(new DepositSampleIntoObservationZoneStateTransition(wrist,arm,driverControls));
+        stateTransitions.add(new DepositSampleIntoObservationZoneStateTransition(wrist,intake,arm,driverControls));
         stateTransitions.add(new GoToGrabSpecimenPositionStateTransition(wrist, intake, arm, driverControls));
         stateTransitions.add(this.grabSpecimenStateTransition);
         stateTransitions.add(new GrabFailedForSpecimensStateTransition(wrist, intake, arm, driverControls));

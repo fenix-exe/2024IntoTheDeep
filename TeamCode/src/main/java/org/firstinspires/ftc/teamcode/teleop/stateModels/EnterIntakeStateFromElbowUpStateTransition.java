@@ -41,7 +41,7 @@ public class EnterIntakeStateFromElbowUpStateTransition implements IStateTransit
                 if (driverControls.enterIntakePosition() && FSMManager.getInstance().robotState == RobotState.ELBOW_TO_DEPOSIT_IN_BUCKET){
                     FSMManager.getInstance().stopTransitions();
                     arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
-                    arm.moveSlideToLength(2);
+                    arm.moveSlideToLength(6);
                     goToIntakeState = TransitionSteps.MOVE_ELBOW;
                 }
                 break;
@@ -60,6 +60,7 @@ public class EnterIntakeStateFromElbowUpStateTransition implements IStateTransit
                 break;
             case MOVE_PITCH:
                 if (timer.milliseconds() > 400){
+                    intake.intake();
                     FSMManager.getInstance().robotState = RobotState.READY_TO_INTAKE_SAMPLE;
                     goToIntakeState = TransitionSteps.START;
                 }

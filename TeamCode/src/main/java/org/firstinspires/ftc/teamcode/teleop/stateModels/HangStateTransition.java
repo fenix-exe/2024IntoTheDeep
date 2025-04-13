@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.stateModels;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
@@ -43,7 +44,11 @@ public class HangStateTransition implements IStateTransition{
     public void execute() {
         switch(hangState){
             case START:
-                if (driverControls.hang() && !(FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE) && !(FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_CLIP)){
+                if (driverControls.hang()
+                        && !(FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE)
+                        && !(FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_CLIP)
+                        && !(FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER)
+                        && !(FSMManager.getInstance().robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE)){
                     FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
