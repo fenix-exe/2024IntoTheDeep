@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.GrabSpecimenStateTransition;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.MoveToLeaveSubmersibleStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
@@ -92,9 +93,9 @@ public class TeleOpBlue extends LinearOpMode {
     double speedMultiplier;
     public static boolean enableLogging=false;
     public static boolean enableTelemetry = true;
-    protected static Alliance alliance = Alliance.BLUE;
+    protected Alliance alliance = Alliance.BLUE;
     boolean colorSensorDetected;
-    boolean checkColorSensor=true;
+    boolean checkColorSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -117,7 +118,6 @@ public class TeleOpBlue extends LinearOpMode {
         } else {
             telemetry.addLine("COLOR SENSOR DETECTED");
         }
-        initializeStateModels();
         ResetSlideEncoderStateModel.initialize(arm);
         //drivers prefer field centric so that is our default mode
         DriveTrain.driveType = DriveTrain.DriveType.FIELD_CENTRIC;
@@ -126,9 +126,17 @@ public class TeleOpBlue extends LinearOpMode {
         freqCounter = new FrequencyCounter();
 
         telemetry.addData("Presets Read", presetsRead);
-
-
         telemetry.update();
+
+        while (opModeInInit()){
+            driverControls.update();
+            if (driverControls.turnOffColorSensor()){
+                colorSensor = null;
+                telemetry.addLine("!!!!Disabled Color Sensor!!!!");
+                telemetry.update();
+            }
+        }
+        initializeStateModels();
 
         waitForStart();
         matchTimer.reset();
@@ -158,7 +166,9 @@ public class TeleOpBlue extends LinearOpMode {
             }
 
             //speed adjustments
-            if (driverControls.slowMode() || FSMManager.robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE || FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE){
+            if (driverControls.slowMode()
+                    || FSMManager.getInstance().robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE
+                    || FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE){
                 speedMultiplier = RobotConstants.SLOW_SPEED;
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
@@ -244,39 +254,45 @@ public class TeleOpBlue extends LinearOpMode {
 
             if (driverControls.escapePresets()){
                 arm.holdArm();
-                FSMManager.stopTransitions();
-                FSMManager.setRobotStateToStart();
+                FSMManager.getInstance().stopTransitions();
+                FSMManager.getInstance().setRobotStateToStart();
             }
 
             //check color sensor based on robot state
-            if ((FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE || FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN) && checkColorSensor && colorSensorDetected){
+            if ((FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE
+                    || FSMManager.getInstance().robotState == RobotState.READY_TO_GRAB_SPECIMEN)
+                    && checkColorSensor && colorSensorDetected){
                 if (!color.isConnected()){
-                    FSMManager.updateBasedOnColorSensorStatus();
+                    FSMManager.getInstance().updateBasedOnColorSensorStatus();
                     colorSensorDetected = false;
                 }
                 checkColorSensor = false;
-            } else if (!(FSMManager.robotState == RobotState.READY_TO_INTAKE_SAMPLE  || FSMManager.robotState == RobotState.READY_TO_GRAB_SPECIMEN) && !checkColorSensor){
+            } else if (!(FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE
+                    || FSMManager.getInstance().robotState == RobotState.READY_TO_GRAB_SPECIMEN)
+                    && !checkColorSensor){
                 checkColorSensor = true;
             }
             //state models for preset positions
-            FSMManager.execute();
+            FSMManager.getInstance().execute();
             //update drivetrain
             driveTrain.Update();
 
             //telemetry
+            telemetry.addData("Ave Freq", freqCounter.getAveFrequency());
             if (enableTelemetry){
                 telemetry.addData("Elbow Angle", arm.getElbowAngleInDegrees());
                 telemetry.addData("Elbow Target Angle", arm.getElbowTargetPositionInDegrees());
                 telemetry.addData("Ave Frequency", freqCounter.getAveFrequency());
-                telemetry.addData("Robot State", FSMManager.robotState);
-                telemetry.addData("Specimen Pickup State", GrabSpecimenStateTransition.intakeTransitionStep);
+                telemetry.addData("Robot State", FSMManager.getInstance().robotState);
+                FSMManager.getInstance().debug(telemetry);
                 telemetry.addData("Distance", color.getDistance());
                 telemetry.addData("Pitch Angle", wrist.getPitchAngle());
                 telemetry.addData("Slide Pos", arm.getSlideExtension());
                 telemetry.addData("Turn Off Auto Grab", driverControls.turnOffAutoGrab());
+                telemetry.addData("Enter Submersible Pitch", StateModelParameters.EnterSubmersibleStateParameters.pitch);
                 telemetry.update();
             }
-
+            //telemetry.update();
             //logging
             if (enableLogging){
                 logDriveTrain();
@@ -388,7 +404,8 @@ public class TeleOpBlue extends LinearOpMode {
         linearActuator = new LinearActuator(linearActuatorMotor, actuatorSwitch);
     }
     private void initializeStateModels(){
-        FSMManager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator, alliance, colorSensorDetected);
+        FSMManager manager = FSMManager.getInstance(true);
+        manager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator, alliance, colorSensorDetected);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
@@ -446,7 +463,7 @@ public class TeleOpBlue extends LinearOpMode {
             led.setColor(ILED.LEDColor.GREEN);
         } else if (!colorSensorDetected){
             led.setColor(ILED.LEDColor.ORANGE);
-        } else if (FSMManager.isAtStart()) {
+        } else if (FSMManager.getInstance().isAtStart()) {
             led.setColor(ILED.LEDColor.YELLOW);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);
