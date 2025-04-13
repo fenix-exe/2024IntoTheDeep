@@ -35,7 +35,7 @@ public class GoToClipSpecimenStateTransition implements IStateTransition{
             case START:
                 if (driverControls.pickupAndDepositSpecimens() && FSMManager.getInstance().robotState == RobotState.READY_TO_GO_TO_CLIP_POSITION){
                     FSMManager.getInstance().stopTransitions();
-                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
+                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees() + arm.elbow.OFFSET;
                     arm.moveSlideToLength(StateModelParameters.DepositSpecimenPositionStateParameters.slideLength);
                     goToClipState = TransitionSteps.MOVING_SLIDES_AND_WRIST_TO_DEPOSIT;
                 }

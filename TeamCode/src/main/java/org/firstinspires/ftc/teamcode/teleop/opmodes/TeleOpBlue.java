@@ -301,6 +301,7 @@ public class TeleOpBlue extends LinearOpMode {
                 telemetry.addData("Deposit Slide Length", StateModelParameters.DepositStateParameters.slideLength);
                 telemetry.addData("Intake Slide Length", StateModelParameters.IntakeStateParameters.slideLength);
                 telemetry.addData("Slide Target Position", arm.getSlideTargetPositionInInches());
+                telemetry.addData("Elbow Clip Angle", StateModelParameters.PickupSpecimensStateParameters.elbowAngle);
                 telemetry.update();
             }
             //telemetry.update();

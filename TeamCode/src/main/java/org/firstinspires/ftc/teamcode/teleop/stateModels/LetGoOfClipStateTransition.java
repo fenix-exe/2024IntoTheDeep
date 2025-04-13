@@ -40,7 +40,7 @@ public class LetGoOfClipStateTransition implements IStateTransition{
             case START:
                 if (driverControls.pickupAndDepositSpecimens() && FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_CLIP){
                     FSMManager.getInstance().stopTransitions();
-                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees();
+                    StateModelParameters.PickupSpecimensStateParameters.elbowAngle = arm.getElbowTargetPositionInDegrees() + arm.elbow.OFFSET;
                     StateModelParameters.DepositSpecimenPositionStateParameters.pitch = wrist.getPitchAngle();
                     timer = new ElapsedTime();
                     timer.reset();
