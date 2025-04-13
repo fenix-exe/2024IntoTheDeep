@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.claw.Claw;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @Config
 @TeleOp
-//@Disabled
+@Disabled
 public class EndEffectorCalibration extends LinearOpMode {
     Servo pitchServo;
     Servo rollServo;

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common.util;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import org.firstinspires.ftc.teamcode.common.PinchRollerIntake;
 @Config
 @TeleOp
+@Disabled
 public class PinchRollerTest extends LinearOpMode {
     CRServoImplEx servo;
     PinchRollerIntake intake;
