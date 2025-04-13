@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.auto.roadrunner.TwoDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 
 @TeleOp
+@Disabled
 public final class ManualFeedbackTuner extends LinearOpMode {
     public static double DISTANCE = 48;
 

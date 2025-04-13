@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 @TeleOp
-//@Disabled
+@Disabled
 public class WristTest extends LinearOpMode {
     Servo pitchServo;
     Servo rollServo;

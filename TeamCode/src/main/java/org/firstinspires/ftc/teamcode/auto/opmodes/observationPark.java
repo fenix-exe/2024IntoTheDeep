@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 
 
 @Autonomous(name = "AUTO - OBSERVATION PARK", preselectTeleOp = "TeleOpV5SampleZapdos")
+@Disabled
 public class observationPark extends LinearOpMode {
 
     //declare vars
