@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -36,8 +37,8 @@ import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.Wrist;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.wrist.test.WristTest;
 
 import java.util.ArrayList;
-
 @TeleOp(group="Testing")
+@Disabled
 public class MasterUnitTesting extends LinearOpMode {
     private class Tuple{
         public Tuple(String label, LinearOpMode opMode){
@@ -89,3 +90,4 @@ public class MasterUnitTesting extends LinearOpMode {
         opModes.get(indexNumber).opMode.start();
     }
 }
+//pitch didn't go up on third one
