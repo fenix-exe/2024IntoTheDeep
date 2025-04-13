@@ -94,8 +94,8 @@ public class DriverControls implements DriveControlMap {
 
     @Override
     public double slideMovement() {
-        if (Math.abs(gamepad2current.left_stick_y) > 0.65){
-            return -gamepad2current.left_stick_y;
+        if (Math.abs(gamepad2current.right_stick_y) > 0.65){
+            return -gamepad2current.right_stick_y;
         }
         if (gamepad1current.right_trigger > 0.3){
             return gamepad1current.right_trigger * 0.5;

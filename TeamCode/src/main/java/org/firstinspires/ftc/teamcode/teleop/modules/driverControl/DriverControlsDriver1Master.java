@@ -27,7 +27,13 @@ public class DriverControlsDriver1Master extends DriverControls{
         }
         return 0;
     }
-
+    @Override
+    public boolean slideStopped(){
+        if (Math.abs(gamepad2previous.left_stick_y) > 0.5 && !(Math.abs(gamepad2current.left_stick_y) > 0.5)){
+            return true;
+        }
+        return Math.abs(gamepad1previous.right_stick_y) > 0.65 && !(Math.abs(gamepad1current.right_stick_y) > 0.3);
+    }
     @Override
     public boolean pickupAndDepositSpecimens() {
         return super.pickupAndDepositSpecimens() || (gamepad1current.right_bumper && !gamepad1previous.right_bumper);

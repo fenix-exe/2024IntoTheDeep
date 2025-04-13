@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
+import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControlsDriver1Master;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.GrabSpecimenStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.MoveToLeaveSubmersibleStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
@@ -126,7 +127,14 @@ public class TeleOpBlue extends LinearOpMode {
         freqCounter = new FrequencyCounter();
 
         telemetry.addData("Presets Read", presetsRead);
+        telemetry.addLine("ALLIANCE: " + alliance);
         telemetry.update();
+
+        if (alliance == Alliance.BLUE){
+            led.setColor(ILED.LEDColor.YELLOW);
+        } else {
+            led.setColor(ILED.LEDColor.ORANGE);
+        }
 
         while (opModeInInit()){
             driverControls.update();
@@ -290,6 +298,9 @@ public class TeleOpBlue extends LinearOpMode {
                 telemetry.addData("Slide Pos", arm.getSlideExtension());
                 telemetry.addData("Turn Off Auto Grab", driverControls.turnOffAutoGrab());
                 telemetry.addData("Enter Submersible Pitch", StateModelParameters.EnterSubmersibleStateParameters.pitch);
+                telemetry.addData("Deposit Slide Length", StateModelParameters.DepositStateParameters.slideLength);
+                telemetry.addData("Intake Slide Length", StateModelParameters.IntakeStateParameters.slideLength);
+                telemetry.addData("Slide Target Position", arm.getSlideTargetPositionInInches());
                 telemetry.update();
             }
             //telemetry.update();
@@ -306,7 +317,7 @@ public class TeleOpBlue extends LinearOpMode {
     }
 
     private void initializeGamePads() {
-        driverControls = new DriverControls(gamepad1, gamepad2, 1);
+        driverControls = new DriverControlsDriver1Master(gamepad1, gamepad2, 1);
     }
 
     private void initializeDriveTrain(){
