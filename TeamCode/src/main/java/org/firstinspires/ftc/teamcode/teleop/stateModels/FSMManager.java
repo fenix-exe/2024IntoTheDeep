@@ -61,6 +61,7 @@ public class FSMManager {
         stateTransitions.add(new HangStateTransition(wrist, arm, driverControls,linearActuator));
         stateTransitions.add(new EnterSubmersibleStateTransition(wrist,intake,driverControls));
         stateTransitions.add(new LeaveDepositStateTransition(wrist, intake, arm, driverControls));
+        stateTransitions.add(new MoveElbowUpToDepositionStateTransition(wrist,arm,driverControls));
         stopTransitions();
         setRobotStateToStart();
         this.arm = arm;

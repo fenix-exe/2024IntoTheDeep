@@ -37,7 +37,7 @@ public class GoToDepositStateTransition implements IStateTransition{
     public void execute() {
         switch (goToDepositState){
             case START:
-                if (driverControls.depositBack() && FSMManager.getInstance().robotState == RobotState.READY_TO_LEAVE_SUBMERSIBLE){
+                if (driverControls.depositBack() && FSMManager.getInstance().robotState == RobotState.ELBOW_TO_DEPOSIT_IN_BUCKET){
                     FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();

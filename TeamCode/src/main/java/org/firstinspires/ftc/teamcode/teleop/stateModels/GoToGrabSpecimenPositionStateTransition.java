@@ -40,7 +40,6 @@ public class GoToGrabSpecimenPositionStateTransition implements IStateTransition
             case START:
                 if ((driverControls.pickupAndDepositSpecimens() &&
                         (FSMManager.getInstance().robotState == RobotState.START
-                                || FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE
                                 || FSMManager.getInstance().robotState == RobotState.INTERMEDIATE_DEPOSIT_TO_BUCKET_STATE
                                 || FSMManager.getInstance().robotState == RobotState.CLIPPED
                                 || FSMManager.getInstance().robotState == RobotState.DRIVING_TO_SUBMERSIBLE))

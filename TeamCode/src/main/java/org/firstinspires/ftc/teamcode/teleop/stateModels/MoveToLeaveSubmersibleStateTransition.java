@@ -57,7 +57,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         switch (grabSampleState) {
             case START:
                 if (FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE){
-                    if (driverControls.grabSampleFromOutside()) {
+                    if (driverControls.grabSampleFromOutside() || driverControls.depositBack() || driverControls.specimenSampleIntake()) {
                         //caseStartMovementForSuccessfulPickup();
                         timer.reset();
                         StateModelParameters.EnterSubmersibleStateParameters.pitch = wrist.getPitchAngle();
