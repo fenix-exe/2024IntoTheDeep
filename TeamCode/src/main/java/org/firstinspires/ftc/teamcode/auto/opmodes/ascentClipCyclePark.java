@@ -399,6 +399,8 @@ public class ascentClipCyclePark extends LinearOpMode {
 
         while(!gamepad1.y && !isStopRequested()) {
             telemetry.addLine("Press Y to get into ready-to-run position.");
+            telemetry.addData("The elbow angle should be at: ", ELBOW_START);
+            telemetry.addData("It is at: ", elbow.getElbowAngle());
             telemetry.update();
 
         }
