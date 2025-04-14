@@ -41,7 +41,7 @@ public class GoToDepositStateTransition implements IStateTransition{
                     FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
-                    wrist.presetPositionPitch(0.5); //goes to 0.5 pitch to not catch on the bucket
+                    wrist.presetPositionPitch(StateModelParameters.DepositStateParameters.intermediatePitch); //goes to 0.5 pitch to not catch on the bucket
                     arm.moveElbowToAngle(StateModelParameters.DepositStateParameters.elbowAngle);
                     goToDepositState = TransitionSteps.MOVING_ELBOW_AND_WRIST;
                 }
