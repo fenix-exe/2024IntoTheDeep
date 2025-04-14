@@ -22,9 +22,9 @@ public class DriverControlsDriver1Master extends DriverControls{
         if (Math.abs(gamepad2current.left_stick_y) > 0.65){
             return -gamepad2current.left_stick_y;
         }
-        if (Math.abs(gamepad1current.right_stick_y) > 0.65){
+        /*if (Math.abs(gamepad1current.right_stick_y) > 0.65){
             return -gamepad1current.right_stick_y;
-        }
+        }*/
         return 0;
     }
     @Override
