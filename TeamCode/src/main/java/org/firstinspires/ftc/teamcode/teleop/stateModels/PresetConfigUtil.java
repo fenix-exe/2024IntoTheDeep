@@ -92,9 +92,8 @@ public class PresetConfigUtil {
                 StateModelParameters.Hang.initialElbowAngle = Double.parseDouble(configValues[6]);
                 StateModelParameters.Hang.intermediateElbowAngle = Double.parseDouble(configValues[7]);
                 StateModelParameters.Hang.hangElbowAngle = Double.parseDouble(configValues[8]);
-                StateModelParameters.Hang.finalElbowAngle = Double.parseDouble(configValues[9]);
-                StateModelParameters.Hang.slideExtension = Double.parseDouble(configValues[10]);
-                StateModelParameters.Hang.slideIntermediatePosition = Double.parseDouble(configValues[11]);
+                StateModelParameters.Hang.slideExtension = Double.parseDouble(configValues[9]);
+                StateModelParameters.Hang.slideIntermediatePosition = Double.parseDouble(configValues[10]);
                 break;
             case "DEPOSIT_SAMPLE_INTO_OBSERVATION_ZONE_STATE_MODEL_PARAMS":
                 StateModelParameters.DepositSampleIntoObservationZone.retractionLength = Double.parseDouble(configValues[1]);
