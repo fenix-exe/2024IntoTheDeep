@@ -16,7 +16,8 @@ public class HangStateTransition implements IStateTransition{
         STEP_1,
         STEP_2,
         STEP_3,
-        STEP_4
+        STEP_4_PT_1,
+        STEP_4_PT_2
 
     }
     TransitionSteps hangState;
@@ -82,12 +83,18 @@ public class HangStateTransition implements IStateTransition{
             case STEP_3:
                 if (driverControls.hang()
                         && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)){
-                    arm.moveSlideToLength(StateModelParameters.Hang.slideIntermediatePosition);
-                    linearActuator.goToTargetPositionInches(StateModelParameters.Hang.linearActuatorRetraction);
-                    hangState = TransitionSteps.STEP_4;
+                    arm.moveElbowToAngle(StateModelParameters.Hang.finalElbowAngle);
+                    hangState = TransitionSteps.STEP_4_PT_1;
                 }
                 break;
-            case STEP_4:
+            case STEP_4_PT_1:
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+                    arm.moveSlideToLength(StateModelParameters.Hang.slideIntermediatePosition);
+                    linearActuator.goToTargetPositionInches(StateModelParameters.Hang.linearActuatorRetraction);
+                    hangState = TransitionSteps.STEP_4_PT_1;
+                }
+                break;
+            case STEP_4_PT_2:
                 if ((Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)
                         && (Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)){
                     hangState = TransitionSteps.START;

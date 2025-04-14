@@ -79,6 +79,7 @@ public class StateModelParameters {
         public static double initialElbowAngle = 65;
         public static double intermediateElbowAngle = 85;
         public static double hangElbowAngle = 95;
+        public static double finalElbowAngle = 90;
         public static double slideExtension = 26;
         public static double slideIntermediatePosition = 12.5;
     }
