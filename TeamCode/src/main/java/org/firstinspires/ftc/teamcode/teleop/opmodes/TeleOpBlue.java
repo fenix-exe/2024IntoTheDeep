@@ -495,6 +495,8 @@ public class TeleOpBlue extends LinearOpMode {
                 led.setColor(ILED.LEDColor.BLUE);
             } else if (color.detectingRed() && alliance == Alliance.RED){
                 led.setColor(ILED.LEDColor.RED);
+            } else {
+                led.turnOff();
             }
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);
