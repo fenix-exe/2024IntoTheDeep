@@ -493,9 +493,9 @@ public class TeleOpBlue extends LinearOpMode {
                 led.setColor(ILED.LEDColor.YELLOW);
             } else if (intake.getIntakeDirection() == IIntake.IntakeDirection.FORWARD){
                 if (alliance == Alliance.BLUE){
-                    led.setColor(ILED.LEDColor.BLUE);
+                    led.setColor(ILED.LEDColor.PURE_BLUE);
                 } else {
-                    led.setColor(ILED.LEDColor.RED);
+                    led.setColor(ILED.LEDColor.PURE_RED);
                 }
             } else {
                 led.turnOff();
