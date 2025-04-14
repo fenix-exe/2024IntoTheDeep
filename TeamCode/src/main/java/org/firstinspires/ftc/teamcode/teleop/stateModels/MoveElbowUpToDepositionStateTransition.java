@@ -41,11 +41,13 @@ public class MoveElbowUpToDepositionStateTransition implements IStateTransition{
                     FSMManager.getInstance().stopTransitions();
                     wrist.presetPositionPitch(StateModelParameters.DepositStateParameters.intermediatePitch);
                     arm.moveElbowToAngle(StateModelParameters.DepositStateParameters.elbowAngle);
+                    arm.moveSlideToLength(StateModelParameters.DepositStateParameters.slideRetractionLength);
                     moveElbowUpState = TransitionSteps.MOVE_ELBOW_UP;
                 }
                 break;
             case MOVE_ELBOW_UP:
-                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE){
+                if (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE
+                        && Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
                     FSMManager.getInstance().robotState = RobotState.ELBOW_TO_DEPOSIT_IN_BUCKET;
                     moveElbowUpState = TransitionSteps.START;
                 }
