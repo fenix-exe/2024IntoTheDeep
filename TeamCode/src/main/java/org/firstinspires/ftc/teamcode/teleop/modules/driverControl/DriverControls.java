@@ -153,14 +153,14 @@ public class DriverControls implements DriveControlMap {
     }
     @Override
     public boolean escapePresets() {
-        return gamepad2current.dpad_left;
+        return gamepad2current.touchpad;
     }
     @Override
     public boolean removeArmRules(){return false;}
     @Override
-    public boolean diffUp(){return gamepad2current.dpad_down  || gamepad1current.b;}
+    public boolean diffUp(){return gamepad2current.dpad_up  || gamepad1current.b;}
     @Override
-    public boolean diffDown(){return gamepad2current.dpad_up || gamepad1current.a;}
+    public boolean diffDown(){return gamepad2current.dpad_down || gamepad1current.a;}
     @Override
     public boolean hang(){return gamepad2current.x;}
     @Override

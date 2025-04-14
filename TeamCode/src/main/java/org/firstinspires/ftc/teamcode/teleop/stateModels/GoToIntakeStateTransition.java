@@ -55,6 +55,7 @@ public class GoToIntakeStateTransition implements IStateTransition {
                     timer = new ElapsedTime();
                     timer.reset();
                     if (fromBucket){
+                        wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
                         arm.moveSlideToLength(StateModelParameters.IntakeStateParameters.slideLength);
                         intakeTransitionStep = TransitionSteps.MOVING_SLIDE;
                     } else if (readyToDepositToHumanPlayer){
