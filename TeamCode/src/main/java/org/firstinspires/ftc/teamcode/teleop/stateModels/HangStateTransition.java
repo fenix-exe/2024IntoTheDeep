@@ -56,6 +56,7 @@ public class HangStateTransition implements IStateTransition{
                     timer.reset();
                     wrist.presetPositionPitch(StateModelParameters.Hang.pitch);
                     linearActuator.goToTargetPositionInches(StateModelParameters.Hang.linearActuatorExtension);
+                    FSMManager.getInstance().robotState = RobotState.HANGING;
                     hangState = TransitionSteps.LINEAR_ACTUATOR_UP;
                 }
                 break;
