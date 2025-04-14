@@ -73,6 +73,7 @@ public class StateModelParameters {
     public static class Hang{
         public static double pitch = 5;
         public static double linearActuatorExtension = 9.5;
+        public static double intermediateLinearActuatorHeight = 8.5;
         public static double linearActuatorRetraction = 5.75;
         public static double slideExtensionToMoveElbow = 6;
         public static double initialElbowAngle = 65;
