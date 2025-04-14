@@ -35,6 +35,7 @@ public class LED implements ILED{
                 break;
             case YELLOW:
                 pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+                break;
             default:
                 pattern = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE;
         }
