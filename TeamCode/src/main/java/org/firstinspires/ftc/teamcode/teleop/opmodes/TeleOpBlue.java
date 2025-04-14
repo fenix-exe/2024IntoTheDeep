@@ -255,7 +255,7 @@ public class TeleOpBlue extends LinearOpMode {
                     }
                 } else {
                     //preset position
-                    linearActuator.goToTargetPositionInches(5.75);
+                    linearActuator.goToTargetPositionInches(0);
                 }
 
             }
