@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -24,12 +23,9 @@ import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControlsDriver1Master;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.BringDepositBackToStartSafelyStateModel;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.GrabSpecimenStateTransition;
-import org.firstinspires.ftc.teamcode.teleop.stateModels.MoveToLeaveSubmersibleStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
 import org.firstinspires.ftc.teamcode.teleop.subsytems.colorSensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.teleop.modules.arm.Arm;
-import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControls;
 import org.firstinspires.ftc.teamcode.teleop.modules.endEffectorV2.EndEffectorV2;
 import org.firstinspires.ftc.teamcode.teleop.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.PresetConfigUtil;
@@ -132,7 +128,7 @@ public class TeleOpBlue extends LinearOpMode {
         telemetry.update();
 
         if (alliance == Alliance.BLUE){
-            led.setColor(ILED.LEDColor.YELLOW);
+            led.setColor(ILED.LEDColor.BLUE);
         } else {
             led.setColor(ILED.LEDColor.PURE_RED);
         }
@@ -491,7 +487,15 @@ public class TeleOpBlue extends LinearOpMode {
         } else if (!colorSensorDetected){
             led.setColor(ILED.LEDColor.ORANGE);
         } else if (FSMManager.getInstance().isAtStart()) {
-            led.setColor(ILED.LEDColor.YELLOW);
+            led.setColor(ILED.LEDColor.BLUE);
+        } else if (FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE){
+            if (intake.getIntakeDirection() == IIntake.IntakeDirection.BACKWARD){
+                led.setColor(ILED.LEDColor.YELLOW);
+            } else if (color.detectingBlue() && alliance == Alliance.BLUE){
+                led.setColor(ILED.LEDColor.BLUE);
+            } else if (color.detectingRed() && alliance == Alliance.RED){
+                led.setColor(ILED.LEDColor.RED);
+            }
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);
         } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 120){

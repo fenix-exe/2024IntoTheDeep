@@ -516,7 +516,7 @@ public class DebugTeleOp extends LinearOpMode {
         if (driveTrain.getLockDriveTrain()){
             led.setColor(ILED.LEDColor.GREEN);
         } else if (FSMManager.getInstance().isAtStart()) {
-            led.setColor(ILED.LEDColor.YELLOW);
+            led.setColor(ILED.LEDColor.BLUE);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);
         } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 120){
