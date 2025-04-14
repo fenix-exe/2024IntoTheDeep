@@ -52,7 +52,6 @@ public class EnterSubmersibleStateTransition implements IStateTransition{
                 break;
             case WAIT_A_BIT:
                 if (timer.milliseconds() > StateModelParameters.EnterSubmersibleStateParameters.waitTime){
-                    intake.intake();
                     FSMManager.getInstance().robotState = RobotState.READY_TO_INTAKE_SAMPLE;
                     steps = TransitionSteps.START;
                 }
