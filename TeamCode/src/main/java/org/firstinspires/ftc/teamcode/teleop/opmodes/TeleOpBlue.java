@@ -213,6 +213,12 @@ public class TeleOpBlue extends LinearOpMode {
             if (driverControls.diffDown()){
                 wrist.manualControlPitch(-0.005);
             }
+            if (driverControls.movePitchToEnterSub()){
+                wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
+            }
+            if (driverControls.movePitchToIntakeSample()){
+                wrist.presetPositionPitch(StateModelParameters.EnterSubmersibleStateParameters.pitch);
+            }
 
 
             //manual control for claw

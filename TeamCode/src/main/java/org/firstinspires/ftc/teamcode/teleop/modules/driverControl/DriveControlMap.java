@@ -28,6 +28,8 @@ public interface DriveControlMap {
     boolean hang();
     boolean turnOffAutoGrab();
     boolean turnOffColorSensor();
+    boolean movePitchToIntakeSample();
+    boolean movePitchToEnterSub();
 
 
 
