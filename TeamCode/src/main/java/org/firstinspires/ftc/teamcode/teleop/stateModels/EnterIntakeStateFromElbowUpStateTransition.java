@@ -12,8 +12,7 @@ public class EnterIntakeStateFromElbowUpStateTransition implements IStateTransit
     private enum TransitionSteps{
         START,
         MOVE_ELBOW,
-        EXTEND_SLIDES,
-        MOVE_PITCH
+        EXTEND_SLIDES
     }
     private TransitionSteps goToIntakeState;
     ElapsedTime timer;
@@ -54,16 +53,10 @@ public class EnterIntakeStateFromElbowUpStateTransition implements IStateTransit
             case EXTEND_SLIDES:
                 if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE){
                     timer.reset();
-                    wrist.presetPositionPitch(StateModelParameters.EnterSubmersibleStateParameters.pitch);
-                    goToIntakeState = TransitionSteps.MOVE_PITCH;
-                }
-                break;
-            case MOVE_PITCH:
-                if (timer.milliseconds() > 400){
-                    intake.intake();
-                    FSMManager.getInstance().robotState = RobotState.READY_TO_INTAKE_SAMPLE;
+                    wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
                     goToIntakeState = TransitionSteps.START;
                 }
+                break;
 
         }
     }
