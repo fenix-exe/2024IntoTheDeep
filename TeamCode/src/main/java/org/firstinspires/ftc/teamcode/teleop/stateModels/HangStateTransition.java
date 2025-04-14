@@ -65,6 +65,7 @@ public class HangStateTransition implements IStateTransition{
                         && (Math.abs(linearActuator.getLinearActuatorPositionInches() - linearActuator.getLinearActuatorTargetPositionInches()) < RobotConstants.LINEAR_ACTUATOR_TOLERANCE)
                         && (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.SLIDE_TOLERANCE)
                         && (Math.abs(arm.getElbowAngleInDegrees() - arm.getElbowTargetPositionInDegrees()) < RobotConstants.ELBOW_TOLERANCE)){
+                    linearActuator.goToTargetPositionInches(StateModelParameters.Hang.intermediateLinearActuatorHeight);
                     arm.moveElbowToAngle(StateModelParameters.Hang.intermediateElbowAngle);
                     arm.moveSlideToLength(StateModelParameters.Hang.slideExtension);
                     hangState = TransitionSteps.STEP_2;
