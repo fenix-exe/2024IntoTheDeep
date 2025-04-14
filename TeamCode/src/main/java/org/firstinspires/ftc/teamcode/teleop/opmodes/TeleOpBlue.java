@@ -491,10 +491,12 @@ public class TeleOpBlue extends LinearOpMode {
         } else if (FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE){
             if (intake.getIntakeDirection() == IIntake.IntakeDirection.BACKWARD){
                 led.setColor(ILED.LEDColor.YELLOW);
-            } else if (color.detectingBlue() && alliance == Alliance.BLUE){
-                led.setColor(ILED.LEDColor.BLUE);
-            } else if (color.detectingRed() && alliance == Alliance.RED){
-                led.setColor(ILED.LEDColor.RED);
+            } else if (intake.getIntakeDirection() == IIntake.IntakeDirection.FORWARD){
+                if (alliance == Alliance.BLUE){
+                    led.setColor(ILED.LEDColor.BLUE);
+                } else {
+                    led.setColor(ILED.LEDColor.RED);
+                }
             } else {
                 led.turnOff();
             }
