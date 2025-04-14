@@ -84,6 +84,9 @@ public class GoToIntakeStateTransition implements IStateTransition {
                 break;
             case MOVING_WRIST:
                 if (timer.milliseconds() > 450) {
+                    if (arm.getSlideExtension() < StateModelParameters.IntakeStateParameters.slideLength){
+                        arm.moveSlideToLength(6);
+                    }
                     timer.reset();
                     arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
                     intakeTransitionStep = TransitionSteps.MOVING_ELBOW;

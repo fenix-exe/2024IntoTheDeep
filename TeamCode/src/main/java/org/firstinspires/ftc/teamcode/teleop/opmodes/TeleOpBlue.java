@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriveControlMap;
 import org.firstinspires.ftc.teamcode.teleop.modules.driverControl.DriverControlsDriver1Master;
+import org.firstinspires.ftc.teamcode.teleop.stateModels.BringDepositBackToStartSafelyStateModel;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.GrabSpecimenStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.MoveToLeaveSubmersibleStateTransition;
 import org.firstinspires.ftc.teamcode.teleop.stateModels.StateModelParameters;
@@ -262,9 +263,13 @@ public class TeleOpBlue extends LinearOpMode {
 
             if (driverControls.escapePresets()){
                 if (FSMManager.getInstance().robotState != RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER){
-                    arm.holdArm();
-                    FSMManager.getInstance().stopTransitions();
-                    FSMManager.getInstance().setRobotStateToStart();
+                    if (FSMManager.getInstance().robotState != RobotState.READY_TO_DEPOSIT_IN_BUCKET){
+                        arm.holdArm();
+                        FSMManager.getInstance().stopTransitions();
+                        FSMManager.getInstance().setRobotStateToStart();
+                    } else {
+                        BringDepositBackToStartSafelyStateModel.activate = true;
+                    }
                 }
             }
 
@@ -284,6 +289,7 @@ public class TeleOpBlue extends LinearOpMode {
             }
             //state models for preset positions
             FSMManager.getInstance().execute();
+            BringDepositBackToStartSafelyStateModel.execute();
             //update drivetrain
             driveTrain.Update();
 
@@ -420,6 +426,7 @@ public class TeleOpBlue extends LinearOpMode {
     private void initializeStateModels(){
         FSMManager manager = FSMManager.getInstance(true);
         manager.initialize(wrist, intake, arm, driveTrain, driverControls,color, linearActuator, alliance, colorSensorDetected);
+        BringDepositBackToStartSafelyStateModel.initialize(arm,wrist);
     }
     private void initializeLED(){
         RevBlinkinLedDriver LED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");

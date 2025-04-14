@@ -48,7 +48,8 @@ public class HangStateTransition implements IStateTransition{
                         && !(FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE)
                         && !(FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_CLIP)
                         && !(FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_TO_HUMAN_PLAYER)
-                        && !(FSMManager.getInstance().robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE)){
+                        && !(FSMManager.getInstance().robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE)
+                        && !(FSMManager.getInstance().robotState == RobotState.READY_TO_DEPOSIT_IN_BUCKET)){
                     FSMManager.getInstance().stopTransitions();
                     timer = new ElapsedTime();
                     timer.reset();
