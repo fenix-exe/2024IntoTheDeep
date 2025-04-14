@@ -62,7 +62,6 @@ public class GrabFailedStateTransition implements IStateTransition{
                 break;
             case MOVING_WRIST_DOWN:
                 if (timer.milliseconds() > 250){
-                    intake.intake();
                     FSMManager.getInstance().robotState = RobotState.READY_TO_INTAKE_SAMPLE;
                     grabFailedState = TransitionSteps.START;
                 }
