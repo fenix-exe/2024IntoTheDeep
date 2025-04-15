@@ -37,6 +37,7 @@ public class StateModelParameters {
     public static class LeaveSubmersibleStateParameters{
         public static double pitch = 0.36;
         public static double slideLength = 0;
+        public static double slideRetractionForPickupLength = 17;
     }
     public static class GrabBlockFromOutsideStateParameters{
         public static double downPitch = -105;

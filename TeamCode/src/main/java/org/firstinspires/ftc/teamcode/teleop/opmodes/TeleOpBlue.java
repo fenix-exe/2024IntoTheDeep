@@ -201,7 +201,9 @@ public class TeleOpBlue extends LinearOpMode {
             }
 
             //Manual control for wrist up
-            if (driverControls.diffUp()){
+            if(arm.getSlideExtension() < 18 && wrist.getPitchAngle() > 0.2){
+                wrist.presetPositionPitch(0.155);
+            } else if (driverControls.diffUp()){
                 wrist.manualControlPitch(0.005);
             }
 

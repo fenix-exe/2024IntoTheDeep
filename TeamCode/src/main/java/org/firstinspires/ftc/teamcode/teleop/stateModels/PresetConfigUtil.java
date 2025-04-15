@@ -109,6 +109,7 @@ public class PresetConfigUtil {
             case "LEAVE_SUBMERSIBLE_STATE_MODEL_PARAMS":
                 StateModelParameters.LeaveSubmersibleStateParameters.pitch = Double.parseDouble(configValues[1]);
                 StateModelParameters.LeaveSubmersibleStateParameters.slideLength = Double.parseDouble(configValues[2]);
+                StateModelParameters.LeaveSubmersibleStateParameters.slideRetractionForPickupLength = Double.parseDouble(configValues[3]);
                 break;
             default:
                 LoggerUtil.error("updatePresets", "Read Unknown Preset," + preset_name );

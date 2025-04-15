@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.teleop.util.LoggerUtil;
 public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     private enum TransitionSteps {
         START,
+        SLIDES_SLIGHTLY_IN,
         PITCH_UP,
         INTAKE_OFF,
         SLIDES_IN,
@@ -115,10 +116,16 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
             case EJECTION:
                 if (timer.milliseconds() > 400){
                     timer.reset();
-                    intake.intake();
                     grabSampleState = TransitionSteps.START;
                 }
                 break;
+            case SLIDES_SLIGHTLY_IN:
+                if (Math.abs(arm.getSlideExtension() - arm.getSlideTargetPositionInInches()) < RobotConstants.LOW_SLIDE_TOLERANCE){
+                    timer.reset();
+                    StateModelParameters.EnterSubmersibleStateParameters.pitch = wrist.getPitchAngle();
+                    wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
+                    grabSampleState = TransitionSteps.PITCH_UP;
+                }
             case PITCH_UP:
                 if (timer.milliseconds() > 250) {
                     timer.reset();
@@ -148,9 +155,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     }
     private void caseStartMovementForSuccessfulPickup(){
         //FSMManager.getInstance().stopTransitions();
-        timer.reset();
-        StateModelParameters.EnterSubmersibleStateParameters.pitch = wrist.getPitchAngle();
-        wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
+        arm.moveSlideToLength(StateModelParameters.LeaveSubmersibleStateParameters.slideRetractionForPickupLength);
         grabSampleState = TransitionSteps.PITCH_UP;
     }
     private void caseStartMovementForUnsuccesfulPickup(){
