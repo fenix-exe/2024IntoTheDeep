@@ -94,6 +94,7 @@ public class TeleOpBlue extends LinearOpMode {
     protected Alliance alliance = Alliance.BLUE;
     boolean colorSensorDetected;
     boolean checkColorSensor;
+    Elbow elbow;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -146,7 +147,7 @@ public class TeleOpBlue extends LinearOpMode {
         waitForStart();
         matchTimer.reset();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             //clear cache for bulk reads
             //IMPORTANT!!!!!!!!!!!!!!!! bc we are using manual bulk read mode
             for (LynxModule hub : allHubs) {
@@ -161,19 +162,19 @@ public class TeleOpBlue extends LinearOpMode {
             imu.update();
 
             //switching drive modes
-            if (driverControls.driveTypeSwitch()){
+            if (driverControls.driveTypeSwitch()) {
                 driveTrain.setDriveType(IDriveTrain.DriveType.FIELD_CENTRIC);
             }
 
             //imu reset
-            if (driverControls.resetIMU()){
+            if (driverControls.resetIMU()) {
                 driveTrain.resetIMU();
             }
 
             //speed adjustments
             if (driverControls.slowMode()
                     || FSMManager.getInstance().robotState == RobotState.READY_TO_ENTER_SUBMERSIBLE
-                    || FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE){
+                    || FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE) {
                 speedMultiplier = RobotConstants.SLOW_SPEED;
             } else {
                 speedMultiplier = RobotConstants.NORMAL_SPEED;
@@ -184,54 +185,62 @@ public class TeleOpBlue extends LinearOpMode {
             driveTrain.Move(driverControls.forwardDrive(), driverControls.strafeDrive(), driverControls.turnDrive());
 
             //manual control for slide
-            if (Math.abs(driverControls.slideMovement()) > 0){
+            if (Math.abs(driverControls.slideMovement()) > 0) {
                 arm.moveSlide(driverControls.slideMovement(), driverControls.removeArmRules());
-            } else if (driverControls.slideStopped()){
+            } else if (driverControls.slideStopped()) {
                 //prevents slides from moving after the drivers let go of the joystick
                 arm.holdSlide();
                 //arm.moveSlideToLength(arm.getSlideExtension());
             }
 
             //manual control for elbow
-            if (Math.abs(driverControls.pivotJoystick()) > 0){
-                telemetry.addData("Elbow Movement",arm.moveElbow(driverControls.pivotJoystick()));
-            } else if (driverControls.pivotManualStopped()){
+            if (Math.abs(driverControls.pivotJoystick()) > 0) {
+                telemetry.addData("Elbow Movement", arm.moveElbow(driverControls.pivotJoystick()));
+            } else if (driverControls.pivotManualStopped()) {
                 //prevents elbow from moving after the drivers let go of the joystick
                 arm.holdElbow();
             }
 
             //Manual control for wrist up
-            if(arm.getSlideExtension() < 18 && wrist.getPitchAngle() > 0.2){
-                wrist.presetPositionPitch(0.155);
-            } else if (driverControls.diffUp()){
+            if (driverControls.diffUp()) {
                 wrist.manualControlPitch(0.005);
             }
 
             //manual control for wrist down
-            if (driverControls.diffDown()){
+            if (driverControls.diffDown()) {
                 wrist.manualControlPitch(-0.005);
             }
-            if (driverControls.movePitchToEnterSub()){
+            if (driverControls.movePitchToEnterSub()) {
                 wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
             }
-            if (driverControls.movePitchToIntakeSample()){
+            if (driverControls.movePitchToIntakeSample()) {
                 wrist.presetPositionPitch(StateModelParameters.EnterSubmersibleStateParameters.pitch);
             }
 
 
             //manual control for claw
-            if (driverControls.outtake()){
+            if (driverControls.outtake()) {
                 if (!(intake.getIntakeDirection() == IIntake.IntakeDirection.BACKWARD)) {
                     intake.outtake();
-                } else{
+                } else {
                     intake.stop();
                 }
-            } else if (driverControls.intake()){
+            } else if (driverControls.intake()) {
                 if (!(intake.getIntakeDirection() == IIntake.IntakeDirection.FORWARD)) {
                     intake.intake();
-                } else{
+                } else {
                     intake.stop();
                 }
+            }
+            if (arm.getElbowAngleInDegrees() > 45 && arm.getSlideExtension() < 17 && wrist.getPitchAngle() >= 0.35 && FSMManager.getInstance().robotState == RobotState.START){
+                wrist.presetPositionPitch(0.35);
+            }
+
+            if (arm.getElbowAngleInDegrees() > elbow.topPosition && FSMManager.getInstance().robotState == RobotState.START){
+                arm.moveElbowToAngle(elbow.topPosition);
+            }
+            if (arm.getSlideExtension() > 16 && wrist.getPitchAngle() >= 0.2 && arm.getElbowAngleInDegrees() < 10){
+                wrist.presetPositionPitch(0.155);
             }
 
             //run touch sensor fsm for resetting slides
@@ -398,7 +407,7 @@ public class TeleOpBlue extends LinearOpMode {
 
 
         Slide slideControl = new Slide(leftSlide, rightSlide, slideSwitch);
-        Elbow elbow = new Elbow(pivot, elbowSwitch, 100);
+        elbow = new Elbow(pivot, elbowSwitch, 85);
         arm = new Arm(slideControl, elbow);
 
         arm.moveSlideToLength(arm.getSlideExtension());

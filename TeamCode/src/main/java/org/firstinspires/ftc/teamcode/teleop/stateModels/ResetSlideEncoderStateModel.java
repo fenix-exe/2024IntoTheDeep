@@ -28,7 +28,7 @@ public class ResetSlideEncoderStateModel {
                 }
                 if (debounceTimer.milliseconds() > 100){
                     arm.resetSlideEncoders();
-                    arm.moveSlideToLength(0.5);
+                    arm.moveSlideToLength(1.5);
                     arm.setSlidePower(0);//killing all power to slides bc our slides are fully retracted
                     resetSlideEncoderState = SlideEncoderState.WAIT_FOR_SLIDES_TO_LEAVE;
                 }

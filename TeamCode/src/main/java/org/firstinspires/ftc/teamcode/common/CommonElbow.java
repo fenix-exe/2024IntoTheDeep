@@ -11,7 +11,7 @@ public abstract class CommonElbow {
     public RevTouchSensor limitSwitch;
     int elbowPosition;
     public final double OFFSET = 1;
-    public int topPosition;
+    protected int topPosition;
     public CommonElbow(DcMotorEx elbow, RevTouchSensor limitSwitch, int topPositionInDegrees){
         this.elbowMotor = elbow;
         this.topPosition = degreesToTicks(topPositionInDegrees);

@@ -59,12 +59,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
             case START:
                 if (FSMManager.getInstance().robotState == RobotState.READY_TO_INTAKE_SAMPLE){
                     if (driverControls.grabSampleFromOutside() || driverControls.depositBack() || driverControls.specimenSampleIntake()) {
-                        //caseStartMovementForSuccessfulPickup();
-                        timer.reset();
-                        StateModelParameters.EnterSubmersibleStateParameters.pitch = wrist.getPitchAngle();
-                        wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
-                        LoggerUtil.logException("Deven TEST1:", new RuntimeException("checking where I am in the code"));
-                        grabSampleState = TransitionSteps.PITCH_UP;
+                        caseStartMovementForSuccessfulPickup();
                     } else if (colorSensor != null && !driverControls.turnOffAutoGrab()) {
                         colorSensor.updateHSVandDistance();
                         colorSensor.updateDetectColor();
@@ -127,6 +122,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
                     wrist.presetPositionPitch(StateModelParameters.LeaveSubmersibleStateParameters.pitch);
                     grabSampleState = TransitionSteps.PITCH_UP;
                 }
+                break;
             case PITCH_UP:
                 if (timer.milliseconds() > 250) {
                     timer.reset();
@@ -157,7 +153,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     private void caseStartMovementForSuccessfulPickup(){
         //FSMManager.getInstance().stopTransitions();
         arm.moveSlideToLength(StateModelParameters.LeaveSubmersibleStateParameters.slideRetractionForPickupLength);
-        grabSampleState = TransitionSteps.PITCH_UP;
+        grabSampleState = TransitionSteps.SLIDES_SLIGHTLY_IN;
     }
     private void caseStartMovementForUnsuccesfulPickup(){
         //FSMManager.getInstance().stopTransitions();
