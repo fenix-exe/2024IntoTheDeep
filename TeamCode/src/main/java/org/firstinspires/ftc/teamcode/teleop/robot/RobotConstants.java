@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class RobotConstants {
-    public static double SLIDE_TOLERANCE = 1;
+    public static double SLIDE_TOLERANCE = 0.5;
     public static double LOW_SLIDE_TOLERANCE = 0.5;
     public static double ELBOW_TOLERANCE = 3;
     public static double LOW_ELBOW_TOLERANCE = 1;

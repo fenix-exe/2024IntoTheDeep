@@ -152,7 +152,11 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     }
     private void caseStartMovementForSuccessfulPickup(){
         //FSMManager.getInstance().stopTransitions();
-        arm.moveSlideToLength(StateModelParameters.LeaveSubmersibleStateParameters.slideRetractionForPickupLength);
+        if (arm.getSlideExtension() > 16){
+            arm.moveSlideToLength(StateModelParameters.LeaveSubmersibleStateParameters.slideRetractionForPickupLength);
+        } else {
+            arm.moveSlideToLength(arm.getSlideExtension());
+        }
         grabSampleState = TransitionSteps.SLIDES_SLIGHTLY_IN;
     }
     private void caseStartMovementForUnsuccesfulPickup(){
