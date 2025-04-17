@@ -50,7 +50,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
             case START:
                 if(FSMManager.getInstance().robotState == RobotState.READY_TO_GRAB_SPECIMEN){
                     if(color != null){
-                        color.updateHSVandDistance();
+                        color.updateDistance();
                         double distance = color.getDistance();
                         if (distance < 100 && !intakeOn){
                             intake.intake();

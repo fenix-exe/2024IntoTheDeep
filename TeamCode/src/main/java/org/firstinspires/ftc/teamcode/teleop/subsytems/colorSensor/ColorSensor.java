@@ -33,6 +33,11 @@ public class ColorSensor {
             timer.reset();
         }
     }
+    public void updateDistance(){
+        if (timer.milliseconds() > 25){
+            colorSensorDistance = colorSensor.getDistance(DistanceUnit.MM);
+        }
+    }
     public void updateDetectColor(){
         detectColor = colorSensorDistance < colorSensorDetectionDistance;
     }
