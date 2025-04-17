@@ -162,9 +162,9 @@ public class TeleOpBlue extends LinearOpMode {
             imu.update();
 
             //switching drive modes
-            if (driverControls.driveTypeSwitch()) {
+            /*if (driverControls.driveTypeSwitch()) {
                 driveTrain.setDriveType(IDriveTrain.DriveType.FIELD_CENTRIC);
-            }
+            }*/
 
             //imu reset
             if (driverControls.resetIMU()) {

@@ -52,9 +52,8 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                     if(color != null){
                         color.updateDistance();
                         double distance = color.getDistance();
-                        if (distance < 100 && !intakeOn){
+                        if (distance < 100){
                             intake.intake();
-                            intakeOn = true;
                         }
                         if (distance < 32.5){
                             FSMManager.getInstance().stopTransitions();
