@@ -39,6 +39,9 @@ public class LED implements ILED{
             case PURE_BLUE:
                 pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
                 break;
+            case PURE_GREEN:
+                pattern = RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN;
+                break;
             default:
                 pattern = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE;
         }

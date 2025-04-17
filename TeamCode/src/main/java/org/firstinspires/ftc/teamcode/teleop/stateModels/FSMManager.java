@@ -100,5 +100,11 @@ public class FSMManager {
         telementry.addLine("FSM states in progress: "+strBuilder.toString());
         moveToLeaveSubmersibleStateTransition.debug(telementry);
     }
+    public boolean turnOnLEDForSpecGrab(){
+        return grabSpecimenStateTransition.getTurnOnLED();
+    }
+    public boolean allowPitchLimiting(){
+        return moveToLeaveSubmersibleStateTransition.allowPitchLimiting();
+    }
 
 }

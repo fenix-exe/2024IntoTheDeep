@@ -239,7 +239,8 @@ public class TeleOpBlue extends LinearOpMode {
             if (arm.getElbowAngleInDegrees() > elbow.topPosition && FSMManager.getInstance().robotState == RobotState.START){
                 arm.moveElbowToAngle(elbow.topPosition);
             }
-            if (arm.getSlideExtension() > 16 && wrist.getPitchAngle() >= 0.2 && arm.getElbowAngleInDegrees() < 10){
+            if (arm.getSlideExtension() > 16 && wrist.getPitchAngle() >= 0.155 && arm.getElbowAngleInDegrees() < 10 && FSMManager.getInstance().allowPitchLimiting()){
+                telemetry.addLine("LIMITING PITCH");
                 wrist.presetPositionPitch(0.155);
             }
 
@@ -511,6 +512,8 @@ public class TeleOpBlue extends LinearOpMode {
             } else {
                 led.turnOff();
             }
+        } else if (FSMManager.getInstance().turnOnLEDForSpecGrab()) {
+            led.setColor(ILED.LEDColor.PURE_GREEN);
         } else if (matchTimer.seconds() > 55 && matchTimer.seconds() < 100){
             led.setColor(ILED.LEDColor.WHITE);
         } else if (matchTimer.seconds() > 100 && matchTimer.seconds() < 120){

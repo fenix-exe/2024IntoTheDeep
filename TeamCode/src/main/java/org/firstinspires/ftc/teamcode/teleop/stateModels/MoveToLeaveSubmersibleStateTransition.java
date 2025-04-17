@@ -152,7 +152,7 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
     }
     private void caseStartMovementForSuccessfulPickup(){
         FSMManager.getInstance().stopTransitions();
-        if (arm.getSlideExtension() > 16){
+        if (arm.getSlideExtension() > 13.75){
             arm.moveSlideToLength(StateModelParameters.LeaveSubmersibleStateParameters.slideRetractionForPickupLength);
         } else {
             arm.moveSlideToLength(arm.getSlideExtension());
@@ -164,5 +164,8 @@ public class MoveToLeaveSubmersibleStateTransition implements IStateTransition {
         timer.reset();
         intake.outtake();
         grabSampleState = TransitionSteps.EJECTION;
+    }
+    public boolean allowPitchLimiting(){
+        return !(grabSampleState == TransitionSteps.PITCH_UP || grabSampleState == TransitionSteps.SLIDES_IN);
     }
 }

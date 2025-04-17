@@ -27,6 +27,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     DriveControlMap driverControls;
     public ColorSensor color;
     boolean intakeOn;
+    private boolean turnOnLED;
     public GrabSpecimenStateTransition(Wrist wrist, IIntake intake, Arm arm, IDriveTrain driveTrain, DriveControlMap driverControls, ColorSensor color){
         this.wrist = wrist;
         this.intake = intake;
@@ -36,12 +37,14 @@ public class GrabSpecimenStateTransition implements IStateTransition{
         intakeTransitionStep = TransitionSteps.START;
         this.color = color;
         intakeOn = false;
+        turnOnLED = false;
         timer = new ElapsedTime();
     }
     @Override
     public void reset() {
         intakeTransitionStep = TransitionSteps.START;
         intakeOn = false;
+        turnOnLED = false;
     }
 
     @Override
@@ -61,6 +64,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                             timer.reset();
                             intake.stop();
                             intakeOn = false;
+                            turnOnLED = true;
                             intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
                         }
                     } else {
@@ -72,6 +76,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                         timer.reset();
                         intake.stop();
                         intakeOn = false;
+                        turnOnLED = true;
                         intakeTransitionStep = TransitionSteps.STOPPING_INTAKE;
                     }
                 }
@@ -85,6 +90,7 @@ public class GrabSpecimenStateTransition implements IStateTransition{
                 break;
             case MOVING_PITCH:
                 if (timer.milliseconds()>400){
+                    turnOnLED = false;
                     FSMManager.getInstance().robotState = RobotState.READY_TO_GO_TO_CLIP_POSITION;
                     intakeTransitionStep = TransitionSteps.START;
                 }
@@ -95,5 +101,8 @@ public class GrabSpecimenStateTransition implements IStateTransition{
     @Override
     public boolean inProgress() {
         return !(intakeTransitionStep == TransitionSteps.START);
+    }
+    public boolean getTurnOnLED(){
+        return turnOnLED;
     }
 }
