@@ -51,11 +51,12 @@ public class MoveElbowUpToDepositionStateTransition implements IStateTransition{
                     FSMManager.getInstance().robotState = RobotState.ELBOW_TO_DEPOSIT_IN_BUCKET;
                     moveElbowUpState = TransitionSteps.START;
                 }
+                break;
         }
     }
 
     @Override
     public boolean inProgress() {
-        return !(FSMManager.getInstance().robotState == RobotState.START);
+        return !(moveElbowUpState == TransitionSteps.START);
     }
 }

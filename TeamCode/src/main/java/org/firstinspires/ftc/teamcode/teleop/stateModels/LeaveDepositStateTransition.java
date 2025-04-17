@@ -83,6 +83,6 @@ public class LeaveDepositStateTransition implements IStateTransition{
 
     @Override
     public boolean inProgress() {
-        return false;
+        return !(steps == TransitionSteps.START);
     }
 }

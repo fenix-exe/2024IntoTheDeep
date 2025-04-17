@@ -111,6 +111,9 @@ public class Arm {
 
         return slide.getSlideExtensionInInches();
     }
+    public double getSlidePower(){
+        return slide.leftSlideMotor.getPower();
+    }
 
     public HashMap getDebugInfo() {
 

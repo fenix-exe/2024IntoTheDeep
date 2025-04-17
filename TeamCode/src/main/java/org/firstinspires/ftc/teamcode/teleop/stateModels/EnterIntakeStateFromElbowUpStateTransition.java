@@ -63,6 +63,6 @@ public class EnterIntakeStateFromElbowUpStateTransition implements IStateTransit
 
     @Override
     public boolean inProgress() {
-        return false;
+        return !(goToIntakeState == TransitionSteps.START);
     }
 }

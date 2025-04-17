@@ -28,14 +28,15 @@ public class ResetSlideEncoderStateModel {
                 }
                 if (debounceTimer.milliseconds() > 100){
                     arm.resetSlideEncoders();
-                    arm.moveSlideToLength(1.5);
-                    arm.setSlidePower(0);//killing all power to slides bc our slides are fully retracted
+                    arm.setSlidePower(0);
                     resetSlideEncoderState = SlideEncoderState.WAIT_FOR_SLIDES_TO_LEAVE;
                 }
                 break;
             case WAIT_FOR_SLIDES_TO_LEAVE:
                 if (!arm.isSlideTouchSensorPressed()){
-                    arm.setSlidePower(1);
+                    if (arm.getSlidePower() == 0){
+                        arm.moveSlideToLength(arm.getSlideExtension());
+                    }
                     resetSlideEncoderState = SlideEncoderState.START;
                 }
                 break;

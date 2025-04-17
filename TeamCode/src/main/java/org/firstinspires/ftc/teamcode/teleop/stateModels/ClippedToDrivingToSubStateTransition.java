@@ -39,6 +39,7 @@ public class ClippedToDrivingToSubStateTransition implements IStateTransition{
         switch (clippedToDrivingToSubState) {
             case START:
                 if (driverControls.depositBack() && FSMManager.getInstance().robotState == RobotState.CLIPPED){
+                    FSMManager.getInstance().stopTransitions();
                     arm.moveSlideToLength(StateModelParameters.DepositSampleIntoBucketStateParameters.slideLength);
                     arm.moveElbowToAngle(StateModelParameters.IntakeStateParameters.elbowAngle);
                     wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
