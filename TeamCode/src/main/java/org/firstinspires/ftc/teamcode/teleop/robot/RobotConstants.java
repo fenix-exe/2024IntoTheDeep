@@ -13,7 +13,7 @@ public class RobotConstants {
     public static double OPEN_POSITION = 0.2534;
     public static double CLOSED_POSITION = 0.6028;
     public static double INTERMEDIATE_POSITION = 0.4506;
-    public static double NORMAL_SPEED = 1;
+    public static double NORMAL_SPEED = 0.45;
     public static double SLOW_SPEED = 0.45;
     public static double INTAKE_SPEED =0.5;
     public static double OUTTAKE_SPEED =-1;
