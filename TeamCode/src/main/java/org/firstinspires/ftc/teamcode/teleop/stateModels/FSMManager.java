@@ -104,7 +104,7 @@ public class FSMManager {
         return grabSpecimenStateTransition.getTurnOnLED();
     }
     public boolean allowPitchLimiting(){
-        return moveToLeaveSubmersibleStateTransition.allowPitchLimiting();
+        return !moveToLeaveSubmersibleStateTransition.inProgress();
     }
 
 }

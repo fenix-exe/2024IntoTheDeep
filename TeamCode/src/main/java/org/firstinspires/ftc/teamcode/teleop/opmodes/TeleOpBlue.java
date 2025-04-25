@@ -211,10 +211,10 @@ public class TeleOpBlue extends LinearOpMode {
                 wrist.manualControlPitch(-0.005);
             }
             if (driverControls.movePitchToEnterSub()) {
-                wrist.presetPositionPitch(StateModelParameters.IntakeStateParameters.pitch);
+                wrist.presetPositionPitch(0.37);
             }
             if (driverControls.movePitchToIntakeSample()) {
-                wrist.presetPositionPitch(StateModelParameters.EnterSubmersibleStateParameters.pitch);
+                wrist.presetPositionPitch(0.2);
             }
 
 
@@ -239,9 +239,14 @@ public class TeleOpBlue extends LinearOpMode {
             if (arm.getElbowAngleInDegrees() > elbow.topPosition && FSMManager.getInstance().robotState == RobotState.START){
                 arm.moveElbowToAngle(elbow.topPosition);
             }
-            if (arm.getSlideExtension() > 16 && wrist.getPitchAngle() >= 0.155 && arm.getElbowAngleInDegrees() < 10 && FSMManager.getInstance().allowPitchLimiting()){
-                telemetry.addLine("LIMITING PITCH");
-                wrist.presetPositionPitch(0.155);
+            if (arm.getSlideExtension() > 16 && wrist.getPitchAngle() >= 0.2 && arm.getElbowAngleInDegrees() < 10 && FSMManager.getInstance().allowPitchLimiting()){
+                //If slides past 16 inches and intaking, then pitch cannot go up
+                //If we are in intake state, we are legal, but we might limit, so it checks that for safety
+                //TODO test this more and make sure that it works
+                telemetry.addLine("LIMITING PITCH BECAUSE SLIDES ARE PAST 16 INCHES, CURRENT SLIDE LENGTH IS " + arm.getSlideExtension() +" INCHES, PREVIOUS TARGET PITCH ANGLE WAS " + wrist.getPitchAngle());
+                LoggerUtil.debug("LIMITING PITCH", "" + arm.getSlideExtension() + " IS THE SLIDE LENGTH");
+                LoggerUtil.debug("LIMITING PITCH", "" + wrist.getPitchAngle() + " IS THE PITCH SERVO POSITION");
+                wrist.presetPositionPitch(0.2);
             }
 
             //run touch sensor fsm for resetting slides
@@ -324,6 +329,7 @@ public class TeleOpBlue extends LinearOpMode {
                 telemetry.addData("Intake Slide Length", StateModelParameters.IntakeStateParameters.slideLength);
                 telemetry.addData("Slide Target Position", arm.getSlideTargetPositionInInches());
                 telemetry.addData("Elbow Clip Angle", StateModelParameters.PickupSpecimensStateParameters.elbowAngle);
+                telemetry.addData("Deposit Sample into observtion zone pitch", StateModelParameters.DepositSampleIntoObservationZone.downPitch);
                 telemetry.update();
             }
             //telemetry.update();
